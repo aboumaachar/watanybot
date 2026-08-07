@@ -1,0 +1,4 @@
+import type { HybridChatAdapter, HybridChatManifest, HybridChatMessage, HybridChatSettings } from '../contracts/hybrid-chat-plugin-contract';
+import { defaultHybridChatSettings } from '../config/hybrid-chat-plugin-settings.defaults';
+import { hybridChatPluginManifest } from '../manifest/hybrid-chat-plugin.manifest';
+export function createHybridChatDefaultAdapter(): HybridChatAdapter { return { getSettings(): HybridChatSettings { return defaultHybridChatSettings; }, getManifest(): HybridChatManifest { return hybridChatPluginManifest; }, async compose(messages: HybridChatMessage[]): Promise<HybridChatMessage> { const last = messages[messages.length - 1]; return { id: 'hybrid-chat-proof-response', role: 'assistant', text: last ? `Hybrid chat plugin boundary received: ${last.text}` : 'Hybrid chat plugin boundary ready.', source: 'plugin-proof' }; } }; }

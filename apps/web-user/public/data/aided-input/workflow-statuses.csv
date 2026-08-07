@@ -1,0 +1,15 @@
+workflow,status,arabic_label,is_terminal,active
+listing,draft,مسودة,false,true
+listing,pending_review,بانتظار المراجعة,false,true
+listing,approved,منشور,false,true
+listing,needs_edit,يحتاج تعديل,false,true
+listing,rejected,مرفوض,true,true
+listing,paused,متوقف مؤقتاً,false,true
+listing,expired,منتهي,true,true
+listing,archived,مؤرشف,true,true
+case,open,مفتوحة,false,true
+case,in_review,قيد المراجعة,false,true
+case,closed,مغلقة,true,true
+ticket,open,مفتوحة,false,true
+ticket,answered,تم الرد,false,true
+ticket,closed,مغلقة,true,true

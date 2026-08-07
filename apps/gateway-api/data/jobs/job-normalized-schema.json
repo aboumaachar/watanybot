@@ -1,0 +1,45 @@
+﻿{
+    "schemaVersion":  "1.0",
+    "requiredFields":  [
+                           "source_name",
+                           "source_url",
+                           "original_job_url",
+                           "title",
+                           "organization",
+                           "sector",
+                           "job_type",
+                           "work_mode",
+                           "mohafaza",
+                           "caza",
+                           "village",
+                           "date_posted",
+                           "date_seen",
+                           "deadline",
+                           "verified_source_status",
+                           "application_method",
+                           "raw_hash_for_deduplication"
+                       ],
+    "optionalFields":  [
+                           "salary_range",
+                           "eligibility",
+                           "veteran_friendly_flag",
+                           "family_friendly_flag",
+                           "language",
+                           "summary",
+                           "exact_address_optional",
+                           "contact_email",
+                           "apply_url",
+                           "source_license_note"
+                       ],
+    "locationPolicy":  "Use LebanonAddressLocator cascade: Mohafaza -\u003e Caza -\u003e Village/Town -\u003e exact address.",
+    "contentPolicy":  "Store metadata and a short summary by default. Link to the original job page. Do not republish full commercial descriptions unless permission allows it.",
+    "dedupePolicy":  "Dedupe by source id + original URL + normalized title + organization + deadline hash.",
+    "verificationStatuses":  [
+                                 "official",
+                                 "verified_partner",
+                                 "aggregated_unverified",
+                                 "manual_review_required",
+                                 "expired",
+                                 "duplicate"
+                             ]
+}

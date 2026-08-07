@@ -1,0 +1,36 @@
+{
+  "$schema": "./SMOKE_CONFIG_SCHEMA.json",
+  "suiteName": "Broad pension finance smoke",
+  "defaultTargetEnv": "BROAD_PENSION_FINANCE_SMOKE_TARGET",
+  "defaultTargetFallback": "public",
+  "urlEnvName": "BROAD_PENSION_FINANCE_SMOKE_URL",
+  "domainTerms": ["معاش", "تقاعد", "مالية", "حاسبة"],
+  "requiredReplyTermsAll": ["حاسبة المعاش", "وزارة المالية"],
+  "forbiddenReplyTerms": ["توقف تقاضي المعاش", "البنت العزباء", "سن 18"],
+  "queryCases": [
+    {
+      "canonical": "احتساب المعاش التقاعدي",
+      "variants": [
+        "كيف بتم احتساب المعاش التقاعدي",
+        "بدي افهم كيف بينحسب المعاش التقاعدي",
+        "شو أساس حساب المعاش التقاعدي"
+      ]
+    },
+    {
+      "canonical": "المراجعات المالية للمعاش",
+      "variants": [
+        "شو أهم مراجعات المعاش التقاعدي",
+        "وين بتصير مراجعات المعاش التقاعدي",
+        "مرحبا بدي افهم بشكل مختصر كيف بتم احتساب المعاش التقاعدي وشو أهم المراجعات"
+      ]
+    },
+    {
+      "canonical": "تعويض الصرف",
+      "variants": [
+        "شو علاقة تعويض الصرف بحساب المعاش",
+        "كيف بيفرق تعويض الصرف عن المعاش التقاعدي",
+        "بدي شرح مختصر عن تعويض الصرف مع المعاش"
+      ]
+    }
+  ]
+}

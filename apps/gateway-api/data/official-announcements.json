@@ -1,0 +1,22 @@
+{
+  "announcements": [
+    {
+      "id": "seed-security-001",
+      "title": "تنبيه أمني تجريبي",
+      "sourceId": "security_agencies",
+      "sourceName": "قيادة أمنية (تجريبي)",
+      "body": "هذا تنبيه تجريبي صادر عن جهة أمنية.",
+      "timestamp": "2026-07-01T08:00:00.000Z",
+      "status": "published"
+    },
+    {
+      "id": "seed-laws-001",
+      "title": "تحديث قانوني تجريبي",
+      "sourceId": "laws",
+      "sourceName": "مجلس النواب (تجريبي)",
+      "body": "هذا إعلان تجريبي حول تعديل تشريعي.",
+      "timestamp": "2026-07-02T08:00:00.000Z",
+      "status": "published"
+    }
+  ]
+}

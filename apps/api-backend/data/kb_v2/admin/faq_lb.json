@@ -1,0 +1,79 @@
+{
+  "version": "1.0.0",
+  "updated_at": "2026-02-24T11:25:21.427987Z",
+  "items": [
+    {
+      "id": "faq_001",
+      "q_lb": "ايمتى القبض/ايمتى المعاش؟",
+      "route": {
+        "domain": "payments",
+        "request_type": "payment_time"
+      },
+      "suggested_card_ids": [
+        "topcard_35d472d39b6d3b72",
+        "topcard_b562ddf548ad10b6"
+      ],
+      "admin_answer_enabled": true
+    },
+    {
+      "id": "faq_002",
+      "q_lb": "شو الوراق المطلوبة؟",
+      "route": {
+        "domain": "other",
+        "request_type": "docs"
+      },
+      "suggested_card_ids": [
+        "topcard_be3c5954f4924408"
+      ],
+      "admin_answer_enabled": true
+    },
+    {
+      "id": "faq_003",
+      "q_lb": "وين بيقدموا؟",
+      "route": {
+        "domain": "other",
+        "request_type": "where"
+      },
+      "suggested_card_ids": [
+        "topcard_be3c5954f4924408"
+      ],
+      "admin_answer_enabled": true
+    },
+    {
+      "id": "faq_004",
+      "q_lb": "آخر مهلة للاعتراض؟",
+      "route": {
+        "domain": "complaints",
+        "request_type": "deadline"
+      },
+      "suggested_card_ids": [
+        "topcard_cf9c50a7ff0dc676"
+      ],
+      "admin_answer_enabled": true
+    },
+    {
+      "id": "faq_005",
+      "q_lb": "ايمتى المدارس/التقديمات المدرسية؟",
+      "route": {
+        "domain": "school",
+        "request_type": "deadline"
+      },
+      "suggested_card_ids": [
+        "topcard_48a87d51d596a406"
+      ],
+      "admin_answer_enabled": true
+    },
+    {
+      "id": "faq_006",
+      "q_lb": "عندي مشكلة بالبنك",
+      "route": {
+        "domain": "payments",
+        "request_type": "problem"
+      },
+      "suggested_card_ids": [
+        "topcard_35d472d39b6d3b72"
+      ],
+      "admin_answer_enabled": true
+    }
+  ]
+}

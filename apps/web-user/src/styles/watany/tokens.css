@@ -1,0 +1,16 @@
+﻿/* APEX_WATANY_WAVE1_GENERATED: TOKENS_V1 */
+/* Semantic colors intentionally deferred until visual/runtime authority proof. */
+
+:root {
+  --watany-font-family-ui: "Cairo", "Noto Sans Arabic", Arial, sans-serif;
+  --watany-font-size-body: 16px;
+  --watany-font-size-strong: 18px;
+  --watany-font-weight-regular: 400;
+  --watany-font-weight-strong: 700;
+  --watany-touch-target-min: 44px;
+
+  --watany-safe-area-top: env(safe-area-inset-top, 0px);
+  --watany-safe-area-right: env(safe-area-inset-right, 0px);
+  --watany-safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  --watany-safe-area-left: env(safe-area-inset-left, 0px);
+}

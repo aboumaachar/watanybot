@@ -1,0 +1,10 @@
+{
+  "builtAt": "2026-03-01T11:55:35.624Z",
+  "kb": {
+    "procedures": [
+      {
+        "id": "TEST_PROC"
+      }
+    ]
+  }
+}

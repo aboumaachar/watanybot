@@ -1,0 +1,63 @@
+/* Authority stylesheet for the clean approved home surface */
+.watany-approved-home {
+  box-sizing: border-box;
+  padding: 12px;
+  padding-top: 82px; /* reserve topbar height */
+  background: transparent;
+  position: relative;
+  z-index: 2;
+}
+
+.watany-approved-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  align-items: center;
+  justify-items: center;
+}
+
+.watany-approved-tile {
+  background: transparent;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  width: 100%;
+  height: 96px;
+  padding: 6px 4px;
+  box-sizing: border-box;
+}
+
+.watany-approved-tile:focus {
+  outline: 2px solid rgba(0,0,0,0.12);
+  outline-offset: 2px;
+}
+
+.wr-icon-unit {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0 0 0 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* Ensure we don't accidentally inherit legacy overlay behavior */
+.watany-approved-home .watany-v1-snapped-popup-overlay,
+.watany-approved-home .watany-v1-header-snap-closeout,
+.watany-approved-home .watany-v1-body-portal-snap-closeout,
+.watany-approved-home .wr-dock {
+  display: none !important;
+}

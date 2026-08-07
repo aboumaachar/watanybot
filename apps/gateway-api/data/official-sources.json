@@ -1,0 +1,86 @@
+[
+  {
+    "id": "lebarmy",
+    "source": "lebarmy.gov.lb",
+    "label": "الجيش اللبناني",
+    "officialUrl": "https://www.lebarmy.gov.lb/",
+    "trustLevel": "high",
+    "crawlFrequency": "weekly",
+    "category": "military_security",
+    "official": true,
+    "status": "active",
+    "lastCheckedAt": "2026-05-16T13:25:29Z"
+  },
+  {
+    "id": "isf",
+    "source": "isf.gov.lb",
+    "label": "قوى الأمن الداخلي",
+    "officialUrl": "https://isf.gov.lb/",
+    "trustLevel": "high",
+    "crawlFrequency": "weekly",
+    "category": "military_security",
+    "official": true,
+    "status": "active",
+    "lastCheckedAt": "2026-05-16T13:25:29Z"
+  },
+  {
+    "id": "general_security",
+    "source": "general-security.gov.lb",
+    "label": "الأمن العام",
+    "officialUrl": "https://www.general-security.gov.lb/",
+    "trustLevel": "high",
+    "crawlFrequency": "weekly",
+    "category": "military_security",
+    "official": true,
+    "status": "active",
+    "lastCheckedAt": "2026-05-16T13:25:29Z"
+  },
+  {
+    "id": "state_security",
+    "source": "state-security.gov.lb",
+    "label": "أمن الدولة",
+    "officialUrl": "https://www.state-security.gov.lb/",
+    "trustLevel": "high",
+    "crawlFrequency": "weekly",
+    "category": "military_security",
+    "official": true,
+    "status": "active",
+    "lastCheckedAt": "2026-05-16T13:25:29Z"
+  },
+  {
+    "id": "mod",
+    "source": "lebarmy.gov.lb",
+    "label": "وزارة الدفاع الوطني",
+    "officialUrl": "https://www.lebarmy.gov.lb/",
+    "trustLevel": "high",
+    "crawlFrequency": "weekly",
+    "category": "ministries",
+    "official": true,
+    "status": "active",
+    "lastCheckedAt": "2026-05-16T13:25:29Z"
+  },
+  {
+    "id": "moph",
+    "source": "moph.gov.lb",
+    "label": "وزارة الصحة العامة",
+    "officialUrl": "https://www.moph.gov.lb/",
+    "trustLevel": "high",
+    "crawlFrequency": "monthly",
+    "category": "health",
+    "official": true,
+    "status": "active",
+    "lastCheckedAt": "2026-05-16T13:25:29Z"
+  },
+  {
+    "id": "finance",
+    "source": "finance.gov.lb",
+    "label": "وزارة المالية",
+    "officialUrl": "https://www.finance.gov.lb/",
+    "trustLevel": "high",
+    "crawlFrequency": "monthly",
+    "category": "pension_finance",
+    "official": true,
+    "status": "needs_review",
+    "lastCheckedAt": "2026-05-16T13:25:29Z"
+  }
+]

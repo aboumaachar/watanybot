@@ -1,0 +1,2 @@
+import type { DeploymentSyncSettings } from '../contracts/deployment-sync-plugin-contract';
+export const defaultDeploymentSyncSettings: DeploymentSyncSettings = { pluginKey: 'deployment-sync', enabled: true, allowLiveSync: false, requireDryRunFirst: true, requireBackup: true, requireValidation: true, requireHandoff: true, serverTargetLabel: 'review-required' };

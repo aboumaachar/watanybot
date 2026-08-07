@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Koudama Icon Render Candidate Viewer</title>
+<style>
+body{margin:0;padding:18px;background:#f4f6f7;font-family:"Segoe UI",Tahoma,Arial,sans-serif;color:#1e221f}
+main{max-width:430px;margin:0 auto;background:#fff;border-radius:28px;padding:16px;box-shadow:0 24px 70px rgba(30,35,33,.16)}
+h1{font-size:22px;margin:0 0 6px;color:#0b7f3a}
+p{margin:0 0 14px;color:#69706a;line-height:1.6}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.card{min-height:112px;border-radius:20px;background:#fff;border:2px solid var(--contour);box-shadow:0 10px 18px rgba(20,25,30,.07);padding:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.icon{width:46px;height:46px;border-radius:16px;display:grid;place-items:center;color:var(--sign);background:#fff;border:2px solid var(--contour);font-weight:900;font-size:13px;margin-bottom:8px}
+strong{font-size:13px;line-height:1.35}
+small{display:block;font-size:10px;color:#747b75;margin-top:4px;direction:ltr}
+</style>
+</head>
+<body>
+<main>
+<h1>موطني · Icon candidates</h1>
+<p>White tile, colored sign, colorful contour. Preview only; live UI requires component integration.</p>
+<section class="grid">
+<article class="card" style="--sign:#0B8F45;--contour:#0B8F45"><div class="icon">Ho</div><strong>الرئيسية</strong><small>home · Home</small></article>
+<article class="card" style="--sign:#7B3FE4;--contour:#7B3FE4"><div class="icon">Us</div><strong>المجتمع</strong><small>community · UsersRound</small></article>
+<article class="card" style="--sign:#1677D2;--contour:#1677D2"><div class="icon">La</div><strong>الخدمات</strong><small>services · LayoutGrid</small></article>
+<article class="card" style="--sign:#D93A45;--contour:#D93A45"><div class="icon">Fi</div><strong>المستندات</strong><small>documents · FileText</small></article>
+<article class="card" style="--sign:#0B8F45;--contour:#0B8F45"><div class="icon">Us</div><strong>حسابي</strong><small>profile · UserRound</small></article>
+<article class="card" style="--sign:#6E7480;--contour:#6E7480"><div class="icon">Li</div><strong></strong><small>list · List</small></article>
+<article class="card" style="--sign:#B9892D;--contour:#B9892D"><div class="icon">Cl</div><strong>قائمة الإجراءات</strong><small>list · ClipboardList</small></article>
+<article class="card" style="--sign:#0B8F45;--contour:#0B8F45"><div class="icon">Pl</div><strong>إضافة إجراء</strong><small>create · PlusCircle</small></article>
+<article class="card" style="--sign:#B9892D;--contour:#B9892D"><div class="icon">Pe</div><strong>تعديل</strong><small>edit · Pencil</small></article>
+<article class="card" style="--sign:#D93A45;--contour:#D93A45"><div class="icon">Fi</div><strong>إدارة المستندات</strong><small>docs · FileText</small></article>
+<article class="card" style="--sign:#0B8F45;--contour:#0B8F45"><div class="icon">Us</div><strong>الحساب والإعدادات</strong><small>profile · UserRound</small></article>
+<article class="card" style="--sign:#E43E4E;--contour:#E43E4E"><div class="icon">Be</div><strong>الإشعارات</strong><small>notifications · Bell</small></article>
+<article class="card" style="--sign:#E43E6A;--contour:#E43E6A"><div class="icon">Ci</div><strong>الأسئلة الشائعة</strong><small>faq · CircleHelp</small></article>
+<article class="card" style="--sign:#1677D2;--contour:#1677D2"><div class="icon">Li</div><strong>المساعدة والدعم</strong><small>help · LifeBuoy</small></article>
+<article class="card" style="--sign:#7B3FE4;--contour:#7B3FE4"><div class="icon">Bo</div><strong>اسأل موطني</strong><small>ask_watany · BotMessageSquare</small></article>
+<article class="card" style="--sign:#0B8F45;--contour:#0B8F45"><div class="icon">Mo</div><strong>او شي تاني</strong><small>something_else · MoreHorizontalCircle</small></article>
+<article class="card" style="--sign:#F08A18;--contour:#F08A18"><div class="icon">La</div><strong>إعلاناتي وخدماتي</strong><small>my_listings_services · Layers</small></article>
+<article class="card" style="--sign:#E43E4E;--contour:#E43E4E"><div class="icon">Be</div><strong>إشعاراتي</strong><small>my_notifications · Bell</small></article>
+<article class="card" style="--sign:#0B8F45;--contour:#0B8F45"><div class="icon">Se</div><strong>بحث</strong><small>global_search · Search</small></article>
+<article class="card" style="--sign:#0B8F45;--contour:#0B8F45"><div class="icon">Ne</div><strong>تعاميم</strong><small>official_circulars · Newspaper</small></article>
+<article class="card" style="--sign:#F08A18;--contour:#F08A18"><div class="icon">Me</div><strong>الأخبار</strong><small>news · Megaphone</small></article>
+<article class="card" style="--sign:#E43E4E;--contour:#E43E4E"><div class="icon">Tr</div><strong>زائف</strong><small>fake_alerts · TriangleAlert</small></article>
+<article class="card" style="--sign:#6F6780;--contour:#6F6780"><div class="icon">Be</div><strong>الوفيات</strong><small>deaths · Bell</small></article>
+<article class="card" style="--sign:#E43E4E;--contour:#E43E4E"><div class="icon">Be</div><strong>التنبيهات والإشعارات</strong><small>alerts_notifications · Bell</small></article>
+<article class="card" style="--sign:#0B8F45;--contour:#0B8F45"><div class="icon">Ca</div><strong>حاسبة المعاش</strong><small>pension_calculator · Calculator</small></article>
+<article class="card" style="--sign:#7B3FE4;--contour:#7B3FE4"><div class="icon">Re</div><strong>إفادة الراتب</strong><small>salary_statement · ReceiptText</small></article>
+<article class="card" style="--sign:#0B8F45;--contour:#0B8F45"><div class="icon">Ci</div><strong>حالة الدفعات</strong><small>payment_status · CircleDollarSign</small></article>
+<article class="card" style="--sign:#0B8F45;--contour:#0B8F45"><div class="icon">Ha</div><strong>التعويضات والحقوق</strong><small>compensation_benefits · HandCoins</small></article>
+<article class="card" style="--sign:#1677D2;--contour:#1677D2"><div class="icon">Gr</div><strong>المساعدات المدرسية</strong><small>school_grants · GraduationCap</small></article>
+<article class="card" style="--sign:#B9892D;--contour:#B9892D"><div class="icon">Cl</div><strong>الإجراءات</strong><small>procedures · ClipboardList</small></article>
+<article class="card" style="--sign:#1677D2;--contour:#1677D2"><div class="icon">Fi</div><strong>النماذج</strong><small>forms · FilePenLine</small></article>
+<article class="card" style="--sign:#E43E6A;--contour:#E43E6A"><div class="icon">Ci</div><strong>الأسئلة</strong><small>questions · CircleHelp</small></article>
+<article class="card" style="--sign:#7B3FE4;--contour:#7B3FE4"><div class="icon">Ga</div><strong>القوانين</strong><small>laws · Gavel</small></article>
+<article class="card" style="--sign:#1677D2;--contour:#1677D2"><div class="icon">Li</div><strong>روابط مفيدة</strong><small>useful_links · Link</small></article>
+<article class="card" style="--sign:#1677D2;--contour:#1677D2"><div class="icon">La</div><strong>الخدمات الرسمية</strong><small>official_services · Landmark</small></article>
+<article class="card" style="--sign:#D93A45;--contour:#D93A45"><div class="icon">Fi</div><strong>الملفات والمستندات</strong><small>documents_files · FileText</small></article>
+<article class="card" style="--sign:#B9892D;--contour:#B9892D"><div class="icon">Fo</div><strong>معاملاتي</strong><small>my_transactions · FolderOpen</small></article>
+<article class="card" style="--sign:#0B8F45;--contour:#0B8F45"><div class="icon">Pl</div><strong>طلب جديد</strong><small>new_request · PlusCircle</small></article>
+<article class="card" style="--sign:#7B3FE4;--contour:#7B3FE4"><div class="icon">Me</div><strong>الدردشات الجماعية</strong><small>group_chats · MessagesSquare</small></article>
+<article class="card" style="--sign:#7B3FE4;--contour:#7B3FE4"><div class="icon">Us</div><strong>غرف المجتمع</strong><small>community_rooms · UsersRound</small></article>
+<article class="card" style="--sign:#1677D2;--contour:#1677D2"><div class="icon">Me</div><strong>رسائلي</strong><small>messages · MessageCircle</small></article>
+<article class="card" style="--sign:#7B3FE4;--contour:#7B3FE4"><div class="icon">Bo</div><strong>المحادثات المحفوظة</strong><small>saved_chats · Bookmark</small></article>
+<article class="card" style="--sign:#7B3FE4;--contour:#7B3FE4"><div class="icon">Mi</div><strong>الدردشة الصوتية</strong><small>voice_chat · Mic</small></article>
+<article class="card" style="--sign:#C89220;--contour:#C89220"><div class="icon">Tr</div><strong>كأس العالم</strong><small>world_cup · Trophy</small></article>
+<article class="card" style="--sign:#E43E6A;--contour:#E43E6A"><div class="icon">Cl</div><strong>المركز الإعلامي</strong><small>media_center · Clapperboard</small></article>
+<article class="card" style="--sign:#1677D2;--contour:#1677D2"><div class="icon">Br</div><strong>الوظائف</strong><small>jobs · BriefcaseBusiness</small></article>
+<article class="card" style="--sign:#2FA84F;--contour:#2FA84F"><div class="icon">Sh</div><strong>التطويع</strong><small>recruitment · ShieldCheck</small></article>
+<article class="card" style="--sign:#C89220;--contour:#C89220"><div class="icon">Sp</div><strong>الفرص</strong><small>opportunities · Sparkles</small></article>
+<article class="card" style="--sign:#F08A18;--contour:#F08A18"><div class="icon">St</div><strong>السوق</strong><small>market · Store</small></article>
+<article class="card" style="--sign:#14A6B8;--contour:#14A6B8"><div class="icon">Ca</div><strong>تاكسي</strong><small>taxi · Car</small></article>
+<article class="card" style="--sign:#E43E6A;--contour:#E43E6A"><div class="icon">Ha</div><strong>المساعدات</strong><small>assistance · HandsHeart</small></article>
+<article class="card" style="--sign:#14A6B8;--contour:#14A6B8"><div class="icon">Co</div><strong>المرشد السياحي</strong><small>tourist_guide · Compass</small></article>
+<article class="card" style="--sign:#1677D2;--contour:#1677D2"><div class="icon">Wr</div><strong>الخدمات الحرة</strong><small>freelance_services · Wrench</small></article>
+<article class="card" style="--sign:#F08A18;--contour:#F08A18"><div class="icon">Ba</div><strong>الإعلانات</strong><small>user_ads · BadgePlus</small></article>
+<article class="card" style="--sign:#0B8F45;--contour:#0B8F45"><div class="icon">Ha</div><strong>مزودو الخدمات</strong><small>service_providers · Handshake</small></article>
+<article class="card" style="--sign:#0B8F45;--contour:#0B8F45"><div class="icon">Ma</div><strong>أداة العنوان</strong><small>address_widget · MapPinned</small></article>
+<article class="card" style="--sign:#E43E4E;--contour:#E43E4E"><div class="icon">Si</div><strong>الدعم الطارئ</strong><small>emergency_support · Siren</small></article>
+<article class="card" style="--sign:#0B8F45;--contour:#0B8F45"><div class="icon">Vo</div><strong>صوّت</strong><small>vote · Vote</small></article>
+<article class="card" style="--sign:#1677D2;--contour:#1677D2"><div class="icon">Ch</div><strong>الاستطلاعات</strong><small>surveys · ChartNoAxesColumn</small></article>
+<article class="card" style="--sign:#E43E4E;--contour:#E43E4E"><div class="icon">Fl</div><strong>الحملات</strong><small>campaigns · Flag</small></article>
+<article class="card" style="--sign:#F08A18;--contour:#F08A18"><div class="icon">Ca</div><strong>الفعاليات</strong><small>events · CalendarDays</small></article>
+<article class="card" style="--sign:#0B8F45;--contour:#0B8F45"><div class="icon">Us</div><strong>مشاركاتي</strong><small>my_participation · UserCheck</small></article>
+<article class="card" style="--sign:#1677D2;--contour:#1677D2"><div class="icon">Ma</div><strong>دعواتي</strong><small>my_invitations · MailOpen</small></article>
+<article class="card" style="--sign:#0B8F45;--contour:#0B8F45"><div class="icon">Us</div><strong>حسابي</strong><small>my_account · UserRound</small></article>
+<article class="card" style="--sign:#F08A18;--contour:#F08A18"><div class="icon">La</div><strong>إعلاناتي وخدماتي</strong><small>my_listings_services · Layers</small></article>
+<article class="card" style="--sign:#1677D2;--contour:#1677D2"><div class="icon">La</div><strong>منشوراتي</strong><small>my_posts · LayoutGrid</small></article>
+<article class="card" style="--sign:#1677D2;--contour:#1677D2"><div class="icon">In</div><strong>طلباتي</strong><small>my_requests · Inbox</small></article>
+<article class="card" style="--sign:#B9892D;--contour:#B9892D"><div class="icon">Ti</div><strong>تذاكري</strong><small>my_tickets · Ticket</small></article>
+<article class="card" style="--sign:#B9892D;--contour:#B9892D"><div class="icon">Fo</div><strong>قضاياي المفتوحة</strong><small>my_open_cases · FolderOpen</small></article>
+<article class="card" style="--sign:#7B3FE4;--contour:#7B3FE4"><div class="icon">Bo</div><strong>المحفوظات</strong><small>bookmarks · Bookmark</small></article>
+<article class="card" style="--sign:#6E7480;--contour:#6E7480"><div class="icon">Se</div><strong>الإعدادات</strong><small>settings · Settings</small></article>
+<article class="card" style="--sign:#0B8F45;--contour:#0B8F45"><div class="icon">Lo</div><strong>الدخول والتسجيل</strong><small>auth · LogIn</small></article>
+<article class="card" style="--sign:#F08A18;--contour:#F08A18"><div class="icon">Ba</div><strong>إعلان</strong><small>general_ad · BadgePlus</small></article>
+<article class="card" style="--sign:#0B8F45;--contour:#0B8F45"><div class="icon">Sh</div><strong>أريد الشراء</strong><small>buy_request · ShoppingCart</small></article>
+<article class="card" style="--sign:#F08A18;--contour:#F08A18"><div class="icon">Ba</div><strong>أريد البيع</strong><small>sell_offer · BadgeDollarSign</small></article>
+<article class="card" style="--sign:#0B8F45;--contour:#0B8F45"><div class="icon">Se</div><strong>أبحث عن عمل</strong><small>job_promotion · Search</small></article>
+<article class="card" style="--sign:#1677D2;--contour:#1677D2"><div class="icon">Wr</div><strong>مهاراتي / خدماتي الحرة</strong><small>freelance_skill · Wrench</small></article>
+<article class="card" style="--sign:#14A6B8;--contour:#14A6B8"><div class="icon">Ca</div><strong>خدمة تاكسي</strong><small>taxi_service · Car</small></article>
+<article class="card" style="--sign:#14A6B8;--contour:#14A6B8"><div class="icon">Co</div><strong>مرشد سياحي</strong><small>tourist_guide_service · Compass</small></article>
+<article class="card" style="--sign:#F08A18;--contour:#F08A18"><div class="icon">Ba</div><strong>مزود خدمة</strong><small>service_provider_listing · BadgePlus</small></article>
+<article class="card" style="--sign:#E43E6A;--contour:#E43E6A"><div class="icon">Ha</div><strong>طلب مساعدة</strong><small>assistance_request · HandsHeart</small></article>
+<article class="card" style="--sign:#7B3FE4;--contour:#7B3FE4"><div class="icon">Me</div><strong>معلومة أو خبر</strong><small>community_info_post · MessagesSquare</small></article>
+<article class="card" style="--sign:#B9892D;--contour:#B9892D"><div class="icon">Ti</div><strong>تذكرة نظام</strong><small>system_ticket · Ticket</small></article>
+<article class="card" style="--sign:#B9892D;--contour:#B9892D"><div class="icon">Fo</div><strong>قضية مفتوحة</strong><small>open_case · FolderOpen</small></article>
+<article class="card" style="--sign:#1677D2;--contour:#1677D2"><div class="icon">La</div><strong>الأرجنتين</strong><small>argentina · LayoutGrid</small></article>
+<article class="card" style="--sign:#1677D2;--contour:#1677D2"><div class="icon">La</div><strong>فرنسا</strong><small>france · LayoutGrid</small></article>
+<article class="card" style="--sign:#1677D2;--contour:#1677D2"><div class="icon">La</div><strong>البرازيل</strong><small>brazil · LayoutGrid</small></article>
+<article class="card" style="--sign:#1677D2;--contour:#1677D2"><div class="icon">La</div><strong>منتخب آخر</strong><small>other · LayoutGrid</small></article>
+<article class="card" style="--sign:#1677D2;--contour:#1677D2"><div class="icon">La</div><strong>لاعب من الأرجنتين</strong><small>player-1 · LayoutGrid</small></article>
+<article class="card" style="--sign:#1677D2;--contour:#1677D2"><div class="icon">La</div><strong>لاعب من فرنسا</strong><small>player-2 · LayoutGrid</small></article>
+<article class="card" style="--sign:#1677D2;--contour:#1677D2"><div class="icon">La</div><strong>لاعب من البرازيل</strong><small>player-3 · LayoutGrid</small></article>
+<article class="card" style="--sign:#1677D2;--contour:#1677D2"><div class="icon">La</div><strong>لاعب آخر</strong><small>other · LayoutGrid</small></article>
+<article class="card" style="--sign:#1677D2;--contour:#1677D2"><div class="icon">La</div><strong>family-dependents</strong><small>family-dependents · LayoutGrid</small></article>
+<article class="card" style="--sign:#D93A45;--contour:#D93A45"><div class="icon">Fi</div><strong>حقوق الابنة على العاتق: الشروط والمستندات</strong><small>fallback-dependent-daughter-faq · FileText</small></article>
+<article class="card" style="--sign:#1677D2;--contour:#1677D2"><div class="icon">La</div><strong>إجراءات تسجيل الابنة ضمن المستفيدين</strong><small>fallback-dependent-daughter-procedure · LayoutGrid</small></article>
+<article class="card" style="--sign:#1677D2;--contour:#1677D2"><div class="icon">Fi</div><strong>النماذج المطلوبة لمعاملة الابنة على العاتق</strong><small>fallback-dependent-daughter-forms · FilePenLine</small></article>
+<article class="card" style="--sign:#1677D2;--contour:#1677D2"><div class="icon">La</div><strong>family-dependents</strong><small>family-dependents · LayoutGrid</small></article>
+<article class="card" style="--sign:#1677D2;--contour:#1677D2"><div class="icon">La</div><strong>دليل المستفيدين على العاتق</strong><small>fallback-family-dependents-guide · LayoutGrid</small></article>
+<article class="card" style="--sign:#7B3FE4;--contour:#7B3FE4"><div class="icon">Bo</div><strong>المحادثة — </strong><small>chat · BotMessageSquare</small></article>
+<article class="card" style="--sign:#0B8F45;--contour:#0B8F45"><div class="icon">Ca</div><strong>حاسبة المعاش</strong><small>salary · Calculator</small></article>
+<article class="card" style="--sign:#1677D2;--contour:#1677D2"><div class="icon">Fi</div><strong>النماذج الرسمية</strong><small>forms · FilePenLine</small></article>
+<article class="card" style="--sign:#B9892D;--contour:#B9892D"><div class="icon">Cl</div><strong>الإجراءات</strong><small>procedures · ClipboardList</small></article>
+<article class="card" style="--sign:#1677D2;--contour:#1677D2"><div class="icon">Br</div><strong>الوظائف</strong><small>jobs · BriefcaseBusiness</small></article>
+<article class="card" style="--sign:#F08A18;--contour:#F08A18"><div class="icon">St</div><strong>السوق المجتمعي</strong><small>marketplace · Store</small></article>
+<article class="card" style="--sign:#E43E6A;--contour:#E43E6A"><div class="icon">Ci</div><strong>الأسئلة الشائعة</strong><small>faq · CircleHelp</small></article>
+<article class="card" style="--sign:#1677D2;--contour:#1677D2"><div class="icon">La</div><strong>الدليل (أرقام وجهات)</strong><small>directory · LayoutGrid</small></article>
+<article class="card" style="--sign:#0B8F45;--contour:#0B8F45"><div class="icon">Se</div><strong>البحث في قاعدة المعرفة</strong><small>search · Search</small></article>
+<article class="card" style="--sign:#B9892D;--contour:#B9892D"><div class="icon">Fo</div><strong>معاملاتي (القضايا)</strong><small>cases · FolderOpen</small></article>
+<article class="card" style="--sign:#E43E4E;--contour:#E43E4E"><div class="icon">Be</div><strong>تنبيهات الطوارئ</strong><small>alerts · Bell</small></article>
+<article class="card" style="--sign:#E43E4E;--contour:#E43E4E"><div class="icon">Be</div><strong>الإشعارات</strong><small>notifications · Bell</small></article>
+<article class="card" style="--sign:#0B8F45;--contour:#0B8F45"><div class="icon">Us</div><strong>الملف الشخصي</strong><small>profile · UserRound</small></article>
+<article class="card" style="--sign:#7B3FE4;--contour:#7B3FE4"><div class="icon">Us</div><strong>المجتمع</strong><small>community · UsersRound</small></article>
+<article class="card" style="--sign:#1677D2;--contour:#1677D2"><div class="icon">La</div><strong></strong><small>vehicleTypes · LayoutGrid</small></article>
+<article class="card" style="--sign:#1677D2;--contour:#1677D2"><div class="icon">La</div><strong></strong><small>vehicleMakes · LayoutGrid</small></article>
+<article class="card" style="--sign:#1677D2;--contour:#1677D2"><div class="icon">La</div><strong></strong><small>vehicleModels · LayoutGrid</small></article>
+<article class="card" style="--sign:#1677D2;--contour:#1677D2"><div class="icon">La</div><strong></strong><small>vehicleYears · LayoutGrid</small></article>
+<article class="card" style="--sign:#1677D2;--contour:#1677D2"><div class="icon">La</div><strong></strong><small>vehicleFeatures · LayoutGrid</small></article>
+<article class="card" style="--sign:#1677D2;--contour:#1677D2"><div class="icon">Wr</div><strong></strong><small>freelanceSkills · Wrench</small></article>
+<article class="card" style="--sign:#F08A18;--contour:#F08A18"><div class="icon">Ba</div><strong></strong><small>listingTypes · BadgePlus</small></article>
+<article class="card" style="--sign:#1677D2;--contour:#1677D2"><div class="icon">Br</div><strong></strong><small>jobCategories · BriefcaseBusiness</small></article>
+</section>
+</main>
+</body>
+</html>

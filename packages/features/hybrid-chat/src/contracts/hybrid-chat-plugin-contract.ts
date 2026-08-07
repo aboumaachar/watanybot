@@ -1,0 +1,5 @@
+export type HybridChatProviderKind = 'local' | 'kb-grounded' | 'external-ai' | 'mock';
+export interface HybridChatSettings { pluginKey: 'hybrid-chat'; enabled: boolean; providerKind: HybridChatProviderKind; kbGroundingEnabled: boolean; liveSearchEnabled: boolean; communityIsolationEnabled: boolean; voiceEntryEnabled: boolean; maxContextItems: number; adminConfigurable: boolean; }
+export interface HybridChatManifest { pluginKey: 'hybrid-chat'; displayName: string; exportable: boolean; replaceable: boolean; adminConfigurable: boolean; routes: string[]; apiRoutes: string[]; }
+export interface HybridChatMessage { id: string; role: 'user' | 'assistant' | 'system'; text: string; createdAt?: string; source?: string; }
+export interface HybridChatAdapter { getSettings(): HybridChatSettings; getManifest(): HybridChatManifest; compose(messages: HybridChatMessage[]): Promise<HybridChatMessage>; }

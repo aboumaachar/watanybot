@@ -1,0 +1,390 @@
+/* ================================================================== */
+/*  Watany Ticker — Scrolling Info Bar                                */
+/* ================================================================== */
+
+.ticker-bar {
+  width: 100%;
+  overflow: hidden;
+  background: linear-gradient(90deg, var(--accent-bg, #f0f4ff) 0%, var(--bg-secondary, #f8f9fb) 50%, var(--accent-bg, #f0f4ff) 100%);
+  border-bottom: 1px solid var(--border, #e5e7eb);
+  padding: 6px 0;
+  position: relative;
+  direction: rtl;
+  flex-shrink: 0;
+  z-index: 5;
+}
+
+.ticker-track {
+  display: flex;
+  width: max-content;
+  min-width: max-content;
+  gap: 3rem;
+  white-space: nowrap;
+  animation: ticker-scroll 40s linear infinite;
+  will-change: transform;
+}
+
+.ticker-track.ticker-manual-motion {
+  animation: none;
+}
+
+.ticker-paused {
+  animation-play-state: paused;
+}
+
+.ticker-item {
+  display: inline-block;
+  font-size: 13px;
+  padding: 2px 12px;
+  color: var(--ink, #1a1a1a);
+  user-select: none;
+  flex-shrink: 0;
+}
+
+/* Clickable ticker items (rendered as buttons) */
+button.ticker-item {
+  background: none;
+  border: none;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+/* Kind-specific styling */
+.ticker-suggest,
+.ticker-popular,
+.ticker-qotd {
+  color: var(--accent, #2563eb);
+  font-weight: 500;
+}
+
+.ticker-suggest:hover,
+.ticker-popular:hover,
+.ticker-qotd:hover {
+  text-decoration: underline;
+  opacity: 0.85;
+}
+
+.ticker-tip {
+  color: var(--ink-secondary, #6b7280);
+}
+
+.ticker-announce {
+  color: var(--warning, #b45309);
+  font-weight: 600;
+}
+
+.ticker-faq {
+  color: var(--accent, #2563eb);
+  font-weight: 500;
+}
+
+.ticker-case_update {
+  color: var(--accent-secondary, #059669);
+  font-weight: 500;
+}
+
+.ticker-highlight {
+  color: var(--warning, #b45309);
+  font-weight: 600;
+}
+
+/* Keep the compact recovery-shell ticker legible over its forest topbar. */
+.watany-recovery-ticker .ticker-item {
+  color: #fff;
+  font-size: 15px;
+}
+
+/* Scroll animation — right to left for RTL */
+@keyframes ticker-scroll {
+  0% {
+    transform: translate3d(-50%, 0, 0);
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .ticker-item {
+    font-size: 12px;
+    padding: 2px 8px;
+  }
+
+  .ticker-track {
+    gap: 2rem;
+    animation-duration: 40s;
+  }
+}
+
+/* ================================================================== */
+/*  Ticker Page — Full View                                          */
+/* ================================================================== */
+
+.ticker-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.ticker-page__header {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.ticker-page__header h2 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem;
+  color: var(--ink);
+}
+
+.ticker-page__header p {
+  font-size: 0.95rem;
+  color: var(--ink-secondary);
+  margin: 0;
+}
+
+.ticker-page__controls {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: nowrap;
+  padding: 0.5rem 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+.ticker-page__filters {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+.ticker-filter-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 2rem;
+  background: transparent;
+  color: var(--ink);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.ticker-filter-btn:hover {
+  border-color: var(--accent);
+  background: var(--accent-bg);
+}
+
+.ticker-filter-btn.active {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+
+.ticker-items {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1rem;
+}
+
+.ticker-error {
+  padding: 1rem;
+  background: #FEE2E2;
+  color: #991B1B;
+  border-radius: 0.5rem;
+  text-align: center;
+}
+
+.ticker-empty {
+  grid-column: 1 / -1;
+  padding: 2rem;
+  text-align: center;
+  color: var(--ink-tertiary);
+}
+
+.ticker-item-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--item-color, var(--accent));
+  border-radius: 0.5rem;
+  background: var(--bg);
+  transition: all 0.2s ease;
+  direction: rtl;
+  text-align: right;
+}
+
+.ticker-item-card--clickable {
+  cursor: pointer;
+}
+
+.ticker-item-card:hover {
+  border-color: var(--item-color, var(--accent));
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.ticker-item-card--clickable:focus-visible {
+  outline: 2px solid var(--item-color, var(--accent));
+  outline-offset: 3px;
+}
+
+.ticker-item-card__header {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.ticker-item-card__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  min-width: 2rem;
+  border-radius: 0.5rem;
+  background: var(--item-color, var(--accent));
+  opacity: 0.1;
+  color: var(--item-color, var(--accent));
+}
+
+.ticker-item-card__kind {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  background: var(--item-color, var(--accent));
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.ticker-item-card__title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--ink);
+  margin: 0;
+}
+
+.ticker-item-card__content {
+  flex: 1;
+}
+
+.ticker-item-card__text {
+  font-size: 0.9rem;
+  color: var(--ink-secondary);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.ticker-item-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  font-size: 0.8rem;
+  color: var(--ink-tertiary);
+}
+
+.ticker-item-card__time {
+  white-space: nowrap;
+}
+
+.ticker-item-card__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.ticker-item-card__action {
+  flex: 0 0 auto;
+  background: none;
+  border: none;
+  color: var(--item-color, var(--accent));
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.ticker-item-card__action:hover {
+  text-decoration: underline;
+  transform: translateX(-2px);
+}
+
+.ticker-loading {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--ink-tertiary);
+}
+
+/* Kind-specific color variables */
+.ticker-item-card.kind-tip {
+  --item-color: #6366F1;
+}
+
+.ticker-item-card.kind-faq {
+  --item-color: #3B82F6;
+}
+
+.ticker-item-card.kind-announcement {
+  --item-color: #F59E0B;
+}
+
+.ticker-item-card.kind-alert {
+  --item-color: #EF4444;
+}
+
+.ticker-item-card.kind-update {
+  --item-color: #10B981;
+}
+
+@media (max-width: 640px) {
+  .ticker-page {
+    padding: 0.75rem;
+  }
+
+  .ticker-page__header h2 {
+    font-size: 1.5rem;
+  }
+
+  .ticker-items {
+    grid-template-columns: 1fr;
+  }
+
+  .ticker-page__controls {
+    gap: 0.5rem;
+  }
+
+  .ticker-filter-btn {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .ticker-items {
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  }
+}

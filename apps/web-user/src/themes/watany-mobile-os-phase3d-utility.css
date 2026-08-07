@@ -1,0 +1,71 @@
+﻿/* APEX WatanyBot Mobile OS Phase 3D: utility/account route layer */
+
+.wmo-utility-route {
+  min-height: 100%;
+}
+
+.wmo-utility-route .utility-card,
+.wmo-utility-route .notification-card,
+.wmo-utility-route .alert-card,
+.wmo-utility-route .profile-card,
+.wmo-utility-route .search-result,
+.wmo-utility-route .result-card,
+.wmo-utility-route .card,
+.wmo-utility-route .panel {
+  border-radius: var(--watany-radius-lg, 28px);
+  border: 1px solid var(--watany-border, rgba(18,53,91,.1));
+  box-shadow: 0 12px 28px rgba(18,53,91,.10);
+  background: var(--watany-surface, rgba(255,255,255,.88));
+}
+
+.wmo-utility-route .page-header,
+.wmo-utility-route .section-header,
+.wmo-utility-route .profile-header,
+.wmo-utility-route .search-header {
+  border-radius: var(--watany-radius-xl, 34px);
+  background:
+    radial-gradient(circle at top left, rgba(178,58,72,.12), transparent 22rem),
+    var(--watany-surface, rgba(255,255,255,.88));
+  border: 1px solid var(--watany-border, rgba(18,53,91,.1));
+  box-shadow: 0 16px 34px rgba(18,53,91,.12);
+}
+
+.wmo-utility-route .search-input,
+.wmo-utility-route input[type='search'],
+.wmo-utility-route input,
+.wmo-utility-route select,
+.wmo-utility-route textarea {
+  min-height: 44px;
+  border-radius: 16px;
+}
+
+.wmo-utility-route button,
+.wmo-utility-route .btn,
+.wmo-utility-route a[role='button'] {
+  min-height: 44px;
+  touch-action: manipulation;
+}
+
+.wmo-utility-route .tabs,
+.wmo-utility-route .filters,
+.wmo-utility-route .filter-bar {
+  gap: 10px;
+  border-radius: var(--watany-radius-lg, 28px);
+}
+
+.wmo-utility-route .list,
+.wmo-utility-route .results,
+.wmo-utility-route .notifications-list,
+.wmo-utility-route .alerts-list {
+  display: grid;
+  gap: 12px;
+}
+
+@media (max-width: 520px) {
+  .wmo-utility-route .page-header,
+  .wmo-utility-route .section-header,
+  .wmo-utility-route .profile-header,
+  .wmo-utility-route .search-header {
+    border-radius: 24px;
+  }
+}

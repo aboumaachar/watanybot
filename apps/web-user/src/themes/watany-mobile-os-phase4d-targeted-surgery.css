@@ -1,0 +1,36 @@
+﻿/* APEX WatanyBot Mobile OS Phase 4D: targeted surgery safety layer
+   This layer supports AppShell-first refactor and duplicate nav reduction. */
+
+.watany-mobile-shell__route-content {
+  --wmo-route-chrome-policy: "single-shell";
+}
+
+/* Marked duplicate chrome can be suppressed after QA. */
+[data-wmo-duplicate-chrome="true"] {
+  display: none !important;
+}
+
+/* Marked content-level controls remain visible. */
+[data-wmo-content-control="true"] {
+  display: initial;
+}
+
+/* Prevent old nav rails from creating a second app frame on mobile. */
+@media (max-width: 768px) {
+  .watany-mobile-shell__route-content :where(.bottom-tab-rail,.bottom-tab-bar,.hamburger-nav,.top-menu,.top-bar,.mobile-header).wmo-legacy-nav-review {
+    opacity: .25;
+    pointer-events: none;
+  }
+}
+
+/* Explicit citizen-route shell boundary. */
+.wmo-appshell-route-boundary {
+  min-height: 100%;
+  width: 100%;
+}
+
+/* Content module normalization under the route boundary. */
+.wmo-appshell-route-boundary :where(.page,.screen,.route,.main,.content,.container) {
+  max-width: 100%;
+  box-sizing: border-box;
+}

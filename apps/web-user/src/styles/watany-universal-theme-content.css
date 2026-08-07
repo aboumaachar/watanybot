@@ -1,0 +1,292 @@
+﻿/* APEX_WATANY_FULL_REBUILD_PRESERVED_UNIVERSAL_CONTENT_V1 */
+@import "./watany/tokens.css";
+@import "./watany/foundations.css";
+/*
+WATANY UNIVERSAL THEME V1
+Canonical visual authority for WatanyBot after CSS freeze.
+Rules:
+- main feature icons use framed glossy cards
+- top and bottom bars use sign-only icons without frames
+- cards/forms/popups use one cream, green, gold design language
+*/
+
+:root {
+  --watany-cream-0: #fffdf4;
+  --watany-cream-1: #fff7df;
+  --watany-cream-2: #f3e4b8;
+  --watany-gold-1: #f8dc8c;
+  --watany-gold-2: #d6a83e;
+  --watany-gold-3: #a97918;
+  --watany-green-1: #2f6b49;
+  --watany-green-2: #17452f;
+  --watany-ink: #17372b;
+  --watany-muted: #61756b;
+  --watany-shadow-soft: 0 12px 30px rgba(23, 69, 47, .16);
+  --watany-shadow-gold: 0 0 0 2px rgba(248, 220, 140, .35), 0 12px 26px rgba(169, 121, 24, .18);
+  --watany-radius-card: 26px;
+  --watany-radius-icon: 24px;
+  --watany-focus: 0 0 0 4px rgba(214, 168, 62, .34);
+}
+
+html, body, #root {
+  min-height: 100%;
+  background: radial-gradient(circle at top, rgba(248,220,140,.24), transparent 32%), linear-gradient(180deg, var(--watany-cream-0), #f6edd2);
+  color: var(--watany-ink);
+}
+
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Tahoma, Arial, sans-serif;
+}
+
+/* Top bar: signs only, no icon frame cards. */
+.watany-top-header,
+.topbar,
+header[role="banner"] {
+  min-height: 76px;
+  background: linear-gradient(180deg, rgba(255,253,244,.96), rgba(243,228,184,.94));
+  border-bottom: 2px solid rgba(214,168,62,.42);
+  box-shadow: 0 10px 24px rgba(23,69,47,.12);
+}
+
+.watany-top-header svg,
+.topbar svg,
+header[role="banner"] svg,
+.watany-top-header .icon,
+.topbar .icon {
+  filter: drop-shadow(0 2px 4px rgba(169,121,24,.24));
+  color: var(--watany-green-2);
+}
+
+.watany-top-header button,
+.topbar button,
+header[role="banner"] button {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  color: var(--watany-green-2) !important;
+}
+
+.watany-top-header__ticker,
+.watany-ticker,
+.ticker {
+  white-space: nowrap;
+  overflow: hidden;
+  color: var(--watany-green-2);
+  font-weight: 800;
+}
+
+/* Main homepage icon cards: framed glossy 3D cards. */
+.watany-approved-home-icons,
+.watany-home-icons,
+.home-icons-grid,
+.main-icons-grid,
+.feature-grid,
+.icon-grid,
+[data-watany-icons] {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  padding: 14px;
+  direction: rtl;
+}
+
+.watany-approved-runtime-card,
+.watany-approved-home-icons a,
+.watany-home-icons a,
+.home-icons-grid a,
+.main-icons-grid a,
+.feature-grid a,
+.icon-grid a,
+.home-icon-card,
+.feature-card,
+.service-card {
+  position: relative;
+  min-height: 118px;
+  border-radius: var(--watany-radius-card);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.72), rgba(255,255,255,0) 24%),
+    radial-gradient(circle at 50% 18%, rgba(248,220,140,.28), transparent 42%),
+    linear-gradient(180deg, var(--watany-cream-1), var(--watany-cream-2));
+  border: 3px solid rgba(214,168,62,.72);
+  box-shadow: var(--watany-shadow-soft), var(--watany-shadow-gold), inset 0 2px 0 rgba(255,255,255,.84), inset 0 -8px 18px rgba(169,121,24,.08);
+  color: var(--watany-ink);
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: transform .18s ease, box-shadow .18s ease;
+  overflow: hidden;
+}
+
+.watany-approved-runtime-card::after,
+.home-icon-card::after,
+.feature-card::after,
+.service-card::after,
+.home-icons-grid a::after,
+.main-icons-grid a::after,
+.feature-grid a::after,
+.icon-grid a::after {
+  content: "";
+  position: absolute;
+  inset: 5px;
+  border-radius: calc(var(--watany-radius-card) - 7px);
+  border: 1px solid rgba(255,255,255,.62);
+  pointer-events: none;
+}
+
+.watany-approved-runtime-card:hover,
+.home-icon-card:hover,
+.feature-card:hover,
+.service-card:hover,
+.home-icons-grid a:hover,
+.main-icons-grid a:hover,
+.feature-grid a:hover,
+.icon-grid a:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 18px 42px rgba(23,69,47,.22), 0 0 0 3px rgba(248,220,140,.28), inset 0 2px 0 rgba(255,255,255,.88);
+}
+
+.watany-approved-runtime-card svg,
+.home-icon-card svg,
+.feature-card svg,
+.service-card svg,
+.home-icons-grid a svg,
+.main-icons-grid a svg,
+.feature-grid a svg,
+.icon-grid a svg {
+  width: 42px;
+  height: 42px;
+  color: var(--watany-green-2);
+  filter: drop-shadow(0 5px 8px rgba(169,121,24,.24));
+}
+
+.watany-approved-runtime-card img,
+.home-icon-card img,
+.feature-card img,
+.service-card img {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  filter: drop-shadow(0 5px 8px rgba(169,121,24,.22));
+}
+
+.watany-approved-runtime-card span,
+.home-icon-card span,
+.feature-card span,
+.service-card span,
+.home-icons-grid a span,
+.main-icons-grid a span,
+.feature-grid a span,
+.icon-grid a span {
+  font-size: 15px;
+  font-weight: 900;
+  color: var(--watany-green-2);
+}
+
+/* Bottom navigation: signs only, no cadre/card around each sign. */
+.tab-bar.bottom-tab-bar,
+.bottom-tab-bar,
+.watany-bottom-bar,
+.bottom-nav,
+.mobile-bottom-nav,
+nav[aria-label*="bottom" i] {
+  min-height: 74px;
+  background: linear-gradient(180deg, rgba(255,253,244,.98), rgba(243,228,184,.96));
+  border-top: 2px solid rgba(214,168,62,.42);
+  box-shadow: 0 -10px 24px rgba(23,69,47,.12);
+}
+
+.tab-bar.bottom-tab-bar a,
+.bottom-tab-bar a,
+.watany-bottom-bar a,
+.bottom-nav a,
+.mobile-bottom-nav a {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  color: var(--watany-green-2) !important;
+  font-weight: 800;
+}
+
+.tab-bar.bottom-tab-bar svg,
+.bottom-tab-bar svg,
+.watany-bottom-bar svg,
+.bottom-nav svg,
+.mobile-bottom-nav svg {
+  color: var(--watany-green-2) !important;
+  filter: drop-shadow(0 2px 4px rgba(169,121,24,.2));
+}
+
+/* Popups, guided cards, forms, and panels. */
+.dialog,
+.modal,
+.popup,
+.guided-help-card,
+.watany-guided-help-card,
+.form-card,
+.card,
+.panel,
+.sheet,
+.drawer {
+  border-radius: var(--watany-radius-card);
+  background: linear-gradient(180deg, var(--watany-cream-1), var(--watany-cream-2));
+  border: 2px solid rgba(214,168,62,.5);
+  box-shadow: var(--watany-shadow-soft), inset 0 1px 0 rgba(255,255,255,.78);
+  color: var(--watany-ink);
+}
+
+input, select, textarea {
+  border-radius: 16px;
+  border: 2px solid rgba(214,168,62,.36);
+  background: rgba(255,255,255,.72);
+  color: var(--watany-ink);
+}
+
+input:focus, select:focus, textarea:focus, button:focus-visible, a:focus-visible {
+  outline: none;
+  box-shadow: var(--watany-focus) !important;
+}
+
+button,
+.btn,
+.button {
+  border-radius: 18px;
+  font-weight: 900;
+}
+
+.primary,
+.btn-primary,
+button[type="submit"] {
+  background: linear-gradient(145deg, var(--watany-gold-1), var(--watany-gold-2));
+  color: var(--watany-green-2);
+  border: 2px solid rgba(169,121,24,.45);
+  box-shadow: 0 8px 18px rgba(169,121,24,.18), inset 0 1px 0 rgba(255,255,255,.75);
+}
+
+@media (max-width: 460px) {
+  .watany-approved-home-icons,
+  .watany-home-icons,
+  .home-icons-grid,
+  .main-icons-grid,
+  .feature-grid,
+  .icon-grid,
+  [data-watany-icons] {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    padding: 10px;
+  }
+
+  .watany-approved-runtime-card,
+  .home-icon-card,
+  .feature-card,
+  .service-card,
+  .home-icons-grid a,
+  .main-icons-grid a,
+  .feature-grid a,
+  .icon-grid a {
+    min-height: 104px;
+    border-radius: 22px;
+  }
+}

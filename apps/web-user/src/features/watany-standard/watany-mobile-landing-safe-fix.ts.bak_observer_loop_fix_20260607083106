@@ -1,0 +1,67 @@
+function setWatanyLandingOffset(): void {
+  const header = document.querySelector<HTMLElement>(
+    "header, [class*='TopBar'], [class*='TopMenu'], [class*='top-bar'], [class*='top-menu']"
+  );
+
+  const headerBottom = header ? Math.ceil(header.getBoundingClientRect().bottom) : 126;
+  const offset = Math.min(Math.max(headerBottom + 10, 118), 176);
+
+  document.documentElement.classList.add("watany-safe-mobile-landing");
+  document.documentElement.style.setProperty("--watany-safe-sticky-offset", `${offset}px`);
+}
+
+function markSafePanels(): void {
+  const candidates = Array.from(
+    document.querySelectorAll<HTMLElement>("[role='dialog'], [aria-modal='true'], [class*='Drawer'], [class*='drawer'], [class*='Sheet'], [class*='sheet'], [class*='Menu'], [class*='menu']")
+  );
+
+  for (const element of candidates) {
+    const text = element.innerText || "";
+    const rect = element.getBoundingClientRect();
+
+    const looksLikeFeatureMenu =
+      text.includes("حاسبة المعاش") ||
+      text.includes("إفادة بالراتب") ||
+      text.includes("روابط مفيدة") ||
+      text.includes("الإجراءات") ||
+      text.includes("القوانين");
+
+    if (looksLikeFeatureMenu && rect.height > 180) {
+      element.classList.add("watany-safe-side-drawer");
+    }
+  }
+
+  const blocks = Array.from(document.querySelectorAll<HTMLElement>("section, article, div"));
+  for (const block of blocks) {
+    const text = block.innerText || "";
+    const rect = block.getBoundingClientRect();
+
+    if (text.includes("تحديثات") && text.includes("ملخص آخر ما حدث") && rect.height > 120 && rect.width > 260) {
+      block.classList.add("watany-safe-updates-card");
+    }
+  }
+}
+
+function runSafeFix(): void {
+  setWatanyLandingOffset();
+  markSafePanels();
+}
+
+if (typeof window !== "undefined" && typeof document !== "undefined") {
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", runSafeFix, { once: true });
+  } else {
+    runSafeFix();
+  }
+
+  window.addEventListener("resize", runSafeFix, { passive: true });
+  window.addEventListener("orientationchange", runSafeFix, { passive: true });
+  window.addEventListener("click", () => setTimeout(runSafeFix, 120), { passive: true });
+
+  new MutationObserver(() => runSafeFix()).observe(document.documentElement, {
+    childList: true,
+    subtree: true,
+    attributes: true,
+    attributeFilter: ["class", "style", "open", "aria-hidden"]
+  });
+}

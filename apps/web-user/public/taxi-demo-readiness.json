@@ -1,0 +1,9 @@
+{
+  "feature": "taxi-trusted-mobility",
+  "demoReady": true,
+  "simulationOnly": true,
+  "status": "DEMO_VERIFIED_PRODUCTION_HARDENING_PENDING",
+  "visibleRoutes": ["/taxi", "/taxi/driver"],
+  "gatewayRoutes": ["/api/taxi/search", "/api/taxi/driver/apply", "/api/admin/taxi/drivers"],
+  "productionHardeningPending": true
+}

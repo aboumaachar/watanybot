@@ -1,0 +1,194 @@
+@import "./wc-sticky-header.css";
+
+.school-grants-top-shortcuts {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  display: grid;
+}
+
+.school-grants-top-shortcuts--nine {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  position: static;
+  top: auto;
+  z-index: auto;
+}
+
+.school-grants-top-shortcuts__item {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: #0f172a;
+  border-radius: 12px;
+  width: 100%;
+  height: auto;
+  background: #fff;
+  padding: 12px 8px;
+  min-height: 104px;
+}
+
+.school-grants-top-shortcuts__item:hover {
+  border-color: rgba(15, 118, 110, 0.44);
+  background: linear-gradient(160deg, rgba(15, 118, 110, 0.12), rgba(234, 179, 8, 0.12));
+}
+
+.school-grants-top-shortcuts__icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 12px;
+  display: inline-grid;
+  place-items: center;
+  background: linear-gradient(135deg, #0f766e, #166534);
+  color: #fff;
+}
+
+.school-grants-top-shortcuts__icon svg {
+  width: 37px !important;
+  height: 37px !important;
+  min-width: 37px !important;
+  min-height: 37px !important;
+  color: inherit !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+  filter: none !important;
+}
+
+.school-grants-top-shortcuts__label {
+  font-weight: 800;
+  font-size: 15px;
+  text-align: center;
+  line-height: 1.35;
+  min-height: 2.7em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-wrap: balance;
+}
+
+.school-grants-page {
+  scroll-behavior: smooth;
+}
+
+.school-grants-page .watany-icon-grid > .watany-app-icon {
+  cursor: pointer;
+}
+
+.school-student-support {
+  border: 1px solid rgba(148, 163, 184, 0.36);
+  border-radius: 24px;
+  background: #ffffff;
+  padding: 16px;
+  display: grid;
+  gap: 14px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+
+.school-student-support__header {
+  display: grid;
+  gap: 5px;
+}
+
+.school-student-support__header p {
+  margin: 0;
+  color: #0f766e;
+  font-weight: 800;
+}
+
+.school-student-support__header h2 {
+  margin: 0;
+  font-size: clamp(22px, 4.8vw, 31px);
+  line-height: 1.25;
+  color: #0f172a;
+}
+
+.school-student-support__header span {
+  color: #334155;
+  font-weight: 600;
+}
+
+.school-student-support__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.school-student-support__card {
+  border: 1px solid rgba(15, 118, 110, 0.2);
+  border-radius: 16px;
+  background: linear-gradient(180deg, #f8fffc, #f8fafc);
+  padding: 13px;
+  display: grid;
+  gap: 8px;
+}
+
+.school-student-support__card h3 {
+  margin: 0;
+  font-size: 19px;
+  color: #0f172a;
+}
+
+.school-student-support__card p {
+  margin: 0;
+  color: #334155;
+  line-height: 1.7;
+}
+
+.school-student-support__card ul {
+  margin: 0;
+  padding-inline: 18px;
+  color: #334155;
+  display: grid;
+  gap: 4px;
+}
+
+.school-student-support__card button {
+  border: 0;
+  border-radius: 999px;
+  background: #0f766e;
+  color: #ffffff;
+  min-height: 42px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+@media (max-width: 640px) {
+  .school-grants-top-shortcuts {
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .school-grants-top-shortcuts__item {
+    padding: 12px 7px;
+    min-height: 108px;
+  }
+
+  .school-grants-top-shortcuts__label {
+    font-size: 13px;
+    line-height: 1.4;
+  }
+
+  .school-grants-top-shortcuts__icon {
+    width: 67px;
+    height: 67px;
+  }
+
+  .school-grants-top-shortcuts__icon svg {
+    width: 43px !important;
+    height: 43px !important;
+    min-width: 43px !important;
+    min-height: 43px !important;
+  }
+
+  .school-student-support {
+    border-radius: 18px;
+    border: 0;
+    box-shadow: none;
+    padding: 12px;
+  }
+
+  .school-student-support__grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "source_id": "reliefweb_lebanon_jobs",
+  "source_name": "ReliefWeb Lebanon Jobs",
+  "api_endpoint": "https://api.reliefweb.int/v2/jobs",
+  "appname_required": true,
+  "appname_value_for_local_probe": "watanybot-koudama-local-dev",
+  "sample_limit": 5,
+  "country_filter": "Lebanon",
+  "mode": "api_only_metadata_and_link",
+  "full_text_policy": "metadata_and_link_only_respect_original_source_ip",
+  "location_model": "mohafaza_caza_village_exact_address",
+  "normalization_status": "probe_scaffold_ready"
+}

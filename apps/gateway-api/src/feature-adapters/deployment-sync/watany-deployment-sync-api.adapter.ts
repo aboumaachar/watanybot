@@ -1,0 +1,1 @@
+export const watanyDeploymentSyncApiAdapter = { pluginKey: 'deployment-sync', host: 'gateway-api', preservesExistingBehavior: true, requireDryRunFirst: true, note: 'Safe modular boundary only. Live sync remains disabled unless explicitly approved.' } as const;

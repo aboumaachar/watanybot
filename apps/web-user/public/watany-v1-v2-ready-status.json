@@ -1,0 +1,126 @@
+﻿{
+  "schemaVersion": "1.0",
+  "auditName": "watany-v1-target-root-final-closeout",
+  "targetRootPolicy": "PROJECT_ROOT_ONLY",
+  "projectRoot": "C:\\xampp\\htdocs\\projectx\\watanybot",
+  "evidenceRootPattern": "C:\\xampp\\htdocs\\projectx\\watanybot\\.pma\\implementation\\...",
+  "v1LaneStatus": "V1_ENHANCEMENT_STATUS_READY_FOR_V2_PICKUP",
+  "v2PickupStatus": "V2_READY_STATUS_MANIFEST",
+  "completedFeatures": [
+    {
+      "id": "home-grid-hard-lock",
+      "name": "Home grid hard lock",
+      "v1Status": "V1_READY_PASS",
+      "v2Pickup": "V2_READY",
+      "closed": true
+    },
+    {
+      "id": "tools-useful-links-schools-public-access",
+      "name": "Tools / Useful Links / Schools / Public Access",
+      "v1Status": "V1_READY_PASS",
+      "v2Pickup": "V2_READY",
+      "closed": true
+    },
+    {
+      "id": "jobs-market-public-access",
+      "name": "Jobs listed + Market public access",
+      "v1Status": "V1_READY_PASS",
+      "v2Pickup": "V2_READY",
+      "closed": true
+    },
+    {
+      "id": "going-now-feed",
+      "name": "Going Now feed",
+      "v1Status": "V1_READY_PASS",
+      "v2Pickup": "V2_READY",
+      "closed": true
+    },
+    {
+      "id": "world-cup-nine-icons",
+      "name": "World Cup 9 icons",
+      "v1Status": "V1_READY_PASS",
+      "v2Pickup": "V2_READY",
+      "closed": true
+    },
+    {
+      "id": "universal-form-viewer",
+      "name": "Universal form viewer",
+      "v1Status": "V1_READY_PASS",
+      "v2Pickup": "V2_READY",
+      "closed": true
+    },
+    {
+      "id": "school-forms-universal-viewer",
+      "name": "School forms through universal viewer",
+      "v1Status": "V1_READY_PASS",
+      "v2Pickup": "V2_READY",
+      "closed": true
+    },
+    {
+      "id": "procedures-page-polish",
+      "name": "Procedures page polish",
+      "v1Status": "V1_READY_PASS",
+      "v2Pickup": "V2_READY",
+      "closed": true
+    },
+    {
+      "id": "clean-settings-canonicalize",
+      "name": "Clean settings canonicalization",
+      "v1Status": "V1_READY_PASS",
+      "v2Pickup": "V2_READY",
+      "closed": true
+    }
+  ],
+  "toBeCompletedFeatures": [
+    {
+      "id": "full-width-mobile-popup-standardization",
+      "name": "Full-width mobile popup/card standardization",
+      "v1Status": "V1_TODO",
+      "v2Pickup": "V2_READY_TODO",
+      "closed": false
+    },
+    {
+      "id": "homepage-icon-height-lock",
+      "name": "Homepage height strictly equals published icons area",
+      "v1Status": "V1_TODO",
+      "v2Pickup": "V2_READY_TODO",
+      "closed": false
+    },
+    {
+      "id": "single-template-style-cleanup",
+      "name": "Single template / single style cleanup",
+      "v1Status": "V1_TODO",
+      "v2Pickup": "V2_READY_TODO",
+      "closed": false
+    },
+    {
+      "id": "hybrid-assistant-only-ai-entry",
+      "name": "Hybrid Assistant as only AI assistant entry",
+      "v1Status": "V1_TODO",
+      "v2Pickup": "V2_READY_TODO",
+      "closed": false
+    },
+    {
+      "id": "school-icons-final-polish",
+      "name": "School icons final size polish",
+      "v1Status": "V1_TODO",
+      "v2Pickup": "V2_READY_TODO",
+      "closed": false
+    },
+    {
+      "id": "market-jobs-tools-visual-consistency",
+      "name": "Market / Jobs / Tools visual consistency",
+      "v1Status": "V1_TODO",
+      "v2Pickup": "V2_READY_TODO",
+      "closed": false
+    },
+    {
+      "id": "final-v1-readiness-rebuild-smoke",
+      "name": "Final V1 readiness rebuild + browser smoke",
+      "v1Status": "V1_TODO",
+      "v2Pickup": "V2_READY_TODO",
+      "closed": false
+    }
+  ],
+  "nextRecommendedApex": "APEX_WATANY_V1_FULL_WIDTH_MOBILE_POPUP_STANDARDIZATION"
+}

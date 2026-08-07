@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ت8 - إقرار من مستفيد</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: white;
+            direction: rtl;
+            text-align: right;
+            padding: 20px;
+        }
+        
+        .form-header {
+            text-align: center;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+            margin-bottom: 30px;
+        }
+        
+        .form-header h1 {
+            font-size: 1.8em;
+            color: #333;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        
+        .form-header p {
+            font-size: 1em;
+            color: #666;
+        }
+        
+        .form-code {
+            background: #f0f4ff;
+            color: #667eea;
+            padding: 10px 15px;
+            border-radius: 4px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 20px;
+            font-size: 0.95em;
+        }
+        
+        .no-print {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 6px;
+            align-items: center;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.95em;
+            transition: all 0.2s;
+            font-weight: 500;
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+        }
+        
+        .form-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            page-break-inside: avoid;
+        }
+        
+        .section-title {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-group label {
+            font-weight: 500;
+            margin-bottom: 5px;
+            color: #333;
+            font-size: 0.95em;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 0.95em;
+            font-family: inherit;
+            line-height: 1.5;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .form-group textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .checkbox-item input {
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+        }
+        
+        .checkbox-item label {
+            margin: 0;
+            cursor: pointer;
+            font-weight: normal;
+        }
+        
+        .signature-block {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+        }
+        
+        .signature-item {
+            text-align: center;
+        }
+        
+        .signature-line {
+            border-bottom: 1px solid #333;
+            height: 60px;
+            margin-bottom: 10px;
+        }
+        
+        .signature-label {
+            font-size: 0.9em;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .date-line {
+            font-size: 0.9em;
+            color: #333;
+            margin-top: 10px;
+        }
+        
+        .form-info-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        
+        .form-info-box p {
+            margin-bottom: 10px;
+            color: #856404;
+        }
+        
+        .form-info-box ul {
+            list-style-position: inside;
+            color: #856404;
+        }
+        
+        .form-info-box li {
+            margin-bottom: 5px;
+        }
+        
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            
+            body {
+                font-size: 12pt;
+                line-height: 1.5;
+                padding: 0;
+            }
+            
+            .form-header {
+                page-break-after: avoid;
+            }
+            
+            .form-section {
+                border: none;
+                padding: 10px 0;
+            }
+            
+            .form-group {
+                page-break-inside: avoid;
+            }
+            
+            input[type="text"],
+            input[type="date"],
+            input[type="email"],
+            select,
+            textarea {
+                border: none;
+                border-bottom: 1px solid #000;
+                background: transparent;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                font-size: 14px;
+                padding: 10px;
+            }
+            
+            .form-header h1 {
+                font-size: 1.4em;
+            }
+            
+            .no-print {
+                flex-wrap: wrap;
+            }
+            
+            .signature-block {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-group input,
+            .form-group select,
+            .form-group textarea {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="form-header">
+        <h1>إقرار من مستفيد</h1>
+        <p>وزارة المالية - إدارة المعاشات</p>
+    </div>
+    
+    <div class="form-code">شارع: ت8</div>
+    
+    <div class="no-print">
+        <button class="btn" onclick="window.print()">🖨️ طباعة</button>
+        <button class="btn" onclick="downloadForm()">⬇️ تحميل</button>
+        <button class="btn" onclick="shareForm()">📤 مشاركة</button>
+    </div>
+    
+    <!-- Section 1: Personal Information -->
+    <div class="form-section">
+        <div class="section-title">١. معلومات المستقيد</div>
+        
+        <div class="form-group">
+            <label for="fullName">الاسم الكامل</label>
+            <input type="text" id="fullName" placeholder="أدخل الاسم الكامل">
+        </div>
+        
+        <div class="form-group">
+            <label for="idNumber">رقم الهوية</label>
+            <input type="text" id="idNumber" placeholder="أدخل رقم الهوية">
+        </div>
+        
+        <div class="form-group">
+            <label for="dateOfBirth">تاريخ الميلاد</label>
+            <input type="date" id="dateOfBirth">
+        </div>
+        
+        <div class="form-group">
+            <label for="address">عنوان السكن</label>
+            <input type="text" id="address" placeholder="أدخل العنوان الكامل">
+        </div>
+        
+        <div class="form-group">
+            <label for="phone">رقم الهاتف</label>
+            <input type="tel" id="phone" placeholder="أدخل رقم الهاتف">
+        </div>
+    </div>
+    
+    <!-- Section 2: Beneficiary Confirmation -->
+    <div class="form-section">
+        <div class="section-title">٢. تأكيد الاستحقاق</div>
+        
+        <div class="form-group">
+            <label for="relationshipStatus">علاقتك بالمتوفى</label>
+            <select id="relationshipStatus">
+                <option value="">اختر...</option>
+                <option value="widow">أرملة</option>
+                <option value="orphan">يتيم</option>
+                <option value="dependent">معال</option>
+                <option value="heir">وارث</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="deceasedName">اسم المتوفى</label>
+            <input type="text" id="deceasedName" placeholder="أدخل اسم المتوفى">
+        </div>
+        
+        <div class="form-group">
+            <label for="deceasedStatus">حالة المتوفى</label>
+            <select id="deceasedStatus">
+                <option value="">اختر...</option>
+                <option value="pension">متقاعد</option>
+                <option value="active">عسكري/موظف</option>
+                <option value="other">أخرى</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="deathDate">تاريخ الوفاة</label>
+            <input type="date" id="deathDate">
+        </div>
+    </div>
+    
+    <!-- Section 3: Compliance Declaration -->
+    <div class="form-section">
+        <div class="section-title">٣. الإقرار والالتزام</div>
+        
+        <div class="form-group">
+            <label>أقر بموجب هذا الإقرار:</label>
+            <div class="checkbox-group">
+                <div class="checkbox-item">
+                    <input id="check1" type="checkbox">
+                    <label for="check1">أن البيانات المذكورة أعلاه صحيحة وكاملة</label>
+                </div>
+                <div class="checkbox-item">
+                    <input id="check2" type="checkbox">
+                    <label for="check2">أنني أستحق المعاش وفقاً للقوانين المعمول بها</label>
+                </div>
+                <div class="checkbox-item">
+                    <input id="check3" type="checkbox">
+                    <label for="check3">التزم بتقديم أي مستندات مطلوبة إضافية</label>
+                </div>
+                <div class="checkbox-item">
+                    <input id="check4" type="checkbox">
+                    <label for="check4">أتقبل جميع الشروط والأحكام المتعلقة بالمعاش</label>
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="additionalInfo">معلومات إضافية</label>
+            <textarea id="additionalInfo" placeholder="أي معلومات أخرى ترغب في إضافتها"></textarea>
+        </div>
+    </div>
+    
+    <!-- Section 4: Legal Conditions -->
+    <div class="form-section">
+        <div class="section-title">٤. الشروط القانونية</div>
+        
+        <div class="form-group">
+            <label>أفهم وأقبل:</label>
+            <div class="checkbox-group">
+                <div class="checkbox-item">
+                    <input id="cond1" type="checkbox">
+                    <label for="cond1">أن المعاش يتعطل عند الزواج (في حالة الأرملة)</label>
+                </div>
+                <div class="checkbox-item">
+                    <input id="cond2" type="checkbox">
+                    <label for="cond2">أن المعاش يستمر للأيتام حتى سن ١٨ عاماً</label>
+                </div>
+                <div class="checkbox-item">
+                    <input id="cond3" type="checkbox">
+                    <label for="cond3">أنني مسؤول عن دقة المعلومات المقدمة</label>
+                </div>
+                <div class="checkbox-item">
+                    <input id="cond4" type="checkbox">
+                    <label for="cond4">أن أي معلومة مضللة قد تؤدي لإلغاء المعاش</label>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Section 5: Signature -->
+    <div class="signature-block">
+        <div class="signature-item">
+            <div class="signature-line"></div>
+            <div class="signature-label">توقيع المستقيد</div>
+            <div class="date-line">التاريخ: ________________</div>
+        </div>
+        
+        <div class="signature-item">
+            <div class="signature-line"></div>
+            <div class="signature-label">موظف المعالجة</div>
+            <div class="date-line">التاريخ: ________________</div>
+        </div>
+    </div>
+    
+    <div class="form-info-box">
+        <p><strong>ملاحظات مهمة:</strong></p>
+        <ul>
+            <li>يجب تقديم أصول المستندات الثبوتية مع هذا الإقرار</li>
+            <li>قد يتطلب التحقق إجراء مقابلة شخصية</li>
+            <li>سيتم إخطارك بقرار الموافقة خلال ٣٠ يوماً</li>
+            <li>الإدارة محفوظة الحق بطلب معلومات إضافية</li>
+        </ul>
+    </div>
+    
+    <script>
+        function downloadForm() {
+            const filename = 'إقرار_من_مستفيد_ت8.html';
+            const html = document.documentElement.outerHTML;
+            const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            link.click();
+        }
+        
+        function shareForm() {
+            const title = 'نموذج إقرار من مستفيد';
+            const url = window.location.href;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: 'نموذج WatanyBot',
+                    text: title,
+                    url: url
+                });
+            } else {
+                navigator.clipboard.writeText(url);
+                alert('تم نسخ الرابط إلى الحافظة');
+            }
+        }
+    </script>
+</body>
+</html>

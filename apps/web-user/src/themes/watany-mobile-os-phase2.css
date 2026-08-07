@@ -1,0 +1,68 @@
+﻿/* APEX WatanyBot Mobile OS Phase 2A: production shell hardening */
+:root {
+  --wmo-shell-max-width: 1080px;
+  --wmo-phone-max-width: 520px;
+  --wmo-topbar-height: 64px;
+  --wmo-dock-height: 78px;
+  --wmo-safe-bottom: env(safe-area-inset-bottom);
+  --wmo-surface-glass: rgba(255,255,255,.72);
+  --wmo-focus-ring: 0 0 0 3px rgba(46,125,91,.22);
+}
+.watany-mobile-shell { isolation: isolate; }
+.watany-mobile-shell__viewport { min-height: 100dvh; }
+.watany-mobile-shell__surface { display: flex; flex-direction: column; }
+.watany-mobile-shell__topbar {
+  position: sticky; top: 0; z-index: 70; display: flex; align-items: center;
+  justify-content: space-between; gap: 12px; min-height: var(--wmo-topbar-height);
+  padding: 10px 14px; border-bottom: 1px solid var(--watany-border, rgba(18,53,91,.1));
+  background: var(--wmo-surface-glass); backdrop-filter: blur(16px);
+}
+.watany-mobile-shell__brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.watany-mobile-shell__brand-icon {
+  display: grid; place-items: center; width: 42px; height: 42px; flex: 0 0 auto;
+  border-radius: 16px; color: #fff; font-weight: 900;
+  background: linear-gradient(135deg, var(--watany-primary,#12355b), var(--watany-secondary,#2e7d5b));
+}
+.watany-mobile-shell__brand-text { min-width: 0; }
+.watany-mobile-shell__brand-title {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  min-width: 0;
+  margin: 0;
+  font-size: 15px;
+  font-weight: 900;
+  line-height: 1.1;
+}
+.watany-mobile-shell__brand-wordmark { flex: 0 0 auto; }
+.watany-mobile-shell__brand-separator { color: var(--watany-muted,#6b7280); }
+.watany-mobile-shell__brand-route {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 700;
+}
+.watany-mobile-shell__brand-subtitle { margin: 3px 0 0; color: var(--watany-muted,#6b7280); font-size: 12px; line-height: 1.2; }
+.watany-mobile-shell__actions { display: flex; align-items: center; gap: 8px; }
+.watany-mobile-shell__action {
+  display: grid; place-items: center; width: 40px; height: 40px; border: 0; border-radius: 15px;
+  color: var(--watany-text,#172033); background: rgba(255,255,255,.72); text-decoration: none;
+  box-shadow: 0 8px 18px rgba(18,53,91,.08);
+}
+.watany-mobile-shell__main { flex: 1; min-height: 0; }
+.watany-mobile-shell__content { min-height: calc(100dvh - 24px); padding-bottom: var(--wmo-safe-bottom); }
+.watany-mobile-shell__dock { max-width: var(--wmo-phone-max-width); margin-inline: auto; }
+.watany-mobile-shell__dock-link:focus-visible,
+.watany-mobile-shell__assistant:focus-visible,
+.watany-mobile-shell__action:focus-visible { outline: none; box-shadow: var(--wmo-focus-ring); }
+.watany-mobile-shell__route-content { min-height: 100%; }
+@media (min-width: 900px) {
+  .watany-mobile-shell__viewport { max-width: var(--wmo-shell-max-width); }
+  .watany-mobile-shell__surface { min-height: calc(100dvh - 36px); }
+}
+@media (max-width: 520px) {
+  .watany-mobile-shell__viewport { padding-inline: 0; padding-block-start: 0; }
+  .watany-mobile-shell__surface { min-height: 100dvh; border-radius: 0; border-inline: 0; }
+  .watany-mobile-shell__brand-subtitle { display: none; }
+}

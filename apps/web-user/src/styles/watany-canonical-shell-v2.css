@@ -1,0 +1,162 @@
+/* APEX WATANY CANONICAL THEME CONTRACT v2.3.5 */
+:root {
+  --watany-theme-contract: "v2.3.5";
+  --watany-green-950: #082b22;
+  --watany-green-900: #0b3b2e;
+  --watany-green-800: #0f4a38;
+  --watany-green-700: #145c44;
+  --watany-gold-600: #b88d3f;
+  --watany-gold-500: #c9a45e;
+  --watany-gold-300: #ead39d;
+  --watany-ivory-50: #fffdf8;
+  --watany-ivory-100: #f7f3e8;
+  --watany-ivory-200: #eee7d8;
+  --watany-text-950: #111713;
+  --watany-text-800: #26312b;
+  --watany-shadow: 0 10px 28px rgba(8, 43, 34, 0.14);
+  --watany-shadow-soft: 0 6px 18px rgba(8, 43, 34, 0.10);
+  --watany-radius-xl: 22px;
+  --watany-radius-lg: 18px;
+  --watany-radius-md: 14px;
+}
+
+html,
+body[data-watany-theme="canonical-v2"] {
+  background: var(--watany-ivory-100);
+  color: var(--watany-text-950);
+}
+
+body[data-watany-theme="canonical-v2"] {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Simplified Arabic", "Noto Sans Arabic", Tahoma, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body[data-watany-theme="canonical-v2"] #root {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 50% -10%, rgba(201, 164, 94, 0.13), transparent 28rem),
+    linear-gradient(180deg, var(--watany-ivory-50), var(--watany-ivory-100));
+  color: var(--watany-text-950);
+}
+
+body[data-watany-theme="canonical-v2"] :where(button, [role="button"], input, select, textarea) {
+  font: inherit;
+}
+
+body[data-watany-theme="canonical-v2"] :where(button, [role="button"]) {
+  border-radius: var(--watany-radius-md);
+}
+
+body[data-watany-theme="canonical-v2"] :where(input, select, textarea) {
+  color: var(--watany-text-950);
+  background: rgba(255, 253, 248, 0.96);
+  border: 1px solid rgba(184, 141, 63, 0.35);
+  box-shadow: 0 2px 8px rgba(8, 43, 34, 0.05);
+}
+
+body[data-watany-theme="canonical-v2"] :where(
+  [data-watany-card],
+  [class*="card" i],
+  [class*="tile" i],
+  [class*="panel" i]
+) {
+  color: var(--watany-text-950);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(247, 243, 232, 0.96));
+  border-color: rgba(184, 141, 63, 0.26);
+  box-shadow: var(--watany-shadow-soft);
+}
+
+body[data-watany-theme="canonical-v2"] :where(
+  [data-watany-feature-icon],
+  [class*="feature-icon" i],
+  [class*="service-icon" i]
+) {
+  border: 1px solid rgba(184, 141, 63, 0.58);
+  border-radius: 20px;
+  background:
+    linear-gradient(145deg, rgba(255,255,255,0.98), rgba(238,231,216,0.95));
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.95),
+    0 8px 20px rgba(8,43,34,0.13);
+}
+
+body[data-watany-theme="canonical-v2"] :where(
+  [data-watany-topbar],
+  [class*="topbar" i],
+  [class*="app-header" i],
+  [class*="mobile-header" i]
+) {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  color: #fff;
+  background: linear-gradient(135deg, var(--watany-green-950), var(--watany-green-700));
+  border-bottom: 1px solid rgba(201,164,94,0.45);
+  box-shadow: 0 8px 20px rgba(8,43,34,0.18);
+}
+
+body[data-watany-theme="canonical-v2"] :where(
+  [data-watany-info-ticker],
+  [class*="ticker" i]
+) {
+  background: linear-gradient(90deg, rgba(201,164,94,0.20), rgba(255,253,248,0.94), rgba(201,164,94,0.20));
+  color: var(--watany-text-950);
+  border-block: 1px solid rgba(184,141,63,0.25);
+}
+
+body[data-watany-theme="canonical-v2"] :where(
+  [data-watany-bottom-chat],
+  [class*="bottom-chat" i],
+  [class*="chat-composer" i],
+  [class*="message-composer" i]
+) {
+  position: sticky;
+  bottom: 0;
+  z-index: 1000;
+  background: rgba(255,253,248,0.96);
+  backdrop-filter: blur(16px);
+  border-top: 1px solid rgba(184,141,63,0.34);
+  box-shadow: 0 -8px 24px rgba(8,43,34,0.12);
+}
+
+body[data-watany-theme="canonical-v2"] :where(
+  [data-watany-feature-grid],
+  [class*="feature-grid" i],
+  [class*="icon-grid" i],
+  [class*="service-grid" i]
+) {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+body[data-watany-theme="canonical-v2"] :where(a, button) {
+  -webkit-tap-highlight-color: transparent;
+}
+
+body[data-watany-theme="canonical-v2"] :where(a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible) {
+  outline: 3px solid rgba(201,164,94,0.65);
+  outline-offset: 2px;
+}
+
+@media (max-width: 767px) {
+  body[data-watany-theme="canonical-v2"] #root {
+    width: 100%;
+    max-width: none;
+  }
+
+  body[data-watany-theme="canonical-v2"] :where(main, [role="main"]) {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+@media (min-width: 768px) {
+  body[data-watany-theme="canonical-v2"] #root {
+    min-height: 100vh;
+  }
+}
+/* END APEX WATANY CANONICAL THEME CONTRACT v2.3.5 */

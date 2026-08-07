@@ -1,0 +1,2 @@
+import type { SalaryPensionSettings } from "../contracts/salary-pension-plugin-contract";
+export const defaultSalaryPensionSettings: SalaryPensionSettings = { pluginKey: "salary-pension", enabled: true, adminConfigurable: true, sourceAuthorityRequired: true, allowProductionReplacement: false, childFeatures: { calculator: true, pensionRules: true, deductions: true, medals: true, familyAllowances: true, officialSources: true } };

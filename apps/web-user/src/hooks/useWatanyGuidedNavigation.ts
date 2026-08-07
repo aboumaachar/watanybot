@@ -1,0 +1,5 @@
+import { normalizeWatanyPreLandingRoute } from '../components/guided-helper/watanyPreLandingGuideRegistry';
+type GuidedNavigationOptions = { source?: string; label?: string; force?: boolean };
+function pushWithoutGuide(route: string): void { window.history.pushState({}, '', route); if (typeof PopStateEvent === 'function') window.dispatchEvent(new PopStateEvent('popstate', { state: window.history.state })); else window.dispatchEvent(new Event('popstate')); }
+export function dispatchWatanyGuidedNavigation(route: string, options: GuidedNavigationOptions = {}): void { const normalizedRoute = normalizeWatanyPreLandingRoute(route); const event = new CustomEvent('watany:prelanding:navigate', { cancelable: true, detail: { route: normalizedRoute, source: options.source, label: options.label, force: options.force === true } }); window.dispatchEvent(event); if (!event.defaultPrevented) pushWithoutGuide(normalizedRoute); }
+export function useWatanyGuidedNavigation() { return { navigateWithGuide: dispatchWatanyGuidedNavigation }; }

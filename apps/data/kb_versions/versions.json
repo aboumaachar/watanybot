@@ -1,0 +1,135 @@
+[
+  {
+    "id": "runtime_kb.json.2026-03-01T11-55-35-652Z",
+    "file": "runtime_kb.json",
+    "path": "C:\\xampp\\htdocs\\projectx\\watanybot\\apps\\data\\kb_versions\\runtime_kb.json.2026-03-01T11-55-35-652Z",
+    "ts": "2026-03-01T11:55:35.657Z",
+    "note": "admin:runtime-save"
+  },
+  {
+    "id": "runtime_kb.json.2026-03-01T11-55-35-628Z",
+    "file": "runtime_kb.json",
+    "path": "C:\\xampp\\htdocs\\projectx\\watanybot\\apps\\data\\kb_versions\\runtime_kb.json.2026-03-01T11-55-35-628Z",
+    "ts": "2026-03-01T11:55:35.635Z",
+    "note": "admin:runtime-save"
+  },
+  {
+    "id": "watany_rag_chunks_v4.jsonl.2026-02-25T18-53-32-805Z",
+    "file": "watany_rag_chunks_v4.jsonl",
+    "path": "C:\\xampp\\htdocs\\projectx\\watanybot\\apps\\data\\kb_versions\\watany_rag_chunks_v4.jsonl.2026-02-25T18-53-32-805Z",
+    "ts": "2026-02-25T18:53:32.808Z",
+    "note": "admin:chunks-save:rebuild"
+  },
+  {
+    "id": "watany_rag_chunks_v4.jsonl.2026-02-25T18-52-41-131Z",
+    "file": "watany_rag_chunks_v4.jsonl",
+    "path": "C:\\xampp\\htdocs\\projectx\\watanybot\\apps\\data\\kb_versions\\watany_rag_chunks_v4.jsonl.2026-02-25T18-52-41-131Z",
+    "ts": "2026-02-25T18:52:41.144Z",
+    "note": "admin:chunks-save:rebuild"
+  },
+  {
+    "id": "training.test.jsonl.2026-02-19T18-01-05-212Z",
+    "file": "training.test.jsonl",
+    "path": "C:\\xampp\\htdocs\\projectx\\watanybot\\apps\\data\\kb_versions\\training.test.jsonl.2026-02-19T18-01-05-212Z",
+    "ts": "2026-02-19T18:01:05.254Z",
+    "note": "admin:training-add"
+  },
+  {
+    "id": "training.test-approve.jsonl.2026-02-19T18-01-05-186Z",
+    "file": "training.test-approve.jsonl",
+    "path": "C:\\xampp\\htdocs\\projectx\\watanybot\\apps\\data\\kb_versions\\training.test-approve.jsonl.2026-02-19T18-01-05-186Z",
+    "ts": "2026-02-19T18:01:05.198Z",
+    "note": "admin:training-add"
+  },
+  {
+    "id": "training.jsonl.2026-02-19T17-55-54-127Z",
+    "file": "training.jsonl",
+    "path": "C:\\xampp\\htdocs\\projectx\\watanybot\\apps\\data\\kb_versions\\training.jsonl.2026-02-19T17-55-54-127Z",
+    "ts": "2026-02-19T17:55:54.162Z",
+    "note": "admin:training-add"
+  },
+  {
+    "id": "runtime_kb.json.2026-02-19T17-23-23-592Z",
+    "file": "runtime_kb.json",
+    "path": "C:\\xampp\\htdocs\\projectx\\watanybot\\apps\\data\\kb_versions\\runtime_kb.json.2026-02-19T17-23-23-592Z",
+    "ts": "2026-02-19T17:23:23.603Z",
+    "note": "admin:runtime-save"
+  },
+  {
+    "id": "runtime_kb.json.2026-02-19T17-23-23-082Z",
+    "file": "runtime_kb.json",
+    "path": "C:\\xampp\\htdocs\\projectx\\watanybot\\apps\\data\\kb_versions\\runtime_kb.json.2026-02-19T17-23-23-082Z",
+    "ts": "2026-02-19T17:23:23.119Z",
+    "note": "admin:runtime-save"
+  },
+  {
+    "id": "runtime_kb.json.2026-02-19T17-21-48-355Z",
+    "file": "runtime_kb.json",
+    "path": "C:\\xampp\\htdocs\\projectx\\watanybot\\apps\\data\\kb_versions\\runtime_kb.json.2026-02-19T17-21-48-355Z",
+    "ts": "2026-02-19T17:21:48.394Z",
+    "note": "admin:runtime-save"
+  },
+  {
+    "id": "runtime_kb.json.2026-02-19T17-21-47-772Z",
+    "file": "runtime_kb.json",
+    "path": "C:\\xampp\\htdocs\\projectx\\watanybot\\apps\\data\\kb_versions\\runtime_kb.json.2026-02-19T17-21-47-772Z",
+    "ts": "2026-02-19T17:21:47.796Z",
+    "note": "admin:runtime-save"
+  },
+  {
+    "id": "runtime_kb.json.2026-02-19T17-14-36-743Z",
+    "file": "runtime_kb.json",
+    "path": "C:\\xampp\\htdocs\\projectx\\watanybot\\apps\\data\\kb_versions\\runtime_kb.json.2026-02-19T17-14-36-743Z",
+    "ts": "2026-02-19T17:14:36.768Z",
+    "note": "admin:runtime-save"
+  },
+  {
+    "id": "runtime_kb.json.2026-02-19T17-14-36-671Z",
+    "file": "runtime_kb.json",
+    "path": "C:\\xampp\\htdocs\\projectx\\watanybot\\apps\\data\\kb_versions\\runtime_kb.json.2026-02-19T17-14-36-671Z",
+    "ts": "2026-02-19T17:14:36.677Z",
+    "note": "admin:runtime-save"
+  },
+  {
+    "id": "runtime_kb.json.2026-02-19T10-48-48-660Z",
+    "file": "runtime_kb.json",
+    "path": "C:\\xampp\\htdocs\\projectx\\watanybot\\apps\\data\\kb_versions\\runtime_kb.json.2026-02-19T10-48-48-660Z",
+    "ts": "2026-02-19T10:48:48.680Z",
+    "note": "admin:runtime-save"
+  },
+  {
+    "id": "runtime_kb.json.2026-02-19T10-48-48-603Z",
+    "file": "runtime_kb.json",
+    "path": "C:\\xampp\\htdocs\\projectx\\watanybot\\apps\\data\\kb_versions\\runtime_kb.json.2026-02-19T10-48-48-603Z",
+    "ts": "2026-02-19T10:48:48.611Z",
+    "note": "admin:runtime-save"
+  },
+  {
+    "id": "runtime_kb.json.2026-02-19T10-47-25-371Z",
+    "file": "runtime_kb.json",
+    "path": "C:\\xampp\\htdocs\\projectx\\watanybot\\apps\\data\\kb_versions\\runtime_kb.json.2026-02-19T10-47-25-371Z",
+    "ts": "2026-02-19T10:47:25.384Z",
+    "note": "admin:runtime-save"
+  },
+  {
+    "id": "runtime_kb.json.2026-02-19T10-47-25-314Z",
+    "file": "runtime_kb.json",
+    "path": "C:\\xampp\\htdocs\\projectx\\watanybot\\apps\\data\\kb_versions\\runtime_kb.json.2026-02-19T10-47-25-314Z",
+    "ts": "2026-02-19T10:47:25.320Z",
+    "note": "admin:runtime-save"
+  },
+  {
+    "id": "runtime_kb.json.2026-02-19T10-33-00-571Z",
+    "file": "runtime_kb.json",
+    "path": "C:\\xampp\\htdocs\\projectx\\watanybot\\apps\\data\\kb_versions\\runtime_kb.json.2026-02-19T10-33-00-571Z",
+    "ts": "2026-02-19T10:33:00.591Z",
+    "note": "admin:runtime-save"
+  },
+  {
+    "id": "runtime_kb.json.2026-02-19T10-33-00-563Z",
+    "file": "runtime_kb.json",
+    "path": "C:\\xampp\\htdocs\\projectx\\watanybot\\apps\\data\\kb_versions\\runtime_kb.json.2026-02-19T10-33-00-563Z",
+    "ts": "2026-02-19T10:33:00.566Z",
+    "note": "admin:runtime-save"
+  }
+]

@@ -1,0 +1,3 @@
+﻿export type PluginControlState = 'enabled' | 'disabled' | 'review_required';
+export interface PluginControlRecord { pluginKey: string; state: PluginControlState; version?: string; roles?: string[]; childFeatures?: Record<string, boolean>; settingsPath?: string; exportReady?: boolean; replaceReady?: boolean; health?: 'pass' | 'warn' | 'fail' | 'unknown'; }
+export interface PluginControlCenterAdapter { listPlugins(): PluginControlRecord[]; getPlugin(pluginKey: string): PluginControlRecord | undefined; }

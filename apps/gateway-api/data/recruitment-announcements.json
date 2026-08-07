@@ -1,0 +1,59 @@
+{
+  "announcements": [
+    {
+      "id": "07d6080a-b529-4ddb-8cbd-65d789179778",
+      "title": "مباراة تطويع جنود متمرنين",
+      "apparatusName": "الجيش اللبناني",
+      "announcementNumber": "2026/12",
+      "startDate": "2026-06-10T08:00:00.000Z",
+      "endDate": "2026-12-10T14:00:00.000Z",
+      "status": "published",
+      "conditions": [
+        "لبناني",
+        "عمره بين 18 و25 سنة"
+      ],
+      "requiredDocuments": [
+        "إخراج قيد فردي",
+        "صورة عن الهوية"
+      ],
+      "eligibleCategories": [
+        "مدنيون",
+        "عسكريون سابقون"
+      ],
+      "applicationLocation": "وزارة الدفاع الوطني",
+      "applicationMethod": "حضورياً",
+      "sourceName": "قيادة الجيش",
+      "sourceUrl": "https://example.test/recruitment",
+      "notes": "يُعتمد الإعلان الرسمي فقط.",
+      "createdAt": "2026-05-22T20:05:31.695Z",
+      "updatedAt": "2026-05-22T20:05:31.695Z",
+      "createdBy": "test-admin"
+    },
+    {
+      "id": "33b876aa-ce23-453e-ad4b-d94b42d1a587",
+      "title": "مباراة تطويع رتباء متطوعين",
+      "apparatusName": "الجيش اللبناني",
+      "announcementNumber": "2026/14",
+      "startDate": "2026-06-12T08:00:00.000Z",
+      "endDate": "2026-12-15T14:00:00.000Z",
+      "status": "published",
+      "conditions": [
+        "لبناني"
+      ],
+      "requiredDocuments": [
+        "إخراج قيد فردي"
+      ],
+      "eligibleCategories": [
+        "مدنيون"
+      ],
+      "applicationLocation": "وزارة الدفاع الوطني",
+      "applicationMethod": "حضورياً",
+      "sourceName": "قيادة الجيش",
+      "sourceUrl": "https://example.test/recruitment-sergeants",
+      "notes": "يُعتمد الإعلان الرسمي فقط.",
+      "createdAt": "2026-05-12T20:23:47.116Z",
+      "updatedAt": "2026-05-12T20:23:47.116Z",
+      "createdBy": "test-admin"
+    }
+  ]
+}

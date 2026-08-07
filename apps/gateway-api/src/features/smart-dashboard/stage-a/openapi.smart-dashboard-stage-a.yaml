@@ -1,0 +1,105 @@
+openapi: 3.0.3
+info:
+  title: Smart Watany Dashboard Stage A API
+  version: 1.0.0
+  description: Arabic-first Stage A foundation endpoints for Smart Watany Dashboard.
+security:
+  - bearerAuth: []
+paths:
+  /api/features/registry:
+    get:
+      summary: Role-filtered feature registry
+      responses:
+        '200':
+          description: Registry entries visible to the current user's role.
+  /api/user/preferences:
+    get:
+      summary: Get current user preferences
+      responses:
+        '200':
+          description: User preferences.
+    put:
+      summary: Update current user preferences
+      responses:
+        '200':
+          description: Updated preferences.
+  /api/activity/event:
+    post:
+      summary: Record a privacy-safe activity event
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [event_type, feature_key, page_path]
+              properties:
+                event_type:
+                  type: string
+                  enum: [CLICK, SEARCH_INTENT, PAGE_VIEW, NOTIFICATION_OPEN, IMPRESSION, PIN, UNPIN]
+                feature_key:
+                  type: string
+                  maxLength: 100
+                page_path:
+                  type: string
+                  maxLength: 255
+                  description: Route path only; query string is rejected.
+                intent_category:
+                  type: string
+                  enum: [pension_query, healthcare_query, procedure_query, document_query, law_query, salary_query, compensation_query, school_query, general_query]
+                metadata_json:
+                  type: object
+                  additionalProperties: false
+                  properties:
+                    feature_key:
+                      type: string
+                    sub_section:
+                      type: string
+                      nullable: true
+                    intent_category:
+                      type: string
+                      nullable: true
+      responses:
+        '201':
+          description: Accepted.
+        '400':
+          description: Unsafe or invalid activity payload.
+  /api/user/pinned:
+    post:
+      summary: Pin a feature
+      responses:
+        '201':
+          description: Pinned.
+  /api/user/pinned/{key}:
+    delete:
+      summary: Unpin a feature
+      parameters:
+        - name: key
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Unpinned.
+  /api/user/activity:
+    delete:
+      summary: Clear activity history and reset scores
+      responses:
+        '204':
+          description: Cleared.
+  /api/admin/dashboard-config:
+    put:
+      summary: Admin-only dashboard configuration override
+      responses:
+        '200':
+          description: Updated.
+        '403':
+          description: Forbidden.
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

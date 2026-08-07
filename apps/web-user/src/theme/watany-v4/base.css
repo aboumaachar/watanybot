@@ -1,0 +1,7 @@
+html, body, #root { min-height: 100%; }
+html { direction: rtl; background: #e8e5de; }
+body { margin: 0; color: var(--watany-ink); background: #e8e5de; font-family: "Cairo", "Noto Kufi Arabic", Tahoma, Arial, sans-serif; }
+*, *::before, *::after { box-sizing: border-box; }
+button, input, select, textarea { font: inherit; }
+button, a, [role="button"] { -webkit-tap-highlight-color: transparent; }
+:focus-visible { outline: 3px solid rgba(215, 164, 58, .52); outline-offset: 2px; }

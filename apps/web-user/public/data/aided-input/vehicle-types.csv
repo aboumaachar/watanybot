@@ -1,0 +1,9 @@
+vehicle_type,arabic_label,category,seat_count,eligible_for_taxi,active
+sedan,سيدان,car,4,true,true
+hatchback,هاتشباك,car,4,true,true
+suv,دفع رباعي,car,5,true,true
+van,فان,car,7,true,true
+minibus,ميني باص,bus,14,true,true
+motorcycle,دراجة نارية,motorcycle,1,false,true
+pickup,بيك آب,truck,2,false,true
+truck,شاحنة,truck,2,false,true

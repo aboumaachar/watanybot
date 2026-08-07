@@ -1,0 +1,110 @@
+﻿/* APEX WatanyBot Mobile OS Phase 4C: architecture refactor guard layer
+   This layer enforces visual ownership while real JSX surgery is performed per file. */
+
+:root {
+  --wmo-architecture-shell-owner: "WatanyMobileShell";
+}
+
+/* The route viewport is the only valid app chrome container for citizen routes. */
+.watany-mobile-shell__route-content {
+  min-width: 0;
+}
+
+.watany-mobile-shell__route-content > * {
+  min-width: 0;
+  max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Reduce nested legacy shell feel without deleting components. */
+.watany-mobile-shell__route-content .legacy-shell,
+.watany-mobile-shell__route-content .legacy-layout,
+.watany-mobile-shell__route-content .dashboard-shell,
+.watany-mobile-shell__route-content .hybrid-shell,
+.watany-mobile-shell__route-content .app-shell,
+.watany-mobile-shell__route-content .screen-shell,
+.watany-mobile-shell__route-content .desktop-shell {
+  padding: 0 !important;
+  margin: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Hide duplicate citizen route chrome only when it is a nested route chrome. */
+.watany-mobile-shell__route-content .nested-topbar,
+.watany-mobile-shell__route-content .nested-header,
+.watany-mobile-shell__route-content .route-nav,
+.watany-mobile-shell__route-content .route-bottom-nav {
+  display: none;
+}
+
+/* Keep actual content headers visible; only normalize them. */
+.watany-mobile-shell__route-content h1,
+.watany-mobile-shell__route-content h2,
+.watany-mobile-shell__route-content h3 {
+  text-wrap: balance;
+}
+
+/* Provide a final common surface model for all citizen feature cards. */
+.watany-mobile-shell__route-content :where(.card,.panel,.tile,.box,.feature-card,.service-card,.document-card,.form-card,.procedure-card,.salary-card,.notification-card,.alert-card,.faq-card,.job-card,.legal-card,.link-card,.profile-card) {
+  border-radius: var(--watany-radius-lg, 28px);
+}
+
+/* Touch-first enforcement. */
+.watany-mobile-shell__route-content :where(button,a,input,select,textarea,[role='button']) {
+  touch-action: manipulation;
+}
+
+/* Chat must keep its own scroll/composer rules. */
+.wa-integrated-chat,
+.whatsapp-chat,
+.wt-chat-screen {
+  overscroll-behavior: contain;
+}
+
+/* Admin/Auth are intentionally outside citizen mobile shell ownership. */
+.superadmin-page,
+.superadmin,
+.login-page,
+.register-page {
+  --wmo-architecture-shell-owner: "excluded";
+}
+
+/* Hard guard for admin/detail routes: never allow horizontal growth. */
+.watany-mobile-shell__route-content :where([class*="admin"], [class*="detail"], [class*="details"]) {
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.watany-mobile-shell__route-content :where([class*="admin"], [class*="detail"], [class*="details"]) :where(*, p, span, h1, h2, h3, h4, h5, h6, a, code, strong, em, small, label) {
+  max-width: 100%;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+@media (max-width: 640px) {
+  .watany-mobile-shell__route-content {
+    overflow-x: hidden;
+  }
+
+  .watany-mobile-shell__route-content :where(table) {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .watany-mobile-shell__route-content :where([class*="admin"], [class*="detail"], [class*="details"]) {
+    overflow-x: clip;
+  }
+
+  .watany-mobile-shell__route-content :where([class*="admin"], [class*="detail"], [class*="details"]) :where(table, thead, tbody, tr, th, td) {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: clip;
+  }
+}

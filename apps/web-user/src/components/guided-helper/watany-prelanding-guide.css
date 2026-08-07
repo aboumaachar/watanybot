@@ -1,0 +1,86 @@
+.watany-prelanding-guide{position:fixed;inset:0;z-index:2147483000;direction:rtl}.watany-prelanding-guide__backdrop{position:absolute;inset:0;background:rgba(2,6,23,.56);backdrop-filter:blur(10px)}.watany-prelanding-guide__dialog{position:absolute;left:50%;top:50%;width:min(92vw,430px);transform:translate(-50%,-50%);border:1px solid rgba(255,255,255,.52);border-radius:28px;background:linear-gradient(145deg,rgba(255,255,255,.96),rgba(241,245,249,.94));box-shadow:0 28px 90px rgba(15,23,42,.34);padding:22px;color:#111827;font-family:inherit}.watany-prelanding-guide__eyebrow{display:inline-flex;border-radius:999px;padding:6px 12px;margin-bottom:12px;background:rgba(15,118,110,.1);color:#0f766e;font-size:14px;font-weight:800}.watany-prelanding-guide__dialog h2{margin:0 0 10px;color:#0f172a;font-size:22px;line-height:1.3;font-weight:900}.watany-prelanding-guide__dialog p{margin:0 0 12px;color:#334155;font-size:16px;line-height:1.75;font-weight:600}.watany-prelanding-guide__hint{border-radius:18px;padding:12px;background:rgba(37,99,235,.08);color:#1e3a8a!important}.watany-prelanding-guide__source{color:#64748b!important;font-size:14px!important}.watany-prelanding-guide__actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}.watany-prelanding-guide__actions button,.watany-prelanding-guide__secondary button{min-height:46px;border:0;border-radius:16px;padding:10px 14px;font:inherit;font-weight:900;cursor:pointer}.watany-prelanding-guide__proceed{background:linear-gradient(135deg,#14532d,#16a34a);color:#fff;box-shadow:0 12px 30px rgba(22,163,74,.25)}.watany-prelanding-guide__cancel{background:#e2e8f0;color:#0f172a}.watany-prelanding-guide__secondary{display:grid;grid-template-columns:1fr;gap:8px;margin-top:12px}.watany-prelanding-guide__secondary button{min-height:40px;background:transparent;color:#475569;text-decoration:underline;text-underline-offset:4px}@media(max-width:420px){.watany-prelanding-guide__dialog{width:calc(100vw - 24px);padding:18px;border-radius:24px}.watany-prelanding-guide__actions{grid-template-columns:1fr}}
+
+/* APEX guided-help frozen CTA repair v1.0 */
+.watany-prelanding-guide-backdrop,
+.watany-prelanding-guide-overlay,
+.watany-guided-helper-backdrop,
+.watany-guided-helper-overlay,
+.watany-prelanding-backdrop,
+.watany-prelanding-overlay {
+  pointer-events: auto !important;
+  z-index: 2147483000 !important;
+}
+
+.watany-prelanding-guide-card,
+.watany-prelanding-guide-modal,
+.watany-guided-helper-card,
+.watany-guided-helper-modal,
+.watany-prelanding-card,
+.watany-prelanding-modal,
+[role="dialog"] {
+  pointer-events: auto !important;
+  position: relative;
+  z-index: 2147483001 !important;
+}
+
+.watany-prelanding-guide-card button,
+.watany-prelanding-guide-modal button,
+.watany-guided-helper-card button,
+.watany-guided-helper-modal button,
+.watany-prelanding-card button,
+.watany-prelanding-modal button,
+[role="dialog"] button {
+  pointer-events: auto !important;
+  cursor: pointer !important;
+  touch-action: manipulation;
+}
+
+/* APEX guided-help frozen CTA forensic repair v1.1 */
+.watany-prelanding-guide-backdrop,
+.watany-prelanding-guide-overlay,
+.watany-guided-helper-backdrop,
+.watany-guided-helper-overlay,
+.watany-prelanding-backdrop,
+.watany-prelanding-overlay {
+  isolation: isolate !important;
+  z-index: 2147483500 !important;
+}
+.watany-prelanding-guide-card,
+.watany-prelanding-guide-modal,
+.watany-guided-helper-card,
+.watany-guided-helper-modal,
+.watany-prelanding-card,
+.watany-prelanding-modal,
+[role="dialog"] {
+  pointer-events: auto !important;
+  position: relative !important;
+  z-index: 2147483600 !important;
+  isolation: isolate !important;
+}
+.watany-prelanding-guide-card::before,
+.watany-prelanding-guide-card::after,
+.watany-prelanding-guide-modal::before,
+.watany-prelanding-guide-modal::after,
+.watany-guided-helper-card::before,
+.watany-guided-helper-card::after,
+.watany-guided-helper-modal::before,
+.watany-guided-helper-modal::after,
+[role="dialog"]::before,
+[role="dialog"]::after {
+  pointer-events: none !important;
+}
+.watany-prelanding-guide-card button,
+.watany-prelanding-guide-modal button,
+.watany-guided-helper-card button,
+.watany-guided-helper-modal button,
+.watany-prelanding-card button,
+.watany-prelanding-modal button,
+[role="dialog"] button,
+[role="dialog"] [role="button"] {
+  pointer-events: auto !important;
+  position: relative !important;
+  z-index: 2147483640 !important;
+  cursor: pointer !important;
+  touch-action: manipulation !important;
+  user-select: none;
+}

@@ -1,0 +1,476 @@
+﻿:root {
+  --watany-bg: #f5efe3;
+  --watany-surface: rgba(255,255,255,.82);
+  --watany-green: #0e3b2e;
+  --watany-green-2: #155b44;
+  --watany-gold: #d4af37;
+  --watany-text: #10251f;
+  --watany-muted: #6b7280;
+  --watany-radius: 18px;
+  --watany-shadow: 0 10px 26px rgba(14,59,46,.12);
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255,225,153,.55), transparent 34%),
+    linear-gradient(180deg, #fbf4e7 0%, #f5efe3 52%, #efe3cf 100%) !important;
+  color: var(--watany-text) !important;
+  font-family: "Noto Kufi Arabic", "Cairo", Tahoma, sans-serif !important;
+}
+
+body * {
+  box-sizing: border-box;
+}
+
+button,
+input,
+select,
+textarea {
+  font-family: inherit !important;
+}
+
+main,
+.app,
+.app-shell,
+.mobile-shell,
+.watany-mobile-shell,
+.page,
+.page-shell {
+  background: transparent !important;
+}
+
+button, input, select, textarea {
+  font-family: inherit;
+}
+
+.watany-theme-active,
+body {
+  --primary: var(--watany-green);
+  --accent: var(--watany-gold);
+}
+
+.card, .listing-card, article, section {
+  border-radius: var(--watany-radius);
+}
+
+button,
+[role="button"],
+a.button {
+  border-radius: 14px;
+}
+
+.watany-welcome-lines {
+  direction: rtl;
+  text-align: center;
+  margin: 14px auto 16px;
+}
+
+.watany-welcome-title {
+  font-weight: 900;
+  font-size: 28px;
+  color: var(--watany-green);
+  text-shadow: 0 2px 0 rgba(212,175,55,.45), 0 8px 18px rgba(14,59,46,.20);
+}
+
+.watany-welcome-subtitle {
+  margin-top: 8px;
+  font-weight: 800;
+  font-size: 22px;
+  color: var(--watany-green-2);
+  text-shadow: 0 2px 0 rgba(212,175,55,.35), 0 8px 16px rgba(14,59,46,.16);
+}
+
+.top-menu {
+  background: linear-gradient(180deg, rgba(255,255,255,.95), rgba(250,245,236,.92)) !important;
+  border-bottom: 1px solid rgba(14,59,46,.14) !important;
+  box-shadow: 0 8px 18px rgba(14,59,46,.08) !important;
+}
+
+.menu-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.menu-logo__img {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 3px 10px rgba(14,59,46,.25));
+}
+
+.tm-icon-btn,
+.tm-login-btn,
+.btn,
+[class*="btn"] {
+  border-radius: 14px !important;
+  border: 1px solid rgba(14,59,46,.18) !important;
+  background: linear-gradient(180deg, #ffffff, #f8f3e7) !important;
+  color: var(--watany-green) !important;
+  box-shadow: 0 6px 14px rgba(14,59,46,.08) !important;
+}
+
+.tm-login-btn,
+.btn-primary,
+[class*="primary"] {
+  background: linear-gradient(135deg, #f4de95, #d7b34d) !important;
+  color: #1f2a1f !important;
+}
+
+.panel,
+.utility-page,
+.utility-header,
+.utility-action-card,
+.utility-list-card,
+.watany-utility-list-card,
+.watany-utility-action-card,
+.procedures-browser,
+.procedures-browser__top-filter,
+.procedures-browser__item,
+.forms-library-screen,
+.forms-library-search,
+.forms-item-card,
+.news-page,
+.fake-news-page,
+.profile-page,
+.settings-page,
+.notifications-page,
+.documents-page,
+.salary-page,
+.school-grants-page,
+.chat-page,
+.official-services-page,
+.official-detail-panel,
+.market-mobile-commerce-layout,
+.marketplace-mobile-page,
+[class*="card"],
+[class*="panel"],
+[class*="dialog"],
+[class*="modal"],
+[class*="sheet"] {
+  border-radius: var(--watany-radius) !important;
+  border: 1px solid rgba(14,59,46,.14) !important;
+  background: var(--watany-surface) !important;
+  box-shadow: var(--watany-shadow) !important;
+  color: var(--watany-text) !important;
+}
+
+input,
+select,
+textarea,
+[type="search"],
+[class*="search"],
+[class*="filter"],
+[class*="field"],
+[class*="input"] {
+  border-radius: 12px !important;
+  border: 1px solid rgba(14,59,46,.2) !important;
+  background: rgba(255,255,255,.95) !important;
+  color: var(--watany-text) !important;
+}
+
+.mj-hero-card {
+  display: none !important;
+}
+
+.unified-pillar__hero,
+.unified-pillar__eyebrow {
+  display: none !important;
+}
+
+.mj-job-listings,
+.mj-feed-section,
+.mj-shortcut-grid,
+.procedures-browser__content,
+.official-services-grid,
+.news-page__list,
+.documents-grid,
+.watany-template-batch-v141 {
+  margin-top: 0 !important;
+}
+
+.watany-auth-page .menu-logo__img {
+  width: 36px;
+  height: 36px;
+}
+
+/* Hide top header globally on all pages (requested) */
+.watany-top-header {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+
+/* APEX universal landing background - excludes main welcome/login splash containers */
+body:not(.watany-main-welcome-screen),
+#root {
+  background-color: #f5efe3;
+}
+
+/* Theme activation no longer applies a global body background image.
+   The universal background is provided by the React layout wrapper
+   `.watany-layout` so we avoid global <body> overrides. */
+.watany-theme-active,
+body {
+  background-image: none;
+  background-repeat: no-repeat;
+  background-position: center top;
+  background-size: cover;
+  background-attachment: scroll;
+}
+
+/* Keep operational pages readable above decorative background */
+main,
+.app-shell,
+.mobile-shell,
+.page,
+.page-shell,
+.content-shell,
+[class*="Page"],
+[class*="Landing"],
+[class*="Screen"] {
+  background-color: rgba(245, 239, 227, 0.82);
+}
+
+/* Do not force decorative background onto welcome/login hero panels */
+.motany-login-landing,
+.motany-login-shell,
+.watany-welcome-screen,
+.watany-splash-screen {
+  background-image: none;
+}
+/* APEX FIX: ensure root sizing and app containers do not force a body
+   background image. The layout-level wrapper mounts the decorative artwork. */
+html,
+body,
+#root {
+  min-height: 100%;
+  background-color: #f5efe3 !important;
+  background-image: none !important;
+  background-repeat: no-repeat !important;
+  background-position: center top !important;
+  background-size: cover !important;
+  background-attachment: scroll !important;
+}
+
+#root > *,
+.app-shell,
+.mobile-shell,
+.watany-mobile-shell,
+main,
+.page,
+.page-shell,
+.content-shell,
+[class*="Page"],
+[class*="Landing"],
+[class*="Screen"] {
+  background: transparent !important;
+}
+
+/* Keep cards readable */
+.card,
+.listing-card,
+article,
+section,
+form,
+[role="dialog"],
+[class*="card"],
+[class*="Card"],
+[class*="panel"],
+[class*="Panel"] {
+  background-color: rgba(255, 252, 245, 0.88) !important;
+  backdrop-filter: blur(6px);
+}
+
+/* Exclude welcome/login/splash hero surfaces */
+.motany-login-landing,
+.motany-login-shell,
+.watany-welcome-screen,
+.watany-splash-screen {
+  background-image: none !important;
+}
+/* Layout-level universal background (mounted by the React layout wrapper)
+   This replaces previous body-level background overrides so the decorative
+   artwork is controlled by the application layout rather than the <body>. */
+.watany-layout {
+  position: relative;
+  min-height: 100vh;
+  isolation: isolate;
+}
+
+.watany-layout-background {
+  position: fixed;
+  inset: 0;
+  /* Ensure the decorative artwork is fully behind all app surfaces and
+     never intercepts pointer events. Use !important to avoid being
+     overridden by other theme layers. */
+  z-index: -1 !important;
+  pointer-events: none !important;
+  user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  /* Decorative artwork hidden per request */
+  background-image: none !important;
+  background-repeat: no-repeat;
+  background-position: center top;
+  background-size: cover;
+  will-change: transform, opacity;
+}
+
+.watany-layout--background-hidden .watany-layout-background {
+  display: none !important;
+}
+
+.watany-layout-content {
+  position: relative;
+  z-index: 1; /* content renders above background */
+  min-height: 100vh;
+  background: transparent !important;
+}
+
+.watany-layout-content main,
+.watany-layout-content .app-shell,
+.watany-layout-content .mobile-shell,
+.watany-layout-content .page,
+.watany-layout-content .page-shell,
+.watany-layout-content .content-shell {
+  background-color: rgba(245,239,227,0.72) !important;
+}
+
+/* Hide specific login and header elements per request */
+.top-menu .menu-toggle svg,
+.watany-welcome-title,
+.watany-welcome-subtitle,
+.motany-login-subtitle {
+  display: none !important;
+}
+
+/* Hide the global header logo when the login view is active */
+body:has(main.motany-login-redesign) .menu-logo__img,
+body:has(main.motany-login-redesign) .menu-logo {
+  display: none !important;
+}
+
+/* Extra specific selectors to override other page rules if necessary */
+main.motany-login-redesign header.motany-login-brand .watany-welcome-subtitle,
+main.motany-login-redesign section.motany-login-card .motany-login-subtitle,
+section.motany-login-screen .watany-welcome-subtitle,
+.motany-login-card .motany-login-subtitle {
+  display: none !important;
+}
+
+/* Safety guard: ensure decorative/preview backdrops do not intercept pointer events.
+   Some runtime preview or legacy backdrops mount fullscreen and capture clicks
+   (e.g., `.watany-v1-jm-backdrop`). Make these decorative only by forcing
+   pointer-events:none and putting them behind content. This is conservative
+   and can be relaxed for specific interactive modals later if needed. */
+.watany-layout-background,
+.watany-layout-background::before,
+.watany-layout-background::after,
+.watany-layout::before,
+.watany-layout::after,
+.watany-v1-jm-backdrop,
+.tm-panel-overlay,
+.tm-panel-backdrop,
+.watany-backdrop,
+.watany-modal-backdrop,
+.universal-preview-overlay,
+[data-watany-backdrop],
+#watany-theme-preview,
+.app-theme-preview-root,
+.watany-theme-preview-root {
+  pointer-events: none !important;
+  z-index: -1 !important;
+}
+
+/* Prevent top header layers from intercepting drawer/overlay interactions while menu is open. */
+html.watany-main-menu-open .top-menu,
+body.watany-main-menu-open .top-menu {
+  pointer-events: none !important;
+}
+
+html.watany-main-menu-open .top-menu .menu-toggle,
+html.watany-main-menu-open .top-menu .menu-logo__burger,
+body.watany-main-menu-open .top-menu .menu-toggle,
+body.watany-main-menu-open .top-menu .menu-logo__burger {
+  pointer-events: auto !important;
+}
+
+html.watany-main-menu-open [data-testid="watany-main-menu-drawer"],
+html.watany-main-menu-open [data-testid="watany-main-menu-overlay"],
+body.watany-main-menu-open [data-testid="watany-main-menu-drawer"],
+body.watany-main-menu-open [data-testid="watany-main-menu-overlay"] {
+  pointer-events: auto !important;
+}
+
+/* Mobile drawer and inner-menu clamp fixes
+   Purpose: clamp profile/menu drawer widths on narrow viewports, ensure
+   inner menu items wrap and don't force overflow, and re-enable the
+   overlay for panel close interactions on small screens. */
+@media (max-width: 420px) {
+  .tm-profile-panel,
+  .tm-panel,
+  .menu-drawer,
+  .menu-panel,
+  .menu-panel__drawer,
+  [data-endpoint][data-drawer] {
+    max-width: 340px !important;
+    width: auto !important;
+    box-sizing: border-box !important;
+    right: 8px !important;
+    left: auto !important;
+    position: fixed !important;
+    transform: none !important;
+  }
+
+  /* Ensure profile cards and menu items do not exceed the container width */
+  .tm-profile-panel .tm-profile-menu,
+  .tm-profile-panel .tm-profile-card {
+    max-width: 100% !important;
+    width: auto !important;
+    box-sizing: border-box !important;
+    overflow-wrap: anywhere !important;
+    white-space: normal !important;
+  }
+
+  /* Make sure hamburger and burger buttons are above the panel */
+  .menu-toggle,
+  .menu-logo__burger {
+    z-index: 1200 !important;
+  }
+
+  /* Canonical hit target contract for main menu toggles */
+  .menu-toggle,
+  .menu-logo__burger,
+  .watany-top-header__burger,
+  .watany-universal-feature-menu__trigger {
+    min-width: 44px !important;
+    min-height: 44px !important;
+    inline-size: max-content;
+    block-size: auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Decorative ticker should never block pointer interactions for menu controls */
+  .news-ticker,
+  .news-ticker__items {
+    pointer-events: none !important;
+  }
+
+  /* Re-enable overlay clicks for small viewports so users can dismiss panels */
+  .tm-panel-overlay,
+  .tm-panel-backdrop {
+    pointer-events: auto !important;
+    z-index: 1100 !important;
+  }
+}

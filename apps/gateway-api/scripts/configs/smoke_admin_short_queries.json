@@ -1,0 +1,30 @@
+{
+  "$schema": "./SMOKE_CONFIG_SCHEMA.json",
+  "suiteName": "Administrative short-query smoke",
+  "defaultTargetEnv": "ADMIN_SHORT_QUERY_SMOKE_TARGET",
+  "defaultTargetFallback": "public",
+  "urlEnvName": "ADMIN_SHORT_QUERY_SMOKE_URL",
+  "domainTerms": ["طلب", "إفادة", "افادة", "بيان", "قيد", "مستند"],
+  "queryCases": [
+    {
+      "canonical": "بيان خدمة",
+      "variants": ["بيان خدمة", "بيان مفصل بالخدمات", "طلب بيان خدمة"]
+    },
+    {
+      "canonical": "إفادة راتب",
+      "variants": ["افادة راتب", "إفادة راتب", "طلب إفادة راتب"]
+    },
+    {
+      "canonical": "إخراج قيد",
+      "variants": ["اخراج قيد", "إخراج قيد", "إخراج قيد إفرادي"]
+    },
+    {
+      "canonical": "طلب خطي",
+      "variants": ["طلب خطي", "طلب خطي موقّع", "شو هو الطلب الخطي"]
+    },
+    {
+      "canonical": "تصديق مستند",
+      "variants": ["تصديق مستند", "تصديق إفادة", "تصديق مستند جامعي"]
+    }
+  ]
+}

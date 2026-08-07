@@ -1,0 +1,10 @@
+﻿{
+    "featureKey":  "02-unified-glossy-ui",
+    "featureName":  "Unified Glossy UI",
+    "doctrine":  "near-zero-recode-v1",
+    "portable":  true,
+    "replaceable":  true,
+    "status":  "BOUNDARY_DECLARED_REQUIRES_VALIDATION",
+    "passRule":  "No PASS without validation and smoke evidence.",
+    "generatedAt":  "2026-06-10T16:38:25.8728371+03:00"
+}

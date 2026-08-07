@@ -1,0 +1,21 @@
+﻿/* APEX WatanyBot Mobile OS Phase 4E: surgical nav dedup slice 1
+   Suppresses duplicated bottom nav only inside the Mobile OS citizen shell. */
+
+.watany-mobile-shell__route-content [data-wmo-duplicate-bottom-nav="true"] {
+  display: none !important;
+}
+
+.watany-mobile-shell__route-content .wmo-duplicate-bottom-nav {
+  display: none !important;
+}
+
+/* Keep nav components usable if rendered outside the Mobile OS shell. */
+[data-wmo-duplicate-bottom-nav="true"] {
+  box-sizing: border-box;
+}
+
+/* Optional audit visual class if toggled manually. */
+.wmo-nav-dedup-audit {
+  outline: 2px dashed rgba(178, 58, 72, 0.35);
+  outline-offset: 4px;
+}

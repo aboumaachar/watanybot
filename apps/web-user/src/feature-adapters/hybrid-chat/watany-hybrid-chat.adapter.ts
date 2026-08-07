@@ -1,0 +1,2 @@
+import { createHybridChatHostRegistration } from '../../../../../packages/features/hybrid-chat/src/index';
+export function createWatanyHybridChatAdapter() { const registration = createHybridChatHostRegistration(); return { ...registration, watanyContext: { preservesExistingUi: true, kbGrounded: true, communityChatSeparated: true } }; }

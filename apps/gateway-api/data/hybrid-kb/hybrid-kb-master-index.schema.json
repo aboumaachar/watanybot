@@ -1,0 +1,28 @@
+{
+    "$schema":  "https://json-schema.org/draft/2020-12/schema",
+    "title":  "WatanyBot Hybrid KB Master Index",
+    "type":  "object",
+    "required":  [
+                     "version",
+                     "generatedAt",
+                     "recordCount",
+                     "records"
+                 ],
+    "properties":  {
+                       "version":  {
+                                       "type":  "string"
+                                   },
+                       "generatedAt":  {
+                                           "type":  "string"
+                                       },
+                       "recordCount":  {
+                                           "type":  "integer"
+                                       },
+                       "categories":  {
+                                          "type":  "object"
+                                      },
+                       "records":  {
+                                       "type":  "array"
+                                   }
+                   }
+}

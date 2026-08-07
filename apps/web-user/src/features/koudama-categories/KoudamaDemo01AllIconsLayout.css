@@ -1,0 +1,180 @@
+.koudama-demo01-layout {
+  --demo-surface: linear-gradient(180deg, rgba(39, 57, 72, 0.96), rgba(29, 43, 56, 0.98));
+  --demo-surface-soft: rgba(255, 255, 255, 0.06);
+  --demo-border: rgba(223, 185, 97, 0.35);
+  --demo-border-soft: rgba(255, 255, 255, 0.12);
+  --demo-title-fill: linear-gradient(135deg, #f0d68d, #d9b45d);
+  --demo-title-ink: #1b2430;
+  --demo-text: #f7f4ea;
+  --demo-muted: rgba(247, 244, 234, 0.82);
+  --demo-shadow: 0 24px 60px rgba(7, 15, 23, 0.28);
+  color: var(--demo-text);
+  width: min(1160px, calc(100% - 2rem));
+  margin: 0 auto;
+  padding: clamp(1.25rem, 3vw, 2rem) 0 3rem;
+}
+
+.koudama-demo01-layout__header {
+  display: grid;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.koudama-demo01-layout__header h1 {
+  margin: 0;
+  font-size: clamp(2rem, 3.4vw, 3rem);
+}
+
+.koudama-demo01-layout__header p {
+  margin: 0;
+  color: rgba(21, 29, 36, 0.78);
+}
+
+.koudama-demo01-layout__eyebrow {
+  color: rgba(21, 29, 36, 0.72);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.koudama-demo01-layout__grid {
+  display: grid;
+  gap: 1.75rem;
+}
+
+.koudama-demo01-layout__category {
+  position: relative;
+  display: grid;
+  gap: 1.5rem;
+  padding: 3.35rem 1.5rem 1.5rem;
+  border: 1px solid var(--demo-border);
+  border-radius: 2rem;
+  background: var(--demo-surface);
+  box-shadow: var(--demo-shadow);
+  overflow: hidden;
+}
+
+.koudama-demo01-layout__category::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 5.75rem 5.75rem;
+  opacity: 0.2;
+  pointer-events: none;
+}
+
+.koudama-demo01-layout__category-header {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  justify-items: center;
+  gap: 1rem;
+}
+
+.koudama-demo01-layout__category-title {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  min-width: min(16rem, calc(100% - 1.5rem));
+  margin: -4.6rem auto 0;
+  padding: 0.9rem 2rem;
+  border-radius: 999px;
+  background: var(--demo-title-fill);
+  color: var(--demo-title-ink);
+  box-shadow: 0 18px 32px rgba(15, 23, 42, 0.18);
+  font-size: clamp(1.1rem, 2vw, 1.35rem);
+  font-weight: 900;
+}
+
+.koudama-demo01-layout__category-subtitle {
+  max-width: 44rem;
+  margin: 0;
+  color: var(--demo-muted);
+  font-size: clamp(1rem, 1.75vw, 1.2rem);
+  line-height: 1.8;
+  text-align: center;
+}
+
+.koudama-demo01-layout__items {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.koudama-demo01-layout__item {
+  display: grid;
+  justify-items: center;
+  gap: 0.85rem;
+  min-height: 7.2rem;
+  padding: 1rem 1.1rem 1.15rem;
+  border: 1px solid var(--demo-border-soft);
+  border-radius: 1.5rem;
+  background: var(--demo-surface-soft);
+  color: inherit;
+  text-align: center;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.koudama-demo01-layout__item[data-koudama-locked='true'] {
+  border-color: rgba(223, 185, 97, 0.3);
+}
+
+.koudama-demo01-layout__item-icon {
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.08);
+  font-size: 1.45rem;
+  line-height: 1;
+}
+
+.koudama-demo01-layout__item-label {
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.55;
+}
+
+@media (max-width: 900px) {
+  .koudama-demo01-layout__items {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .koudama-demo01-layout {
+    width: min(100%, calc(100% - 1rem));
+    padding-top: 0.75rem;
+  }
+
+  .koudama-demo01-layout__category {
+    padding: 3rem 0.9rem 1rem;
+    border-radius: 1.5rem;
+  }
+
+  .koudama-demo01-layout__category-title {
+    min-width: calc(100% - 1rem);
+    padding-inline: 1rem;
+    font-size: 1.05rem;
+  }
+
+  .koudama-demo01-layout__category-subtitle {
+    font-size: 0.95rem;
+  }
+
+  .koudama-demo01-layout__items {
+    grid-template-columns: 1fr;
+  }
+
+  .koudama-demo01-layout__item {
+    min-height: 6.5rem;
+  }
+}

@@ -1,0 +1,2 @@
+import { createHybridChatHostRegistration } from '../host-integration/hybrid-chat.host-registration';
+export function proveHybridChatRegistryConsumption() { const registration = createHybridChatHostRegistration(); return { pluginKey: registration.pluginKey, exportable: registration.manifest.exportable, replaceable: registration.manifest.replaceable, adminConfigurable: registration.manifest.adminConfigurable, routes: registration.manifest.routes, apiRoutes: registration.manifest.apiRoutes }; }

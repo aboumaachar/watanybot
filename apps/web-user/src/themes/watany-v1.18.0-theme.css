@@ -1,0 +1,441 @@
+/*
+ * WatanyBot V1.18.0 visual theme.
+ * Scope: presentation only.
+ * Icon symbol and internal icon color authority remain outside this file.
+ */
+
+@layer watany-v1180 {
+  html[data-watany-theme="v1.18.0"] {
+    --wt-v1180-forest-950: #052b22;
+    --wt-v1180-forest-900: #07392e;
+    --wt-v1180-forest-800: #0b4a3a;
+    --wt-v1180-forest-700: #12624d;
+    --wt-v1180-forest-500: #278066;
+    --wt-v1180-gold-700: #94620f;
+    --wt-v1180-gold-600: #b98522;
+    --wt-v1180-gold-500: #d7a43a;
+    --wt-v1180-gold-300: #edd18a;
+    --wt-v1180-ivory-50: #fffdf7;
+    --wt-v1180-ivory-100: #fbf6e8;
+    --wt-v1180-ivory-200: #f4ead1;
+    --wt-v1180-ink: #14231f;
+    --wt-v1180-muted: #64736d;
+    --wt-v1180-line: #ded6c2;
+    --wt-v1180-danger: #a53b45;
+
+    --wt-v1180-phone-width: 390px;
+    --wt-v1180-phone-min-width: 360px;
+    --wt-v1180-top-height: 74px;
+    --wt-v1180-bottom-height: 72px;
+
+    --wt-v1180-radius-xs: 10px;
+    --wt-v1180-radius-sm: 13px;
+    --wt-v1180-radius-md: 16px;
+    --wt-v1180-radius-lg: 20px;
+    --wt-v1180-radius-xl: 24px;
+    --wt-v1180-radius-phone: 34px;
+
+    --wt-v1180-shadow-soft: 0 7px 18px rgba(7, 57, 46, .06);
+    --wt-v1180-shadow-panel: 0 12px 32px rgba(5, 43, 34, .10);
+    --wt-v1180-shadow-phone: 0 18px 48px rgba(5, 43, 34, .18);
+
+    --wt-v1180-space-1: 4px;
+    --wt-v1180-space-2: 8px;
+    --wt-v1180-space-3: 12px;
+    --wt-v1180-space-4: 14px;
+    --wt-v1180-space-5: 18px;
+    --wt-v1180-space-6: 24px;
+
+    color: var(--wt-v1180-ink);
+    background: #e8e5de;
+    font-family: "Cairo", "Noto Kufi Arabic", Tahoma, Arial, sans-serif;
+  }
+
+  html[data-watany-theme="v1.18.0"],
+  html[data-watany-theme="v1.18.0"] body,
+  html[data-watany-theme="v1.18.0"] #root {
+    min-height: 100%;
+  }
+
+  html[data-watany-theme="v1.18.0"] body {
+    margin: 0;
+    background:
+      radial-gradient(circle at 50% 0, rgba(215,164,58,.08), transparent 34%),
+      #e8e5de;
+    color: var(--wt-v1180-ink);
+  }
+
+  /*
+   * Golden shell rule.
+   * Multiple selectors are intentional because the existing app has several
+   * shell generations. The first matching shell receives the same geometry.
+   */
+  html[data-watany-theme="v1.18.0"] :is(
+    .watany-mobile-shell,
+    .watany-public-shell,
+    .watany-recovery-shell,
+    .watany-drawer-phone,
+    [data-watany-mobile-shell],
+    [data-watany-phone-shell]
+  ) {
+    width: min(100%, var(--wt-v1180-phone-width));
+    min-width: min(100%, var(--wt-v1180-phone-min-width));
+    max-width: var(--wt-v1180-phone-width);
+    min-height: 100dvh;
+    margin-inline: auto;
+    position: relative;
+    overflow-x: hidden;
+    background:
+      radial-gradient(circle at 92% 4%, rgba(215,164,58,.12), transparent 30%),
+      linear-gradient(180deg, var(--wt-v1180-ivory-50), #f8f3e8);
+    border-inline: 1px solid rgba(7,57,46,.14);
+    box-shadow: var(--wt-v1180-shadow-phone);
+  }
+
+  @media (min-width: 700px) {
+    html[data-watany-theme="v1.18.0"] :is(
+      .watany-mobile-shell,
+      .watany-public-shell,
+      .watany-recovery-shell,
+      .watany-drawer-phone,
+      [data-watany-mobile-shell],
+      [data-watany-phone-shell]
+    ) {
+      min-height: min(844px, calc(100dvh - 36px));
+      margin-block: 18px;
+      border: 1px solid rgba(7,57,46,.22);
+      border-radius: var(--wt-v1180-radius-phone);
+      overflow: hidden;
+      box-shadow:
+        var(--wt-v1180-shadow-phone),
+        inset 0 0 0 5px rgba(255,255,255,.60);
+    }
+  }
+
+  html[data-watany-theme="v1.18.0"] :is(
+    .watany-top-header,
+    .watany-topbar,
+    .wt-topbar,
+    [data-watany-top-header]
+  ) {
+    min-height: var(--wt-v1180-top-height);
+    background: linear-gradient(180deg, var(--wt-v1180-forest-950), var(--wt-v1180-forest-900));
+    color: #fff;
+    border: 0;
+    box-shadow: 0 7px 18px rgba(5,43,34,.18);
+  }
+
+  html[data-watany-theme="v1.18.0"] :is(
+    .watany-route-scaffold,
+    .watany-service-route,
+    .watany-support-route,
+    .watany-utility-route,
+    .wt-page-shell,
+    .hybrid-screen,
+    [data-watany-feature-route]
+  ) {
+    color: var(--wt-v1180-ink);
+  }
+
+  html[data-watany-theme="v1.18.0"] :is(
+    .wt-page-shell,
+    .hybrid-screen,
+    .watany-route-scaffold
+  ) {
+    display: grid;
+    gap: var(--wt-v1180-space-3);
+    padding: var(--wt-v1180-space-4);
+  }
+
+  html[data-watany-theme="v1.18.0"] :is(
+    .wt-panel,
+    .hybrid-section,
+    .watany-card,
+    .wt-card,
+    .info-card,
+    .listing-card,
+    .watany-route-card,
+    .watany-surface
+  ) {
+    background: rgba(255,255,255,.94);
+    color: var(--wt-v1180-ink);
+    border: 1px solid var(--wt-v1180-line);
+    border-radius: var(--wt-v1180-radius-lg);
+    box-shadow: var(--wt-v1180-shadow-soft);
+  }
+
+  html[data-watany-theme="v1.18.0"] :is(
+    .wt-panel,
+    .hybrid-section,
+    .watany-route-card,
+    .watany-surface
+  ) {
+    padding: var(--wt-v1180-space-4);
+  }
+
+  html[data-watany-theme="v1.18.0"] :is(
+    .wt-panel--hero,
+    .watany-feature-hero,
+    .feature-hero
+  ) {
+    background:
+      radial-gradient(circle at 88% 12%, rgba(215,164,58,.16), transparent 35%),
+      linear-gradient(145deg, #fffdf7, #f8efd9);
+    border-color: var(--wt-v1180-gold-300);
+  }
+
+  html[data-watany-theme="v1.18.0"] :is(
+    h1, h2, h3,
+    .wt-panel__title,
+    .wt-panel__subtitle,
+    .hybrid-section__title,
+    .watany-route-title,
+    .icon-title
+  ) {
+    color: var(--wt-v1180-forest-900);
+  }
+
+  html[data-watany-theme="v1.18.0"] :is(
+    p,
+    .wt-panel__description,
+    .wt-sheet__subtitle,
+    .hybrid-section p,
+    .watany-muted
+  ) {
+    color: var(--wt-v1180-muted);
+    line-height: 1.72;
+  }
+
+  html[data-watany-theme="v1.18.0"] :is(
+    .wt-panel__eyebrow,
+    .hybrid-section__eyebrow,
+    .watany-eyebrow
+  ) {
+    color: var(--wt-v1180-gold-700);
+    font-weight: 900;
+  }
+
+  html[data-watany-theme="v1.18.0"] :is(
+    .wt-btn,
+    .community-shortcut,
+    .watany-button,
+    button[data-watany-action]
+  ) {
+    min-height: 44px;
+    border-radius: var(--wt-v1180-radius-sm);
+    border: 1px solid var(--wt-v1180-forest-700);
+    background: #fff;
+    color: var(--wt-v1180-forest-900);
+    font: inherit;
+    font-weight: 900;
+    transition: transform .16s ease, box-shadow .16s ease, background .16s ease;
+  }
+
+  html[data-watany-theme="v1.18.0"] :is(
+    .wt-btn:not(.wt-btn--ghost),
+    .wt-cta-glow,
+    .watany-button--primary,
+    button[data-variant="primary"]
+  ) {
+    background: linear-gradient(135deg, var(--wt-v1180-forest-800), var(--wt-v1180-forest-950));
+    color: #fff;
+    border-color: var(--wt-v1180-forest-900);
+    box-shadow: 0 10px 22px rgba(5,43,34,.18);
+  }
+
+  html[data-watany-theme="v1.18.0"] :is(
+    .wt-btn,
+    .community-shortcut,
+    .watany-button
+  ):where(:hover, :focus-visible):not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 12px 24px rgba(5,43,34,.16);
+  }
+
+  html[data-watany-theme="v1.18.0"] :is(
+    input,
+    select,
+    textarea,
+    .wt-field__control
+  ) {
+    min-height: 44px;
+    width: 100%;
+    border: 1px solid #d8d0c1;
+    border-radius: var(--wt-v1180-radius-sm);
+    background: rgba(255,255,255,.96);
+    color: var(--wt-v1180-ink);
+    padding-inline: 12px;
+    font: inherit;
+    outline: none;
+  }
+
+  html[data-watany-theme="v1.18.0"] textarea {
+    min-height: 78px;
+    padding-block: 10px;
+  }
+
+  html[data-watany-theme="v1.18.0"] :is(
+    input,
+    select,
+    textarea,
+    .wt-field__control
+  ):focus {
+    border-color: var(--wt-v1180-gold-600);
+    box-shadow: 0 0 0 3px rgba(215,164,58,.16);
+  }
+
+  html[data-watany-theme="v1.18.0"] :is(
+    .wt-chip,
+    .badge,
+    .watany-chip
+  ) {
+    display: inline-flex;
+    align-items: center;
+    min-height: 24px;
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: #eef5f2;
+    color: var(--wt-v1180-forest-700);
+    font-size: 11px;
+    font-weight: 900;
+  }
+
+  html[data-watany-theme="v1.18.0"] :is(
+    .watany-drawer,
+    .universal-feature-menu,
+    [data-watany-drawer]
+  ) {
+    background: var(--wt-v1180-ivory-50);
+    color: var(--wt-v1180-ink);
+    border-color: var(--wt-v1180-line);
+    box-shadow: -14px 0 34px rgba(5,43,34,.25);
+  }
+
+  html[data-watany-theme="v1.18.0"] :is(
+    .watany-bottom-tab-rail,
+    .bottom-tab-bar,
+    .bottom-tab-rail,
+    [data-watany-bottom-nav]
+  ) {
+    min-height: var(--wt-v1180-bottom-height);
+    background: linear-gradient(180deg, var(--wt-v1180-ivory-50), #f1e8d6);
+    border-top: 1px solid var(--wt-v1180-line);
+    box-shadow: 0 -6px 18px rgba(5,43,34,.08);
+  }
+
+  html[data-watany-theme="v1.18.0"] :is(
+    .icon-cadre,
+    .watany-app-icon-shell,
+    .watany-icon-shell,
+    [data-watany-icon-frame]
+  ) {
+    border: 2px solid var(--wt-v1180-gold-500);
+    border-radius: 18px;
+    background: transparent;
+    box-shadow:
+      0 7px 16px rgba(148,98,15,.09),
+      inset 0 0 0 2px rgba(18,98,77,.08);
+  }
+
+  /*
+   * ICON SOURCE-OF-TRUTH BOUNDARY
+   * This theme deliberately contains no selector that writes stroke, fill,
+   * currentColor, filter, mask, path data, or symbol identity inside icons.
+   */
+  html[data-watany-theme="v1.18.0"] :is(
+    .watany-app-icon-shell,
+    .watany-icon-shell,
+    [data-watany-icon-frame]
+  ) > :is(svg, img) {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+
+  html[data-watany-theme="v1.18.0"] :is(
+    .listing-card,
+    .wt-card,
+    .watany-listing-card
+  ) {
+    padding: 12px;
+    gap: 11px;
+  }
+
+  html[data-watany-theme="v1.18.0"] :is(
+    .watany-popup,
+    .watany-modal,
+    [role="dialog"]
+  ) {
+    background: #fff;
+    border: 1px solid var(--wt-v1180-gold-300);
+    border-radius: var(--wt-v1180-radius-xl);
+    box-shadow: 0 22px 54px rgba(5,43,34,.22);
+  }
+
+  html[data-watany-theme="v1.18.0"] :is(
+    .watany-ticker,
+    .inline-ticker,
+    [data-watany-ticker]
+  ) {
+    background: rgba(0,0,0,.14);
+    border: 1px solid rgba(255,255,255,.18);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+
+  html[data-watany-theme="v1.18.0"] :is(
+    .watany-ticker-label,
+    .ticker-label
+  ) {
+    background: var(--wt-v1180-gold-500);
+    color: var(--wt-v1180-forest-950);
+    font-weight: 900;
+  }
+
+  html[data-watany-theme="v1.18.0"] :is(
+    .form-viewer-frame,
+    .watany-document-viewer
+  ) {
+    border: 3px solid var(--wt-v1180-forest-900);
+    border-radius: var(--wt-v1180-radius-lg);
+    background: var(--wt-v1180-forest-950);
+    box-shadow: 0 14px 32px rgba(5,43,34,.18);
+  }
+
+  html[data-watany-theme="v1.18.0"] :is(
+    .wt-panel--notice,
+    .watany-notice,
+    [data-variant="notice"]
+  ) {
+    background: #fff9e8;
+    border-color: #ead49a;
+    color: #715416;
+  }
+
+  html[data-watany-theme="v1.18.0"] :is(
+    .wt-breakdown,
+    .wt-sheet
+  ) {
+    border-color: var(--wt-v1180-line);
+  }
+
+  html[data-watany-theme="v1.18.0"] * {
+    box-sizing: border-box;
+  }
+
+  html[data-watany-theme="v1.18.0"] :focus-visible {
+    outline: 3px solid rgba(215,164,58,.45);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html[data-watany-theme="v1.18.0"] *,
+    html[data-watany-theme="v1.18.0"] *::before,
+    html[data-watany-theme="v1.18.0"] *::after {
+      animation-duration: .01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: .01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}

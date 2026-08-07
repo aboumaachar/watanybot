@@ -1,0 +1,915 @@
+/* APEX_V119022_FINAL_CASCADE_BEGIN */
+@font-face {
+  font-family: "Cairo";
+  src: url("/fonts/cairo/cairo-arabic-400-normal.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Cairo";
+  src: url("/fonts/cairo/cairo-arabic-500-normal.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Cairo";
+  src: url("/fonts/cairo/cairo-arabic-600-normal.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Cairo";
+  src: url("/fonts/cairo/cairo-arabic-700-normal.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+
+:root {
+  --apex-phone-width: 390px;
+  --apex-top-height: 74px;
+  --apex-dock-height: 116px;
+  --apex-icon-cadre: 76px;
+  --apex-icon-glyph: 43px;
+  --apex-bg: #f7f3e9;
+  --apex-panel: #fffdf7;
+  --apex-ink: #17231e;
+  --apex-green: #0a6847;
+  --apex-green-dark: #07513a;
+  --apex-gold: #c89b3c;
+  --apex-border: rgba(24, 67, 50, 0.18);
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body:has(.watany-recovery-shell) {
+  margin: 0 !important;
+  background: #e9e5da !important;
+  color: var(--apex-ink) !important;
+  font-family: "Cairo", Tahoma, Arial, sans-serif !important;
+  overflow-x: hidden !important;
+}
+
+.watany-recovery-shell,
+.watany-recovery-shell *,
+.watany-recovery-shell *::before,
+.watany-recovery-shell *::after {
+  box-sizing: border-box !important;
+  font-family: "Cairo", Tahoma, Arial, sans-serif !important;
+}
+
+.watany-recovery-shell {
+  position: relative !important;
+  isolation: isolate !important;
+  display: flex !important;
+  flex-direction: column !important;
+  width: min(var(--apex-phone-width), 100vw) !important;
+  height: min(900px, 100dvh) !important;
+  min-height: min(568px, 100dvh) !important;
+  margin: max(0px, calc((100dvh - min(900px, 100dvh)) / 2)) auto !important;
+  overflow: hidden !important;
+  direction: rtl !important;
+  color: var(--apex-ink) !important;
+  background: var(--apex-bg) !important;
+  border: 1px solid var(--apex-border) !important;
+  border-radius: 24px !important;
+  box-shadow: 0 20px 55px rgba(19, 48, 36, 0.18) !important;
+}
+
+.watany-recovery-topbar {
+  position: relative !important;
+  inset: auto !important;
+  z-index: 30 !important;
+  display: grid !important;
+  grid-template-columns: 48px minmax(0, 1fr) 48px !important;
+  align-items: center !important;
+  flex: 0 0 var(--apex-top-height) !important;
+  width: 100% !important;
+  height: var(--apex-top-height) !important;
+  min-height: var(--apex-top-height) !important;
+  padding: 10px 12px !important;
+ :is([data-watany-recovery-shell="true"], .watany-recovery-shell) > .watany-recovery-bottom > :last-child:is(button, a),
+ :is([data-watany-recovery-shell="true"], .watany-recovery-shell) > .watany-recovery-bottom > :last-child :is(button, a) {
+   grid-column: 1 / -1 !important;
+   grid-row: 1 !important;
+   align-self: center !important;
+   justify-self: stretch !important;
+   display: flex !important;
+   align-items: center !important;
+   justify-content: center !important;
+   gap: 8px !important;
+   height: 40px !important;
+   min-height: 40px !important;
+   margin: 4px 10px 0 !important;
+   padding: 0 16px !important;
+   border-radius: 13px !important;
+   box-sizing: border-box !important;
+   font-size: 14px !important;
+   line-height: 1 !important;
+   white-space: nowrap !important;
+   overflow: hidden !important;
+   text-overflow: ellipsis !important;
+ }
+  background: linear-gradient(180deg, #fffdf7 0%, #f5eddb 100%) !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--apex-border) !important;
+  box-shadow: 0 3px 12px rgba(31, 57, 46, 0.08) !important;
+}
+
+.watany-recovery-logo {
+  grid-column: 1 !important;
+  width: 44px !important;
+  height: 44px !important;
+  max-width: 44px !important;
+  object-fit: contain !important;
+}
+
+.watany-recovery-ticker {
+  grid-column: 2 !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+  color: #264638 !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  text-align: center !important;
+  white-space: nowrap !important;
+  text-overflow: ellipsis !important;
+}
+
+.watany-recovery-menu-button {
+  grid-column: 3 !important;
+  display: grid !important;
+  place-items: center !important;
+  width: 44px !important;
+  height: 44px !important;
+  padding: 0 !important;
+  color: #fff !important;
+  background: var(--apex-green) !important;
+  border: 0 !important;
+  border-radius: 14px !important;
+  font-size: 24px !important;
+  cursor: pointer !important;
+}
+
+.watany-recovery-menu-button .watany-recovery-menu-glyph {
+  display: grid !important;
+  grid-template-rows: repeat(3, 2px) !important;
+  gap: 4px !important;
+  width: 24px !important;
+  height: 16px !important;
+  min-width: 24px !important;
+  min-height: 16px !important;
+}
+
+  background: var(--apex-bg) !important;
+}
+
+.watany-recovery-main > * {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  margin-inline: auto !important;
+}
+
+.watany-recovery-dock {
+  position: relative !important;
+  inset: auto !important;
+  z-index: 35 !important;
+  display: grid !important;
+  grid-template-rows: 48px 68px !important;
+  flex: 0 0 var(--apex-dock-height) !important;
+  width: 100% !important;
+  height: var(--apex-dock-height) !important;
+  min-height: var(--apex-dock-height) !important;
+  background: #fffdf8 !important;
+  border-top: 1px solid var(--apex-border) !important;
+  box-shadow: 0 -5px 16px rgba(25, 53, 42, 0.1) !important;
+}
+
+.watany-recovery-ask {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  width: calc(100% - 20px) !important;
+  height: 40px !important;
+  margin: 4px 10px !important;
+  padding: 0 16px !important;
+  color: #fff !important;
+  background: linear-gradient(135deg, var(--apex-green-dark), var(--apex-green)) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  border-radius: 13px !important;
+  box-shadow: 0 4px 10px rgba(10, 104, 71, 0.2) !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+}
+
+.watany-recovery-bottom {
+  position: static !important;
+  inset: auto !important;
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  width: 100% !important;
+  height: 68px !important;
+  padding: 4px 8px 7px !important;
+  overflow: hidden !important;
+  background: transparent !important;
+  border: 0 !important;
+}
+
+.watany-recovery-bottom > a {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 2px !important;
+  min-width: 0 !important;
+  min-height: 52px !important;
+  padding: 3px 2px !important;
+  color: #365447 !important;
+  text-decoration: none !important;
+  border-radius: 11px !important;
+}
+
+body.watany-recovery-menu-open .watany-recovery-main {
+  width: calc(100% - 280px) !important;
+  max-width: calc(100% - 280px) !important;
+  align-self: flex-start !important;
+  margin-inline-start: auto !important;
+  margin-inline-end: 0 !important;
+}
+
+body.watany-recovery-menu-open .watany-recovery-main > * {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+body.watany-recovery-menu-open .watany-recovery-bottom {
+  width: calc(100% - 280px) !important;
+  margin-inline-start: auto !important;
+  margin-inline-end: 0 !important;
+}
+
+.watany-recovery-bottom > a.active {
+  color: var(--apex-green-dark) !important;
+  background: rgba(10, 104, 71, 0.1) !important;
+}
+
+.watany-recovery-bottom [data-watany-menu-icon] {
+  display: grid !important;
+  place-items: center !important;
+  width: 25px !important;
+  height: 25px !important;
+}
+
+.watany-recovery-bottom svg {
+  width: 24px !important;
+  height: 24px !important;
+}
+
+.watany-recovery-bottom small {
+  display: block !important;
+  width: 100% !important;
+  overflow: hidden !important;
+  font-size: 10px !important;
+  line-height: 1.35 !important;
+  text-align: center !important;
+  white-space: nowrap !important;
+  text-overflow: ellipsis !important;
+}
+.watany-recovery-shell > .watany-recovery-bottom > :last-child:is(button, a),
+.watany-recovery-shell > .watany-recovery-bottom > :last-child :is(button, a),
+[data-watany-recovery-shell="true"] > .watany-recovery-bottom > :last-child:is(button, a),
+[data-watany-recovery-shell="true"] > .watany-recovery-bottom > :last-child :is(button, a) {
+  grid-column: 1 / -1 !important;
+  grid-row: 1 !important;
+  align-self: center !important;
+  justify-self: stretch !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  height: 40px !important;
+  min-height: 40px !important;
+  width: calc(100% - 24px) !important;
+  max-width: calc(100% - 24px) !important;
+  margin: 4px 12px 0 !important;
+  padding: 0 16px !important;
+  border-radius: 13px !important;
+  box-sizing: border-box !important;
+  font-size: 14px !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.watany-recovery-drawer-layer {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 80 !important;
+}
+
+.watany-recovery-drawer-backdrop {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  background: rgba(12, 26, 20, 0.48) !important;
+  border: 0 !important;
+}
+
+.watany-recovery-drawer {
+  position: absolute !important;
+  inset: 0 0 0 auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  width: min(326px, calc(100% - 42px)) !important;
+  max-width: 100% !important;
+  padding: 14px !important;
+  overflow-y: auto !important;
+  background: #fffdf8 !important;
+  box-shadow: -12px 0 30px rgba(13, 34, 25, 0.2) !important;
+}
+
+.watany-recovery-drawer-title {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  margin-bottom: 12px !important;
+}
+
+.watany-recovery-drawer nav {
+  display: grid !important;
+  gap: 7px !important;
+}
+
+.watany-recovery-drawer nav > a,
+.watany-recovery-drawer nav > button,
+.watany-recovery-login-link {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  width: 100% !important;
+  min-height: 44px !important;
+  padding: 8px 10px !important;
+  color: var(--apex-ink) !important;
+  background: #fff !important;
+  border: 1px solid var(--apex-border) !important;
+  border-radius: 12px !important;
+  text-decoration: none !important;
+}
+
+.watany-recovery-login-link {
+  margin-top: 12px !important;
+  justify-content: center !important;
+  color: #fff !important;
+  background: var(--apex-green) !important;
+}
+
+.watany-recovery-chat {
+  position: absolute !important;
+  right: 10px !important;
+  bottom: calc(var(--apex-dock-height) + 8px) !important;
+  left: 10px !important;
+  z-index: 70 !important;
+  max-height: min(320px, calc(100% - var(--apex-top-height) - var(--apex-dock-height) - 24px)) !important;
+  padding: 14px !important;
+  overflow-y: auto !important;
+  background: #fff !important;
+  border: 1px solid var(--apex-border) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 12px 36px rgba(13, 35, 25, 0.24) !important;
+}
+
+.watany-recovery-chat-head {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+}
+
+.watany-drawer-page,
+.watany-drawer-phone,
+.sa-home-icons,
+.watany-icon-grid,
+.sa-home-icons__grid {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+}
+
+.watany-drawer-page,
+.watany-drawer-phone {
+  min-height: 0 !important;
+  padding: 0 !important;
+  overflow: visible !important;
+  background: transparent !important;
+}
+
+.watany-icon-grid,
+.sa-home-icons__grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  grid-auto-rows: minmax(108px, auto) !important;
+  gap: 12px 8px !important;
+  align-items: start !important;
+}
+
+.sa-home-icons {
+  display: block !important;
+  margin: 0 0 12px !important;
+}
+
+.watany-icon-grid > *,
+.sa-home-icons__grid > * {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+
+.watany-recovery-shell .watany-app-icon {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 6px !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 104px !important;
+  padding: 0 !important;
+  color: var(--apex-ink) !important;
+  background: transparent !important;
+  border: 0 !important;
+  text-align: center !important;
+  text-decoration: none !important;
+}
+
+.watany-recovery-shell .watany-app-icon__tile {
+  position: relative !important;
+  display: grid !important;
+  place-items: center !important;
+  flex: 0 0 var(--apex-icon-cadre) !important;
+  width: var(--apex-icon-cadre) !important;
+  height: var(--apex-icon-cadre) !important;
+  min-width: var(--apex-icon-cadre) !important;
+  min-height: var(--apex-icon-cadre) !important;
+  max-width: var(--apex-icon-cadre) !important;
+  max-height: var(--apex-icon-cadre) !important;
+  overflow: hidden !important;
+  background: linear-gradient(150deg, #fff 0%, #f4ead4 100%) !important;
+  border: 1px solid rgba(184, 139, 51, 0.38) !important;
+  border-radius: 19px !important;
+  box-shadow: 0 7px 16px rgba(26, 61, 46, 0.12) !important;
+}
+
+.watany-recovery-shell .watany-app-icon__glyph {
+  position: relative !important;
+  inset: auto !important;
+  display: grid !important;
+  place-items: center !important;
+  width: var(--apex-icon-glyph) !important;
+  height: var(--apex-icon-glyph) !important;
+  min-width: var(--apex-icon-glyph) !important;
+  min-height: var(--apex-icon-glyph) !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  color: var(--apex-green-dark) !important;
+  font-size: 38px !important;
+  line-height: 1 !important;
+}
+
+.watany-recovery-shell .watany-app-icon__glyph svg,
+.watany-recovery-shell .watany-app-icon__glyph img {
+  width: var(--apex-icon-glyph) !important;
+  height: var(--apex-icon-glyph) !important;
+  max-width: var(--apex-icon-glyph) !important;
+  max-height: var(--apex-icon-glyph) !important;
+  object-fit: contain !important;
+}
+
+.watany-recovery-shell .watany-app-icon__label {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  min-height: 32px !important;
+  max-height: none !important;
+  overflow: visible !important;
+  color: #1a3027 !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  line-height: 1.45 !important;
+  text-align: center !important;
+  white-space: normal !important;
+  word-break: normal !important;
+  overflow-wrap: normal !important;
+  writing-mode: horizontal-tb !important;
+  -webkit-line-clamp: unset !important;
+  -webkit-box-orient: initial !important;
+}
+
+.sa-home-icons .watany-app-icon[data-sa-feature="latest"] .watany-app-icon__tile::after {
+  content: attr(data-sign) !important;
+  position: absolute !important;
+  inset: 5px 5px auto auto !important;
+  transform: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 0 !important;
+  min-height: 18px !important;
+  padding: 3px 6px !important;
+  color: #fff !important;
+  background: #b61d2f !important;
+  border-radius: 999px !important;
+  font-size: 9px !important;
+  font-weight: 800 !important;
+  line-height: 1 !important;
+}
+
+.watany-route-activation-panel {
+  display: grid !important;
+  gap: 10px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+}
+
+.watany-route-activation-card {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  padding: 12px !important;
+  background: var(--apex-panel) !important;
+  border: 1px solid var(--apex-border) !important;
+  border-radius: 14px !important;
+}
+
+.watany-recovery-shell .mj-mobile-page,
+.watany-recovery-shell .mj-page,
+.watany-recovery-shell [class*="mj-"] {
+  max-width: 100% !important;
+  min-width: 0 !important;
+}
+
+.watany-recovery-shell .mj-mobile-page,
+.watany-recovery-shell .mj-page {
+  width: 100% !important;
+  margin: 0 !important;
+  padding-inline: 0 !important;
+  overflow: visible !important;
+}
+
+.watany-recovery-shell .mj-shortcut-grid,
+.watany-recovery-shell .mj-category-grid,
+.watany-recovery-shell .mj-status-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 9px !important;
+}
+
+.watany-recovery-shell .mj-sticky-icon-nav,
+.watany-recovery-shell .mj-filter-row {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  gap: 7px !important;
+  max-width: 100% !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  scrollbar-width: thin !important;
+}
+
+.watany-recovery-shell .mj-sticky-icon-nav > *,
+.watany-recovery-shell .mj-filter-row > * {
+  flex: 0 0 auto !important;
+}
+
+.watany-recovery-shell [class*="mj-"] h1,
+.watany-recovery-shell [class*="mj-"] h2,
+.watany-recovery-shell [class*="mj-"] h3,
+.watany-recovery-shell [class*="mj-"] p,
+.watany-recovery-shell [class*="mj-"] span,
+.watany-recovery-shell [class*="mj-"] a,
+.watany-recovery-shell [class*="mj-"] button {
+  writing-mode: horizontal-tb !important;
+  word-break: normal !important;
+  overflow-wrap: break-word !important;
+}
+
+.watany-recovery-shell .auth-page,
+.watany-recovery-shell .motany-login-redesign,
+.watany-recovery-shell .motany-login-screen {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 4px 0 16px !important;
+  overflow: visible !important;
+  background: transparent !important;
+}
+
+.watany-recovery-shell .auth-card,
+.watany-recovery-shell .motany-login-card {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  height: auto !important;
+  margin: 0 auto !important;
+  padding: 18px 16px !important;
+  overflow: visible !important;
+  background: #fff !important;
+  border: 1px solid var(--apex-border) !important;
+  border-radius: 18px !important;
+  box-shadow: 0 8px 24px rgba(23, 53, 41, 0.1) !important;
+}
+
+.watany-recovery-shell .auth-field,
+.watany-recovery-shell .motany-login-input-shell,
+.watany-recovery-shell .auth-field input,
+.watany-recovery-shell .motany-login-input-shell input {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+}
+
+.watany-recovery-shell .sc-page,
+.watany-recovery-shell .sc-card,
+.watany-recovery-shell .sc-calc-launcher,
+.watany-recovery-shell .sc-inline-results {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  height: auto !important;
+  overflow: visible !important;
+}
+
+.watany-recovery-shell .screen-loader {
+  min-height: 120px !important;
+}
+
+.watany-recovery-shell .procedures-browser,
+.watany-recovery-shell .watany-procedure-compact,
+.watany-recovery-shell .watany-procedure-compact__list {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+.watany-recovery-shell .procedures-browser__items,
+.watany-recovery-shell .procedures-browser__item {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+  overflow-x: visible !important;
+  overflow-y: visible !important;
+}
+
+.watany-recovery-shell .procedures-browser__items {
+  padding-bottom: var(--apex-content-bottom-clearance) !important;
+  scroll-padding-bottom: var(--apex-content-bottom-clearance) !important;
+}
+
+.watany-recovery-shell .procedures-browser__item,
+.watany-recovery-shell .watany-procedure-card {
+  padding-bottom: var(--apex-content-bottom-clearance) !important;
+  scroll-padding-bottom: var(--apex-content-bottom-clearance) !important;
+}
+
+.watany-recovery-shell .watany-procedure-card,
+.watany-recovery-shell .mof-viewer__entry,
+.watany-recovery-shell [data-watany-procedure-card="true"] {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow: visible !important;
+  writing-mode: horizontal-tb !important;
+  word-break: normal !important;
+  overflow-wrap: break-word !important;
+}
+
+.watany-recovery-shell .watany-procedure-card__summary,
+.watany-recovery-shell .watany-procedure-card__actions {
+  max-width: 100% !important;
+  min-width: 0 !important;
+}
+
+.watany-recovery-shell .watany-procedure-card__details {
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+.watany-recovery-shell .watany-procedure-card__body h2,
+.watany-recovery-shell .watany-procedure-card__body p,
+.watany-recovery-shell .mj-shortcut-card__label,
+.watany-recovery-shell .mj-shortcut-card__desc {
+  display: block !important;
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  white-space: normal !important;
+  -webkit-line-clamp: unset !important;
+  -webkit-box-orient: initial !important;
+}
+
+.watany-recovery-shell button,
+.watany-recovery-shell a,
+.watany-recovery-shell input,
+.watany-recovery-shell select,
+.watany-recovery-shell textarea {
+  touch-action: manipulation !important;
+}
+
+.watany-recovery-shell :focus-visible {
+  outline: 3px solid rgba(200, 155, 60, 0.78) !important;
+  outline-offset: 2px !important;
+}
+
+@media (max-width: 430px) {
+  .watany-recovery-shell {
+    width: 100vw !important;
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+    margin: 0 !important;
+    border-inline: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .watany-recovery-main {
+    padding: 10px !important;
+  }
+}
+
+@media (min-width: 431px) {
+  .watany-recovery-shell {
+    width: var(--apex-phone-width) !important;
+  }
+}
+
+.watany-recovery-shell .mj-mobile-landing {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  height: auto !important;
+  min-height: 0 !important;
+  padding: 8px !important;
+  overflow: visible !important;
+}
+
+.watany-recovery-shell .mj-shortcut-grid,
+.watany-recovery-shell .mj-category-grid,
+.watany-recovery-shell .mj-status-strip {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  align-items: stretch !important;
+  gap: 9px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow: visible !important;
+}
+
+.watany-recovery-shell .mj-feed-sections,
+.watany-recovery-shell .mj-feed-cards,
+.watany-recovery-shell .mj-job-listings {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  gap: 10px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow: visible !important;
+}
+
+.watany-recovery-shell .mj-shortcut-card,
+.watany-recovery-shell .mj-category-pill,
+.watany-recovery-shell .mj-status-card,
+.watany-recovery-shell .mj-feed-card,
+.watany-recovery-shell .mj-job-card,
+.watany-recovery-shell .mj-feed-section,
+.watany-recovery-shell .mj-job-listings-section {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow: visible !important;
+  white-space: normal !important;
+}
+
+.watany-recovery-shell .mj-shortcut-card__icon,
+.watany-recovery-shell .mj-category-pill > span:first-child,
+.watany-recovery-shell .mj-status-card > span:first-child,
+.watany-recovery-shell .mj-sticky-icon-nav__icon,
+.watany-recovery-shell .mj-filter-chip > span:first-child {
+  display: grid !important;
+  place-items: center !important;
+  width: 42px !important;
+  height: 42px !important;
+  min-width: 42px !important;
+  overflow: visible !important;
+  color: var(--apex-green) !important;
+}
+
+.watany-recovery-shell .mj-shortcut-card__icon svg,
+.watany-recovery-shell .mj-category-pill > span:first-child svg,
+.watany-recovery-shell .mj-status-card > span:first-child svg,
+.watany-recovery-shell .mj-sticky-icon-nav__icon svg,
+.watany-recovery-shell .mj-filter-chip > span:first-child svg {
+  display: block !important;
+  width: 30px !important;
+  height: 30px !important;
+}
+
+.watany-recovery-shell .mj-job-card__head,
+.watany-recovery-shell .mj-job-card__actions,
+.watany-recovery-shell .mj-job-card__actions-row,
+.watany-recovery-shell .mj-inline-sheet__actions {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  gap: 8px !important;
+  max-width: 100% !important;
+  overflow: visible !important;
+}
+
+.watany-recovery-shell [data-jobs-error-state="true"] {
+  display: grid !important;
+  gap: 8px !important;
+  width: 100% !important;
+  min-height: 96px !important;
+  padding: 12px !important;
+  overflow: visible !important;
+}
+
+.watany-recovery-shell [data-jobs-error-state="true"] button {
+  display: inline-flex !important;
+  min-height: 42px !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.watany-recovery-shell .auth-page[data-watany-register-page="true"] .auth-card > img,
+.watany-recovery-shell .auth-page[data-watany-register-page="true"] .auth-card h1,
+.watany-recovery-shell .auth-page[data-watany-register-page="true"] .auth-subtitle,
+.watany-recovery-shell .auth-page[data-watany-register-page="true"] .auth-field,
+.watany-recovery-shell .auth-page[data-watany-register-page="true"] .auth-field label,
+.watany-recovery-shell .auth-page[data-watany-register-page="true"] .auth-btn,
+.watany-recovery-shell .auth-page[data-watany-register-page="true"] .auth-link {
+  visibility: visible !important;
+  opacity: 1 !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+.watany-recovery-shell .auth-page[data-watany-register-page="true"] .auth-card > img,
+.watany-recovery-shell .auth-page[data-watany-register-page="true"] .auth-card h1,
+.watany-recovery-shell .auth-page[data-watany-register-page="true"] .auth-subtitle,
+.watany-recovery-shell .auth-page[data-watany-register-page="true"] .auth-field,
+.watany-recovery-shell .auth-page[data-watany-register-page="true"] .auth-field label,
+.watany-recovery-shell .auth-page[data-watany-register-page="true"] .auth-link {
+  display: block !important;
+}
+
+.watany-recovery-shell .auth-page[data-watany-register-page="true"] .auth-card form {
+  display: grid !important;
+  gap: 9px !important;
+}
+
+.watany-recovery-shell .motany-login-google {
+  display: grid !important;
+}
+
+.watany-recovery-shell .motany-login-guest,
+.watany-recovery-shell .motany-login-register {
+  display: flex !important;
+}
+
+.watany-recovery-shell .motany-login-forgot {
+  display: block !important;
+}
+
+/* APEX_V119022_FINAL_CASCADE_END */

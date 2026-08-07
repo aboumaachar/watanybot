@@ -1,0 +1,38 @@
+{
+  "repo_root": "c:\\xampp\\htdocs\\projectx\\watanbot",
+  "chat_handlers": [
+    {
+      "path": "apps/api/routers/public.py",
+      "function": "chat_ask",
+      "decorator": "@router.post(\"/chat/ask\")"
+    }
+  ],
+  "kb_query_modules": [
+    "apps/api/kb_sqlite.py"
+  ],
+  "whatsapp_webhook": [],
+  "existing_endpoints": {
+    "chat": [
+      "apps/api/routers/public.py:@router.post(\"/chat/ask\")"
+    ],
+    "procedures_search": [
+      "apps/api/routers/kb_v3.py:@router.get(\"/procedures/search\")"
+    ],
+    "procedures_detail": [
+      "apps/api/routers/kb_v3.py:@router.get(\"/procedures/{tx_no}\")"
+    ],
+    "law_search": [
+      "apps/api/routers/kb_v3.py:@router.get(\"/law/search\")"
+    ],
+    "law_detail": [
+      "apps/api/routers/kb_v3.py:@router.get(\"/law/{article_no}\")"
+    ]
+  },
+  "endpoints_missing": {
+    "procedures_detail": false,
+    "law_detail": false
+  },
+  "notes": [
+    "WhatsApp webhook handler not present in repo; add /whatsapp/webhook."
+  ]
+}

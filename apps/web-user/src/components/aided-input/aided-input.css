@@ -1,0 +1,32 @@
+.aided-field,
+.aided-address,
+.aided-vehicle,
+.aided-vehicle-features,
+.aided-currency-amount {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.aided-field__label {
+  font-weight: 700;
+}
+
+.aided-field input,
+.aided-field select,
+.aided-address input,
+.aided-address select,
+.aided-currency-amount input,
+.aided-currency-amount select {
+  min-height: 44px;
+  border-radius: 14px;
+  border: 1px solid rgba(15, 23, 42, 0.16);
+  padding: 0.65rem 0.8rem;
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.aided-check {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 40px;
+}

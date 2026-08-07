@@ -1,0 +1,217 @@
+/* Watany UI Platform V1 - canonical mobile-first theme */
+:root {
+  --w-green-950: #06291f;
+  --w-green-900: #0b3f2f;
+  --w-green-800: #12543d;
+  --w-green-700: #176346;
+  --w-gold-700: #9a650d;
+  --w-gold-600: #c58a1a;
+  --w-gold-500: #d6a72a;
+  --w-gold-300: #f0d98a;
+  --w-ivory-50: #fffdf7;
+  --w-ivory-100: #fff8e6;
+  --w-ivory-200: #f7edcf;
+  --w-text: #10261d;
+  --w-muted: #6e6659;
+  --w-radius-card: 26px;
+  --w-radius-icon: 24px;
+  --w-shadow-soft: 0 18px 38px rgba(34, 52, 38, 0.16);
+  --w-shadow-gold: 0 0 0 2px rgba(214, 167, 42, 0.22), 0 16px 34px rgba(198, 139, 22, 0.18);
+  --w-phone-max: 430px;
+}
+
+html, body, #root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  direction: rtl;
+  background:
+    radial-gradient(circle at 50% -8%, rgba(240, 217, 138, 0.22), transparent 32%),
+    linear-gradient(180deg, var(--w-ivory-50), #f4f7fb);
+  color: var(--w-text);
+  font-family: var(--watany-font-family-ui, "Cairo", "Tajawal", "Segoe UI", Arial, sans-serif);
+}
+
+.watany-phone-shell {
+  width: min(100vw, var(--w-phone-max));
+  min-height: 100vh;
+  margin: 0 auto;
+  background: linear-gradient(180deg, #fffdf8, #fff8e6);
+  box-shadow: 0 0 0 1px rgba(154, 101, 13, 0.12), 0 30px 80px rgba(0, 0, 0, 0.12);
+  overflow-x: hidden;
+}
+
+.watany-platform-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  display: grid;
+  grid-template-columns: 68px 1fr 52px;
+  align-items: center;
+  gap: 10px;
+  min-height: 76px;
+  padding: 8px 12px;
+  background: linear-gradient(180deg, #fffdf8, var(--w-ivory-100));
+  border-bottom: 1px solid rgba(214, 167, 42, 0.38);
+  box-shadow: 0 12px 28px rgba(6, 41, 31, 0.12);
+}
+
+.watany-platform-logo {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  display: block;
+}
+
+.watany-platform-ticker {
+  min-width: 0;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  border-radius: 999px;
+  border: 1px solid rgba(214, 167, 42, 0.45);
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.95);
+  color: var(--w-green-900);
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.watany-platform-ticker-track {
+  display: inline-flex;
+  gap: 22px;
+  width: max-content;
+  animation: watany-platform-ticker 24s linear infinite;
+}
+
+@keyframes watany-platform-ticker {
+  from { transform: translateX(-10%); }
+  to { transform: translateX(55%); }
+}
+
+.watany-platform-sign-button {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--w-green-900);
+  width: 48px;
+  height: 48px;
+  display: inline-grid;
+  place-items: center;
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.watany-platform-section {
+  padding: 18px 16px 110px;
+}
+
+.watany-platform-heading {
+  margin: 10px auto 18px;
+  text-align: center;
+  color: var(--w-green-950);
+  font-size: 22px;
+  font-weight: 900;
+}
+
+.watany-platform-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px 12px;
+}
+
+.watany-feature-tile {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: var(--w-green-950);
+  font-weight: 900;
+}
+
+.watany-feature-icon-frame {
+  width: 86px;
+  height: 86px;
+  border-radius: var(--w-radius-icon);
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(circle at 50% 18%, rgba(240, 217, 138, 0.38), transparent 36%),
+    linear-gradient(180deg, #fffdf8, #f8edd0 100%);
+  border: 3px solid rgba(214, 167, 42, 0.78);
+  box-shadow:
+    inset 0 0 0 2px rgba(255,255,255,0.82),
+    inset 0 0 0 5px rgba(10, 63, 47, 0.06),
+    0 12px 24px rgba(34, 52, 38, 0.14),
+    0 0 16px rgba(214, 167, 42, 0.20);
+}
+
+.watany-feature-icon-frame svg {
+  width: 54px;
+  height: 54px;
+  display: block;
+  filter: drop-shadow(0 8px 10px rgba(154, 101, 13, 0.25));
+}
+
+.watany-feature-title {
+  font-size: 15px;
+  line-height: 1.15;
+  text-align: center;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.9);
+}
+
+.watany-platform-bottom-bar {
+  position: fixed;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  z-index: 50;
+  width: min(100vw, var(--w-phone-max));
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 2px;
+  padding: 8px 8px calc(8px + env(safe-area-inset-bottom));
+  background: rgba(255, 253, 248, 0.96);
+  border-top: 1px solid rgba(214, 167, 42, 0.42);
+  box-shadow: 0 -14px 34px rgba(6, 41, 31, 0.14);
+  backdrop-filter: blur(12px);
+}
+
+.watany-platform-bottom-item {
+  display: grid;
+  justify-items: center;
+  gap: 3px;
+  border: 0;
+  background: transparent;
+  color: var(--w-green-900);
+  font-weight: 800;
+  font-size: 11px;
+}
+
+.watany-platform-bottom-item svg {
+  width: 24px;
+  height: 24px;
+}
+
+@media (min-width: 700px) {
+  body {
+    background:
+      radial-gradient(circle at 50% -6%, rgba(240, 217, 138, 0.18), transparent 30%),
+      #eef3f8;
+  }
+
+  .watany-phone-shell {
+    margin-top: 16px;
+    margin-bottom: 16px;
+    border-radius: 34px;
+    min-height: calc(100vh - 32px);
+  }
+
+  .watany-platform-bottom-bar {
+    border-radius: 24px 24px 0 0;
+  }
+}

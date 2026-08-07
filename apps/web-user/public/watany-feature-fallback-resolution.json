@@ -1,0 +1,13 @@
+{
+    "FeatureId":  "all-features",
+    "Label":  "all-features",
+    "Route":  "/watany-all-features.html",
+    "PreviousClassification":  "FALLBACK_ONLY",
+    "PreviousFallbackDeclaration":  "FALLBACK_ONLY_REAL_ROUTE_REQUIRED",
+    "NewClassification":  "SYSTEM_CATALOG_PAGE",
+    "PageRouteDeclaration":  "SYSTEM_CATALOG_PAGE_ROUTE_PROVEN",
+    "ApiDeclaration":  "API_NOT_APPLICABLE_SYSTEM_CATALOG",
+    "ModuleCompletionDeclaration":  "SYSTEM_CATALOG_FOUNDATION_COMPLETE_NOT_BUSINESS_FEATURE",
+    "RequiredNextAction":  "NONE",
+    "Decision":  "KEEP_AS_SYSTEM_CATALOG_UTILITY"
+}

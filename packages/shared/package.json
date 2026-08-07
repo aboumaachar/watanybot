@@ -1,0 +1,22 @@
+{
+  "name": "@watany/shared",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./arabic": "./src/arabic.ts",
+    "./debug-client": "./src/debug-client.ts",
+    "./features": "./src/features.ts",
+    "./procedures-view-mode": "./src/procedures-view-mode.ts",
+    "./reliable-websocket": "./src/reliable-websocket.ts",
+    "./web-user-settings": "./src/web-user-settings.ts",
+    "./worldcup-official-data": "./src/worldcup-official-data.ts"
+  },
+  "scripts": {
+    "lint": "node -e \"console.log('lint not configured')\"",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3"
+  }
+}

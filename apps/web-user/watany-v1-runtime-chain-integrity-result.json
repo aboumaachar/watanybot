@@ -1,0 +1,231 @@
+{
+  "ok": false,
+  "baseUrl": "http://127.0.0.1:5174",
+  "httpStatus": 200,
+  "pageUrl": "http://127.0.0.1:5174/",
+  "title": "موطني — مساعد المحاربين القدامى",
+  "scriptCount": 7,
+  "uniqueScriptCount": 7,
+  "duplicates": [],
+  "missingRequired": [
+    "watany-v1-tools-schools-public-access-v144.js",
+    "watany-v1-jobs-market-public-access-v150.js",
+    "watany-v1-going-now-feed-v160.js",
+    "watany-v1-procedures-source-polish-v190.js",
+    "watany-v1-school-forms-universal-viewer-bridge-v185.js",
+    "watany-v1-clean-settings-single-template-v190.js",
+    "watany-v1-procedures-title-source-grouping-polish-v200.js",
+    "watany-v1-procedures-title-inline-size-closeout-v202.js"
+  ],
+  "runtimeFlags": {
+    "popupBase": true,
+    "popupHeader": true,
+    "popupPortal": true,
+    "homeHeight": true,
+    "settingsSingle": false,
+    "proceduresGrouping": false,
+    "proceduresTitle": false
+  },
+  "chainRows": [
+    {
+      "name": "popup-chain",
+      "files": [
+        "watany-v1-full-width-snapped-popup-consistency-v210.js",
+        "watany-v1-full-width-snapped-popup-header-snap-closeout-v211.js",
+        "watany-v1-full-width-snapped-popup-body-portal-closeout-v212.js"
+      ],
+      "positions": [
+        1,
+        2,
+        3
+      ],
+      "ok": true
+    }
+  ],
+  "assetRows": [
+    {
+      "file": "watany-v1-tools-schools-public-access-v144.js",
+      "role": "tools-schools",
+      "assetUrl": "http://127.0.0.1:5174/watany-v1-tools-schools-public-access-v144.js",
+      "status": 200,
+      "contentType": "text/javascript",
+      "bytes": 13943,
+      "htmlFallback": false,
+      "marker": "openSchoolFormItem",
+      "markerFound": true,
+      "ok": true,
+      "error": ""
+    },
+    {
+      "file": "watany-v1-jobs-market-public-access-v150.js",
+      "role": "jobs-market",
+      "assetUrl": "http://127.0.0.1:5174/watany-v1-jobs-market-public-access-v150.js",
+      "status": 200,
+      "contentType": "text/javascript",
+      "bytes": 7379,
+      "htmlFallback": false,
+      "marker": "",
+      "markerFound": true,
+      "ok": true,
+      "error": ""
+    },
+    {
+      "file": "watany-v1-going-now-feed-v160.js",
+      "role": "going-now",
+      "assetUrl": "http://127.0.0.1:5174/watany-v1-going-now-feed-v160.js",
+      "status": 200,
+      "contentType": "text/javascript",
+      "bytes": 7456,
+      "htmlFallback": false,
+      "marker": "",
+      "markerFound": true,
+      "ok": true,
+      "error": ""
+    },
+    {
+      "file": "watany-v1-world-cup-nine-icons-v170.js",
+      "role": "world-cup",
+      "assetUrl": "http://127.0.0.1:5174/watany-v1-world-cup-nine-icons-v170.js",
+      "status": 200,
+      "contentType": "text/javascript",
+      "bytes": 11531,
+      "htmlFallback": false,
+      "marker": "",
+      "markerFound": true,
+      "ok": true,
+      "error": ""
+    },
+    {
+      "file": "watany-v1-universal-form-viewer-v182.js",
+      "role": "form-viewer",
+      "assetUrl": "http://127.0.0.1:5174/watany-v1-universal-form-viewer-v182.js",
+      "status": 200,
+      "contentType": "text/javascript",
+      "bytes": 13919,
+      "htmlFallback": false,
+      "marker": "watanyUniversalFormViewer",
+      "markerFound": true,
+      "ok": true,
+      "error": ""
+    },
+    {
+      "file": "watany-v1-procedures-source-polish-v190.js",
+      "role": "procedures-source",
+      "assetUrl": "http://127.0.0.1:5174/watany-v1-procedures-source-polish-v190.js",
+      "status": 200,
+      "contentType": "text/javascript",
+      "bytes": 11316,
+      "htmlFallback": false,
+      "marker": "",
+      "markerFound": true,
+      "ok": true,
+      "error": ""
+    },
+    {
+      "file": "watany-v1-school-forms-universal-viewer-bridge-v185.js",
+      "role": "school-bridge",
+      "assetUrl": "http://127.0.0.1:5174/watany-v1-school-forms-universal-viewer-bridge-v185.js",
+      "status": 200,
+      "contentType": "text/javascript",
+      "bytes": 10860,
+      "htmlFallback": false,
+      "marker": "watanyV1OpenSchoolAidFormUniversal",
+      "markerFound": true,
+      "ok": true,
+      "error": ""
+    },
+    {
+      "file": "watany-v1-clean-settings-single-template-v190.js",
+      "role": "settings-single",
+      "assetUrl": "http://127.0.0.1:5174/watany-v1-clean-settings-single-template-v190.js",
+      "status": 200,
+      "contentType": "text/javascript",
+      "bytes": 9966,
+      "htmlFallback": false,
+      "marker": "watanyV1CleanSettingsSingleTemplateReady",
+      "markerFound": true,
+      "ok": true,
+      "error": ""
+    },
+    {
+      "file": "watany-v1-procedures-title-source-grouping-polish-v200.js",
+      "role": "procedures-grouping",
+      "assetUrl": "http://127.0.0.1:5174/watany-v1-procedures-title-source-grouping-polish-v200.js",
+      "status": 200,
+      "contentType": "text/javascript",
+      "bytes": 10228,
+      "htmlFallback": false,
+      "marker": "watanyV1ProceduresSourceGroupingPolishReady",
+      "markerFound": true,
+      "ok": true,
+      "error": ""
+    },
+    {
+      "file": "watany-v1-procedures-title-inline-size-closeout-v202.js",
+      "role": "procedures-title",
+      "assetUrl": "http://127.0.0.1:5174/watany-v1-procedures-title-inline-size-closeout-v202.js",
+      "status": 200,
+      "contentType": "text/javascript",
+      "bytes": 1444,
+      "htmlFallback": false,
+      "marker": "watanyV1ProceduresTitleSizeCloseoutReady",
+      "markerFound": true,
+      "ok": true,
+      "error": ""
+    },
+    {
+      "file": "watany-v1-full-width-snapped-popup-consistency-v210.js",
+      "role": "popup-base",
+      "assetUrl": "http://127.0.0.1:5174/watany-v1-full-width-snapped-popup-consistency-v210.js",
+      "status": 200,
+      "contentType": "text/javascript",
+      "bytes": 9760,
+      "htmlFallback": false,
+      "marker": "watanyV1SnappedPopupConsistencyReady",
+      "markerFound": true,
+      "ok": true,
+      "error": ""
+    },
+    {
+      "file": "watany-v1-full-width-snapped-popup-header-snap-closeout-v211.js",
+      "role": "popup-header",
+      "assetUrl": "http://127.0.0.1:5174/watany-v1-full-width-snapped-popup-header-snap-closeout-v211.js",
+      "status": 200,
+      "contentType": "text/javascript",
+      "bytes": 8071,
+      "htmlFallback": false,
+      "marker": "watanyV1SnappedPopupHeaderSnapCloseoutReady",
+      "markerFound": true,
+      "ok": true,
+      "error": ""
+    },
+    {
+      "file": "watany-v1-full-width-snapped-popup-body-portal-closeout-v212.js",
+      "role": "popup-portal",
+      "assetUrl": "http://127.0.0.1:5174/watany-v1-full-width-snapped-popup-body-portal-closeout-v212.js",
+      "status": 200,
+      "contentType": "text/javascript",
+      "bytes": 9693,
+      "htmlFallback": false,
+      "marker": "watanyV1SnappedPopupBodyPortalCloseoutReady",
+      "markerFound": true,
+      "ok": true,
+      "error": ""
+    },
+    {
+      "file": "watany-v1-home-height-published-icons-closeout-v220.js",
+      "role": "home-height",
+      "assetUrl": "http://127.0.0.1:5174/watany-v1-home-height-published-icons-closeout-v220.js",
+      "status": 200,
+      "contentType": "text/javascript",
+      "bytes": 10346,
+      "htmlFallback": false,
+      "marker": "watanyV1HomeHeightPublishedIconsCloseoutReady",
+      "markerFound": true,
+      "ok": true,
+      "error": ""
+    }
+  ],
+  "failingAssets": [],
+  "failingChains": []
+}

@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "11.0-ps1",
+  "generatedUtc": "2026-07-17T16:29:06.662083+00:00",
+  "path": "/mnt/data/run_native_lifecycle_validation_v1.ps1",
+  "intendedRepositoryPath": "C:\\xampp\\htdocs\\projectx\\watanybot\\scripts\\run_native_lifecycle_validation_v1.ps1",
+  "sizeBytes": 78266,
+  "sha256": "daa5e4493bb3992fb24e1f21482db18d9996c774983573b73f02250bfa0c617b",
+  "asciiOnly": true,
+  "utf8Bom": false,
+  "lineEnding": "CRLF",
+  "containsExpandableHereString": false,
+  "containsSingleQuotedHereString": false,
+  "containsLASTEXITCODEVariable": false,
+  "containsRawArabic": false,
+  "lightweightDelimiterBalance": true,
+  "lightweightDelimiterBalanceDetail": {
+    "stack": [],
+    "in_single": false,
+    "in_double": false
+  },
+  "windowsPowerShellParserStatus": "UNVERIFIED_NOT_AVAILABLE_IN_GENERATION_ENVIRONMENT",
+  "runtimeStatus": "NOT_EXECUTED",
+  "expectedRuntime": "Windows PowerShell 5.1",
+  "defaultProjectRoot": "C:\\xampp\\htdocs\\projectx\\watanybot",
+  "defaultBlockedExitCode": 97,
+  "successToken": "APEX_WATANYBOT_V3_DEADLOCK_ESCAPE_NATIVE_LIFECYCLE_NODE20_SALARY_LAYOUT_FEATURE_CLOSURE_COMPLETED",
+  "blockedToken": "APEX_WATANYBOT_V3_DEADLOCK_ESCAPE_NATIVE_LIFECYCLE_NODE20_SALARY_LAYOUT_FEATURE_CLOSURE_BLOCKED",
+  "notes": [
+    "The script is ASCII-only and BOM-free.",
+    "No PowerShell runtime exists in the artifact generation container, so parser and runtime PASS are not claimed.",
+    "The script performs its own PS5.1 parser gate before executing runtime phases.",
+    "The script does not run Git reset, clean, checkout, restore, stash, commit, merge, or rebase.",
+    "The script returns BLOCKED exit code 97 when full salary, visual, or feature parity remains unproven."
+  ]
+}

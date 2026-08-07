@@ -1,0 +1,30 @@
+{
+  "updated_at": "2026-02-24T16:39:51.198003Z",
+  "templates_lb": [
+    {
+      "pattern": "إيمتى القبض اليوم؟",
+      "route": "mof_pension_payments"
+    },
+    {
+      "pattern": "صار في تأخير بالمعاش؟",
+      "route": "mof_pension_payments"
+    },
+    {
+      "pattern": "شو آخر مهلة للتقديم؟",
+      "route": "deadlines_and_circulars"
+    },
+    {
+      "pattern": "مساعدات المدارس إمتى؟",
+      "route": "education_benefits"
+    },
+    {
+      "pattern": "في تعميم جديد؟",
+      "route": "deadlines_and_circulars"
+    },
+    {
+      "pattern": "في زيادة جديدة؟",
+      "route": "salary_engine"
+    }
+  ],
+  "notes_lb": "هيدي قوالب. النظام بيستخدمها ليعرف spike ويقترح broadcast."
+}

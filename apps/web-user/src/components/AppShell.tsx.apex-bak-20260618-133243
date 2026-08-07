@@ -1,0 +1,641 @@
+import WatanyMobileShell from "./layouts/WatanyMobileShell";
+import { lazy, Suspense, useEffect, useMemo, useRef, useState, useCallback } from "react";
+import { Routes, Route, useNavigate, Navigate, useLocation } from "react-router-dom";
+import { useApp } from "../store/app";
+import { useFeatureFlags } from "../store/features";
+import type { FeatureId } from "../store/features";
+import type { ChatMessage } from "../types/domain";
+import { api } from "../lib/api";
+import { TAB_ROOT_MODES, activeTabFromMode, isTabMode } from "./bottom-tab-model";
+import { PopupModal } from "./PopupModal";
+import { ScreenHeader } from "./ScreenHeader";
+import { CommunityScreen } from "./CommunityScreen";
+import WorldCupPage from "../pages/WorldCupPage";
+import { DirectorySheet } from "./sheets/DirectorySheet";
+import { PwaInstallController } from "./PwaInstallController";
+import StickyHybridChatLauncher from "./chat/StickyHybridChatLauncher";
+import GlobalFeatureNav from "./GlobalFeatureNav";
+import PublicRuntimeLayoutGuard from "./PublicRuntimeLayoutGuard";
+import PublicRuntimeScriptLoader from "./PublicRuntimeScriptLoader";
+import { useCurrentMode, useNavigateMode } from "../lib/routes";
+import { resolveFeatureGate } from "../lib/feature-gates";
+import { installSameWindowNavigationPolicy } from "../utils/windowNavigationPolicy";
+import KoudamaFeatureIcon from "./koudama-icons/KoudamaFeatureIcon";
+
+
+import ArmyVolunteeringConditionsPage from "../features/army-volunteering/ArmyVolunteeringConditionsPage";
+
+// Local auth bypass must be explicitly enabled; production-safe default is off.
+const AUTH_BYPASS_FOR_TESTING = (import.meta.env.VITE_DISABLE_AUTH ?? "false").toLowerCase() === "true";
+// Lazy-loaded page components
+const SearchPage        = lazy(() => import("../pages/SearchPage"));
+const MediaCenterPage   = lazy(() => import("../pages/MediaCenterPage"));
+const SalaryPage        = lazy(() => import("../pages/SalaryPage"));
+const SchoolGrantsPage  = lazy(() => import("../pages/SchoolGrantsPage"));
+const SurveyPage        = lazy(() => import("../pages/SurveyPage"));
+const SurveyDetailPage  = lazy(() => import("../pages/SurveyDetailPage"));
+const SurveyResultsPage = lazy(() => import("../pages/SurveyResultsPage"));
+const CasesPage         = lazy(() => import("../pages/CasesPage"));
+const DocumentsPage     = lazy(() => import("../pages/DocumentsPage"));
+const JobsPage          = lazy(() => import("../pages/JobSearchPage"));
+const MarketPage        = lazy(() => import("../pages/MarketPage"));
+const RecruitmentPage   = lazy(() => import("../pages/RecruitmentPage"));
+const EmployerPortalPage = lazy(() => import("../pages/EmployerPortalPage"));
+const DisasterPage      = lazy(() => import("../pages/DisasterPage"));
+const MarketplacePage   = lazy(() => import("../pages/MarketplacePage"));
+const AlertsPage        = lazy(() => import("../pages/AlertsPage"));
+const NotificationsPage = lazy(() => import("../pages/NotificationsPage"));
+const ProfilePage       = lazy(() => import("../pages/ProfilePage"));
+const SettingsPage      = lazy(() => import("../pages/SettingsPage"));
+const MessagesPage      = lazy(() => import("../pages/MessagesPage"));
+const SavedChatsPage    = lazy(() => import("../pages/SavedChatsPage"));
+const BookmarksPage     = lazy(() => import("../pages/BookmarksPage"));
+const ProceduresPage    = lazy(() => import("../pages/ProceduresPage"));
+const FormsPage         = lazy(() => import("../pages/FormsPage"));
+const ChatSessionsPage  = lazy(() => import("../pages/ChatSessionsPage"));
+const LoginPage         = lazy(() => import("../pages/LoginPage"));
+const RegisterPage      = lazy(() => import("../pages/RegisterPage"));
+const FaqPage           = lazy(() => import("../pages/FaqPage"));
+const TickerPage        = lazy(() => import("../pages/TickerPage"));
+const CommunityThreadsPage = lazy(() => import("../pages/CommunityThreadsPage"));
+const SuperAdminPage    = lazy(() => import("../pages/SuperAdminPage"));
+const SuperadminUsersPage = lazy(() => import("../features/superadmin-users/SuperadminUsersPage"));
+const LegalPage         = lazy(() => import("../pages/LegalPage"));
+const DeathsPage = lazy(() => import("../pages/DeathsPage"));
+const AlWafiyatPage = lazy(() => import("../features/al-wafiyat/AlWafiyatPage"));
+const OpportunitiesPage    = lazy(() => import("../pages/OpportunitiesPage"));
+const OpportunityDetailPage = lazy(() => import("../pages/OpportunityDetailPage"));
+const AdminOpportunitiesPage = lazy(() => import("../pages/AdminOpportunitiesPage"));
+const AdminImportReviewPage  = lazy(() => import("../pages/AdminImportReviewPage"));
+const AdminOpportunitiesAuditPage = lazy(() => import("../pages/AdminOpportunitiesAuditPage"));
+// AdminFreelancerMarketplacePage lazy import removed (unused)
+const FreelanceServicesPage = lazy(() => import("../pages/FreelanceServicesPage"));
+const AlWafiyatAdminApproval = lazy(() => import("../features/al-wafiyat/AlWafiyatAdminApproval"));
+const UsefulLinksPage = lazy(() => import("../pages/UsefulLinksPage"));
+const OfficialServicesPage = lazy(() => import("../pages/OfficialServicesPage"));
+const OfficialServiceDetailPage = lazy(() => import("../pages/OfficialServiceDetailPage"));
+const MobileOsPage = lazy(() => import("../pages/MobileOsPage"));
+const MobileOsChatPage = lazy(() => import("../pages/MobileOsChatPage"));
+const HybridKbChatPage = lazy(() => import("../pages/hybrid-kb-chat"));
+const TaxiMobileCommerceLayout = lazy(() => import("../features/taxi/TaxiMobileCommerceLayout"));
+const TaxiDriverDashboard = lazy(() => import("../features/taxi/TaxiDriverDashboard"));
+const NewsPage          = lazy(() => import("../pages/NewsPage"));
+const FakeNewsPage      = lazy(() => import("../pages/FakeNewsPage"));
+const AddressWidgetSmokePage = lazy(() => import("../pages/AddressWidgetSmokePage"));
+const TheNetworkPage = lazy(() => import("../pages/TheNetworkPage"));
+const KoudamaDemo01AllIconsLayoutPage = lazy(() => import("../pages/KoudamaDemo01AllIconsLayoutPage"));
+
+// Direct component imports (not lazy)
+import { PensionAttestationForm } from "./PensionAttestationForm";
+import { SmartAttentionFeaturePage } from "../features/smart-attention-native/SmartAttentionPages";
+
+// Screen title mapping
+const TITLES: Record<string, string> = {
+  home:            "الرئيسية",
+  chat:            "محادثة موطني",
+  voting:          "الاستطلاع",
+  "mobile-os":      "منصة Mobile OS",
+  "mobile-os-chat": "محادثة Mobile OS",
+  community:       "مجتمعي",
+  services:        "الخدمات",
+  media:           "المركز الإعلامي",
+  search:          "بحث",
+  salary:          "حاسبة المعاش",
+  "school-grants": "المساعدات المدرسية",
+  pension:         "",
+  cases:           "معاملاتي",
+  documents:       "مستنداتي",
+  procedures:      "الإجراءات",
+  forms:           "النماذج",
+  jobs:            "الوظائف",
+  disaster:        "إدارة الكوارث",
+  marketplace:     "السوق",
+  alerts:          "تنبيهات",
+  notifications:   "إشعارات",
+  profile:         "ملفي",
+  messages:        "الرسائل الداخلية",
+  saved:           "محادثات محفوظة",
+  bookmarks:       "المفضّلة",
+  faq:             "الأسئلة الشائعة",
+  ticker:          "التعاميم",
+  groups:          "المجموعات",
+  "chat-sessions": "طلبات المحادثة",
+  legal:           "القوانين والحقوق",
+  superadmin:      "لوحة الإدارة",
+};
+
+// Font sizing
+const FONT_LEVELS = ["normal", "large", "xlarge"] as const;
+const THEME_OPTIONS = ["system", "light", "dark"] as const;
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function FontControls() {
+  const { fontSize, setFontSize } = useApp();
+  const idx = FONT_LEVELS.indexOf(fontSize);
+
+  return (
+    <div className="font-controls">
+      <button
+        type="button"
+        className="font-btn"
+        onClick={() => {
+          const next = FONT_LEVELS[Math.max(0, idx - 1)];
+          setFontSize(next as any);
+        }}
+        disabled={idx <= 0}
+        aria-label="تصغير الخط"
+        title="تصغير الخط"
+      >
+        A−
+      </button>
+      <button
+        type="button"
+        className="font-btn"
+        onClick={() => {
+          const next = FONT_LEVELS[Math.min(FONT_LEVELS.length - 1, idx + 1)];
+          setFontSize(next as any);
+        }}
+        disabled={idx >= FONT_LEVELS.length - 1}
+        aria-label="تكبير الخط"
+        title="تكبير الخط"
+      >
+        A+
+      </button>
+    </div>
+  );
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function ThemeControls() {
+  const { themeMode, setThemeMode } = useApp();
+  const currentIndex = THEME_OPTIONS.indexOf(themeMode);
+  let themeIcon = <KoudamaFeatureIcon featureId="theme-system" size="sm" />;
+  let themeLabel = "تلقائي";
+
+  if (themeMode === "dark") {
+    themeIcon = <KoudamaFeatureIcon featureId="theme-dark" size="sm" />;
+    themeLabel = "داكن";
+  } else if (themeMode === "light") {
+    themeIcon = <KoudamaFeatureIcon featureId="theme-light" size="sm" />;
+    themeLabel = "فاتح";
+  }
+
+  return (
+    <button
+      type="button"
+      className="theme-btn"
+      onClick={() => setThemeMode(THEME_OPTIONS[(currentIndex + 1) % THEME_OPTIONS.length])}
+      aria-label="تغيير المظهر"
+      title="تغيير المظهر"
+    >
+      {themeIcon}
+      <span>{themeLabel}</span>
+    </button>
+  );
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function ContrastControls() {
+  const { contrastMode, setContrastMode } = useApp();
+  const isHighContrast = contrastMode === "high";
+
+  return (
+    <button
+      type="button"
+      className={`contrast-btn ${isHighContrast ? "is-active" : ""}`}
+      onClick={() => setContrastMode(isHighContrast ? "normal" : "high")}
+      aria-label={isHighContrast ? "إلغاء التباين العالي" : "تشغيل التباين العالي"}
+      aria-pressed={isHighContrast}
+      title={isHighContrast ? "إلغاء التباين العالي" : "تشغيل التباين العالي"}
+    >
+      <KoudamaFeatureIcon featureId="theme-contrast" size="sm" />
+      <span>{isHighContrast ? "تباين عال" : "تباين"}</span>
+    </button>
+  );
+}
+
+// Fallback spinner
+function ScreenLoader() {
+  return (
+    <div className="screen-loader">
+      <div className="screen-loader__spinner" />
+      <span>جارٍ التحميل…</span>
+    </div>
+  );
+}
+
+// Wrapped lazy page (Suspense boundary)
+function LazyPage({ children }: Readonly<{ children: React.ReactNode }>) {
+  return <Suspense fallback={<ScreenLoader />}>{children}</Suspense>;
+}
+
+function ProtectedRoute({ children }: Readonly<{ children: React.ReactNode }>) {
+  const location = useLocation();
+  const { profile } = useApp();
+  if (AUTH_BYPASS_FOR_TESTING) {
+    return <>{children}</>;
+  }
+  if (!profile.isAuthed) {
+    const next = `${location.pathname}${location.search}${location.hash}`;
+    return <Navigate to={`/login?next=${encodeURIComponent(next)}`} replace />;
+  }
+  return <>{children}</>;
+}
+
+/** Route guard: only allows app managers through to the admin dashboard. */
+function AdminGate({ children }: Readonly<{ children: React.ReactNode }>) {
+  const { hasRole } = useApp();
+  if (AUTH_BYPASS_FOR_TESTING) {
+    return <>{children}</>;
+  }
+  if (!hasRole(["admin", "superadmin"])) {
+    return <Navigate to="/" replace />;
+  }
+  return <>{children}</>;
+}
+
+// Shorthand for protected lazy page
+function ProtectedLazyPage({ children }: Readonly<{ children: React.ReactNode }>) {
+  return <ProtectedRoute><LazyPage>{children}</LazyPage></ProtectedRoute>;
+}
+
+// Feature gate redirects to the launcher when disabled
+function FeatureGate({ feature, children }: Readonly<{ feature: FeatureId; children: React.ReactNode }>) {
+  const { isEnabled, isHydrated } = useFeatureFlags();
+  const resolution = resolveFeatureGate(feature, { isHydrated, isEnabled });
+
+  if (resolution.kind === "loading") {
+    return <ScreenLoader />;
+  }
+  if (resolution.kind === "redirect") {
+    return <Navigate to={resolution.to} replace />;
+  }
+  return <>{children}</>;
+}
+
+function AnyFeatureGate({ features, children }: Readonly<{ features: FeatureId[]; children: React.ReactNode }>) {
+  const { isEnabled, isHydrated } = useFeatureFlags();
+  if (!isHydrated) {
+    return <ScreenLoader />;
+  }
+  if (!features.some((feature) => isEnabled(feature))) {
+    return <Navigate to="/" replace />;
+  }
+  return <>{children}</>;
+}
+
+// Main shell
+export function AppShell() {
+  const mode = useCurrentMode();
+  const { themeMode, apiBaseUrl, profile } = useApp();
+  const navigateMode = useNavigateMode();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [directoryOpen, setDirectoryOpen] = useState(false);
+  const [directoryCategory, setDirectoryCategory] = useState<string | null>(null);
+  const seenNotificationIdsRef = useRef<Set<string>>(new Set());
+  const notificationBootstrapDoneRef = useRef(false);
+  const isMobileOsPage = mode === "mobile-os";
+  const isMobileOsChatPage = mode === "mobile-os-chat";
+
+  const activeTab = activeTabFromMode(mode);
+  const isAlWafiyatPage = location.pathname.startsWith("/al-wafiyat") || location.pathname.startsWith("/deaths");
+  const isAlWafiyatAdminPage = location.pathname.startsWith("/admin/al-wafiyat");
+  let title = TITLES[mode] || "موطني";
+  if (location.pathname.startsWith("/forms")) {
+    title = "النماذج";
+  } else if (isAlWafiyatAdminPage) {
+    title = "إدارة الوفيات الرسمية";
+  } else if (isAlWafiyatPage) {
+    title = "الوفيات الرسمية";
+  }
+  // Show back on sub-pages and on /services/:categoryId subcategory views
+  const isServiceSubPage = /^\/services\/.+/.test(location.pathname);
+  const showBack = isMobileOsPage || !isTabMode(mode) || isServiceSubPage;
+
+  const isAuthPage = !AUTH_BYPASS_FOR_TESTING && (location.pathname === "/login" || location.pathname === "/register");
+  const isSuperAdminPage = location.pathname === "/superadmin";
+  const isChatPage = mode === "chat" || isMobileOsChatPage;
+  const shellOwnsCitizenChrome = !isAuthPage && !isSuperAdminPage;
+  const isGroupThread = /^\/groups\/.+/.test(location.pathname);
+  const shouldShowScreenHeader = !shellOwnsCitizenChrome && !isAuthPage && !isSuperAdminPage && !isGroupThread && !isChatPage && (isMobileOsPage || !isTabMode(mode) || isServiceSubPage);
+
+  useEffect(() => {
+    if (globalThis.window === undefined || typeof document === "undefined") return;
+    return installSameWindowNavigationPolicy();
+  }, []);
+
+  let shellClassName = "app-shell--phone";
+  if (isAuthPage) shellClassName = "app-shell--auth";
+  else if (isSuperAdminPage) shellClassName = "app-shell--admin";
+
+  function handoffChatMessage(message: ChatMessage) {
+    const text = typeof message.text === "string" ? message.text.trim() : "";
+    if (!text) {
+      navigateMode("chat");
+      return;
+    }
+
+    navigate("/chat", {
+      state: {
+        handoffMessage: {
+          role: message.role,
+          text,
+        },
+      },
+    });
+  }
+
+  function goBack() {
+    if (globalThis.history.length > 1) {
+      navigate(-1);
+      return;
+    }
+
+    if (isMobileOsChatPage) {
+      navigate("/");
+      return;
+    }
+
+    if (isMobileOsPage) {
+      navigate("/");
+      return;
+    }
+
+    navigateMode(TAB_ROOT_MODES[activeTab]);
+  }
+
+  const showBrowserNotification = useCallback((title: string, body: string, targetRoute: string, tag: string) => {
+    const browserNotification = new Notification(title, { body, tag });
+    browserNotification.onclick = () => {
+      globalThis.window?.focus();
+      navigate(targetRoute);
+      browserNotification.close();
+    };
+  }, [navigate]);
+
+  const trailing = useMemo(() => null, []);
+
+  const breadcrumbs = useMemo(() => {
+    if (!showBack) return undefined;
+
+    const trail: Array<{ label: string; onClick?: () => void }> = [{
+      label: "الرئيسية",
+      onClick: () => navigateMode("home"),
+    }];
+    const parentMode = TAB_ROOT_MODES[activeTab];
+    const parentLabel = TITLES[parentMode];
+
+    if (parentMode !== "home") {
+      trail.push({ label: parentLabel, onClick: () => navigateMode(parentMode) });
+    }
+
+    trail.push({ label: title });
+
+    return trail;
+  }, [activeTab, showBack, title, navigateMode]);
+
+  useEffect(() => {
+    const openDirectory = (e: Event) => {
+      setDirectoryCategory((e as CustomEvent<{ category?: string }>).detail?.category ?? null);
+      setDirectoryOpen(true);
+    };
+
+    const openSalary = () => {
+      navigateMode("salary");
+    };
+
+    const openSchoolGrants = () => {
+      navigateMode("school-grants");
+    };
+
+    const openTickets = () => {
+      navigateMode("cases");
+    };
+
+    globalThis.addEventListener("watany-open-directory", openDirectory);
+    globalThis.addEventListener("watany-open-salary", openSalary);
+    globalThis.addEventListener("watany-open-school-grants", openSchoolGrants);
+    globalThis.addEventListener("watany-open-tickets", openTickets);
+
+    return () => {
+      globalThis.removeEventListener("watany-open-directory", openDirectory);
+      globalThis.removeEventListener("watany-open-salary", openSalary);
+      globalThis.removeEventListener("watany-open-school-grants", openSchoolGrants);
+      globalThis.removeEventListener("watany-open-tickets", openTickets);
+    };
+  }, [navigateMode]);
+
+  useEffect(() => {
+    if (globalThis.window === undefined) return;
+
+    if (!profile.isAuthed) {
+      seenNotificationIdsRef.current = new Set();
+      notificationBootstrapDoneRef.current = false;
+      return;
+    }
+
+    if (!("Notification" in globalThis)) return;
+
+    const permissionPromptKey = "watany_browser_notifications_prompted";
+    if (Notification.permission === "default" && localStorage.getItem(permissionPromptKey) !== "1") {
+      localStorage.setItem(permissionPromptKey, "1");
+      void Notification.requestPermission().catch(() => undefined);
+    }
+
+    let cancelled = false;
+
+    const pollNotifications = async () => {
+      try {
+        const items = await api.getNotifications(apiBaseUrl);
+        if (cancelled) return;
+
+        const unreadItems = items.filter((item) => !item.read);
+        // Build a simple world-cup counts map for UI badges.
+        try {
+          const wcMap: Record<string, number> = {};
+          let wcTotal = 0;
+          for (const it of unreadItems) {
+            try {
+              if (it.refType === "route" && typeof it.refId === "string" && it.refId.startsWith("/world-cup")) {
+                const path = it.refId.split("?")[0];
+                wcMap[path] = (wcMap[path] || 0) + 1;
+                wcTotal += 1;
+              }
+            } catch {
+              // ignore per-item parse failures
+            }
+          }
+          // expose globally for runtime components to consume and dispatch event
+          try {
+            (globalThis as any).__watany_wc_counts__ = wcMap;
+            globalThis.dispatchEvent(new CustomEvent("watany-worldcup-counts", { detail: { map: wcMap, total: wcTotal } }));
+          } catch {
+            // ignore
+          }
+        } catch {
+          // ignore world-cup map building failures
+        }
+        const nextIds = new Set(unreadItems.map((item) => item.id));
+
+        if (!notificationBootstrapDoneRef.current) {
+          seenNotificationIdsRef.current = nextIds;
+          notificationBootstrapDoneRef.current = true;
+          return;
+        }
+
+        const freshItems = unreadItems
+          .filter((item) => !seenNotificationIdsRef.current.has(item.id))
+          .sort((left, right) => left.ts - right.ts);
+
+        seenNotificationIdsRef.current = nextIds;
+
+        if (Notification.permission !== "granted") return;
+
+        freshItems.forEach((item) => {
+          const rawTargetRoute = item.refType === "route" && item.refId ? item.refId : "/updates";
+          const targetRoute = rawTargetRoute === "/alerts" || rawTargetRoute === "/notifications"
+            ? "/updates"
+            : rawTargetRoute;
+          showBrowserNotification(item.title, item.body, targetRoute, item.id);
+        });
+      } catch {
+        // Keep notification polling silent; the in-app inbox remains the fallback.
+      }
+    };
+
+    void pollNotifications();
+    const intervalId = globalThis.setInterval(() => {
+      void pollNotifications();
+    }, 60_000);
+
+    return () => {
+      cancelled = true;
+      globalThis.clearInterval(intervalId);
+    };
+  }, [apiBaseUrl, navigate, profile.isAuthed, showBrowserNotification]);
+
+  return (
+    <div className={`app-shell ${shellClassName}`} data-theme-mode={themeMode}>
+      <PublicRuntimeScriptLoader />
+      <PublicRuntimeLayoutGuard />
+      {shouldShowScreenHeader && (
+        <ScreenHeader
+          title={title}
+          showBack={showBack}
+          onBack={goBack}
+          trailing={trailing}
+          breadcrumbs={breadcrumbs}
+        />
+      )}
+
+      {/* Global Feature Navigation - Sticky beneath app header, standardized across all pages */}
+      {!isSuperAdminPage && <GlobalFeatureNav />}
+
+      {/* Main content always starts below the static header */}
+      <main className={`app-content${isGroupThread || isMobileOsChatPage ? " app-content--thread" : ""}`}>
+        <WatanyMobileShell>
+        <div className="wmo-appshell-route-boundary">
+        <Routes>
+          <Route path="/login" element={AUTH_BYPASS_FOR_TESTING ? <Navigate to="/" replace /> : <LazyPage><LoginPage /></LazyPage>} />
+          <Route path="/register" element={AUTH_BYPASS_FOR_TESTING ? <Navigate to="/" replace /> : <LazyPage><RegisterPage /></LazyPage>} />
+          <Route path="/" element={<LazyPage><MobileOsPage /></LazyPage>} />
+          <Route path="/community" element={<CommunityScreen onNavigate={navigateMode} />} />
+          <Route path="/network" element={<LazyPage><TheNetworkPage /></LazyPage>} />
+          <Route path="/the-network" element={<Navigate to="/network" replace />} />
+          <Route path="/koudama/demo-01-all-icons-layout" element={<LazyPage><KoudamaDemo01AllIconsLayoutPage /></LazyPage>} />
+          <Route path="/world-cup/*" element={<LazyPage><WorldCupPage /></LazyPage>} />
+          <Route path="/hybrid-kb-chat" element={<LazyPage><HybridKbChatPage /></LazyPage>} />
+          <Route path="/chat" element={<LazyPage><MobileOsChatPage /></LazyPage>} />
+          <Route path="/mobile-os/chat" element={<Navigate to="/chat" replace />} />
+          <Route path="/assistant" element={<Navigate to="/chat" replace />} />
+          <Route path="/services" element={<Navigate to="/" replace />} />
+          <Route path="/services/official" element={<FeatureGate feature="govservices"><LazyPage><OfficialServicesPage /></LazyPage></FeatureGate>} />
+          <Route path="/services/official/:serviceId" element={<FeatureGate feature="govservices"><LazyPage><OfficialServiceDetailPage /></LazyPage></FeatureGate>} />
+          <Route path="/services/recruitment" element={<FeatureGate feature="jobs"><LazyPage><RecruitmentPage /></LazyPage></FeatureGate>} />
+          <Route path="/services/recruitment/employer" element={<FeatureGate feature="jobs"><LazyPage><EmployerPortalPage /></LazyPage></FeatureGate>} />
+          <Route path="/recruitment" element={<FeatureGate feature="jobs"><LazyPage><RecruitmentPage /></LazyPage></FeatureGate>} />
+          <Route path="/services/:categoryId" element={<Navigate to="/" replace />} />
+          <Route path="/media" element={<FeatureGate feature="media"><LazyPage><MediaCenterPage /></LazyPage></FeatureGate>} />
+          <Route path="/search" element={<FeatureGate feature="search"><LazyPage><SearchPage onAddMessage={handoffChatMessage} /></LazyPage></FeatureGate>} />
+          <Route path="/salary" element={<FeatureGate feature="salary"><LazyPage><SalaryPage /></LazyPage></FeatureGate>} />
+          <Route path="/school-grants" element={<FeatureGate feature="school-grants"><LazyPage><SchoolGrantsPage /></LazyPage></FeatureGate>} />
+          <Route path="/voting" element={<ProtectedLazyPage><SurveyPage /></ProtectedLazyPage>} />
+          <Route path="/survey" element={<ProtectedLazyPage><SurveyPage /></ProtectedLazyPage>} />
+          <Route path="/voting/:surveyId" element={<ProtectedLazyPage><SurveyDetailPage /></ProtectedLazyPage>} />
+          <Route path="/voting/:surveyId/results" element={<ProtectedLazyPage><SurveyResultsPage /></ProtectedLazyPage>} />
+          <Route path="/survey-results" element={<ProtectedLazyPage><SurveyResultsPage /></ProtectedLazyPage>} />
+          <Route path="/pension" element={<FeatureGate feature="salary"><LazyPage><PensionAttestationForm /></LazyPage></FeatureGate>} />
+          <Route path="/news" element={<FeatureGate feature="news"><LazyPage><NewsPage /></LazyPage></FeatureGate>} />
+          <Route path="/fake-news" element={<FeatureGate feature="news"><LazyPage><FakeNewsPage /></LazyPage></FeatureGate>} />
+          <Route path="/faq" element={<FeatureGate feature="ticker_faq"><LazyPage><FaqPage /></LazyPage></FeatureGate>} />
+          <Route path="/ticker" element={<Navigate to="/updates" replace />} />
+          <Route path="/updates" element={<AnyFeatureGate features={["ticker_bar", "ticker_announcements", "ticker_case_updates", "ticker_highlights", "ticker_faq"]}><LazyPage><TickerPage onAddMessage={handoffChatMessage} /></LazyPage></AnyFeatureGate>} />
+          <Route path="/groups" element={<FeatureGate feature="groups"><LazyPage><CommunityThreadsPage /></LazyPage></FeatureGate>} />
+          <Route path="/groups/:groupId" element={<FeatureGate feature="groups"><LazyPage><CommunityThreadsPage /></LazyPage></FeatureGate>} />
+          <Route path="/forms" element={<FeatureGate feature="forms"><LazyPage><FormsPage /></LazyPage></FeatureGate>} />
+          <Route path="/mobile-os" element={<Navigate to="/" replace />} />
+          <Route path="/mobile-os/*" element={<Navigate to="/" replace />} />
+          <Route path="/forms/category/:categoryId" element={<Navigate to="/forms" replace />} />
+          <Route path="/forms/source/:sourceId" element={<FeatureGate feature="forms"><LazyPage><FormsPage /></LazyPage></FeatureGate>} />
+          <Route path="/forms/:sourceId" element={<FeatureGate feature="forms"><LazyPage><FormsPage /></LazyPage></FeatureGate>} />
+          <Route path="/procedures" element={<FeatureGate feature="procedures"><LazyPage><ProceduresPage /></LazyPage></FeatureGate>} />
+          <Route path="/legal" element={<LazyPage><LegalPage /></LazyPage>} />
+          <Route path="/al-wafiyat" element={<LazyPage><AlWafiyatPage /></LazyPage>} />
+          <Route path="/admin/al-wafiyat" element={<ProtectedRoute><AdminGate><LazyPage><AlWafiyatAdminApproval /></LazyPage></AdminGate></ProtectedRoute>} />
+          <Route path="/alerts" element={<LazyPage><AlertsPage /></LazyPage>} />
+          <Route path="/disaster" element={<FeatureGate feature="disaster"><LazyPage><DisasterPage /></LazyPage></FeatureGate>} />
+          {/* Protected routes — require authentication */}
+          <Route path="/cases" element={<FeatureGate feature="cases"><ProtectedLazyPage><CasesPage /></ProtectedLazyPage></FeatureGate>} />
+          <Route path="/documents" element={<FeatureGate feature="documents"><ProtectedLazyPage><DocumentsPage /></ProtectedLazyPage></FeatureGate>} />
+          <Route path="/jobs" element={<FeatureGate feature="jobs"><LazyPage><JobsPage /></LazyPage></FeatureGate>} />
+          <Route path="/market" element={<FeatureGate feature="marketplace"><LazyPage><MarketPage /></LazyPage></FeatureGate>} />
+          <Route path="/opportunities" element={<LazyPage><OpportunitiesPage /></LazyPage>} />
+          <Route path="/opportunities/:id" element={<LazyPage><OpportunityDetailPage /></LazyPage>} />
+          <Route path="/freelance-services" element={<LazyPage><FreelanceServicesPage /></LazyPage>} />
+          <Route path="/admin/opportunities" element={<ProtectedRoute><AdminGate><LazyPage><AdminOpportunitiesPage /></LazyPage></AdminGate></ProtectedRoute>} />
+          <Route path="/admin/opportunities/imports" element={<ProtectedRoute><AdminGate><LazyPage><AdminImportReviewPage /></LazyPage></AdminGate></ProtectedRoute>} />
+          <Route path="/admin/opportunities/audit" element={<ProtectedRoute><AdminGate><LazyPage><AdminOpportunitiesAuditPage /></LazyPage></AdminGate></ProtectedRoute>} />
+          <Route path="/marketplace" element={<FeatureGate feature="marketplace"><LazyPage><MarketplacePage /></LazyPage></FeatureGate>} />
+          <Route path="/notifications" element={<LazyPage><NotificationsPage /></LazyPage>} />
+          <Route path="/profile" element={<FeatureGate feature="profile"><ProtectedLazyPage><ProfilePage /></ProtectedLazyPage></FeatureGate>} />              <Route path="/super-admin" element={<SuperAdminPage />} />
+
+          <Route path="/settings" element={<FeatureGate feature="profile"><ProtectedLazyPage><SettingsPage /></ProtectedLazyPage></FeatureGate>} />
+          <Route path="/messages" element={<ProtectedLazyPage><MessagesPage /></ProtectedLazyPage>} />
+          <Route path="/saved" element={<FeatureGate feature="saved"><ProtectedLazyPage><SavedChatsPage /></ProtectedLazyPage></FeatureGate>} />
+          <Route path="/bookmarks" element={<FeatureGate feature="bookmarks"><ProtectedLazyPage><BookmarksPage /></ProtectedLazyPage></FeatureGate>} />
+          <Route path="/chat-sessions" element={<FeatureGate feature="chat-sessions"><ProtectedLazyPage><ChatSessionsPage /></ProtectedLazyPage></FeatureGate>} />
+          <Route path="/superadmin" element={<ProtectedRoute><AdminGate><LazyPage><SuperAdminPage /></LazyPage></AdminGate></ProtectedRoute>} />
+          <Route path="/superadmin/users" element={<ProtectedRoute><AdminGate><LazyPage><SuperadminUsersPage /></LazyPage></AdminGate></ProtectedRoute>} />
+          <Route path="/admin/users" element={<ProtectedRoute><AdminGate><LazyPage><SuperadminUsersPage /></LazyPage></AdminGate></ProtectedRoute>} />
+          <Route path="/taxi" element={<LazyPage><TaxiMobileCommerceLayout /></LazyPage>} />
+          <Route path="/taxi/driver" element={<LazyPage><TaxiDriverDashboard /></LazyPage>} />
+          <Route path="/dev/address-widget-smoke" element={import.meta.env.DEV ? <LazyPage><AddressWidgetSmokePage /></LazyPage> : <Navigate to="/" replace />} />
+        <Route path="/army-volunteering" element={<ArmyVolunteeringConditionsPage />} />
+        <Route path="/services/official/army-volunteering-conditions" element={<ArmyVolunteeringConditionsPage />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+            <Route path="/deaths" element={<DeathsPage />} />
+          <Route path="/useful-links" element={<UsefulLinksPage />} />
+          <Route path="/opportunities/freelance" element={<LazyPage><OpportunityDetailPage /></LazyPage>} />
+{/* APEX_SMART_ATTENTION_ROUTES_START */}
+<Route path="/most-requested" element={<SmartAttentionFeaturePage featureKey="most-requested" />} />
+<Route path="/latest" element={<SmartAttentionFeaturePage featureKey="latest" />} />
+<Route path="/for-you" element={<SmartAttentionFeaturePage featureKey="for-you" />} />
+{/* APEX_SMART_ATTENTION_ROUTES_END */}
+</Routes>
+          </div>
+      </WatanyMobileShell>
+      </main>
+
+      <PopupModal open={directoryOpen} title="دليل الأرقام" onClose={() => { setDirectoryOpen(false); setDirectoryCategory(null); }}>
+        <DirectorySheet initialCategory={directoryCategory ?? undefined} onDone={() => { setDirectoryOpen(false); setDirectoryCategory(null); }} />
+      </PopupModal>
+
+      <PwaInstallController />
+      <StickyHybridChatLauncher />
+
+    </div>
+  );
+}
+// APEX_PHASE4C_ROUTE_DECLARATION_ONLY: AppShell should declare routes and avoid duplicate visual chrome.
+// APEX_PHASE4D_APPSHELL_BOUNDARY_REVIEWED: AppShell must remain route declaration + shell boundary only.

@@ -1,0 +1,45 @@
+﻿{
+    "scriptVersion":  "v2.1-merged-phases-guard-fixed-no-inset-token-icon-theme-bridge-ascii-safe",
+    "generatedAt":  "2026-06-13T10:41:14.7146113+03:00",
+    "apply":  true,
+    "v1ProjectRoot":  "C:\\xampp\\htdocs\\projectx\\watanybot",
+    "v2ProjectRoot":  "C:\\watany",
+    "tokenCssPath":  "C:\\xampp\\htdocs\\projectx\\watanybot\\apps\\web-user\\src\\styles\\watany-v2-token-only-theme.scoped.generated.css",
+    "iconCssPath":  "C:\\xampp\\htdocs\\projectx\\watanybot\\apps\\web-user\\src\\styles\\watany-v2-icon-visuals.scoped.generated.css",
+    "restrictions":  [
+                         "no raw v2 layout css",
+                         "no v1 route changes",
+                         "no v1 feature logic changes",
+                         "no v1 launcher layout changes",
+                         "token-only visual bridge",
+                         "scoped icon visual bridge"
+                     ],
+    "cssGuard":  {
+                     "forbiddenTerms":  [
+
+                                        ],
+                     "allowedTerms":  [
+                                          "--watany",
+                                          "color",
+                                          "background",
+                                          "accent-color",
+                                          "border-color",
+                                          "border-radius",
+                                          "box-shadow",
+                                          "fill",
+                                          "stroke"
+                                      ]
+                 },
+    "files":  [
+                  {
+                      "kind":  "tokenCss",
+                      "path":  "C:\\xampp\\htdocs\\projectx\\watanybot\\apps\\web-user\\src\\styles\\watany-v2-token-only-theme.scoped.generated.css",
+                      "sha256":  "819D894C8308549A2B0CFE4447754E16C9D0A9D055D03901578A1BCBEBC313C7"
+                  },
+                  {
+                      "kind":  "iconCss",
+                      "path":  "C:\\xampp\\htdocs\\projectx\\watanybot\\apps\\web-user\\src\\styles\\watany-v2-icon-visuals.scoped.generated.css",
+                      "sha256":  "454486600754B4A9DE820CAA3614306BDB40B99F6BEF37C9E54B5D7A733E6E8F"
+                  }
+              ]
+}

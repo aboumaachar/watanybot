@@ -1,0 +1,23 @@
+{
+    "ok":  true,
+    "contractVersion":  "v2.feature.module.fallback.review",
+    "generatedAt":  "2026-06-11T11:21:49.6038984Z",
+    "count":  1,
+    "items":  [
+                  {
+                      "FeatureId":  "all-features",
+                      "Label":  "all-features",
+                      "Category":  "",
+                      "Route":  "/watany-all-features.html",
+                      "ApiEndpoint":  "",
+                      "SourceClassification":  "FALLBACK_ONLY",
+                      "RouteStatus":  "HTTP_200",
+                      "ApiStatus":  "NOT_DECLARED",
+                      "PageRouteDeclaration":  "FALLBACK_PAGE_ONLY",
+                      "ApiDeclaration":  "API_NOT_APPLICABLE_UNTIL_REAL_ROUTE_EXISTS",
+                      "FallbackDeclaration":  "FALLBACK_ONLY_REAL_ROUTE_REQUIRED",
+                      "ModuleCompletionDeclaration":  "FALLBACK_NOT_A_COMPLETE_FEATURE",
+                      "RequiredNextAction":  "create-real-feature-route-or-keep-explicitly-out-of-scope"
+                  }
+              ]
+}

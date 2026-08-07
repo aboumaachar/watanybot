@@ -1,0 +1,1 @@
+export const watanyKbStudioWebAdapter = { pluginKey: 'kb-studio', hostApp: 'watanybot-web-user', preservesExistingUi: true, replacementMode: 'disabled-until-browser-proof', notes: 'Watany-specific KB Studio web adapter boundary. Production UI is not replaced by this modular closure.' } as const;

@@ -1,0 +1,67 @@
+{
+  "name": "watany",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "concurrently -n gateway,web-user -c green,blue \"pnpm --filter gateway-api dev\" \"pnpm --filter web-user dev\"",
+    "dev:all": "node scripts/dev-startup.js",
+    "dev:public": "pnpm --filter web-public dev",
+    "dev:gateway": "pnpm --filter gateway-api dev",
+    "rebuild:better-sqlite3": "node scripts/rebuild-better-sqlite3.js",
+    "lint": "pnpm -r lint",
+    "typecheck": "pnpm -r typecheck",
+    "test": "vitest",
+    "test:watch": "vitest --watch",
+    "e2e:install": "playwright install",
+    "e2e:ci": "playwright test --config=playwright.config.ts --reporter=dot",
+    "e2e": "playwright test --config=playwright.config.ts",
+    "e2e:procedures": "playwright test --workers=1 --config=playwright.config.ts tests/e2e/procedures-page.spec.ts tests/e2e/references-page.spec.ts",
+    "e2e:mobile": "playwright test --config=playwright.config.ts tests/e2e/mobile-validation.spec.ts",
+    "closeout:production-auth": "pwsh -NoProfile -ExecutionPolicy Bypass -File scripts/run-production-auth-closeout.ps1",
+    "electron:dev": "pnpm --filter web-user electron:dev",
+    "electron": "pnpm --filter web-user electron",
+    "rollback:auth": "pwsh -NoProfile -ExecutionPolicy Bypass -File scripts/rollback-auth-bypass.ps1"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.40.0",
+    "@rollup/rollup-win32-x64-msvc": "^4.61.1",
+    "cheerio": "^1.2.0",
+    "concurrently": "^8.2.2",
+    "eslint": "^9.17.0",
+    "happy-dom": "^15.11.7",
+    "mammoth": "^1.11.0",
+    "playwright": "^1.40.0",
+    "supertest": "^7.2.2",
+    "tsx": "^4.21.0",
+    "typescript": "^5.6.3",
+    "vitest": "^1.0.0",
+    "wait-on": "^7.0.1",
+    "yaml": "^2.8.2",
+    "zod": "^4.3.6"
+  },
+  "description": "Watany is a PNPM workspace that combines a Fastify gateway API and multiple web apps. Legacy WatanBot sources are copied into `legacy/` for reference and proxying.",
+  "main": "build_watany_kb_both.js.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "pnpm": {
+    "overrides": {
+      "fast-jwt": ">=6.2.4",
+      "flatted": ">=3.4.0",
+      "undici": "^7.24.0",
+      "picomatch": ">=4.0.2",
+      "@types/react": "~18.3.28",
+      "@types/react-dom": "~18.3.5"
+    },
+    "onlyBuiltDependencies": [
+      "better-sqlite3"
+    ]
+  },
+  "dependencies": {
+    "xlsx": "^0.18.5"
+  }
+}

@@ -1,0 +1,285 @@
+/**
+ * Mock data and seed data used for development and initial seeding.
+ * Extracted from server.ts.
+ */
+import type { TxItem, TxDetail, SalaryResult, JobVacancy, EmergencyAlert, MarketplaceListing, DocumentItem, NotificationItem } from "../types/domain";
+
+export const MOCK_TX: TxItem[] = [
+  {
+    tx_no: 12,
+    title_ar: "طلب الحصول على شهادة دورة أو نسخة مصورة عنها",
+    section_ar: "الشؤون المالية",
+    preview: "المستندات المطلوبة والإجراءات للحصول على شهادة دورة...",
+  },
+  {
+    tx_no: 24,
+    title_ar: "طلب تعديل في الأحوال الشخصية",
+    section_ar: "المعاملات الإدارية",
+    preview: "إجراءات تعديل الأحوال الشخصية والوثائق اللازمة...",
+  },
+  {
+    tx_no: 41,
+    title_ar: "طلب إستعمال طوافة أو زورق أو آلية عسكرية للتصوير",
+    section_ar: "المساعدات الاجتماعية",
+    preview: "آلية الاستفادة من طلب استعمال المعدات العسكرية...",
+  },
+];
+
+export const MOCK_DETAIL: Record<number, TxDetail> = {
+  12: {
+    tx_no: 12,
+    title_ar: "طلب الحصول على شهادة دورة أو نسخة مصورة عنها",
+    section_ar: "الشؤون المالية",
+    preview: "المستندات المطلوبة والإجراءات للحصول على شهادة دورة...",
+    body: "المعاملة رقم 12: طلب الحصول على شهادة دورة أو نسخة مصورة عنها\n\nالمستندات المطلوبة:\n1. كتاب من صاحب العلاقة يتضمن تفاصيل الطلب أو تعبئة أنموذج رقم 72\n2. إثبات هوية صاحب العلاقة (صورة عن بطاقة الهوية أو بيان قيد إفرادي)\n3. إثبات قانونية الإيداع (وكالة خاصة أو عامة إن لم يكن صاحب العلاقة شخصياً)",
+    required_docs: ["كتاب طلب أو أنموذج رقم 72", "صورة عن بطاقة الهوية", "إثبات قانونية الإيداع"],
+    steps: ["تجهيز المستندات المطلوبة", "تقديم الطلب لدى الجهة المختصة", "متابعة المعاملة"],
+    phones: ["01XXXXXX"],
+    urls: [],
+    legal_basis: [{ law: "قانون الدفاع الوطني", article_no: 90, excerpt: "تعويضات الأعباء العائلية..." }],
+    related: [{ tx_no: 24, title_ar: "طلب تعديل في الأحوال الشخصية", similarity: 0.31 }],
+  },
+  24: {
+    tx_no: 24,
+    title_ar: "طلب تعديل في الأحوال الشخصية",
+    section_ar: "المعاملات الإدارية",
+    preview: "إجراءات تعديل الأحوال الشخصية والوثائق اللازمة...",
+    body: "المعاملة رقم 24: طلب تعديل في الأحوال الشخصية (تغيير على سجل النفوس، شطب/إعادة أحد على العاتق...)\n\nالمستندات المطلوبة:\n1. كتاب من صاحب العلاقة يتضمن تفاصيل الطلب\n2. إفادة من مختار المحلة\n3. إثبات هوية صاحب العلاقة (صورة عن بطاقة الهوية أو بيان قيد إفرادي)",
+    required_docs: ["كتاب طلب", "إفادة من المختار", "إخراج قيد"],
+    steps: ["تحضير المستندات", "تنظيم طلب التعديل", "تقديم الملف للجهة المختصة"],
+    legal_basis: [{ law: "قانون الدفاع الوطني", article_no: 94, excerpt: "انتقال الحقوق إلى المستحقين..." }],
+    related: [{ tx_no: 12, title_ar: "طلب الحصول على شهادة دورة أو نسخة مصورة عنها", similarity: 0.31 }],
+  },
+};
+
+export const MOCK_SALARY: SalaryResult[] = [
+  {
+    rank_ar: "عميد",
+    degree: 4,
+    new_salary_lbp: 9999999,
+    base_salary_old_lbp: 8888888,
+    cola_lbp: 111111,
+    notes: "Mock row",
+  },
+];
+
+export const MOCK_JOBS: JobVacancy[] = [
+  {
+    id: "job_001",
+    title: "Security Operations Coordinator",
+    company: "Watany Services",
+    location: "Beirut",
+    mode: "onsite",
+    postedAt: "2026-02-01",
+    summary: "Coordinate site security shifts, incident reporting, and vendor briefings.",
+    tags: ["security", "operations", "field"],
+  },
+  {
+    id: "job_002",
+    title: "Community Support Liaison",
+    company: "Civic Helpdesk",
+    location: "Tripoli",
+    mode: "hybrid",
+    postedAt: "2026-01-27",
+    summary: "Support veterans with case intake, benefits guidance, and local follow-ups.",
+    tags: ["support", "community", "casework"],
+  },
+  {
+    id: "job_003",
+    title: "Logistics Scheduler",
+    company: "ReliefBridge",
+    location: "Remote",
+    mode: "remote",
+    postedAt: "2026-01-22",
+    summary: "Plan dispatch schedules, coordinate deliveries, and track supply movement.",
+    tags: ["logistics", "planning", "coordination"],
+  },
+];
+
+export const MOCK_ALERTS: EmergencyAlert[] = [
+  {
+    id: "alert_001",
+    title: "Weather advisory for coastal areas",
+    country: "Lebanon",
+    date: "2026-02-05",
+    url: "https://example.com/alerts/001",
+    summary: "Strong winds expected near coastal districts. Secure outdoor items.",
+    source: "Watany Demo",
+  },
+  {
+    id: "alert_002",
+    title: "Road closures in northern corridor",
+    country: "Lebanon",
+    date: "2026-02-04",
+    url: "https://example.com/alerts/002",
+    summary: "Temporary closures due to maintenance work. Expect detours.",
+    source: "Watany Demo",
+  },
+];
+
+export const SEED_MARKETPLACE: MarketplaceListing[] = [
+  {
+    id: "list_001",
+    title: "كرسي متحرك خفيف الوزن",
+    price: 120,
+    currency: "USD",
+    location: "بيروت",
+    seller: "محمود أ.",
+    contact: "+961-70-000-111",
+    description: "مستعمل بحالة جيدة مع وسادة جلوس وحزام أمان.",
+    category: "items",
+    status: "active",
+    createdAt: Date.now() - 1000 * 60 * 60 * 12,
+  },
+  {
+    id: "list_002",
+    title: "بدلة خدمة عسكرية كاملة",
+    price: 40,
+    currency: "USD",
+    location: "صيدا",
+    seller: "رانيا ح.",
+    contact: "+961-70-000-222",
+    description: "قياس L مع جاكيت وبنطال، مناسبة للأنشطة والمراسم.",
+    category: "items",
+    status: "active",
+    createdAt: Date.now() - 1000 * 60 * 60 * 30,
+  },
+  {
+    id: "list_003",
+    title: "خدمة نقل يومية بيروت - جونية",
+    price: 15,
+    currency: "USD",
+    location: "بيروت",
+    seller: "أبو علي للنقل",
+    contact: "+961-70-000-333",
+    description: "نقل يومي للموظفين والطلاب مع مواعيد ثابتة صباحاً ومساءً.",
+    category: "transport",
+    status: "active",
+    createdAt: Date.now() - 1000 * 60 * 60 * 8,
+  },
+  {
+    id: "list_004",
+    title: "صيانة كهرباء ومولدات منزلية",
+    price: 25,
+    currency: "USD",
+    location: "جونية",
+    seller: "ورشة إلياس",
+    contact: "+961-70-000-444",
+    description: "كشف وصيانة للمولدات ولوحات الكهرباء المنزلية داخل كسروان والمتن.",
+    category: "services",
+    status: "active",
+    createdAt: Date.now() - 1000 * 60 * 60 * 5,
+  },
+  {
+    id: "list_005",
+    title: "مرشد سياحي لرحلات الجبل والشمال",
+    price: 60,
+    currency: "USD",
+    location: "طرابلس",
+    seller: "هادي س.",
+    contact: "+961-70-000-555",
+    description: "جولات خاصة للمجموعات الصغيرة بالعربي والإنجليزي مع تخطيط كامل للمسار.",
+    category: "freelance",
+    status: "active",
+    createdAt: Date.now() - 1000 * 60 * 60 * 20,
+  },
+  {
+    id: "list_006",
+    title: "شقة مفروشة للإيجار الشهري",
+    price: 350,
+    currency: "USD",
+    location: "الحدث",
+    seller: "نبيل خ.",
+    contact: "+961-70-000-666",
+    description: "غرفتان وصالون، قريبة من الخدمات والمستشفى، مناسبة للإقامة المؤقتة.",
+    category: "property",
+    status: "active",
+    createdAt: Date.now() - 1000 * 60 * 60 * 44,
+  },
+  {
+    id: "list_007",
+    title: "سيارة كيا ريو 2014 للبيع",
+    price: 6800,
+    currency: "USD",
+    location: "زحلة",
+    seller: "جورج م.",
+    contact: "+961-70-000-777",
+    description: "أوتوماتيك، مكيف ممتاز، ميكانيك نظيف ومعاينة متاحة بعد الاتصال.",
+    category: "cars",
+    status: "active",
+    createdAt: Date.now() - 1000 * 60 * 60 * 55,
+  },
+  {
+    id: "list_008",
+    title: "كمبيوتر محمول مستعمل للعمل المكتبي",
+    price: 220,
+    currency: "USD",
+    location: "جل الديب",
+    seller: "سامر ن.",
+    contact: "+961-70-000-888",
+    description: "مناسب للأعمال المكتبية والدراسة مع شاحن أصلي وحقيبة حماية.",
+    category: "items",
+    status: "active",
+    createdAt: Date.now() - 1000 * 60 * 60 * 15,
+  },
+];
+
+export const SEED_DOCUMENTS: DocumentItem[] = [
+  {
+    id: "doc_001",
+    name: "إخراج قيد عائلي.pdf",
+    kind: "pdf",
+    status: "verified",
+    updatedAt: Date.now() - 1000 * 60 * 60 * 12,
+    tags: ["معالين", "قيد عائلي"],
+  },
+  {
+    id: "doc_002",
+    name: "صورة عن الهوية.jpg",
+    kind: "image",
+    status: "pending",
+    updatedAt: Date.now() - 1000 * 60 * 25,
+    tags: ["هوية"],
+  },
+];
+
+export const SEED_NOTIFICATIONS: NotificationItem[] = [
+  {
+    id: "notif_001",
+    title: "تحديث قضية",
+    body: "تم إضافة ملاحظة جديدة على ملف المعالين.",
+    kind: "case",
+    ts: Date.now() - 1000 * 60 * 45,
+    read: false,
+  },
+  {
+    id: "notif_002",
+    title: "تنبيه مستند",
+    body: "يرجى رفع نسخة واضحة من إخراج القيد.",
+    kind: "doc",
+    ts: Date.now() - 1000 * 60 * 180,
+    read: false,
+  },
+  {
+    id: "notif_003",
+    title: "تنبيه نظام",
+    body: "تم تحديث دليل المعاملات بآخر نسخة.",
+    kind: "system",
+    ts: Date.now() - 1000 * 60 * 600,
+    read: true,
+  },
+];
+
+export const TICKER_CURATED: Array<{ kind: string; title: string }> = [
+  { kind: "tip",      title: "💡 نصيحة اليوم: يمكنك حفظ أي رد بالنقر على المحفوظات لقراءته لاحقاً" },
+  { kind: "tip",      title: "💡 هل تعلم؟ يمكنك التحدث صوتياً مع موطني بالضغط على 🎧" },
+  { kind: "tip",      title: "💡 استخدم حاسبة الرواتب لمعرفة تفاصيل راتبك ومعاشك التقاعدي" },
+  { kind: "tip",      title: "📋 النماذج الرسمية متاحة — اختر نموذجاً من القائمة لتعبئته وتحميله" },
+  { kind: "announce", title: "📢 تم تحديث قاعدة المعرفة — 743 مقطع قانوني متاح للبحث" },
+  { kind: "announce", title: "🔔 تابع حالة قضاياك ومستنداتك من الشريط الجانبي" },
+  { kind: "suggest",  title: "❓ سؤال شائع: ما هي شروط الإحالة على التقاعد؟" },
+  { kind: "suggest",  title: "❓ سؤال شائع: كيف أحسب معاشي التقاعدي؟" },
+  { kind: "suggest",  title: "❓ سؤال شائع: ما هي حقوق ذوي العسكري المتوفى؟" },
+  { kind: "suggest",  title: "❓ سؤال شائع: كيف أقدم طلب مساعدة مدرسية؟" },
+  { kind: "suggest",  title: "❓ سؤال شائع: ما هي إجراءات تسجيل الزواج؟" },
+];

@@ -1,0 +1,186 @@
+.procedures-catalog-display {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 2rem;
+}
+
+.procedures-catalog-display--loading,
+.procedures-catalog-display--error,
+.procedures-catalog-display--empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  padding: 2rem;
+  text-align: center;
+  color: var(--ink-secondary, #666);
+}
+
+.procedures-catalog-display--error {
+  background-color: #fee;
+  border-radius: 0.5rem;
+  color: var(--error-ink, #c00);
+}
+
+.procedures-catalog-display--empty {
+  background-color: #f5f5f5;
+  border-radius: 0.5rem;
+}
+
+.procedures-catalog-display__sources {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.procedures-catalog-display__source {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  background-color: var(--bg-secondary, #f9f9f9);
+  border: 1px solid var(--border-light, #e0e0e0);
+  border-radius: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.procedures-catalog-display__source-title {
+  font-weight: 500;
+  color: var(--ink-primary, #212121);
+}
+
+.procedures-catalog-display__source-count {
+  font-size: 0.85rem;
+  color: var(--ink-secondary, #666);
+}
+
+.procedures-catalog-display__sections {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.procedures-catalog-display__section {
+  border: 1px solid var(--border-light, #e0e0e0);
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.procedures-catalog-display__section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 1rem 1.5rem;
+  background-color: var(--bg-secondary, #f9f9f9);
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--ink-primary, #212121);
+  transition: background-color 0.2s ease;
+}
+
+.procedures-catalog-display__section-header:hover {
+  background-color: var(--bg-hover, #f0f0f0);
+}
+
+.procedures-catalog-display__section-header:active {
+  background-color: var(--bg-active, #e8e8e8);
+}
+
+.procedures-catalog-display__section-title {
+  flex: 1;
+  text-align: right;
+  margin-right: 1rem;
+}
+
+.procedures-catalog-display__section-count {
+  font-size: 0.85rem;
+  color: var(--ink-secondary, #666);
+  margin-left: auto;
+  margin-right: 1rem;
+}
+
+.procedures-catalog-display__section-toggle {
+  font-size: 0.75rem;
+  color: var(--ink-secondary, #666);
+  transition: transform 0.2s ease;
+}
+
+.procedures-catalog-display__section-items {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.5rem;
+  background-color: white;
+}
+
+.procedures-catalog-display__item {
+  padding: 1rem;
+  border: 1px solid var(--border-light, #e0e0e0);
+  border-radius: 0.375rem;
+  background-color: var(--bg-primary, #fff);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.procedures-catalog-display__item:hover {
+  border-color: var(--accent-light, #0078d4);
+  box-shadow: 0 2px 8px rgba(0, 120, 212, 0.1);
+}
+
+.procedures-catalog-display__item-title {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--ink-primary, #212121);
+  line-height: 1.4;
+}
+
+.procedures-catalog-display__item-summary {
+  margin: 0.5rem 0;
+  font-size: 0.85rem;
+  color: var(--ink-secondary, #666);
+  line-height: 1.5;
+}
+
+.procedures-catalog-display__item-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.procedures-catalog-display__tag {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  background-color: var(--tag-bg, #e8f4f8);
+  color: var(--tag-ink, #0078d4);
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.procedures-catalog-display__section-empty {
+  text-align: center;
+  color: var(--ink-secondary, #666);
+  font-style: italic;
+  padding: 1rem;
+}
+
+/* RTL adjustment */
+[dir="rtl"] .procedures-catalog-display__source-title {
+  margin-right: 0;
+}
+
+[dir="rtl"] .procedures-catalog-display__section-title {
+  margin-right: 0;
+  margin-left: 1rem;
+}
+
+[dir="rtl"] .procedures-catalog-display__section-count {
+  margin-left: 0;
+  margin-right: 1rem;
+}

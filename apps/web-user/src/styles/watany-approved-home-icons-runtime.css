@@ -1,0 +1,250 @@
+﻿/* APEX_APPROVED_ICONS_RUNTIME_SAFE_CSS_V1_5
+   Runtime-scoped approved WatanyBot V1 home icon styling.
+   Goal: match the approved Koudama glossy transparent tile style without broad wrapper damage. */
+:root {
+  --watany-approved-icon-size: 76px;
+  --watany-approved-icon-radius: 22px;
+  --watany-approved-icon-img-size: 68px;
+  --watany-approved-icon-label-size: 13px;
+  --watany-approved-icon-label-gap: 8px;
+}
+
+.watany-approved-icons-runtime-enabled .watany-drawer-page[data-watany-feature="home"][data-watany-launcher-theme="golden-green-v1"] {
+  --watany-approved-icon-size: 76px;
+  --watany-approved-icon-img-size: 68px;
+  --watany-approved-icon-label-size: 12px;
+}
+
+.watany-approved-icons-runtime-enabled .watany-drawer-page[data-watany-feature="home"][data-watany-launcher-theme="golden-green-v1"] .watany-approved-runtime-card {
+  display: grid !important;
+  grid-template-rows: auto auto !important;
+  align-items: start !important;
+  justify-items: center !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  gap: 8px !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  text-decoration: none !important;
+  overflow: visible !important;
+}
+
+.watany-approved-icons-runtime-enabled .watany-drawer-page[data-watany-feature="home"][data-watany-launcher-theme="golden-green-v1"] .watany-approved-runtime-tile {
+  width: min(100%, var(--watany-approved-icon-size)) !important;
+  height: auto !important;
+  aspect-ratio: 1 / 1 !important;
+  min-width: var(--watany-approved-icon-size) !important;
+  min-height: 0 !important;
+  max-width: var(--watany-approved-icon-size) !important;
+  max-height: none !important;
+  box-sizing: border-box !important;
+  position: relative !important;
+  isolation: isolate !important;
+  overflow: visible !important;
+  border-radius: 24px !important;
+  display: grid !important;
+  place-items: center !important;
+  padding: 6px !important;
+  margin: 0 !important;
+  color: #173b2c !important;
+  background-color: #fff8e6 !important;
+  background-image: linear-gradient(180deg, #fffdf5 0%, #fff8e6 56%, #f6e0b0 100%) !important;
+  border: 2px solid rgba(214, 167, 42, 0.86) !important;
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,.98),
+    inset 0 10px 16px rgba(255,255,255,.72),
+    inset 0 -10px 14px rgba(214, 167, 42, .2),
+    0 16px 24px rgba(23,59,44,.18),
+    0 8px 14px rgba(23,59,44,.12) !important;
+}
+
+.watany-approved-icons-runtime-enabled .watany-drawer-page[data-watany-feature="home"][data-watany-launcher-theme="golden-green-v1"] .watany-approved-runtime-tile::before {
+  content: "" !important;
+  position: absolute !important;
+  inset: 6px !important;
+  border-radius: 16px !important;
+  border: 1px solid rgba(255,255,255,0.86) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.92) !important;
+  pointer-events: none !important;
+  z-index: 1 !important;
+}
+
+.watany-approved-icons-runtime-enabled .watany-drawer-page[data-watany-feature="home"][data-watany-launcher-theme="golden-green-v1"] .watany-approved-runtime-glyph,
+.watany-approved-icons-runtime-enabled .watany-drawer-page[data-watany-feature="home"][data-watany-launcher-theme="golden-green-v1"] .watany-approved-runtime-tile > img,
+.watany-approved-icons-runtime-enabled .watany-drawer-page[data-watany-feature="home"][data-watany-launcher-theme="golden-green-v1"] .watany-approved-runtime-tile > svg,
+.watany-approved-icons-runtime-enabled .watany-drawer-page[data-watany-feature="home"][data-watany-launcher-theme="golden-green-v1"] .watany-approved-runtime-tile img,
+.watany-approved-icons-runtime-enabled .watany-drawer-page[data-watany-feature="home"][data-watany-launcher-theme="golden-green-v1"] .watany-approved-runtime-tile svg {
+  width: var(--watany-approved-icon-img-size) !important;
+  height: var(--watany-approved-icon-img-size) !important;
+  max-width: var(--watany-approved-icon-img-size) !important;
+  max-height: var(--watany-approved-icon-img-size) !important;
+  object-fit: contain !important;
+  display: block !important;
+  position: relative !important;
+  z-index: 3 !important;
+  margin: 0 !important;
+  filter: drop-shadow(0 5px 8px rgba(23,59,44,.22)) !important;
+}
+
+html body .watany-approved-icons-runtime-enabled .watany-drawer-page[data-watany-feature="home"][data-watany-launcher-theme="golden-green-v1"] .watany-app-icon__glyph img.watany-v4-approved-raster-icon {
+  width: 68px !important;
+  height: 68px !important;
+  min-width: 68px !important;
+  min-height: 68px !important;
+  max-width: 68px !important;
+  max-height: 68px !important;
+}
+
+html body .watany-approved-icons-runtime-enabled .watany-drawer-page[data-watany-feature="home"][data-watany-launcher-theme="golden-green-v1"] .watany-app-icon__glyph[data-watany-approved-raster-glyph="true"] {
+  position: absolute !important;
+  inset: 3px !important;
+  width: 68px !important;
+  height: 68px !important;
+}
+
+.watany-approved-icons-runtime-enabled .watany-drawer-page[data-watany-feature="home"][data-watany-launcher-theme="golden-green-v1"] .watany-approved-runtime-label {
+  display: block !important;
+  margin-top: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-height: 1.15em !important;
+  line-height: 1.34 !important;
+  font-size: var(--watany-approved-icon-label-size) !important;
+  font-weight: 900 !important;
+  text-align: center !important;
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  color: #173b2c !important;
+  text-shadow: 0 1px 0 rgba(255,255,255,.65) !important;
+}
+
+.watany-approved-icons-runtime-enabled .watany-approved-runtime-tile::after {
+  content: "" !important;
+}
+
+.watany-approved-icons-runtime-enabled .watany-app-icon[data-watany-icon-render="sign"] .watany-app-icon__tile::after,
+.watany-approved-icons-runtime-enabled .watany-app-icon[href$="/salary"] .watany-app-icon__tile::after,
+.watany-approved-icons-runtime-enabled .watany-app-icon[href$="/recruitment"] .watany-app-icon__tile::after,
+.watany-approved-icons-runtime-enabled .watany-app-icon[href$="/services/official"] .watany-app-icon__tile::after,
+.watany-approved-icons-runtime-enabled .watany-app-icon[href$="/procedures"] .watany-app-icon__tile::after,
+.watany-approved-icons-runtime-enabled .watany-app-icon[href$="/school-grants"] .watany-app-icon__tile::after,
+.watany-approved-icons-runtime-enabled .watany-app-icon[href$="/al-wafiyat"] .watany-app-icon__tile::after,
+.watany-approved-icons-runtime-enabled .watany-app-icon[href$="/legal"] .watany-app-icon__tile::after,
+.watany-approved-icons-runtime-enabled .watany-app-icon[href$="/network"] .watany-app-icon__tile::after,
+.watany-approved-icons-runtime-enabled .watany-app-icon[href$="/news"] .watany-app-icon__tile::after,
+.watany-approved-icons-runtime-enabled .watany-app-icon[href$="/fake-news"] .watany-app-icon__tile::after,
+.watany-approved-icons-runtime-enabled .watany-app-icon[href$="/forms"] .watany-app-icon__tile::after,
+.watany-approved-icons-runtime-enabled .watany-app-icon[href$="/faq"] .watany-app-icon__tile::after,
+.watany-approved-icons-runtime-enabled .watany-app-icon[href$="/jobs"] .watany-app-icon__tile::after,
+.watany-approved-icons-runtime-enabled .watany-app-icon[href$="/marketplace"] .watany-app-icon__tile::after,
+.watany-approved-icons-runtime-enabled .watany-app-icon[href$="/taxi"] .watany-app-icon__tile::after,
+.watany-approved-icons-runtime-enabled .watany-app-icon[href$="/voting"] .watany-app-icon__tile::after,
+.watany-approved-icons-runtime-enabled .watany-app-icon[href$="/community"] .watany-app-icon__tile::after,
+.watany-approved-icons-runtime-enabled .watany-app-icon[href$="/world-cup"] .watany-app-icon__tile::after,
+.watany-approved-icons-runtime-enabled .watany-app-icon[href$="/settings"] .watany-app-icon__tile::after {
+  content: attr(data-sign) !important;
+}
+
+.watany-approved-icons-runtime-enabled .watany-app-icon[href$="/salary"] .watany-app-icon__tile::after {
+  top: calc(50% - 6px) !important;
+}
+
+.watany-approved-icons-runtime-enabled .watany-drawer-page[data-watany-feature="home"][data-watany-launcher-theme="golden-green-v1"] .watany-app-icon .watany-app-icon__tile[data-sign] .watany-app-icon__glyph,
+.watany-approved-icons-runtime-enabled .watany-drawer-page[data-watany-feature="home"][data-watany-launcher-theme="golden-green-v1"] .watany-app-icon .watany-app-icon__tile[data-sign] .watany-app-icon__glyph > svg,
+.watany-approved-icons-runtime-enabled .watany-drawer-page[data-watany-feature="home"][data-watany-launcher-theme="golden-green-v1"] .watany-app-icon .watany-app-icon__tile[data-sign] > svg,
+.watany-approved-icons-runtime-enabled .watany-drawer-page[data-watany-feature="home"][data-watany-launcher-theme="golden-green-v1"] .watany-app-icon .watany-app-icon__tile[data-sign] > img,
+.watany-approved-icons-runtime-enabled .watany-drawer-page[data-watany-feature="home"][data-watany-launcher-theme="golden-green-v1"] .watany-app-icon .watany-app-icon__tile[data-sign] img,
+.watany-approved-icons-runtime-enabled .watany-drawer-page[data-watany-feature="home"][data-watany-launcher-theme="golden-green-v1"] .watany-app-icon .watany-app-icon__tile[data-sign] .watany-app-icon__badge {
+  display: none !important;
+}
+
+.watany-approved-icons-runtime-enabled .watany-drawer-page[data-watany-feature="home"][data-watany-launcher-theme="golden-green-v1"] .watany-app-icon[data-watany-asset-render="exact-viewer"] {
+  position: relative !important;
+  gap: 0 !important;
+}
+
+.watany-approved-icons-runtime-enabled .watany-drawer-page[data-watany-feature="home"][data-watany-launcher-theme="golden-green-v1"] .watany-app-icon[data-watany-asset-render="exact-viewer"] .watany-approved-runtime-tile {
+  width: min(100%, var(--watany-approved-icon-size)) !important;
+  max-width: var(--watany-approved-icon-size) !important;
+  height: auto !important;
+  min-height: 0 !important;
+  aspect-ratio: auto !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  overflow: visible !important;
+}
+
+.watany-approved-icons-runtime-enabled .watany-drawer-page[data-watany-feature="home"][data-watany-launcher-theme="golden-green-v1"] .watany-app-icon[data-watany-asset-render="exact-viewer"] .watany-approved-runtime-asset {
+  display: block !important;
+  width: 100% !important;
+  height: auto !important;
+  max-width: 100% !important;
+  object-fit: contain !important;
+  margin: 0 !important;
+  filter: none !important;
+}
+
+.watany-approved-icons-runtime-enabled .watany-drawer-page[data-watany-feature="home"][data-watany-launcher-theme="golden-green-v1"] .watany-app-icon[data-watany-asset-render="exact-viewer"] .watany-app-icon__glyph,
+.watany-approved-icons-runtime-enabled .watany-drawer-page[data-watany-feature="home"][data-watany-launcher-theme="golden-green-v1"] .watany-app-icon[data-watany-asset-render="exact-viewer"] .watany-app-icon__badge {
+  display: none !important;
+}
+
+.watany-approved-icons-runtime-enabled .watany-drawer-page[data-watany-feature="home"][data-watany-launcher-theme="golden-green-v1"] .watany-app-icon[data-watany-asset-render="exact-viewer"] .watany-app-icon__tile::before,
+.watany-approved-icons-runtime-enabled .watany-drawer-page[data-watany-feature="home"][data-watany-launcher-theme="golden-green-v1"] .watany-app-icon[data-watany-asset-render="exact-viewer"] .watany-app-icon__tile::after {
+  content: none !important;
+  display: none !important;
+}
+
+.watany-approved-icons-runtime-enabled .watany-drawer-page[data-watany-feature="home"][data-watany-launcher-theme="golden-green-v1"] .watany-app-icon[data-watany-asset-render="exact-viewer"] .watany-app-icon__label {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0 0 0 0) !important;
+  clip-path: inset(50%) !important;
+  border: 0 !important;
+  white-space: nowrap !important;
+}
+
+.watany-approved-icons-runtime-enabled .koudama-home__tile-icon[data-sign]::after {
+  content: attr(data-sign) !important;
+  position: absolute !important;
+  left: 50% !important;
+  top: calc(50% - 2px) !important;
+  z-index: 2 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: max-content !important;
+  height: max-content !important;
+  color: #0f172a !important;
+  font-size: clamp(32px, 10vw, 46px) !important;
+  line-height: 1 !important;
+  text-align: center !important;
+  filter:
+    saturate(1.2)
+    contrast(1.12)
+    brightness(1.02)
+    drop-shadow(0 1px 0 rgba(255, 255, 255, .55))
+    drop-shadow(0 4px 7px rgba(15, 23, 42, .24)) !important;
+  transform: translate(-50%, -50%) !important;
+  pointer-events: none !important;
+}
+
+.watany-approved-icons-runtime-enabled .koudama-home__tile-icon[data-sign] :is(svg, img, .koudama-feature-icon) {
+  opacity: 0 !important;
+}

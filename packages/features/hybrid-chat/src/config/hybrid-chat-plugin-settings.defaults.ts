@@ -1,0 +1,2 @@
+import type { HybridChatSettings } from '../contracts/hybrid-chat-plugin-contract';
+export const defaultHybridChatSettings: HybridChatSettings = { pluginKey: 'hybrid-chat', enabled: true, providerKind: 'kb-grounded', kbGroundingEnabled: true, liveSearchEnabled: true, communityIsolationEnabled: true, voiceEntryEnabled: false, maxContextItems: 8, adminConfigurable: true };

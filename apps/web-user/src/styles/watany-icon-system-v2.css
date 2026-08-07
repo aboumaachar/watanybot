@@ -1,0 +1,14 @@
+.watany-icon-system-v2 {
+  --image-reduce-size: 48px;
+}
+.watany-topbar-light {
+  --accent: #173b2c;
+  --align: center;
+}
+.watany-icon-card-v2 {
+  display: inline-block;
+  margin: 8px;
+  padding: 6px;
+  background-color: #fffdf7;
+  border-radius: 8px;
+}

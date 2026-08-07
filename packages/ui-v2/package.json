@@ -1,0 +1,17 @@
+{
+  "name": "@watany/ui-v2",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "lint": "node -e \"console.log('lint not configured')\"",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.12",
+    "react": "^18.3.1",
+    "typescript": "^5.6.3"
+  },
+  "dependencies": {
+    "@watany/core": "workspace:*"
+  }
+}

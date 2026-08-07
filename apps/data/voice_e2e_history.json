@@ -1,0 +1,1594 @@
+[
+  {
+    "ts": "2026-03-08T14:32:55.873Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2487
+  },
+  {
+    "ts": "2026-03-08T14:17:55.809Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 3468
+  },
+  {
+    "ts": "2026-03-08T14:02:56.153Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 3312
+  },
+  {
+    "ts": "2026-03-08T13:47:55.101Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 9481
+  },
+  {
+    "ts": "2026-03-08T13:32:54.896Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 4260
+  },
+  {
+    "ts": "2026-03-08T13:17:54.898Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 3030
+  },
+  {
+    "ts": "2026-03-08T13:02:55.282Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2754
+  },
+  {
+    "ts": "2026-03-08T12:47:52.908Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 3085
+  },
+  {
+    "ts": "2026-03-08T12:32:52.805Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 6303
+  },
+  {
+    "ts": "2026-03-08T12:17:52.567Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2705
+  },
+  {
+    "ts": "2026-03-08T12:02:52.881Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 4601
+  },
+  {
+    "ts": "2026-03-08T11:47:49.888Z",
+    "ok": false,
+    "sampleText": "اختبار موطني E2E",
+    "error": "fastify-plugin: @fastify/cors - expected '4.x' fastify version, '5.8.2' is installed",
+    "durationMs": 2721
+  },
+  {
+    "ts": "2026-03-07T06:53:41.448Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2196
+  },
+  {
+    "ts": "2026-03-07T06:38:41.445Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 3460
+  },
+  {
+    "ts": "2026-03-07T06:23:41.435Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 1908
+  },
+  {
+    "ts": "2026-03-07T06:08:41.434Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2574
+  },
+  {
+    "ts": "2026-03-07T05:53:41.408Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 1693
+  },
+  {
+    "ts": "2026-03-07T05:38:41.403Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2219
+  },
+  {
+    "ts": "2026-03-07T05:23:41.354Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 3232
+  },
+  {
+    "ts": "2026-03-07T05:21:42.148Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 1662
+  },
+  {
+    "ts": "2026-03-07T05:20:01.694Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2918
+  },
+  {
+    "ts": "2026-03-07T05:15:01.605Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 3671
+  },
+  {
+    "ts": "2026-03-07T05:00:01.369Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2506
+  },
+  {
+    "ts": "2026-03-07T04:47:50.924Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 3616
+  },
+  {
+    "ts": "2026-03-06T21:50:22.739Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 4686
+  },
+  {
+    "ts": "2026-03-06T21:35:22.700Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2263
+  },
+  {
+    "ts": "2026-03-06T21:20:22.686Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 1435
+  },
+  {
+    "ts": "2026-03-06T21:05:22.648Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2634
+  },
+  {
+    "ts": "2026-03-06T20:50:22.590Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 5498
+  },
+  {
+    "ts": "2026-03-06T20:35:22.450Z",
+    "ok": false,
+    "sampleText": "اختبار موطني E2E",
+    "error": "fastify-plugin: @fastify/cors - expected '4.x' fastify version, '5.8.1' is installed",
+    "durationMs": 67
+  },
+  {
+    "ts": "2026-03-06T20:30:54.244Z",
+    "ok": false,
+    "sampleText": "اختبار موطني E2E",
+    "error": "fastify-plugin: @fastify/cors - expected '4.x' fastify version, '5.8.1' is installed",
+    "durationMs": 473
+  },
+  {
+    "ts": "2026-03-04T21:45:43.049Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 3008
+  },
+  {
+    "ts": "2026-03-04T21:30:42.982Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 1877
+  },
+  {
+    "ts": "2026-03-04T21:15:42.983Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2822
+  },
+  {
+    "ts": "2026-03-04T21:00:42.964Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 3133
+  },
+  {
+    "ts": "2026-03-04T20:45:42.961Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 1934
+  },
+  {
+    "ts": "2026-03-04T20:30:42.960Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2395
+  },
+  {
+    "ts": "2026-03-04T20:15:42.951Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 3493
+  },
+  {
+    "ts": "2026-03-04T20:00:42.941Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 5791
+  },
+  {
+    "ts": "2026-03-04T19:45:42.926Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 7720
+  },
+  {
+    "ts": "2026-03-04T19:30:42.912Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 3021
+  },
+  {
+    "ts": "2026-03-04T19:15:42.911Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 1757
+  },
+  {
+    "ts": "2026-03-04T19:00:42.899Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2182
+  },
+  {
+    "ts": "2026-03-04T18:45:42.894Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2296
+  },
+  {
+    "ts": "2026-03-04T18:30:42.881Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2284
+  },
+  {
+    "ts": "2026-03-04T18:15:42.865Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 3230
+  },
+  {
+    "ts": "2026-03-04T18:00:42.859Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 1323
+  },
+  {
+    "ts": "2026-03-04T17:45:42.849Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 3566
+  },
+  {
+    "ts": "2026-03-04T17:30:42.848Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2684
+  },
+  {
+    "ts": "2026-03-04T17:15:42.854Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 3096
+  },
+  {
+    "ts": "2026-03-04T17:00:42.766Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 3008
+  },
+  {
+    "ts": "2026-03-04T16:45:42.756Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 4723
+  },
+  {
+    "ts": "2026-03-04T16:30:42.754Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 1575
+  },
+  {
+    "ts": "2026-03-04T16:15:42.741Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2278
+  },
+  {
+    "ts": "2026-03-04T16:00:42.737Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 1895
+  },
+  {
+    "ts": "2026-03-04T15:45:42.733Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2364
+  },
+  {
+    "ts": "2026-03-04T15:30:42.710Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2115
+  },
+  {
+    "ts": "2026-03-04T15:15:42.331Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 3386
+  },
+  {
+    "ts": "2026-03-04T08:19:36.482Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2738
+  },
+  {
+    "ts": "2026-03-04T08:04:36.470Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2795
+  },
+  {
+    "ts": "2026-03-04T07:49:36.465Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2821
+  },
+  {
+    "ts": "2026-03-04T07:34:36.459Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 1801
+  },
+  {
+    "ts": "2026-03-04T07:19:36.457Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 1256
+  },
+  {
+    "ts": "2026-03-04T07:04:36.601Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2963
+  },
+  {
+    "ts": "2026-03-04T06:49:36.398Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2388
+  },
+  {
+    "ts": "2026-03-04T06:34:36.443Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2337
+  },
+  {
+    "ts": "2026-03-04T06:19:35.839Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2982
+  },
+  {
+    "ts": "2026-03-03T15:16:31.255Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 6074
+  },
+  {
+    "ts": "2026-03-03T15:01:31.200Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2740
+  },
+  {
+    "ts": "2026-03-03T14:46:31.200Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2384
+  },
+  {
+    "ts": "2026-03-03T14:31:31.241Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 5506
+  },
+  {
+    "ts": "2026-03-03T14:16:31.209Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2075
+  },
+  {
+    "ts": "2026-03-03T14:01:31.150Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2278
+  },
+  {
+    "ts": "2026-03-03T13:46:31.139Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 1396
+  },
+  {
+    "ts": "2026-03-03T13:31:31.143Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2943
+  },
+  {
+    "ts": "2026-03-03T13:16:31.151Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2709
+  },
+  {
+    "ts": "2026-03-03T13:01:31.018Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2646
+  },
+  {
+    "ts": "2026-03-03T13:00:33.166Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 4417
+  },
+  {
+    "ts": "2026-03-03T02:11:21.924Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2229
+  },
+  {
+    "ts": "2026-03-03T01:56:21.932Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2790
+  },
+  {
+    "ts": "2026-03-03T01:41:21.899Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2728
+  },
+  {
+    "ts": "2026-03-03T01:26:22.113Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 4832
+  },
+  {
+    "ts": "2026-03-03T01:11:21.862Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 1669
+  },
+  {
+    "ts": "2026-03-03T01:09:17.324Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2079
+  },
+  {
+    "ts": "2026-03-03T01:05:31.092Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2498
+  },
+  {
+    "ts": "2026-03-03T01:04:41.242Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2998
+  },
+  {
+    "ts": "2026-03-03T01:03:53.949Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2063
+  },
+  {
+    "ts": "2026-03-03T01:02:15.733Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 1871
+  },
+  {
+    "ts": "2026-03-03T00:47:15.764Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2525
+  },
+  {
+    "ts": "2026-03-03T00:32:15.320Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 4647
+  },
+  {
+    "ts": "2026-03-03T00:31:12.405Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2782
+  },
+  {
+    "ts": "2026-03-03T00:16:12.416Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 3441
+  },
+  {
+    "ts": "2026-03-03T00:01:12.423Z",
+    "ok": false,
+    "sampleText": "اختبار موطني E2E",
+    "error": "stt failed: 500"
+  },
+  {
+    "ts": "2026-03-02T23:46:12.384Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2662
+  },
+  {
+    "ts": "2026-03-02T23:31:12.399Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2855
+  },
+  {
+    "ts": "2026-03-02T23:16:12.407Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2518
+  },
+  {
+    "ts": "2026-03-02T23:01:12.386Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2016
+  },
+  {
+    "ts": "2026-03-02T22:46:12.387Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2716
+  },
+  {
+    "ts": "2026-03-02T22:31:12.601Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 4514
+  },
+  {
+    "ts": "2026-03-02T22:16:12.045Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2471
+  },
+  {
+    "ts": "2026-03-02T22:10:13.113Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2717
+  },
+  {
+    "ts": "2026-03-02T21:55:13.108Z",
+    "ok": false,
+    "sampleText": "اختبار موطني E2E",
+    "error": "stt failed: 500"
+  },
+  {
+    "ts": "2026-03-02T21:40:13.067Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2827
+  },
+  {
+    "ts": "2026-03-02T21:25:13.411Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 3651
+  },
+  {
+    "ts": "2026-03-02T21:10:12.964Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 3884
+  },
+  {
+    "ts": "2026-03-02T20:55:13.014Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2343
+  },
+  {
+    "ts": "2026-03-02T20:40:12.959Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 3017
+  },
+  {
+    "ts": "2026-03-02T20:25:12.924Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 4027
+  },
+  {
+    "ts": "2026-03-02T20:10:12.906Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 3836
+  },
+  {
+    "ts": "2026-03-02T19:55:12.902Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 1805
+  },
+  {
+    "ts": "2026-03-02T19:40:12.822Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2743
+  },
+  {
+    "ts": "2026-03-02T19:25:12.857Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 3133
+  },
+  {
+    "ts": "2026-03-02T19:10:12.820Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2723
+  },
+  {
+    "ts": "2026-03-02T18:55:12.833Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 3571
+  },
+  {
+    "ts": "2026-03-02T18:40:12.852Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 1901
+  },
+  {
+    "ts": "2026-03-02T18:25:12.311Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 6394
+  },
+  {
+    "ts": "2026-03-02T05:25:05.366Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 13100
+  },
+  {
+    "ts": "2026-03-02T05:10:05.221Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2461
+  },
+  {
+    "ts": "2026-03-02T05:06:22.795Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 3421
+  },
+  {
+    "ts": "2026-03-02T05:05:26.992Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2754
+  },
+  {
+    "ts": "2026-03-01T19:25:28.908Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 4254
+  },
+  {
+    "ts": "2026-03-01T19:22:39.258Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 5893
+  },
+  {
+    "ts": "2026-03-01T00:08:06.629Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2830
+  },
+  {
+    "ts": "2026-02-28T23:53:06.541Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 3657
+  },
+  {
+    "ts": "2026-02-28T23:38:05.726Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2151
+  },
+  {
+    "ts": "2026-02-28T23:23:05.673Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 3365
+  },
+  {
+    "ts": "2026-02-28T23:08:05.511Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2122
+  },
+  {
+    "ts": "2026-02-28T22:53:05.418Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2986
+  },
+  {
+    "ts": "2026-02-28T22:38:05.355Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2548
+  },
+  {
+    "ts": "2026-02-28T22:23:05.305Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2070
+  },
+  {
+    "ts": "2026-02-28T22:08:05.214Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 1990
+  },
+  {
+    "ts": "2026-02-28T21:53:05.176Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2678
+  },
+  {
+    "ts": "2026-02-28T21:38:05.126Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 3888
+  },
+  {
+    "ts": "2026-02-28T21:23:05.104Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 3942
+  },
+  {
+    "ts": "2026-02-28T21:08:05.027Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2822
+  },
+  {
+    "ts": "2026-02-28T20:53:04.981Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 1947
+  },
+  {
+    "ts": "2026-02-28T20:38:04.566Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 5715
+  },
+  {
+    "ts": "2026-02-28T17:27:35.346Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 4726
+  },
+  {
+    "ts": "2026-02-28T17:27:03.678Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 3162
+  },
+  {
+    "ts": "2026-02-28T17:12:03.680Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2132
+  },
+  {
+    "ts": "2026-02-28T16:57:03.661Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 1899
+  },
+  {
+    "ts": "2026-02-28T16:42:03.677Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2843
+  },
+  {
+    "ts": "2026-02-28T16:27:03.658Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 3257
+  },
+  {
+    "ts": "2026-02-28T16:12:03.469Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 4137
+  },
+  {
+    "ts": "2026-02-28T16:06:43.874Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 4159
+  },
+  {
+    "ts": "2026-02-28T12:54:41.402Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2231
+  },
+  {
+    "ts": "2026-02-28T12:39:41.390Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 1663
+  },
+  {
+    "ts": "2026-02-28T12:24:41.383Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 1536
+  },
+  {
+    "ts": "2026-02-28T12:09:41.369Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 4123
+  },
+  {
+    "ts": "2026-02-28T11:54:41.368Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2053
+  },
+  {
+    "ts": "2026-02-28T11:39:41.356Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 1460
+  },
+  {
+    "ts": "2026-02-28T11:24:41.341Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 1459
+  },
+  {
+    "ts": "2026-02-28T11:09:41.326Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 1946
+  },
+  {
+    "ts": "2026-02-28T10:54:41.326Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 3062
+  },
+  {
+    "ts": "2026-02-28T09:54:58.012Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2290
+  },
+  {
+    "ts": "2026-02-28T09:39:58.010Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 1775
+  },
+  {
+    "ts": "2026-02-28T09:24:57.995Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 1836
+  },
+  {
+    "ts": "2026-02-28T09:09:57.982Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 1675
+  },
+  {
+    "ts": "2026-02-28T08:54:58.035Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 3193
+  },
+  {
+    "ts": "2026-02-28T08:39:58.011Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2613
+  },
+  {
+    "ts": "2026-02-28T08:24:57.966Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 3180
+  },
+  {
+    "ts": "2026-02-28T08:09:57.947Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 3679
+  },
+  {
+    "ts": "2026-02-28T07:54:57.940Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 3075
+  },
+  {
+    "ts": "2026-02-28T07:39:57.922Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2770
+  },
+  {
+    "ts": "2026-02-28T07:24:57.943Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 1901
+  },
+  {
+    "ts": "2026-02-28T07:09:57.808Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2433
+  },
+  {
+    "ts": "2026-02-28T07:09:26.833Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 3461
+  },
+  {
+    "ts": "2026-02-28T07:00:21.779Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 3643
+  },
+  {
+    "ts": "2026-02-28T06:45:21.784Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2363
+  },
+  {
+    "ts": "2026-02-28T06:30:21.766Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 1751
+  },
+  {
+    "ts": "2026-02-28T06:15:21.716Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 1640
+  },
+  {
+    "ts": "2026-02-28T06:00:21.740Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 1617
+  },
+  {
+    "ts": "2026-02-28T05:45:21.601Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2229
+  },
+  {
+    "ts": "2026-02-28T05:33:52.969Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2318
+  },
+  {
+    "ts": "2026-02-28T05:21:45.299Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2373
+  },
+  {
+    "ts": "2026-02-28T05:20:58.073Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2778
+  },
+  {
+    "ts": "2026-02-28T05:07:38.206Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2813
+  },
+  {
+    "ts": "2026-02-28T04:52:38.210Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 3078
+  },
+  {
+    "ts": "2026-02-28T04:37:37.697Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 3249
+  },
+  {
+    "ts": "2026-02-28T04:34:00.921Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 1809
+  },
+  {
+    "ts": "2026-02-28T04:19:00.962Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 3018
+  },
+  {
+    "ts": "2026-02-28T04:04:00.866Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2054
+  },
+  {
+    "ts": "2026-02-28T03:49:00.847Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 1388
+  },
+  {
+    "ts": "2026-02-28T03:34:00.568Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 3066
+  },
+  {
+    "ts": "2026-02-27T21:26:20.869Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 3390
+  },
+  {
+    "ts": "2026-02-27T21:11:20.738Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 7353
+  },
+  {
+    "ts": "2026-02-27T20:56:20.707Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 12881
+  },
+  {
+    "ts": "2026-02-27T20:41:20.335Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 1988
+  },
+  {
+    "ts": "2026-02-27T20:26:20.335Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 7928
+  },
+  {
+    "ts": "2026-02-27T20:11:20.060Z",
+    "ok": false,
+    "sampleText": "اختبار موطني E2E",
+    "error": "fastify-plugin: @fastify/rate-limit - expected '5.x' fastify version, '4.29.1' is installed",
+    "durationMs": 209
+  },
+  {
+    "ts": "2026-02-27T20:09:42.172Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 1587
+  },
+  {
+    "ts": "2026-02-27T19:54:42.195Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 3316
+  },
+  {
+    "ts": "2026-02-27T19:39:42.158Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2529
+  },
+  {
+    "ts": "2026-02-27T19:24:42.174Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2535
+  },
+  {
+    "ts": "2026-02-27T19:09:42.161Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2387
+  },
+  {
+    "ts": "2026-02-27T18:54:41.839Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 4074
+  },
+  {
+    "ts": "2026-02-27T16:35:17.248Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 8496
+  },
+  {
+    "ts": "2026-02-27T16:20:17.138Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 4704
+  },
+  {
+    "ts": "2026-02-27T16:05:17.099Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 2354
+  },
+  {
+    "ts": "2026-02-27T15:50:17.083Z",
+    "ok": true,
+    "sampleText": "اختبار موطني E2E",
+    "transcript": "اختبار موطني E2E",
+    "confidence": 0.95,
+    "durationMs": 3289
+  }
+]

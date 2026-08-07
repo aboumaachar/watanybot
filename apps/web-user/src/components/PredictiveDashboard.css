@@ -1,0 +1,288 @@
+/**
+ * Predictive Dashboard Styles - Elite Feature
+ */
+
+/* ═══════════════════════════════════════════════════════════
+   Dashboard Container
+   ═══════════════════════════════════════════════════════════ */
+.pred-dashboard {
+  background: linear-gradient(135deg, #f8f9fa, #eef2f5);
+  border-radius: 16px;
+  padding: 16px;
+  margin: 12px 0;
+}
+
+.pred-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.pred-icon {
+  font-size: 20px;
+}
+
+.pred-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #333;
+  margin: 0;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Cards Container
+   ═══════════════════════════════════════════════════════════ */
+.pred-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Individual Card
+   ═══════════════════════════════════════════════════════════ */
+.pred-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 14px;
+  position: relative;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border-right: 4px solid #2563eb;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.pred-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.pred-card--high {
+  border-right-color: #f44336;
+  background: linear-gradient(135deg, #fff, #fff5f5);
+}
+
+.pred-card--medium {
+  border-right-color: #ff9800;
+  background: linear-gradient(135deg, #fff, #fffaf3);
+}
+
+.pred-card--low {
+  border-right-color: #4caf50;
+  background: linear-gradient(135deg, #fff, #f5fff5);
+}
+
+.pred-dismiss {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: #f0f0f0;
+  border-radius: 50%;
+  font-size: 14px;
+  color: #5b6472;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.pred-dismiss:hover {
+  background: #e0e0e0;
+  color: #333;
+}
+
+.pred-card-icon {
+  font-size: 28px;
+  margin-bottom: 8px;
+}
+
+.pred-card-message {
+  font-size: 14px;
+  color: #444;
+  margin: 0 0 12px;
+  line-height: 1.5;
+}
+
+.pred-card-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.pred-action-btn {
+  background: var(--primary, #2563eb);
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.pred-action-btn:hover {
+  background: var(--primary-dark, #1d4ed8);
+  transform: scale(1.02);
+}
+
+.pred-action-btn:active {
+  transform: scale(0.98);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Proactive Card (Inline notification style)
+   ═══════════════════════════════════════════════════════════ */
+.proactive-card {
+  background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+  border: 1px solid #90caf9;
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin: 8px 0;
+}
+
+.proactive-card--high {
+  background: linear-gradient(135deg, #ffebee, #ffcdd2);
+  border-color: #ef9a9a;
+}
+
+.proactive-card--medium {
+  background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+  border-color: #ffcc80;
+}
+
+.proactive-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.proactive-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.proactive-message {
+  font-size: 14px;
+  color: #333;
+  margin: 0;
+  line-height: 1.45;
+}
+
+.proactive-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.proactive-btn {
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.proactive-btn:hover {
+  background: #1d4ed8;
+}
+
+.proactive-dismiss {
+  background: transparent;
+  color: #666;
+  border: 1px solid #ccc;
+  padding: 6px 14px;
+  border-radius: 16px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.proactive-dismiss:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Responsive
+   ═══════════════════════════════════════════════════════════ */
+@media (max-width: 480px) {
+  .pred-dashboard {
+    padding: 12px;
+    margin: 8px 0;
+  }
+
+  .pred-card {
+    padding: 12px;
+  }
+
+  .pred-card-message {
+    font-size: 13px;
+  }
+
+  .pred-action-btn {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Dark Mode
+   ═══════════════════════════════════════════════════════════ */
+@media (prefers-color-scheme: dark) {
+  .pred-dashboard {
+    background: linear-gradient(135deg, #1e1e1e, #252525);
+  }
+
+  .pred-title {
+    color: #e0e0e0;
+  }
+
+  .pred-card {
+    background: #2a2a2a;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+
+  .pred-card--high {
+    background: linear-gradient(135deg, #2a2a2a, #3d2424);
+  }
+
+  .pred-card--medium {
+    background: linear-gradient(135deg, #2a2a2a, #3d3424);
+  }
+
+  .pred-card--low {
+    background: linear-gradient(135deg, #2a2a2a, #243d24);
+  }
+
+  .pred-dismiss {
+    background: #333;
+    color: #aaa;
+  }
+
+  .pred-dismiss:hover {
+    background: #444;
+    color: #fff;
+  }
+
+  .pred-card-message {
+    color: #ccc;
+  }
+
+  .proactive-card {
+    background: linear-gradient(135deg, #1e2a36, #263544);
+    border-color: #3d5a80;
+  }
+
+  .proactive-message {
+    color: #e0e0e0;
+  }
+}

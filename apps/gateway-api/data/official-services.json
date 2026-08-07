@@ -1,0 +1,403 @@
+[
+  {
+    "id": "isf-medical-allowances",
+    "listingNo": 2,
+    "titleAr": "المساعدات المرضية لمتقاعدي الأمن الداخلي",
+    "providerAr": "قوى الأمن الداخلي",
+    "category": "health",
+    "sourceUrl": "https://isf.gov.lb/ar/medical-allowances/",
+    "route": "/services/official/isf-medical-allowances",
+    "mode": "LOCAL_FORM_BRIDGE",
+    "enabled": true,
+    "summaryAr": "اعرف قيمة المساعدات المرضية من داخل موطني مع إبقاء النتيجة من المصدر الرسمي لقوى الأمن الداخلي.",
+    "helpTextAr": "أدخل الاسم والرقم العسكري كما يظهران في خدمة قوى الأمن الداخلي الرسمية، ثم دع موطني يجلب النتيجة من المصدر الرسمي.",
+    "fallbackMessageAr": "إذا تعذر الجلب المباشر يمكنك متابعة الطلب من صفحة قوى الأمن الداخلي الرسمية.",
+    "guideBulletsAr": [
+      "هذه الخدمة مرتبطة مباشرة بالمصدر الرسمي لقوى الأمن الداخلي.",
+      "يجب إدخال الاسم والرقم العسكري كما هما في السجل الرسمي.",
+      "لا يقوم موطني بحفظ هذه المعرفات في سجلات الإدارة."
+    ],
+    "knownIssuesAr": [],
+    "inputFields": [
+      {
+        "key": "name",
+        "labelAr": "الاسم",
+        "placeholderAr": "الاسم",
+        "type": "text",
+        "required": true
+      },
+      {
+        "key": "military_number",
+        "labelAr": "الرقم العسكري",
+        "placeholderAr": "الرقم العسكري",
+        "type": "text",
+        "required": true
+      }
+    ],
+    "downloads": [],
+    "privacy": "NORMAL",
+    "cache": false,
+    "storeInputs": false,
+    "externalOnly": true,
+    "bridgeSubmitUrl": "https://isf.gov.lb/wp-content/themes/ISF/services/apis/medical_aid.php",
+    "iframeAllowed": null,
+    "lastCheckedAt": null,
+    "lastStatusCode": null,
+    "lastHealthOk": null
+  },
+  {
+    "id": "army-lab-results",
+    "listingNo": 3,
+    "titleAr": "نتائج الفحوصات المخبرية في الطبابة العسكرية",
+    "providerAr": "الجيش اللبناني / الطبابة العسكرية",
+    "category": "health",
+    "sourceUrl": "https://portal.army.gov.lb/lab.html",
+    "route": "/services/official/army-lab-results",
+    "mode": "SECURE_EXTERNAL_PORTAL",
+    "enabled": true,
+    "summaryAr": "هذه الخدمة تفتح البوابة الرسمية لنتائج الفحوصات المخبرية مع شرح مبسط داخل موطني.",
+    "helpTextAr": "التسجيل الأول يحتاج الرقم التسلسلي للبطاقة العسكرية أو بطاقة الخدمات الاجتماعية، رقم الإصدار، ورمز التفعيل الذي يصل عبر SMS. لا يخزن موطني هذه البيانات أو النتائج.",
+    "fallbackMessageAr": "إذا لم تظهر المنصة داخل موطني استخدم زر فتح المنصة الرسمية.",
+    "guideBulletsAr": [
+      "أدخل الرقم التسلسلي للبطاقة العسكرية أو بطاقة الخدمات الاجتماعية.",
+      "أدخل رقم الإصدار عند التسجيل الأول.",
+      "يصل رمز التفعيل عبر SMS من المنصة الرسمية.",
+      "لا يقوم موطني بتخزين بيانات الدخول أو نتائج الفحوصات."
+    ],
+    "knownIssuesAr": [],
+    "inputFields": [],
+    "downloads": [],
+    "privacy": "HIGH",
+    "cache": false,
+    "storeInputs": false,
+    "externalOnly": true,
+    "portalUrl": "https://portal.army.gov.lb/lab.html",
+    "iframeAllowed": null,
+    "lastCheckedAt": null,
+    "lastStatusCode": null,
+    "lastHealthOk": null
+  },
+  {
+    "id": "isf-mechanic-taxes",
+    "listingNo": 5,
+    "titleAr": "رسوم الميكانيك",
+    "providerAr": "قوى الأمن الداخلي",
+    "category": "vehicles",
+    "sourceUrl": "https://isf.gov.lb/ar/mechanic-taxes/",
+    "route": "/services/official/isf-mechanic-taxes",
+    "mode": "PENDING_URL_VALIDATION",
+    "enabled": false,
+    "summaryAr": "هذه الخدمة مضافة داخل موطني لكنها ما زالت قيد التحقق من الرابط الرسمي قبل تفعيلها داخل التطبيق.",
+    "helpTextAr": "يمكن للإدارة تحديث الرابط الرسمي وفحص حالته. ستتحول الخدمة إلى استعلام محلي مباشر بعد تثبيت الرابط الصحيح.",
+    "fallbackMessageAr": "قيد التحقق من الرابط الرسمي حالياً.",
+    "guideBulletsAr": [
+      "الرابط الرسمي الحالي يحتاج إلى تحقق قبل تفعيل الخدمة.",
+      "ستظهر حالة الفحص الأخيرة وتاريخها داخل لوحة الإدارة.",
+      "بعد تثبيت الرابط الصحيح يمكن تحويل الخدمة إلى نموذج محلي مباشر."
+    ],
+    "knownIssuesAr": [
+      "الرابط الحالي أعاد 404 أثناء التحقق الأولي."
+    ],
+    "inputFields": [],
+    "downloads": [],
+    "privacy": "NORMAL",
+    "cache": false,
+    "storeInputs": false,
+    "externalOnly": true,
+    "iframeAllowed": null,
+    "lastCheckedAt": null,
+    "lastStatusCode": null,
+    "lastHealthOk": null
+  },
+  {
+    "id": "isf-traffic-tickets",
+    "listingNo": 6,
+    "titleAr": "مخالفات سرعة الرادار",
+    "providerAr": "قوى الأمن الداخلي",
+    "category": "vehicles",
+    "sourceUrl": "https://isf.gov.lb/ar/traffic-tickets/",
+    "route": "/services/official/isf-traffic-tickets",
+    "mode": "LOCAL_FORM_BRIDGE",
+    "enabled": true,
+    "summaryAr": "استعلم عن مخالفات سرعة الرادار من داخل موطني مع إبقاء النتيجة من المصدر الرسمي لقوى الأمن الداخلي.",
+    "helpTextAr": "أدخل رقم اللوحة واختر رمز الآلية كما هو معتمد في صفحة قوى الأمن الداخلي الرسمية.",
+    "fallbackMessageAr": "إذا لم تظهر النتيجة يمكنك فتح صفحة قوى الأمن الداخلي الرسمية مباشرة.",
+    "guideBulletsAr": [
+      "الخدمة تستخدم الاستعلام الرسمي نفسه الموجود في صفحة قوى الأمن الداخلي.",
+      "اختر رمز الآلية الصحيح ثم أدخل رقم اللوحة.",
+      "يظهر لك موطني النتيجة بصيغة مبسطة مع الحفاظ على المصدر الرسمي."
+    ],
+    "knownIssuesAr": [],
+    "inputFields": [
+      {
+        "key": "plate_number",
+        "labelAr": "رقم اللوحة",
+        "placeholderAr": "رقم اللوحة",
+        "type": "text",
+        "required": true
+      },
+      {
+        "key": "code",
+        "labelAr": "رمز الآلية",
+        "placeholderAr": "رمز الآلية",
+        "type": "select",
+        "required": true,
+        "options": [
+          {
+            "value": "0",
+            "labelAr": "A"
+          },
+          {
+            "value": "1",
+            "labelAr": "بدون رمز"
+          },
+          {
+            "value": "2",
+            "labelAr": "ب - B"
+          },
+          {
+            "value": "3",
+            "labelAr": "ج - G"
+          },
+          {
+            "value": "4",
+            "labelAr": "ر - R"
+          },
+          {
+            "value": "5",
+            "labelAr": "ز - Z"
+          },
+          {
+            "value": "6",
+            "labelAr": "ص - S"
+          },
+          {
+            "value": "7",
+            "labelAr": "ط - T"
+          },
+          {
+            "value": "8",
+            "labelAr": "ع - J"
+          },
+          {
+            "value": "9",
+            "labelAr": "P"
+          },
+          {
+            "value": "10",
+            "labelAr": "م - M"
+          },
+          {
+            "value": "11",
+            "labelAr": "ن - N"
+          },
+          {
+            "value": "12",
+            "labelAr": "و - O"
+          },
+          {
+            "value": "13",
+            "labelAr": "Y"
+          },
+          {
+            "value": "14",
+            "labelAr": "ق - C"
+          },
+          {
+            "value": "19",
+            "labelAr": "سعودية"
+          },
+          {
+            "value": "20",
+            "labelAr": "قطرية"
+          },
+          {
+            "value": "22",
+            "labelAr": "حمص"
+          },
+          {
+            "value": "23",
+            "labelAr": "ادلب"
+          },
+          {
+            "value": "24",
+            "labelAr": "دمشق"
+          },
+          {
+            "value": "25",
+            "labelAr": "الكويت"
+          },
+          {
+            "value": "26",
+            "labelAr": "دبي"
+          },
+          {
+            "value": "27",
+            "labelAr": "شارقة"
+          },
+          {
+            "value": "28",
+            "labelAr": "يونيفيل"
+          },
+          {
+            "value": "30",
+            "labelAr": "سويسرا"
+          },
+          {
+            "value": "31",
+            "labelAr": "حلب"
+          },
+          {
+            "value": "32",
+            "labelAr": "حماة"
+          },
+          {
+            "value": "33",
+            "labelAr": "الأردن"
+          },
+          {
+            "value": "34",
+            "labelAr": "أبو ظبي"
+          },
+          {
+            "value": "35",
+            "labelAr": "BLP"
+          },
+          {
+            "value": "36",
+            "labelAr": "سورية"
+          },
+          {
+            "value": "37",
+            "labelAr": "البحرين"
+          },
+          {
+            "value": "38",
+            "labelAr": "السويداء"
+          },
+          {
+            "value": "39",
+            "labelAr": "اللاذقية"
+          },
+          {
+            "value": "40",
+            "labelAr": "الإمارات"
+          },
+          {
+            "value": "41",
+            "labelAr": "طرطوس"
+          },
+          {
+            "value": "43",
+            "labelAr": "الحسكة"
+          },
+          {
+            "value": "44",
+            "labelAr": "كاليفورنيا"
+          },
+          {
+            "value": "45",
+            "labelAr": "لوحة أجنبية"
+          },
+          {
+            "value": "46",
+            "labelAr": "دير الزور"
+          },
+          {
+            "value": "47",
+            "labelAr": "عُمان"
+          },
+          {
+            "value": "48",
+            "labelAr": "تجربة"
+          },
+          {
+            "value": "49",
+            "labelAr": "تركيا"
+          },
+          {
+            "value": "50",
+            "labelAr": "الرقة"
+          },
+          {
+            "value": "51",
+            "labelAr": "درعا"
+          },
+          {
+            "value": "55",
+            "labelAr": "العراق"
+          },
+          {
+            "value": "56",
+            "labelAr": "نيجيريا"
+          }
+        ]
+      }
+    ],
+    "downloads": [],
+    "privacy": "NORMAL",
+    "cache": false,
+    "storeInputs": false,
+    "externalOnly": true,
+    "bridgeSubmitUrl": "https://isf.gov.lb/api/service-speed-ticket",
+    "iframeAllowed": null,
+    "lastCheckedAt": null,
+    "lastStatusCode": null,
+    "lastHealthOk": null
+  },
+  {
+    "id": "dgcs-ekhraj-kaid",
+    "listingNo": 7,
+    "titleAr": "إخراج القيد الإلكتروني",
+    "providerAr": "المديرية العامة للأحوال الشخصية",
+    "category": "civil-status",
+    "sourceUrl": "https://www.dgcs.gov.lb/arabic/ekhraj-al-kaid-electronic",
+    "route": "/services/official/dgcs-ekhraj-kaid",
+    "mode": "LOCAL_GUIDE_AND_DOWNLOADS",
+    "enabled": true,
+    "summaryAr": "دليل مبسط داخل موطني لشرح خدمة إخراج القيد الإلكتروني وروابط التحميل الرسمية المرتبطة بها.",
+    "helpTextAr": "هذه الخدمة لا تعيد نتيجة مباشرة. موطني يجمع لك الخطوات والروابط الرسمية والنماذج في مكان واحد ثم يفتح لك المصدر الرسمي عند الحاجة.",
+    "fallbackMessageAr": "يمكنك متابعة التفاصيل الكاملة من صفحة المديرية العامة للأحوال الشخصية الرسمية.",
+    "guideBulletsAr": [
+      "يمكن تحميل النموذج الجديد من طلب بيان القيد من الصفحة الرسمية.",
+      "توجد فيديوهات توضيحية ومنشور رسمي يشرح كيفية الحصول على إخراج قيد إلكتروني.",
+      "الحصول على إخراج القيد الإلكتروني يتم من مكان القيد أول مرة، ثم من مكان السكن لاحقاً بحسب التوضيح الرسمي."
+    ],
+    "knownIssuesAr": [],
+    "inputFields": [],
+    "downloads": [
+      {
+        "id": "leaflet",
+        "titleAr": "المنشور التوضيحي",
+        "url": "https://www.dgcs.gov.lb/Library/Assets/Gallery/Files/Leaflet.pdf",
+        "kind": "pdf"
+      },
+      {
+        "id": "record-request",
+        "titleAr": "طلب بيان قيد",
+        "url": "https://www.dgcs.gov.lb/Library/Assets/Gallery/Files/ekhraj_qaid_electronic.pdf",
+        "kind": "pdf"
+      },
+      {
+        "id": "video-guide",
+        "titleAr": "فيديو توضيحي",
+        "url": "https://youtu.be/V2b0J2HuTFM",
+        "kind": "video"
+      },
+      {
+        "id": "campaign-video",
+        "titleAr": "إعلان الخدمة",
+        "url": "https://youtu.be/Me_h4VdJGeY",
+        "kind": "video"
+      }
+    ],
+    "privacy": "NORMAL",
+    "cache": false,
+    "storeInputs": false,
+    "externalOnly": true,
+    "iframeAllowed": null,
+    "lastCheckedAt": null,
+    "lastStatusCode": null,
+    "lastHealthOk": null
+  }
+]

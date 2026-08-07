@@ -1,0 +1,107 @@
+html.watany-platform-v3 [data-watany-topbar] {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 80;
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) 48px;
+  align-items: center;
+  gap: 0.5rem;
+  min-block-size: 68px;
+  padding:
+    max(0.5rem, env(safe-area-inset-top))
+    0.75rem
+    0.45rem;
+  border-block-end: 1px solid var(--watany-border-gold);
+  background: rgb(251 248 240 / 0.92);
+  box-shadow: 0 6px 20px rgb(42 35 17 / 0.06);
+  backdrop-filter: blur(18px);
+}
+
+html.watany-platform-v3 [data-watany-brand-mark] {
+  inline-size: 44px;
+  block-size: 50px;
+  object-fit: contain;
+  justify-self: start;
+  filter: drop-shadow(0 6px 10px rgb(103 73 20 / 0.16));
+}
+
+html.watany-platform-v3 [data-watany-topbar]
+  :where(button, a) {
+  min-inline-size: var(--watany-touch-min);
+  min-block-size: var(--watany-touch-min);
+}
+
+html.watany-platform-v3 [data-watany-topbar]
+  :where(button, a):not([data-watany-brand-link]) {
+  display: inline-grid;
+  place-items: center;
+  border-color: transparent;
+  background: transparent;
+  color: var(--watany-forest-950);
+  box-shadow: none;
+}
+
+html.watany-platform-v3 [data-watany-topbar]
+  :where(button, a)
+  :where(svg, [class*="icon" i]) {
+  inline-size: 24px;
+  block-size: 24px;
+  color: currentColor;
+}
+
+html.watany-platform-v3 [data-watany-ticker] {
+  min-inline-size: 0;
+  min-block-size: 36px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  overflow: hidden;
+  padding-inline: 0.75rem;
+  border: 1px solid rgb(208 162 70 / 0.18);
+  border-radius: 999px;
+  background: rgb(255 253 248 / 0.82);
+  color: var(--watany-forest-900);
+  white-space: nowrap;
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+html.watany-platform-v3 [data-watany-search] {
+  min-block-size: 48px;
+  inline-size: 100%;
+  border: 1px solid var(--watany-border-gold);
+  border-radius: 16px;
+  background: var(--watany-warm-white);
+  color: var(--watany-ink);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.90);
+}
+
+html.watany-platform-v3 main {
+  color: var(--watany-ink);
+}
+
+/* APEX_V2_VISUAL_DOM_AUTHORITY */
+html.watany-platform-v3
+  body
+  [data-watany-topbar="true"]
+  [data-watany-ticker-link="true"],
+html.watany-platform-v3
+  body
+  [data-watany-ticker="true"]
+  a[data-watany-ticker-link="true"] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-block-size: 44px;
+  padding-block: 0.3rem;
+  padding-inline: 0.45rem;
+  line-height: 1.3;
+}
+
+html.watany-platform-v3
+  [data-watany-dropped-oversized-brand-art="true"] {
+  display: none;
+  inline-size: 0;
+  block-size: 0;
+  overflow: hidden;
+}

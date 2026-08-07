@@ -1,0 +1,78 @@
+{
+  "datasetId": "lebanese-administrative-authority",
+  "datasetVersion": "1.0.1",
+  "schemaVersion": "1.0.0",
+  "approvalStatus": "validation-failed",
+  "generatedAt": "2026-08-06T07:40:31.324Z",
+  "approvedAt": null,
+  "approvedBy": [],
+  "approvalReference": null,
+  "sourceHashes": {
+    "SRC-VENDOR-LOCALITIES": "475fb9e3e9f80b4a35c6c23909545163cab49fed4a5b508b10bb4a07a1fd5871",
+    "SRC-STARTER-CSV": "62cceb6264d1dfb57f35bb163355d6b773b7441ba8714167b38c0f19f9ec1ddc",
+    "SRC-ADDRESS-NETWORK-GOV": "0222d407c467ba1c3c7b9ab9776dfa904b8187223b136326529430dfb92c4076",
+    "SRC-ADDRESS-NETWORK-CAZA": "335c321ac185e4a97c5317e87742672e3f1bc8b5251a45431ce095534cf2b985",
+    "SRC-ADDRESS-NETWORK-VILLAGES": "95164423315f1c7d8b6c31e4ee6e40268411544f2f219d54772b27d9835281a2",
+    "SRC-BOUNDARY-INDEX": "b4f574742eddf6e9e2c4834d382fa09dafbaf8ccdc3b967dddb5aafc08397f30",
+    "SRC-AUTHORITY-MANIFEST": "bfc22ba8950178a91d493d37ea66bafa4b6a9eda679ec65620fa5e26b664c88f",
+    "SRC-STARTER-ARABIC": "62cceb6264d1dfb57f35bb163355d6b773b7441ba8714167b38c0f19f9ec1ddc"
+  },
+  "artifactHashes": {
+    "aliases.csv": "565a917f4de3ddf4f308e0fcb58a8cf5e902fd015b772db298c422c348f02ea9",
+    "arabic-crosswalk.csv": "11776e00334b971c64fc585f4aff793bf537c485f56fa9af25eb9ebfa916bad8",
+    "arabic-name-provenance.csv": "4d556e74521e5229a5a62720424bbd98d97746950c0f19aa1af143610e60b102",
+    "coordinates.csv": "5b466310509eb1872b2d7a19b48bcabd86a95091c74f45d85decf8b85eb899ca",
+    "district-equivalents.csv": "f9340bf8d4b0b4716dd80a91a5a9720b4da846d8c2fe5305616d42f7cb4cc82b",
+    "districts.csv": "03ddeb3cd9ceb4c17bc6ce96cccb8e87c03d63b3803d59776711bed65b3aef03",
+    "governorates.csv": "6af83d7412e8380c68ae598aa5b1bd2be31540d737d887f758ef63d667467baf",
+    "localities.csv": "90b0db6fc3a549b74a6a9a4d9c2beeb1128a530868af827a14286992bc0fc11d",
+    "municipalities.csv": "7966ac970db2fbb5bd22867c464d7d2840623c3c27b21d837ed61209c8e97881",
+    "provenance.csv": "92535fccaf4ef88838db448bd9ca47c3dc4d99109aa62fa42a98dc17065c478f",
+    "runtime.json": "161952f8ee2a7895c400aa08668070731805998727b7e57fdf55af8e0bc2fa81"
+  },
+  "recordCounts": {
+    "governorates": 8,
+    "districts": 25,
+    "municipalities": 0,
+    "localities": 1586,
+    "aliases": 1586,
+    "localitiesWithCoordinates": 181,
+    "missingArabic": 1586,
+    "duplicateIds": 0,
+    "orphanRows": 0
+  },
+  "arabicCoverage": {
+    "acceptedArabic": 0,
+    "missingArabic": 1586,
+    "conflictedArabic": 0,
+    "unresolvedArabic": 1586,
+    "status": "BLOCKED",
+    "issues": [
+      "AUTHORITATIVE_ARABIC_SOURCE_MISSING",
+      "ARABIC_NAME_MISSING"
+    ]
+  },
+  "conflictCounts": {
+    "arabic": 0,
+    "hierarchy": 0,
+    "ambiguous": 1586
+  },
+  "validationSummary": {
+    "status": "BLOCKED",
+    "missingArabic": 1586,
+    "litigeCount": 0,
+    "ambiguousAliasCount": 0
+  },
+  "knownLimitations": [
+    "No authoritative Arabic source with stable identity was available",
+    "Starter Arabic source is audit-only and partial",
+    "Municipality coverage is not established",
+    "Coordinates are incomplete",
+    "Owner approval is pending"
+  ],
+  "previousRelease": "1.0.0",
+  "releaseType": "arabic-authority-recovery",
+  "minimumApplicationVersion": "UL2B",
+  "releaseImmutable": true,
+  "releaseDecision": "BLOCKED_TECHNICAL_VALIDATION"
+}

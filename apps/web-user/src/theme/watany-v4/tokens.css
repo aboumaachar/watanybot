@@ -1,0 +1,38 @@
+:root {
+  --watany-v4-authority: "ECC9D85CC1F24B5F3C2A3D5101E1A064877EEDE5717112FDA77521B20C99CA28";
+  --watany-forest-950: #052b22;
+  --watany-forest-900: #07392e;
+  --watany-forest-800: #0b4a3a;
+  --watany-forest-700: #12624d;
+  --watany-forest-500: #278066;
+  --watany-gold-700: #94620f;
+  --watany-gold-600: #b98522;
+  --watany-gold-500: #d7a43a;
+  --watany-gold-300: #edd18a;
+  --watany-ivory-50: #fffdf7;
+  --watany-ivory-100: #fbf6e8;
+  --watany-ivory-200: #f4ead1;
+  --watany-ink: #14231f;
+  --watany-muted: #64736d;
+  --watany-line: #ded6c2;
+  --watany-phone-width: 390px;
+  --watany-phone-max-width: 430px;
+  --watany-phone-height: 844px;
+  --watany-top-height: 74px;
+  --watany-bottom-height: 72px;
+  --watany-radius-shell: 34px;
+  --watany-shadow-shell: 0 18px 48px rgba(5, 43, 34, .18);
+  --watany-icon-frame-size-desktop: 132px;
+  --watany-icon-frame-size-tablet: 106px;
+  --watany-icon-frame-size-mobile: 96px;
+  --watany-icon-frame-radius-desktop: 28px;
+  --watany-icon-frame-radius-mobile: 21px;
+  --watany-icon-frame-depth: 7px;
+  --watany-icon-frame-gold-dark: #765000;
+  --watany-icon-frame-gold: #d69b12;
+  --watany-icon-frame-gold-bright: #ffd86e;
+  --watany-icon-frame-glow: rgba(255, 201, 72, .48);
+  --watany-icon-frame-shadow: rgba(5, 38, 29, .22);
+  --watany-icon-frame-green-shadow: rgba(5, 49, 36, .22);
+  --watany-icon-frame-highlight: rgba(255, 255, 255, .68);
+}

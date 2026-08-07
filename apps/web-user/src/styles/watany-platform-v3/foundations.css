@@ -1,0 +1,124 @@
+html.watany-platform-v3 {
+  direction: rtl;
+  color-scheme: light;
+  background: var(--watany-ivory-100);
+}
+
+html.watany-platform-v3,
+html.watany-platform-v3 body,
+html.watany-platform-v3 #root {
+  inline-size: 100%;
+  max-inline-size: 100%;
+  min-inline-size: 0;
+  min-block-size: 100%;
+}
+
+html.watany-platform-v3 body,
+html.watany-platform-v3 #root {
+  overflow-x: clip;
+}
+
+html.watany-platform-v3 :where(
+  main,
+  section,
+  article,
+  nav,
+  header,
+  footer,
+  form
+) {
+  max-inline-size: 100%;
+  min-inline-size: 0;
+}
+
+html.watany-platform-v3 body {
+  margin: 0;
+  background:
+    radial-gradient(
+      circle at 90% 0%,
+      rgb(226 189 105 / 0.16),
+      transparent 24rem
+    ),
+    linear-gradient(
+      180deg,
+      var(--watany-ivory-50),
+      var(--watany-ivory-100)
+    );
+  color: var(--watany-ink);
+  font-family:
+    Tahoma,
+    Arial,
+    "Segoe UI",
+    sans-serif;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+html.watany-platform-v3 *,
+html.watany-platform-v3 *::before,
+html.watany-platform-v3 *::after {
+  box-sizing: border-box;
+}
+
+html.watany-platform-v3 :where(button, input, select, textarea) {
+  font: inherit;
+}
+
+html.watany-platform-v3 :where(button, a, input, select, textarea) {
+  -webkit-tap-highlight-color: transparent;
+}
+
+html.watany-platform-v3 :where(button, a):focus-visible,
+html.watany-platform-v3 :where(input, select, textarea):focus-visible {
+  outline: 3px solid rgb(208 162 70 / 0.32);
+  outline-offset: 3px;
+}
+
+html.watany-platform-v3 :where(h1, h2, h3, h4) {
+  color: var(--watany-forest-950);
+  letter-spacing: 0;
+}
+
+html.watany-platform-v3 :where(p, li, label, small) {
+  letter-spacing: 0;
+}
+
+html.watany-platform-v3 :where(img, svg) {
+  max-inline-size: 100%;
+}
+
+html.watany-platform-v3 body::selection {
+  background: rgb(208 162 70 / 0.26);
+  color: var(--watany-forest-950);
+}
+
+@media (min-width: 760px) {
+  html.watany-platform-v3 body {
+    background:
+      radial-gradient(
+        circle at 50% 0%,
+        rgb(208 162 70 / 0.15),
+        transparent 32rem
+      ),
+      #e6e0d3;
+  }
+
+  html.watany-platform-v3 #root {
+    inline-size: min(100%, 430px);
+    min-block-size: 100dvb;
+    margin-inline: auto;
+    background: var(--watany-ivory-100);
+    box-shadow: 0 0 48px rgb(42 35 17 / 0.16);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.watany-platform-v3 *,
+  html.watany-platform-v3 *::before,
+  html.watany-platform-v3 *::after {
+    scroll-behavior: auto;
+    transition-duration: 1ms;
+    animation-duration: 1ms;
+    animation-iteration-count: 1;
+  }
+}

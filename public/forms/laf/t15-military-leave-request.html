@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ت-15 - طلب إجازة عسكرية</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; direction: rtl; text-align: right; padding: 20px; }
+        .form-header { text-align: center; padding-bottom: 20px; border-bottom: 3px solid #667eea; margin-bottom: 30px; }
+        .form-header h1 { font-size: 1.8em; color: #333; margin-bottom: 10px; font-weight: bold; }
+        .form-header p { font-size: 1em; color: #666; }
+        .form-code { background: #f0f4ff; color: #667eea; padding: 10px 15px; border-radius: 4px; font-weight: bold; display: inline-block; margin-bottom: 20px; }
+        .no-print { display: flex; gap: 10px; margin-bottom: 20px; padding: 15px; background: #f5f5f5; border-radius: 6px; }
+        .btn { padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; background: #667eea; color: white; transition: 0.2s; }
+        .btn:hover { background: #5568d3; transform: translateY(-2px); box-shadow: 0 2px 8px rgba(102,126,234,0.3); }
+        .form-section { margin-bottom: 30px; padding: 20px; border: 1px solid #e0e0e0; border-radius: 6px; }
+        .section-title { font-size: 1.1em; font-weight: bold; color: #333; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #667eea; }
+        .form-group { margin-bottom: 15px; display: flex; flex-direction: column; }
+        .form-group label { font-weight: 500; margin-bottom: 5px; color: #333; }
+        .form-group input, .form-group select, .form-group textarea { padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-family: inherit; }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(102,126,234,0.1); }
+        .form-group textarea { min-height: 70px; resize: vertical; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .checkbox-group { margin: 10px 0; display: flex; flex-wrap: wrap; gap: 15px; }
+        .checkbox-group label { display: flex; align-items: center; margin-bottom: 0; }
+        .checkbox-group input { margin-left: 5px; }
+        .signature-block { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 40px; padding-top: 20px; border-top: 1px solid #e0e0e0; }
+        .signature-item { text-align: center; }
+        .signature-line { border-bottom: 1px solid #333; height: 60px; margin-bottom: 10px; }
+        .signature-label { font-size: 0.9em; color: #333; }
+        .date-line { font-size: 0.9em; color: #333; margin-top: 10px; }
+        @media print { .no-print { display: none !important; } body { padding: 0; } input, select, textarea { border: none; border-bottom: 1px solid #000; background: transparent; } }
+        @media (max-width: 768px) { .form-header h1 { font-size: 1.4em; } .signature-block { grid-template-columns: 1fr; } .form-row { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div class="form-header">
+        <h1>طلب إجازة عسكرية</h1>
+        <p>الجيش اللبناني - إدارة الموارد البشرية</p>
+    </div>
+    
+    <div class="form-code">النموذج: ت-15</div>
+    
+    <div class="no-print">
+        <button class="btn" onclick="window.print()">🖨️ طباعة</button>
+        <button class="btn" onclick="downloadForm()">⬇️ تحميل</button>
+        <button class="btn" onclick="shareForm()">📤 مشاركة</button>
+    </div>
+    
+    <div class="form-section">
+        <div class="section-title">١. معلومات الجندي</div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="rank">الرتبة</label>
+                <input type="text" id="rank">
+            </div>
+            <div class="form-group">
+                <label for="name">الاسم الكامل</label>
+                <input type="text" id="name">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="serviceNumber">رقم الملف</label>
+                <input type="text" id="serviceNumber">
+            </div>
+            <div class="form-group">
+                <label for="unit">الوحدة</label>
+                <input type="text" id="unit">
+            </div>
+        </div>
+    </div>
+    
+    <div class="form-section">
+        <div class="section-title">٢. نوع الإجازة</div>
+        <div class="form-group">
+            <label>نوع الإجازة المطلوبة</label>
+            <div class="checkbox-group">
+                <label><input type="radio" name="leaveType"> إجازة عادية</label>
+                <label><input type="radio" name="leaveType"> إجازة مرضية</label>
+                <label><input type="radio" name="leaveType"> إجازة طوارئ</label>
+                <label><input type="radio" name="leaveType"> إجازة بدون راتب</label>
+            </div>
+        </div>
+    </div>
+    
+    <div class="form-section">
+        <div class="section-title">٣. مدة الإجازة</div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="startDate">من التاريخ</label>
+                <input type="date" id="startDate">
+            </div>
+            <div class="form-group">
+                <label for="endDate">إلى التاريخ</label>
+                <input type="date" id="endDate">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="duration">عدد أيام الإجازة</label>
+            <input type="number" id="duration" placeholder="سيحسب تلقائياً">
+        </div>
+    </div>
+    
+    <div class="form-section">
+        <div class="section-title">٤. تفاصيل الإجازة</div>
+        <div class="form-group">
+            <label for="reason">السبب</label>
+            <textarea id="reason" placeholder="اشرح سبب الحاجة للإجازة"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="destination">الوجهة (إن أمكن)</label>
+            <input type="text" id="destination" placeholder="حيث سيقضي الجندي الإجازة">
+        </div>
+        <div class="form-group">
+            <label for="contact">رقم الاتصال أثناء الإجازة</label>
+            <input type="tel" id="contact" placeholder="رقم هاتف أو عنوان">
+        </div>
+    </div>
+    
+    <div class="form-section">
+        <div class="section-title">٥. تفاصيل إضافية</div>
+        <div class="form-group">
+            <label for="usedDays">عدد أيام الإجازة المستخدمة سابقاً</label>
+            <input type="number" id="usedDays">
+        </div>
+        <div class="form-group">
+            <label for="remainingDays">عدد الأيام المتبقية</label>
+            <input type="number" id="remainingDays" readonly>
+        </div>
+    </div>
+    
+    <div class="signature-block">
+        <div class="signature-item">
+            <div class="signature-line"></div>
+            <div class="signature-label">توقيع الجندي</div>
+            <div class="date-line">التاريخ: ________________</div>
+        </div>
+        <div class="signature-item">
+            <div class="signature-line"></div>
+            <div class="signature-label">قائد الوحدة</div>
+            <div class="date-line">التاريخ: ________________</div>
+        </div>
+    </div>
+    
+    <script>
+        function downloadForm() {
+            const blob = new Blob([document.documentElement.outerHTML], { type: 'text/html;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'طلب_إجازة_عسكرية_ت15.html';
+            link.click();
+        }
+        function shareForm() {
+            if (navigator.share) {
+                navigator.share({ title: 'نموذج WatanyBot', text: 'طلب إجازة عسكرية', url: window.location.href });
+            } else {
+                navigator.clipboard.writeText(window.location.href);
+                alert('تم نسخ الرابط');
+            }
+        }
+    </script>
+</body>
+</html>

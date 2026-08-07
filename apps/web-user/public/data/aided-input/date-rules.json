@@ -1,0 +1,9 @@
+{
+  "version": "v1.0",
+  "fields": [
+    { "field": "birth_date", "minDate": "1900-01-01", "maxDate": "today", "displayCalendar": true },
+    { "field": "retirement_date", "minDate": "1943-11-22", "maxDate": "today", "displayCalendar": true },
+    { "field": "event_date", "minDate": "1900-01-01", "maxDate": "today", "displayCalendar": true },
+    { "field": "listing_expires_at", "minDate": "today", "maxDate": "today+365d", "displayCalendar": true }
+  ]
+}

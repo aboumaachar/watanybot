@@ -1,0 +1,119 @@
+.sa-home-icons {
+  display: grid;
+  gap: 8px;
+  margin: 2px 0 4px;
+}
+
+.sa-home-icons__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px 10px;
+}
+
+@media (max-width: 759px) {
+  .sa-home-icons__grid {
+    gap: 10px 8px;
+  }
+
+  .sa-home-icons .watany-app-icon {
+    min-width: 0;
+    gap: 6px;
+  }
+
+  .sa-home-icons .watany-app-icon__tile {
+    width: clamp(52px, 15vw, 62px);
+    height: clamp(52px, 15vw, 62px);
+    border-radius: 16px;
+  }
+
+  .sa-home-icons .watany-app-icon__glyph {
+    font-size: 20px !important;
+  }
+
+  .sa-home-icons .watany-app-icon__label {
+    max-width: 100%;
+    font-size: 11px;
+    line-height: 1.25;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  .sa-home-icons .watany-app-icon[data-sa-feature="latest"] .watany-app-icon__label {
+    font-size: 10px;
+  }
+}
+
+.sa-home-icons .watany-app-icon[data-watany-icon-render="sign"] .watany-app-icon__tile::after {
+  content: attr(data-sign) !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  left: 50% !important;
+  top: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  color: var(--watany-icon-sign-color, #b91c1c) !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+  padding: 0 !important;
+  min-height: 0 !important;
+  line-height: 1 !important;
+  font-weight: 700 !important;
+  font-size: var(--watany-icon-sign-size) !important;
+}
+
+.sa-home-icons .watany-app-icon[data-sa-feature="latest"][data-watany-icon-render="sign"] .watany-app-icon__tile::after,
+.sa-home-icons .watany-app-icon__tile[data-sign="جديد"]::after {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff !important;
+  background: linear-gradient(180deg, #cb3445 0%, #b61d2f 100%) !important;
+  border-radius: 14px;
+  min-height: 1.2em !important;
+  padding: 8px 14px !important;
+  font-weight: 900;
+  line-height: 1 !important;
+  font-size: var(--watany-icon-sign-size) !important;
+  filter: drop-shadow(0 4px 10px rgba(15, 23, 42, 0.18));
+  z-index: 4;
+}
+
+.sa-home-icons .watany-app-icon:not([data-watany-icon-render="sign"]) .watany-app-icon__glyph {
+  position: relative !important;
+  inset: auto !important;
+  display: grid !important;
+  place-items: center !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: none !important;
+  font-size: 24px !important;
+  line-height: 1 !important;
+}
+
+.sa-home-icons .watany-app-icon[data-sa-feature="for-you"] .watany-app-icon__glyph {
+  font-size: clamp(36px, 9vw, 46px) !important;
+  color: #0b8f45 !important;
+  font-weight: 800 !important;
+}
+
+.sa-home-icons .watany-app-icon[data-sa-feature="most-requested"] .watany-app-icon__glyph {
+  font-size: clamp(36px, 9vw, 46px) !important;
+  color: #143b85 !important;
+  font-weight: 800 !important;
+}
+
+/* Ensure the inner glyph is hidden for latest (we use the ::after badge) */
+.sa-home-icons .watany-app-icon[data-watany-icon-render="sign"] .watany-app-icon__glyph {
+  visibility: hidden !important;
+  width: 0 !important;
+  height: 0 !important;
+  display: inline-block !important;
+}
+
+/* Only non-latest sign tiles should drop the frame; latest keeps the shared homepage tile. */
+.sa-home-icons .watany-app-icon[data-watany-icon-render="sign"]:not([data-sa-feature="latest"]) .watany-app-icon__tile {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}

@@ -1,0 +1,386 @@
+html[data-theme='watani'] {
+  --kw-page: #f6f8fc;
+  --kw-surface: #ffffff;
+  --kw-soft: #eef3fb;
+  --kw-text: #0f1c3a;
+  --kw-muted: #5b678a;
+  --kw-border: rgba(21, 36, 79, 0.1);
+  --kw-shadow: rgba(21, 36, 79, 0.14);
+  --kw-accent: #f5c96a;
+  --kw-blue: #3b82f6;
+  --kw-red: #be123c;
+  --kw-teal: #0e7490;
+  --kw-green: #1e3a8a;
+  --kw-orange: #d99a0b;
+  --kw-purple: #4338ca;
+  --kw-gray: #71809d;
+  --kw-pink: #c0267a;
+  --koudama-page-bg: #f6f8fc;
+  --koudama-surface: rgba(255, 255, 255, 0.88);
+  --koudama-surface-strong: #ffffff;
+  --koudama-text: #0f1c3a;
+  --koudama-text-soft: #5b678a;
+  --koudama-border: rgba(21, 36, 79, 0.1);
+  --koudama-primary: #1e3a8a;
+  --koudama-primary-soft: rgba(30, 58, 138, 0.12);
+  --koudama-accent: #f5c96a;
+}
+
+html[data-theme='watani'] body,
+html[data-theme='watani'] #root,
+html[data-theme='watani'] .watany-mobile-shell {
+  background-color: var(--koudama-page-bg, #f6f8fc) !important;
+  background-image: none !important;
+  background-repeat: no-repeat !important;
+  background-position: center top !important;
+  background-size: cover !important;
+  color: var(--koudama-text, #0f1c3a);
+}
+
+html[data-theme='watani'] .watany-mobile-shell__surface,
+html[data-theme='watani'] .watany-mobile-shell__route-content,
+html[data-theme='watani'] .watany-mobile-shell__route-content .watany-utility-page,
+html[data-theme='watani'] .watany-mobile-shell__route-content .utility-action-card,
+html[data-theme='watani'] .watany-mobile-shell__route-content .utility-list-card,
+html[data-theme='watani'] .watany-mobile-shell__route-content .panel,
+html[data-theme='watani'] .watany-mobile-shell__route-content .ds-card,
+html[data-theme='watani'] .watany-mobile-shell__route-content .procedure-card {
+  background: color-mix(in srgb, var(--koudama-surface-strong, #ffffff) 90%, transparent);
+  border-color: rgba(21, 36, 79, 0.1);
+  box-shadow: 0 16px 34px rgba(21, 36, 79, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.86);
+  color: var(--koudama-text, #0f1c3a);
+}
+
+html[data-theme='watani'] .watany-mobile-shell__route-content .utility-action-card__icon,
+html[data-theme='watani'] .watany-mobile-shell__route-content .utility-list-card__title-actions > button,
+html[data-theme='watani'] .watany-mobile-shell__history-btn,
+html[data-theme='watani'] .watany-mobile-shell__drawer-handle {
+  background: linear-gradient(180deg, #ffffff, #eef2fb);
+  border-color: rgba(21, 36, 79, 0.12);
+  box-shadow: 0 10px 20px rgba(21, 36, 79, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  color: var(--koudama-primary, #1e3a8a);
+}
+
+html[data-theme='watani'] .watany-mobile-shell__route-content input,
+html[data-theme='watani'] .watany-mobile-shell__route-content select,
+html[data-theme='watani'] .watany-mobile-shell__route-content textarea,
+html[data-theme='watani'] .watany-mobile-shell__route-content .input {
+  background: #ffffff;
+  border-color: rgba(21, 36, 79, 0.12);
+  color: var(--koudama-text, #0f1c3a);
+  box-shadow: inset 0 2px 8px rgba(21, 36, 79, 0.06);
+}
+
+html[data-theme='watani'] .watany-mobile-shell__route-content .btn,
+html[data-theme='watani'] .watany-mobile-shell__route-content .btn-ghost,
+html[data-theme='watani'] .watany-mobile-shell__route-content button.utility-action-card,
+html[data-theme='watani'] .watany-mobile-shell__route-content .decision-tree .dt-btn {
+  border-color: rgba(21, 36, 79, 0.12);
+  background: linear-gradient(180deg, #ffffff, #eef2fb);
+  color: var(--koudama-primary, #1e3a8a);
+  box-shadow: 0 10px 20px rgba(21, 36, 79, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.88);
+}
+
+html[data-theme='watani'] .watany-mobile-shell__route-content .btn.btn-primary,
+html[data-theme='watani'] .watany-mobile-shell__route-content .decision-tree .dt-btn-main,
+html[data-theme='watani'] .watany-mobile-shell__route-content .utility-action-card--primary {
+  background: linear-gradient(180deg, #3b5bbf, #1e3a8a);
+  color: #ffffff;
+  border-color: transparent;
+}
+
+body.koudama-agent5-active {
+  background-color: var(--koudama-page-bg, #f6f8fc) !important;
+  background-image: none !important;
+}
+
+body.koudama-agent5-active .kw-card-grid {
+  gap: 14px;
+  padding: 14px 14px 6px;
+  --kw-agent5-row-height: 132px;
+  height: auto;
+  overflow: visible;
+}
+
+body.koudama-agent5-active .kw-main-card {
+  border: 1px solid rgba(21, 36, 79, 0.08);
+  border-radius: 34px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(248, 251, 255, 0.9));
+  box-shadow: 0 20px 44px rgba(34, 62, 123, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(18px);
+  padding: 12px 8px 10px;
+  gap: 6px;
+}
+
+body.koudama-agent5-active .kw-main-card strong {
+  color: var(--koudama-text, #0f1c3a);
+  font-size: 17px;
+  line-height: 1.12;
+}
+
+body.koudama-agent5-active .kw-main-card small {
+  display: none;
+  color: var(--koudama-text-soft, #5b678a);
+  font-size: 11.5px;
+  font-weight: 700;
+  line-height: 1.16;
+}
+
+body.koudama-agent5-active .kw-card-icon-wrap {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+}
+
+body.koudama-agent5-active .kw-card-badge {
+  top: -6px;
+  right: -7px;
+  min-width: 28px;
+  height: 28px;
+  padding: 0 8px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(180deg, #e11d48, #be123c) !important;
+  color: #ffffff !important;
+  font-size: 13px;
+  font-weight: 900;
+  line-height: 1;
+  border: 2px solid #ffffff;
+  box-shadow: 0 10px 20px rgba(225, 29, 72, 0.22);
+  text-shadow: none;
+}
+
+body.koudama-agent5-active .kw-card-badge:empty {
+  display: none;
+}
+
+body.koudama-agent5-active :is(.kw-main-card, .kw-child-item) .kw-service-menu-icon-source,
+body.koudama-agent5-active .kw-profile-menu__icon {
+  --watany-icon-shell-size: 82px;
+  --watany-icon-shell-border: 0px;
+  --watany-icon-glyph-size: 126px;
+  --watany-icon-shell-padding: 2px;
+  border: 1.5px solid color-mix(in srgb, var(--kw-tone, #2563eb) 20%, rgba(255, 255, 255, 0.9));
+  border-radius: 28px;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, #ffffff 92%, var(--kw-tone, #2563eb) 8%),
+    color-mix(in srgb, #f6f9ff 95%, var(--kw-tone, #2563eb) 5%)
+  );
+  box-shadow:
+    0 14px 28px color-mix(in srgb, var(--kw-tone, #2563eb) 12%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.96),
+    inset 0 -3px 10px color-mix(in srgb, var(--kw-tone, #2563eb) 6%, transparent);
+}
+
+body.koudama-agent5-active :is(.kw-main-card, .kw-child-item) .kw-service-menu-icon-source.tone-blue,
+body.koudama-agent5-active .kw-profile-menu__icon.tone-blue { --kw-tone: #2563eb; --kw-tone-2: #60a5fa; }
+body.koudama-agent5-active :is(.kw-main-card, .kw-child-item) .kw-service-menu-icon-source.tone-green,
+body.koudama-agent5-active .kw-profile-menu__icon.tone-green { --kw-tone: #1e3a8a; --kw-tone-2: #3b5bbf; }
+body.koudama-agent5-active :is(.kw-main-card, .kw-child-item) .kw-service-menu-icon-source.tone-teal,
+body.koudama-agent5-active .kw-profile-menu__icon.tone-teal { --kw-tone: #0e7490; --kw-tone-2: #22b8cf; }
+body.koudama-agent5-active :is(.kw-main-card, .kw-child-item) .kw-service-menu-icon-source.tone-red,
+body.koudama-agent5-active .kw-profile-menu__icon.tone-red { --kw-tone: #be123c; --kw-tone-2: #f43f5e; }
+body.koudama-agent5-active :is(.kw-main-card, .kw-child-item) .kw-service-menu-icon-source.tone-gold,
+body.koudama-agent5-active .kw-profile-menu__icon.tone-gold { --kw-tone: #d99a0b; --kw-tone-2: #f5c96a; }
+body.koudama-agent5-active :is(.kw-main-card, .kw-child-item) .kw-service-menu-icon-source.tone-purple,
+body.koudama-agent5-active .kw-profile-menu__icon.tone-purple { --kw-tone: #4338ca; --kw-tone-2: #7c8cf0; }
+body.koudama-agent5-active :is(.kw-main-card, .kw-child-item) .kw-service-menu-icon-source.tone-gray,
+body.koudama-agent5-active .kw-profile-menu__icon.tone-gray { --kw-tone: #64748b; --kw-tone-2: #94a3b8; }
+body.koudama-agent5-active :is(.kw-main-card, .kw-child-item) .kw-service-menu-icon-source.tone-pink,
+body.koudama-agent5-active .kw-profile-menu__icon.tone-pink { --kw-tone: #9d174d; --kw-tone-2: #ec4899; }
+
+body.koudama-agent5-active :is(.kw-main-card, .kw-child-item) .kw-service-menu-icon-source svg,
+body.koudama-agent5-active .kw-profile-menu__icon svg {
+  fill: none !important;
+  filter:
+    drop-shadow(0 8px 16px color-mix(in srgb, currentColor 16%, transparent))
+    drop-shadow(0 1px 0 rgba(255, 255, 255, 0.88));
+}
+
+body.koudama-agent5-active :is(.kw-main-card, .kw-child-item) .kw-service-menu-icon-source svg path,
+body.koudama-agent5-active :is(.kw-main-card, .kw-child-item) .kw-service-menu-icon-source svg circle,
+body.koudama-agent5-active :is(.kw-main-card, .kw-child-item) .kw-service-menu-icon-source svg rect,
+body.koudama-agent5-active :is(.kw-main-card, .kw-child-item) .kw-service-menu-icon-source svg ellipse,
+body.koudama-agent5-active :is(.kw-main-card, .kw-child-item) .kw-service-menu-icon-source svg line,
+body.koudama-agent5-active :is(.kw-main-card, .kw-child-item) .kw-service-menu-icon-source svg polyline,
+body.koudama-agent5-active :is(.kw-main-card, .kw-child-item) .kw-service-menu-icon-source svg polygon,
+body.koudama-agent5-active .kw-profile-menu__icon svg path,
+body.koudama-agent5-active .kw-profile-menu__icon svg circle,
+body.koudama-agent5-active .kw-profile-menu__icon svg rect,
+body.koudama-agent5-active .kw-profile-menu__icon svg ellipse,
+body.koudama-agent5-active .kw-profile-menu__icon svg line,
+body.koudama-agent5-active .kw-profile-menu__icon svg polyline,
+body.koudama-agent5-active .kw-profile-menu__icon svg polygon {
+  fill: none !important;
+  stroke: currentColor !important;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+body.koudama-agent5-active:not([data-koudama-sign='filled']) :is(.kw-main-card, .kw-child-item) .kw-service-menu-icon-source,
+body.koudama-agent5-active:not([data-koudama-sign='filled']) .kw-profile-menu__icon {
+  color: var(--kw-tone, var(--koudama-primary, #1e3a8a)) !important;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, #ffffff 92%, var(--kw-tone, #1e3a8a) 8%),
+    color-mix(in srgb, #f6f9ff 95%, var(--kw-tone, #1e3a8a) 5%)
+  );
+  border: 1.5px solid color-mix(in srgb, var(--kw-tone, #1e3a8a) 22%, transparent);
+  box-shadow:
+    0 14px 26px color-mix(in srgb, var(--kw-tone, #1e3a8a) 12%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.96),
+    inset 0 -3px 10px color-mix(in srgb, var(--kw-tone, #1e3a8a) 5%, transparent);
+}
+
+body.koudama-agent5-active[data-koudama-sign='filled'] :is(.kw-main-card, .kw-child-item) .kw-service-menu-icon-source,
+body.koudama-agent5-active[data-koudama-sign='filled'] .kw-profile-menu__icon {
+  color: var(--kw-tone, #2563eb) !important;
+  border: 1.5px solid color-mix(in srgb, var(--kw-tone, #2563eb) 26%, transparent);
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, #ffffff 90%, var(--kw-tone, #2563eb) 10%),
+    color-mix(in srgb, #f6f9ff 94%, var(--kw-tone, #2563eb) 6%)
+  );
+  box-shadow:
+    0 14px 26px color-mix(in srgb, var(--kw-tone, #2563eb) 13%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.96),
+    inset 0 -3px 10px color-mix(in srgb, var(--kw-tone, #2563eb) 6%, transparent);
+}
+
+body.koudama-agent5-active[data-koudama-sign='filled'] :is(.kw-main-card, .kw-child-item) .kw-service-menu-icon-source svg,
+body.koudama-agent5-active[data-koudama-sign='filled'] .kw-profile-menu__icon svg {
+  filter: drop-shadow(0 2px 3px color-mix(in srgb, var(--kw-tone, #2563eb) 24%, transparent));
+}
+
+body.koudama-agent5-active .kw-child-item {
+  border: 1px solid rgba(21, 36, 79, 0.08);
+  border-radius: 24px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(248, 251, 255, 0.9));
+  box-shadow: 0 16px 34px rgba(34, 62, 123, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.92);
+}
+
+body.koudama-agent5-active .kw-child-item .kw-service-menu-icon-source {
+  --watany-icon-shell-size: 72px;
+  --watany-icon-glyph-size: 104px;
+  --watany-icon-shell-padding: 3px;
+}
+
+body.koudama-agent5-active .kw-profile-menu__icon {
+  --watany-icon-shell-size: 56px;
+  --watany-icon-glyph-size: 72px;
+  --watany-icon-shell-padding: 3px;
+}
+
+body.koudama-agent5-active .watany-top-header {
+  --watany-top-header-bg: color-mix(in srgb, var(--koudama-surface-strong, #ffffff) 82%, transparent);
+  --watany-top-header-border: rgba(21, 36, 79, 0.1);
+  --watany-top-header-text: var(--koudama-text, #0f1c3a);
+  --watany-top-header-muted: var(--koudama-text-soft, #5b678a);
+  --watany-top-header-shadow: 0 10px 26px rgba(21, 36, 79, 0.08);
+  padding: 10px 12px 8px;
+}
+
+body.koudama-agent5-active .watany-top-header__top-strip {
+  grid-template-columns: 48px minmax(0, 1fr) auto;
+  gap: 8px;
+}
+
+body.koudama-agent5-active .watany-top-header__search {
+  height: 44px;
+  background: #ffffff;
+  color: var(--koudama-text-soft, #5b678a);
+  border: 1px solid rgba(21, 36, 79, 0.1);
+  box-shadow: inset 0 2px 6px rgba(21, 36, 79, 0.06);
+}
+
+body.koudama-agent5-active .watany-top-header__icon-row {
+  gap: 6px;
+}
+
+body.koudama-agent5-active .watany-top-header__logo-tile {
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #ffffff, #eaf0f9);
+  box-shadow: 0 12px 26px rgba(21, 36, 79, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.92);
+  padding: 5px;
+}
+
+body.koudama-agent5-active .watany-top-header__logo-tile img {
+  mix-blend-mode: normal;
+  filter: drop-shadow(0 4px 6px rgba(21, 36, 79, 0.2));
+}
+
+body.koudama-agent5-active .watany-top-header .watany-top-header__icon,
+body.koudama-agent5-active .kw-toolbar-btn {
+  border-radius: 13px !important;
+  background: linear-gradient(180deg, #ffffff, #eef2fb) !important;
+  color: var(--koudama-primary, #1e3a8a);
+  box-shadow: 0 8px 16px rgba(21, 36, 79, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+}
+
+body.koudama-agent5-active .watany-top-header .watany-top-header__icon--sign.is-active {
+  background: linear-gradient(180deg, #ffffff, #eef2fb) !important;
+  color: #8a5a08;
+  border: 1px solid rgba(217, 154, 11, 0.38);
+  box-shadow: 0 8px 16px rgba(217, 154, 11, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.92) !important;
+}
+
+body.koudama-agent5-active .watany-top-header__ticker {
+  height: 44px;
+  background: #ffffff;
+  border: 1px solid rgba(21, 36, 79, 0.1);
+  box-shadow: inset 0 2px 6px rgba(21, 36, 79, 0.06);
+}
+
+body.koudama-agent5-active .watany-top-header__ticker-track,
+body.koudama-agent5-active .watany-top-header .watany-top-header__ticker-item {
+  color: var(--koudama-text-soft, #5b678a);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+body.koudama-agent5-active .watany-top-header__ticker-separator {
+  background: var(--koudama-accent, #f5c96a);
+}
+
+body.koudama-agent5-active .kw-bottom-chat--global,
+body.koudama-agent5-active .sticky-hybrid-chat-launcher {
+  background: color-mix(in srgb, var(--koudama-surface-strong, #ffffff) 82%, transparent);
+  border-top: 1px solid rgba(21, 36, 79, 0.1);
+  box-shadow: 0 -12px 32px rgba(21, 36, 79, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.68);
+  backdrop-filter: blur(18px) saturate(140%);
+}
+
+body.koudama-agent5-active .kw-bottom-chat--global input,
+body.koudama-agent5-active .sticky-hybrid-chat-launcher__input {
+  background: #ffffff;
+  border-color: rgba(21, 36, 79, 0.1);
+  color: var(--koudama-text, #0f1c3a);
+  box-shadow: inset 0 2px 6px rgba(21, 36, 79, 0.06);
+}
+
+body.koudama-agent5-active .kw-bottom-chat--global .kw-chat-send,
+body.koudama-agent5-active .sticky-hybrid-chat-launcher__send {
+  background: linear-gradient(180deg, #3b5bbf, #1e3a8a);
+  color: #ffffff;
+}
+
+body.koudama-agent5-active .kw-bottom-chat--global .kw-chat-mic,
+body.koudama-agent5-active .sticky-hybrid-chat-launcher__avatar {
+  background: #ffffff;
+  color: var(--koudama-primary, #1e3a8a);
+}
+
+@media (max-width: 520px) {
+  body.koudama-agent5-active .watany-top-header__logo-tile {
+    width: 48px;
+    height: 48px;
+  }
+
+  body.koudama-agent5-active .watany-top-header__ticker {
+    height: 40px;
+  }
+}

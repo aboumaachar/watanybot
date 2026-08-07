@@ -1,0 +1,62 @@
+﻿/* APEX WhatsApp-style admin chat monitor layer */
+
+.chat-monitor-layout {
+  min-height: min(760px, calc(100dvh - 160px));
+}
+
+.conversation-pane.wa-admin-chat {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr);
+  min-height: 0;
+  overflow: hidden;
+}
+
+.conversation-pane.wa-admin-chat .msg-list {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 16px;
+}
+
+.conversation-pane.wa-admin-chat .msg-bubble {
+  max-width: min(78%, 720px);
+  border-radius: 18px;
+  padding: 10px 12px;
+  margin-block: 8px;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+
+.conversation-pane.wa-admin-chat .msg-bubble.user {
+  margin-inline-start: auto;
+  background: #d9fdd3;
+  color: #102315;
+}
+
+.conversation-pane.wa-admin-chat .msg-bubble.assistant,
+.conversation-pane.wa-admin-chat .msg-bubble.admin,
+.conversation-pane.wa-admin-chat .msg-bubble.system {
+  margin-inline-end: auto;
+  background: #ffffff;
+  color: #1f2933;
+}
+
+.conversation-pane.wa-admin-chat .msg-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 4px;
+  font-size: 12px;
+}
+
+@media (max-width: 720px) {
+  .chat-monitor-layout {
+    grid-template-columns: 1fr;
+    min-height: 100dvh;
+  }
+
+  .conversation-pane.wa-admin-chat .msg-bubble {
+    max-width: 88%;
+  }
+}

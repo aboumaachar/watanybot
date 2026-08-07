@@ -1,0 +1,8 @@
+eligibility_type,arabic_label,server_role,active
+veteran,متقاعد عسكري,VETERAN,true
+family_member,فرد عائلة,FAMILY,true
+approved_provider,مزود خدمة معتمد,PROVIDER,true
+approved_taxi_provider,مزود تاكسي معتمد,TAXI_PROVIDER,true
+approved_tourist_guide,مرشد سياحي معتمد,TOURIST_GUIDE,true
+admin,إدارة,ADMIN,true
+superadmin,إدارة عليا,SUPER_ADMIN,true

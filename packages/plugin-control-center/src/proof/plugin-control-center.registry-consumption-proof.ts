@@ -1,0 +1,2 @@
+﻿import { createPluginControlCenterDefaultAdapter } from '../adapter/plugin-control-center-default.adapter';
+export function provePluginControlCenterConsumption() { const adapter = createPluginControlCenterDefaultAdapter(); const plugins = adapter.listPlugins(); return { ok: plugins.length >= 15, count: plugins.length, plugins: plugins.map((p) => p.pluginKey) }; }

@@ -1,0 +1,10 @@
+﻿{
+    "id":  "lebarmy_volunteer_conditions",
+    "type":  "official_reference",
+    "category":  "recruitment_conditions",
+    "sourceUrl":  "https://www.lebarmy.gov.lb/ar/content/%D8%B4%D8%B1%D9%88%D8%B7-%D8%A7%D9%84%D8%AA%D8%B7%D9%88%D8%B9",
+    "importedAt":  "2026-05-16T13:25:29",
+    "status":  "source_mapped",
+    "publicRoute":  "/services/recruitment",
+    "note":  "Static official reference. Must remain separate from live recruitment announcements."
+}

@@ -1,0 +1,40 @@
+.smart-dashboard-stage-a {
+  width: 100%;
+  margin: 12px 0;
+}
+
+.smart-dashboard-stage-a h2 {
+  margin: 0 0 10px;
+  font-size: 1.15rem;
+}
+
+.smart-dashboard-stage-a-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.smart-dashboard-stage-a-card {
+  min-height: 86px;
+  border-radius: 18px;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.14);
+  background: rgba(255, 255, 255, 0.92);
+  color: inherit;
+}
+
+.smart-dashboard-stage-a-card-title {
+  font-weight: 700;
+  text-align: center;
+}
+
+.smart-dashboard-stage-a-card-reason {
+  font-size: 0.75rem;
+  opacity: 0.72;
+  text-align: center;
+}

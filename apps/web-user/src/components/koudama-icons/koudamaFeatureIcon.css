@@ -1,0 +1,256 @@
+.koudama-feature-icon {
+  --koudama-icon-sign: #f8faf5;
+  --koudama-icon-contour: #0b4b3a;
+  --koudama-icon-tile: #ffffff;
+  --kfi-size: 64px;
+  --kfi-glyph-size: calc(var(--kfi-size) * 0.88); /* increase glyph by ~33% relative to previous glyph sizing */
+  display: inline-grid;
+  place-items: center;
+  width: var(--kfi-size);
+  height: var(--kfi-size);
+  color: var(--koudama-icon-sign);
+  flex: 0 0 auto;
+  vertical-align: middle;
+}
+
+.koudama-feature-icon--sm {
+  --kfi-size: 60px; /* bumped ~33% */
+}
+
+.koudama-feature-icon--md {
+  --kfi-size: 86px; /* bumped ~33% */
+}
+
+.koudama-feature-icon--lg {
+  --kfi-size: 110px; /* bumped ~33% */
+}
+
+.koudama-feature-icon__tile {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-radius: calc(var(--kfi-size) * 0.38);
+  background:
+    radial-gradient(circle at 28% 18%, rgba(255, 255, 255, 0.92) 0 22%, rgba(255, 255, 255, 0.42) 23% 44%, rgba(255, 255, 255, 0.08) 45% 100%),
+    linear-gradient(180deg, color-mix(in srgb, #ffffff 88%, var(--koudama-icon-sign) 12%) 0%, #ffffff 48%, color-mix(in srgb, #f7faf7 84%, var(--koudama-icon-sign) 16%) 100%);
+  border: 1px solid color-mix(in srgb, var(--koudama-icon-contour) 22%, rgba(15, 23, 42, 0.08));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -4px 10px rgba(15, 23, 42, 0.04),
+    0 8px 18px rgba(15, 23, 42, 0.08),
+    0 0 0 1px rgba(255, 255, 255, 0.62);
+  transform: translateZ(0);
+}
+
+.koudama-feature-icon__tile::before {
+  content: '';
+  position: absolute;
+  inset: 10%;
+  border-radius: calc(var(--kfi-size) * 0.32);
+  background:
+    radial-gradient(circle at 50% 34%, rgba(255, 255, 255, 0.92), transparent 52%),
+    linear-gradient(180deg, color-mix(in srgb, var(--koudama-icon-sign) 8%, transparent), transparent 72%);
+  opacity: 0.9;
+  pointer-events: none;
+}
+
+.koudama-feature-icon__tile::after {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border-radius: calc(var(--kfi-size) * 0.25);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--koudama-icon-contour) 18%, transparent),
+    inset 0 -4px 10px rgba(15, 23, 42, 0.04);
+  pointer-events: none;
+}
+
+.koudama-feature-icon__mist {
+  position: absolute;
+  inset: 13%;
+  margin: auto;
+  width: 74%;
+  height: 74%;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--koudama-icon-sign) 10%, transparent);
+  filter: blur(10px);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.koudama-feature-icon__svg {
+  position: relative;
+  z-index: 2;
+  width: var(--kfi-glyph-size);
+  height: var(--kfi-glyph-size);
+  display: block;
+  margin: auto;
+  color: var(--koudama-icon-sign);
+  /* prefer filled glyph rendering; strokes not used for filled tokens */
+  stroke: none;
+  filter:
+    drop-shadow(0 3px 8px color-mix(in srgb, var(--koudama-icon-sign) 18%, transparent))
+    drop-shadow(0 1px 0 rgba(255, 255, 255, 0.46));
+}
+
+.koudama-feature-icon svg * {
+  vector-effect: non-scaling-stroke;
+}
+
+.top-menu {
+  background:
+    radial-gradient(circle at 16% 0%, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.94) 58%, rgba(236, 241, 247, 0.9)) !important;
+  color: #111827 !important;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08) !important;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08) !important;
+  backdrop-filter: blur(14px);
+}
+
+.top-menu .tm-icon-btn,
+.top-menu .tm-user-btn {
+  width: 54px;
+  height: 54px;
+  border-radius: 18px;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  color: inherit;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.top-menu .tm-icon-btn > .koudama-feature-icon,
+.top-menu .tm-user-btn > .koudama-feature-icon,
+.top-menu .logo-text > .koudama-feature-icon {
+  --kfi-size: 64px;
+}
+
+.top-menu .logo-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #1f2937;
+  font-weight: 800;
+}
+
+.tm-profile-card__icon .koudama-feature-icon {
+  --kfi-size: 75px;
+}
+
+.tm-logout-btn .koudama-feature-icon {
+  --kfi-size: 51px;
+  margin-inline-end: 6px;
+}
+
+.koudama-grouped-dashboard__icon-svg.koudama-feature-icon,
+.koudama-dashboard .koudama-feature-icon,
+.watany-dashboard .koudama-feature-icon {
+  --kfi-size: 104px;
+}
+
+.bottom-tab-bar .koudama-feature-icon,
+.bottom-tab .koudama-feature-icon,
+[class*='bottom'] .koudama-feature-icon--sm,
+.nav-bottom-tabs .tab-icon .koudama-feature-icon,
+.nav-rail .rail-icon .koudama-feature-icon {
+  --kfi-size: 44px;
+}
+
+.watany-app-icon .koudama-feature-icon,
+.sa-home-icons .koudama-feature-icon {
+  --koudama-icon-sign: #f9fbfa;
+  --koudama-icon-contour: #0f4c45;
+  --koudama-icon-tile: #0f4c45;
+}
+
+.watany-app-icon__tile,
+.koudama-feature-icon__tile {
+  border-color: color-mix(in srgb, var(--koudama-icon-contour) 92%, #c9a127 8%);
+}
+
+.utility-action-card__icon .koudama-feature-icon,
+.watany-mobile-shell__route-content .watany-utility-page .utility-action-card__icon .koudama-feature-icon {
+  --kfi-size: var(--watany-icon-glyph-size, 52px);
+}
+
+.koudama-feature-icon__svg .kfi-fill {
+  fill: currentColor;
+  stroke: none;
+}
+
+.koudama-feature-icon__svg .kfi-detail {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.92);
+  stroke-width: 1.85;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.koudama-feature-icon[data-koudama-icon-render='outline'] {
+  --kfi-size: 56px;
+  --kfi-glyph-size: calc(var(--kfi-size) * 0.62);
+}
+
+.koudama-feature-icon[data-koudama-icon-render='outline'].koudama-feature-icon--sm {
+  --kfi-size: 44px;
+}
+
+.koudama-feature-icon[data-koudama-icon-render='outline'].koudama-feature-icon--md {
+  --kfi-size: 60px;
+}
+
+.koudama-feature-icon[data-koudama-icon-render='outline'].koudama-feature-icon--lg {
+  --kfi-size: 76px;
+}
+
+.koudama-feature-icon[data-koudama-icon-render='outline'] .koudama-feature-icon__tile {
+  border-radius: calc(var(--kfi-size) * 0.32);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, #ffffff 90%, var(--koudama-icon-sign) 10%), #ffffff 48%, color-mix(in srgb, #f8fafc 84%, var(--koudama-icon-sign) 16%) 100%);
+  border: 1px solid color-mix(in srgb, var(--koudama-icon-contour) 22%, rgba(15, 23, 42, 0.08));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.92),
+    0 8px 18px rgba(15, 23, 42, 0.08),
+    0 0 0 1px rgba(255, 255, 255, 0.62);
+}
+
+.koudama-feature-icon[data-koudama-icon-render='outline'] .koudama-feature-icon__tile::before {
+  inset: 10%;
+  border-radius: calc(var(--kfi-size) * 0.26);
+  background:
+    radial-gradient(circle at 50% 32%, rgba(255, 255, 255, 0.92), transparent 52%),
+    linear-gradient(180deg, color-mix(in srgb, var(--koudama-icon-sign) 8%, transparent), transparent 72%);
+  opacity: 0.9;
+}
+
+.koudama-feature-icon[data-koudama-icon-render='outline'] .koudama-feature-icon__tile::after {
+  inset: 4px;
+  border-radius: calc(var(--kfi-size) * 0.25);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--koudama-icon-contour) 18%, transparent),
+    inset 0 -4px 10px rgba(15, 23, 42, 0.04);
+}
+
+.koudama-feature-icon[data-koudama-icon-render='outline'] .koudama-feature-icon__mist {
+  display: none;
+}
+
+.koudama-feature-icon[data-koudama-icon-render='outline'] .koudama-feature-icon__svg {
+  color: color-mix(in srgb, var(--koudama-icon-sign) 82%, #1f2937 18%);
+  filter:
+    drop-shadow(0 2px 6px color-mix(in srgb, var(--koudama-icon-sign) 14%, transparent));
+}
+
+.koudama-feature-icon[data-koudama-icon-render='outline'] .koudama-feature-icon__svg .kfi-fill {
+  fill: color-mix(in srgb, var(--koudama-icon-sign) 90%, #0f172a 10%);
+}
+
+.koudama-feature-icon[data-koudama-icon-render='outline'] .koudama-feature-icon__svg .kfi-detail {
+  stroke: rgba(255, 255, 255, 0.98);
+  stroke-width: 1.65;
+}

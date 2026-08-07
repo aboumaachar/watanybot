@@ -1,0 +1,25 @@
+/* Generated: every prior global CSS authority is contained in the lower-priority watany-legacy layer. */
+@import url("../../components/clean-watany-shell.css") layer(watany-legacy);
+@import url("../../components/koudama-icons/koudamaFeatureIcon.css") layer(watany-legacy);
+@import url("../../components/watanybot/koudama-homepage.css") layer(watany-legacy);
+@import url("../../components/watanybot/watany-drawer-overrides.css") layer(watany-legacy);
+@import url("../../components/watanybot/watany-drawer.css") layer(watany-legacy);
+@import url("../../features/smart-attention-native/SmartAttentionDashboardIcons.css") layer(watany-legacy);
+@import url("../../styles/motanyLoginLanding.css") layer(watany-legacy);
+@import url("../../styles/superadmin.css") layer(watany-legacy);
+@import url("../../styles/watany-approved-home-icons-runtime.css") layer(watany-legacy);
+@import url("../../styles/watany-approved-home-icons.css") layer(watany-legacy);
+@import url("../../styles/watany-compact-procedures-viewer.css") layer(watany-legacy);
+@import url("../../styles/watany-guided-helper.css") layer(watany-legacy);
+@import url("../../styles/watany-homepage-icons-authority.css") layer(watany-legacy);
+@import url("../../styles/watany-icons.css") layer(watany-legacy);
+@import url("../../styles/watany-ui-platform.css") layer(watany-legacy);
+@import url("../../styles/watany-v4-theme.css") layer(watany-legacy);
+@import url("../../styles/watany-welcome-clone.css") layer(watany-legacy);
+@import url("../../styles/watanyApprovedHome.css") layer(watany-legacy);
+@import url("../../styles/watanyCleanHome.css") layer(watany-legacy);
+@import url("../../styles/watanyFinalHome.css") layer(watany-legacy);
+@import url("../../styles/watanyForceCloneHost.css") layer(watany-legacy);
+@import url("../../styles/watanyRasterCloneHome.css") layer(watany-legacy);
+@import url("../../styles/watanyVisualCloneHome.css") layer(watany-legacy);
+

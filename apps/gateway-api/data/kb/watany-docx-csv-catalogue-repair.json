@@ -1,0 +1,21 @@
+﻿{
+    "registry":  "watany-docx-csv-catalogue-repair",
+    "generatedBy":  "v1.3-csv-lock-fallback-effective-catalogue",
+    "generatedAt":  "2026-06-17T13:39:48.9798556+03:00",
+    "source":  "DOCX pre-import audit v1.1 decision package",
+    "applyMode":  true,
+    "rows":  [
+                 {
+                     "decision":  "CSV_CATALOGUE_REPAIR_REQUIRED",
+                     "Status":  "CSV_MISSING",
+                     "MatchScore":  "22.5",
+                     "ProcedureNumber":  "41",
+                     "OfficialTitle":  "ايجاز عن البدل الرمزي لبعض الأعمال الطبية (طوابع)",
+                     "ExpectedBucket":  "قيادة الجيش",
+                     "MatchedCsvTitle":  "اعتماد آلية لاستيفاء بدل مالي عن بعض الخدمات الطبية ويدل تنظيم بطاقات الخدمات",
+                     "CsvRowNumber":  "64",
+                     "target_source_id":  "laf",
+                     "notes":  "Add this DOCX row to the authoritative CSV catalogue or confirm equivalent existing CSV row title."
+                 }
+             ]
+}

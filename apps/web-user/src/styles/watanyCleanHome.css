@@ -1,0 +1,327 @@
+/* ═══════════════════════════════════════════════
+   WatanyCleanHome — standalone CSS
+   Only .wch-* classes. No .wr-*, no watany-v1-*.
+   ═══════════════════════════════════════════════ */
+
+/* ── ancestor overrides when clean home is active ── */
+html:has(.wch-root) {
+  display: block !important;
+  width: 100% !important;
+  min-height: 100% !important;
+}
+html:has(.wch-root) body,
+html:has(.wch-root) #root {
+  display: block !important;
+  width: 100% !important;
+  min-height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* ── reset for clean home root ── */
+.wch-root {
+  all: initial;
+  display: block;
+  direction: rtl;
+  width: 100vw;
+  min-height: 100dvh;
+  margin: 0;
+  padding: 82px 0 130px;
+  background: linear-gradient(180deg, #fffdf7 0%, #f4ecd6 100%);
+  color: #073f2a;
+  font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.4;
+  overflow-x: hidden;
+  overflow-y: auto;
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+}
+.wch-root *, .wch-root *::before, .wch-root *::after { box-sizing: border-box; }
+
+/* ── topbar (fixed) ── */
+.wch-topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  width: 100vw;
+  max-width: 430px;
+  height: 82px;
+  z-index: 900;
+  display: grid;
+  grid-template-columns: 64px 1fr 64px;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: rgba(255, 253, 246, .97);
+  border-bottom: 1px solid rgba(214,167,42,.28);
+  box-shadow: 0 4px 16px rgba(22,59,44,.06);
+}
+.wch-logo {
+  width: 54px; height: 54px;
+  object-fit: contain;
+  justify-self: start;
+}
+.wch-ticker {
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(214,167,42,.45);
+  border-radius: 12px;
+  background: #f6edcf;
+  font-weight: 900;
+  font-size: 14px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.wch-burger {
+  width: 48px; height: 48px;
+  border-radius: 12px;
+  border: 1px solid rgba(214,167,42,.35);
+  background: rgba(255,255,255,.8);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
+  padding: 10px;
+  cursor: pointer;
+}
+.wch-burger span {
+  width: 24px; height: 3px;
+  background: #073f2a;
+  border-radius: 99px;
+  display: block;
+}
+.wch-back-btn {
+  width: 48px; height: 48px;
+  border-radius: 12px;
+  border: 1px solid rgba(214,167,42,.35);
+  background: rgba(255,255,255,.8);
+  font-size: 22px;
+  font-weight: 900;
+  color: #073f2a;
+  cursor: pointer;
+  display: grid; place-items: center;
+}
+.wch-topbar-title {
+  font-weight: 900;
+  font-size: 18px;
+  text-align: center;
+  color: #073f2a;
+}
+
+/* ── icon grid ── */
+.wch-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px 0;
+  padding: 8px 4px;
+  justify-items: center;
+  align-items: start;
+  max-width: 430px;
+  margin: 0 auto;
+}
+.wch-tile {
+  border: 0;
+  background: transparent;
+  padding: 0; margin: 0;
+  width: 100%;
+  max-width: 140px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.wch-tile img {
+  width: 100%;
+  max-width: 120px;
+  height: auto;
+  display: block;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  filter: drop-shadow(0 8px 14px rgba(22,59,44,.06));
+  transition: transform .12s ease;
+}
+.wch-tile:active img { transform: scale(.95); }
+
+/* ── chat bar (fixed above bottom nav) ── */
+.wch-chat {
+  position: fixed;
+  left: 0; right: 0;
+  margin: 0 auto;
+  bottom: 60px;
+  width: 100vw;
+  max-width: 430px;
+  z-index: 900;
+  display: grid;
+  grid-template-columns: 56px 1fr 56px;
+  gap: 6px;
+  padding: 6px 10px;
+  background: rgba(255,255,255,.92);
+  border-top: 1px solid rgba(214,167,42,.18);
+  box-shadow: 0 -4px 14px rgba(22,59,44,.05);
+}
+.wch-chat-btn {
+  height: 46px;
+  border-radius: 12px;
+  border: 1px solid rgba(214,167,42,.35);
+  background: #fff;
+  color: #073f2a;
+  font-size: 20px;
+  font-weight: 900;
+  cursor: pointer;
+  display: grid; place-items: center;
+}
+.wch-chat-input {
+  height: 46px;
+  border-radius: 12px;
+  border: 1px solid rgba(214,167,42,.35);
+  background: #fff;
+  color: #073f2a;
+  font-size: 16px;
+  font-weight: 700;
+  text-align: right;
+  padding: 0 14px;
+  min-width: 0;
+  outline: none;
+}
+.wch-chat-input::placeholder { color: rgba(7,63,42,.4); }
+
+/* ── bottom nav (fixed) ── */
+.wch-bottom {
+  position: fixed;
+  left: 0; right: 0;
+  margin: 0 auto;
+  bottom: 0;
+  width: 100vw;
+  max-width: 430px;
+  height: 60px;
+  z-index: 900;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  background: rgba(255,253,247,.96);
+  border-top: 1px solid rgba(214,167,42,.2);
+  box-shadow: 0 -4px 14px rgba(22,59,44,.04);
+}
+.wch-bottom button {
+  border: 0;
+  background: transparent;
+  color: #073f2a;
+  font-size: 11px;
+  font-weight: 900;
+  cursor: pointer;
+  display: grid; place-items: center;
+  padding: 4px 0;
+}
+.wch-nav-active {
+  color: #d6a72a !important;
+}
+
+/* ── welcome overlay + modal ── */
+.wch-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 950;
+  background: rgba(0,0,0,.4);
+  display: grid;
+  place-items: center;
+}
+.wch-welcome {
+  position: relative;
+  width: min(92vw, 380px);
+  border-radius: 24px;
+  border: 1px solid rgba(214,167,42,.3);
+  background: rgba(255,253,247,.97);
+  box-shadow: 0 20px 50px rgba(22,59,44,.15);
+  padding: 32px 24px 28px;
+  text-align: center;
+}
+.wch-welcome h1 {
+  font-size: 28px;
+  font-weight: 900;
+  color: #073f2a;
+  margin: 16px 0 8px;
+}
+.wch-welcome p {
+  font-size: 16px;
+  color: rgba(7,63,42,.7);
+  margin: 0 0 20px;
+}
+.wch-welcome-logo {
+  width: 80px; height: 80px;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto;
+}
+.wch-welcome-btns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.wch-welcome-btns button {
+  height: 48px;
+  border-radius: 14px;
+  border: 1px solid rgba(214,167,42,.35);
+  background: #fff8e6;
+  font-weight: 900;
+  font-size: 15px;
+  color: #073f2a;
+  cursor: pointer;
+}
+.wch-modal-close {
+  position: absolute;
+  top: 12px; left: 12px;
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  border: 1px solid rgba(214,167,42,.3);
+  background: #fff8e6;
+  font-size: 20px;
+  color: #073f2a;
+  cursor: pointer;
+  display: grid; place-items: center;
+}
+
+/* ── feature landing ── */
+.wch-landing-main {
+  max-width: 430px;
+  margin: 0 auto;
+  padding: 24px 16px;
+  display: grid;
+  place-items: center;
+  min-height: calc(100dvh - 82px - 130px);
+}
+.wch-landing-card {
+  width: 100%;
+  border-radius: 20px;
+  border: 1px solid rgba(214,167,42,.25);
+  background: rgba(255,255,255,.85);
+  box-shadow: 0 8px 24px rgba(22,59,44,.06);
+  padding: 40px 24px;
+  text-align: center;
+}
+.wch-landing-title {
+  font-size: 28px;
+  font-weight: 900;
+  color: #073f2a;
+  margin: 0 0 12px;
+}
+.wch-landing-desc {
+  font-size: 16px;
+  color: rgba(7,63,42,.6);
+  margin: 0 0 24px;
+  line-height: 1.6;
+}
+.wch-landing-home-btn {
+  height: 48px;
+  min-width: 180px;
+  border-radius: 14px;
+  border: 1px solid rgba(214,167,42,.35);
+  background: #073f2a;
+  color: #fff;
+  font-weight: 900;
+  font-size: 16px;
+  cursor: pointer;
+}

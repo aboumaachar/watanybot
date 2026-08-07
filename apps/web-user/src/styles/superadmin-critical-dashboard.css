@@ -1,0 +1,261 @@
+﻿:root {
+  --superadmin-surface: rgba(255, 255, 255, 0.92);
+  --superadmin-surface-strong: #ffffff;
+  --superadmin-border: rgba(15, 23, 42, 0.10);
+  --superadmin-ink: #111827;
+  --superadmin-muted: #667085;
+  --superadmin-blue: #2563eb;
+  --superadmin-blue-soft: rgba(37, 99, 235, 0.12);
+  --superadmin-green: #0f8a5f;
+  --superadmin-radius-xl: 28px;
+  --superadmin-radius-lg: 20px;
+  --superadmin-shadow: 0 22px 70px rgba(15, 23, 42, 0.10);
+}
+
+.superadmin-critical-shell,
+.superadmin-taxi-preview-panel {
+  direction: rtl;
+  width: min(1180px, calc(100% - 24px));
+  margin: 18px auto;
+  color: var(--superadmin-ink);
+}
+
+.superadmin-critical-shell__hero,
+.superadmin-taxi-preview-panel__header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: stretch;
+  gap: 18px;
+  padding: clamp(20px, 4vw, 36px);
+  border: 1px solid var(--superadmin-border);
+  border-radius: var(--superadmin-radius-xl);
+  background:
+    radial-gradient(circle at 10% 10%, rgba(59, 130, 246, 0.16), transparent 34%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(241, 245, 249, 0.92));
+  box-shadow: var(--superadmin-shadow);
+  overflow: hidden;
+}
+
+.superadmin-critical-shell__eyebrow,
+.superadmin-critical-shell__card-eyebrow {
+  margin: 0 0 8px;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--superadmin-blue);
+  font-weight: 800;
+}
+
+.superadmin-critical-shell h1,
+.superadmin-critical-shell h2,
+.superadmin-taxi-preview-panel h2,
+.superadmin-taxi-preview-panel h3 {
+  margin: 0;
+  line-height: 1.15;
+  color: var(--superadmin-ink);
+}
+
+.superadmin-critical-shell h1 {
+  font-size: clamp(1.8rem, 4vw, 3rem);
+}
+
+.superadmin-critical-shell p,
+.superadmin-taxi-preview-panel p {
+  color: var(--superadmin-muted);
+  line-height: 1.8;
+}
+
+.superadmin-critical-shell__status {
+  min-width: 220px;
+  display: grid;
+  gap: 6px;
+  align-content: center;
+  padding: 18px;
+  border-radius: var(--superadmin-radius-lg);
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(37, 99, 235, 0.14);
+}
+
+.superadmin-critical-shell__status span,
+.superadmin-critical-shell__status small {
+  color: var(--superadmin-muted);
+}
+
+.superadmin-critical-shell__status strong {
+  color: var(--superadmin-green);
+  font-size: 1.1rem;
+}
+
+.superadmin-critical-shell__metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.superadmin-critical-shell__metric,
+.superadmin-critical-shell__card,
+.superadmin-critical-shell__checklist,
+.superadmin-taxi-preview-panel__notes {
+  border: 1px solid var(--superadmin-border);
+  border-radius: var(--superadmin-radius-lg);
+  background: var(--superadmin-surface);
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.07);
+}
+
+.superadmin-critical-shell__metric {
+  padding: 16px;
+  min-height: 132px;
+}
+
+.superadmin-critical-shell__metric span {
+  display: block;
+  color: var(--superadmin-muted);
+  font-size: 0.82rem;
+}
+
+.superadmin-critical-shell__metric strong {
+  display: block;
+  margin-top: 10px;
+  font-size: clamp(1.35rem, 3vw, 2rem);
+}
+
+.superadmin-critical-shell__metric p {
+  margin: 8px 0 0;
+  font-size: 0.9rem;
+}
+
+.superadmin-critical-shell__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.superadmin-critical-shell__card {
+  padding: 20px;
+  display: grid;
+  gap: 10px;
+}
+
+.superadmin-critical-shell__action {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0 16px;
+  border-radius: 999px;
+  background: var(--superadmin-blue-soft);
+  color: var(--superadmin-blue);
+  text-decoration: none;
+  font-weight: 800;
+  border: 1px solid rgba(37, 99, 235, 0.16);
+}
+
+.superadmin-critical-shell__action:hover {
+  background: rgba(37, 99, 235, 0.18);
+}
+
+.superadmin-critical-shell__checklist {
+  margin-top: 14px;
+  padding: 20px;
+}
+
+.superadmin-critical-shell__checklist ul,
+.superadmin-taxi-preview-panel__notes ul {
+  display: grid;
+  gap: 10px;
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.superadmin-critical-shell__checklist li,
+.superadmin-taxi-preview-panel__notes li {
+  position: relative;
+  padding: 10px 38px 10px 12px;
+  border-radius: 14px;
+  background: rgba(248, 250, 252, 0.92);
+  color: var(--superadmin-ink);
+}
+
+.superadmin-critical-shell__checklist li::before,
+.superadmin-taxi-preview-panel__notes li::before {
+  content: "✓";
+  position: absolute;
+  right: 12px;
+  top: 9px;
+  color: var(--superadmin-green);
+  font-weight: 900;
+}
+
+.superadmin-taxi-preview-panel__body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.superadmin-taxi-preview-panel__frame-wrap {
+  min-height: 520px;
+  border-radius: var(--superadmin-radius-xl);
+  overflow: hidden;
+  border: 1px solid var(--superadmin-border);
+  background: var(--superadmin-surface-strong);
+  box-shadow: var(--superadmin-shadow);
+}
+
+.superadmin-taxi-preview-panel__frame {
+  width: 100%;
+  height: 620px;
+  border: 0;
+  background: #fff;
+}
+
+.superadmin-taxi-preview-panel__notes {
+  padding: 18px;
+  align-self: start;
+}
+
+.superadmin-page,
+.superadmin-users-page,
+.admin-opportunities-page,
+.admin-import-review-page,
+.admin-opportunities-audit-page,
+[class*="superadmin"],
+[class*="admin-opportunities"] {
+  box-sizing: border-box;
+}
+
+[class*="superadmin"] form,
+[class*="admin-opportunities"] form,
+[class*="superadmin"] .card,
+[class*="admin-opportunities"] .card {
+  border-radius: 18px;
+}
+
+@media (max-width: 900px) {
+  .superadmin-critical-shell__hero,
+  .superadmin-taxi-preview-panel__header,
+  .superadmin-taxi-preview-panel__body {
+    grid-template-columns: 1fr;
+  }
+
+  .superadmin-critical-shell__metrics,
+  .superadmin-critical-shell__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .superadmin-critical-shell__status {
+    min-width: 0;
+  }
+
+  .superadmin-taxi-preview-panel__frame-wrap {
+    min-height: 420px;
+  }
+
+  .superadmin-taxi-preview-panel__frame {
+    height: 480px;
+  }
+}

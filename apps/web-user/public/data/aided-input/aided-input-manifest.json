@@ -1,0 +1,30 @@
+{
+  "version": "v1.0",
+  "purpose": "Koudama aided-input metadata manifest",
+  "rules": {
+    "controlledValuesMustUseMetadata": true,
+    "addressExactDetailsAreOptionalFreeTextOnly": true,
+    "calendarRequiredForDates": true,
+    "vehicleTypeMakeModelYearFeaturesAreMetadataDriven": true,
+    "customFreelanceSkillRequiresApproval": true,
+    "listingPublicationRequiresApprovalWorkflow": true
+  },
+  "datasets": {
+    "addresses": "/data/location/lebanon-admin-locations.csv",
+    "dateRules": "/data/aided-input/date-rules.json",
+    "vehicleTypes": "/data/aided-input/vehicle-types.csv",
+    "vehicleMakes": "/data/aided-input/vehicle-makes.csv",
+    "vehicleModels": "/data/aided-input/vehicle-models.csv",
+    "vehicleYears": "/data/aided-input/vehicle-years.csv",
+    "vehicleFeatures": "/data/aided-input/vehicle-features.csv",
+    "freelanceSkills": "/data/aided-input/freelance-skills.csv",
+    "listingTypes": "/data/aided-input/listing-types.csv",
+    "jobCategories": "/data/aided-input/job-categories.csv",
+    "contactMethods": "/data/aided-input/contact-methods.csv",
+    "eligibilityTypes": "/data/aided-input/eligibility-types.csv",
+    "workflowStatuses": "/data/aided-input/workflow-statuses.csv",
+    "currencies": "/data/aided-input/currencies.csv",
+    "educationLevels": "/data/aided-input/education-levels.csv",
+    "formOptionsRegistry": "/data/aided-input/form-options-registry.json"
+  }
+}

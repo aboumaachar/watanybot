@@ -1,0 +1,73 @@
+/* APEX clean shell isolation authority v1.0.12 */
+html:has(.wch-root),
+html:has(.wch-page),
+html.watany-platform-v3:has(.wch-root),
+html.watany-platform-v3:has(.wch-page),
+body:has(.wch-root),
+body:has(.wch-page),
+#root:has(.wch-root),
+#root:has(.wch-page) {
+  display: block !important;
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 0 !important;
+  overflow-x: hidden !important;
+}
+
+body:has(.wch-root) .wr-dock,
+body:has(.wch-root) .wr-safe-dock,
+body:has(.wch-root) .watany-v1-snapped-popup-overlay,
+body:has(.wch-root) .watany-v1-header-snap-closeout,
+body:has(.wch-root) .watany-v1-body-portal-snap-closeout,
+body:has(.wch-root) .watany-force-clone-host,
+body:has(.wch-root) iframe.watany-force-clone-frame,
+body:has(.wch-root) [class*="guided-help" i],
+body:has(.wch-root) [class*="guidedHelp"],
+body:has(.wch-root) [data-guided-help],
+body:has(.wch-root) [data-apex-authority*="guided" i],
+body:has(.wch-page) .wr-dock,
+body:has(.wch-page) .wr-safe-dock,
+body:has(.wch-page) .watany-v1-snapped-popup-overlay,
+body:has(.wch-page) .watany-v1-header-snap-closeout,
+body:has(.wch-page) .watany-v1-body-portal-snap-closeout,
+body:has(.wch-page) .watany-force-clone-host,
+body:has(.wch-page) iframe.watany-force-clone-frame,
+body:has(.wch-page) [class*="guided-help" i],
+body:has(.wch-page) [class*="guidedHelp"],
+body:has(.wch-page) [data-guided-help],
+body:has(.wch-page) [data-apex-authority*="guided" i] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+body:has(.wch-root) .wch-topbar,
+body:has(.wch-page) .wch-topbar {
+  position: fixed !important;
+  top: 0 !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: min(100vw, 430px) !important;
+  z-index: 10000 !important;
+}
+
+body:has(.wch-root) .wch-chat,
+body:has(.wch-page) .wch-chat {
+  position: fixed !important;
+  left: 50% !important;
+  bottom: 64px !important;
+  transform: translateX(-50%) !important;
+  width: min(100vw, 430px) !important;
+  z-index: 10000 !important;
+}
+
+body:has(.wch-root) .wch-bottom,
+body:has(.wch-page) .wch-bottom {
+  position: fixed !important;
+  left: 50% !important;
+  bottom: 0 !important;
+  transform: translateX(-50%) !important;
+  width: min(100vw, 430px) !important;
+  z-index: 10000 !important;
+}

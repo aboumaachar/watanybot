@@ -1,0 +1,108 @@
+{
+  "version": "1.0.0",
+  "updated_at": "2026-02-24T11:53:21.204371Z",
+  "goals_lb": [
+    "إذا المستخدم سأل 'مين مسؤول/مع مين بحكي' وما لقينا شخص محدد بالدفتر، نعطي الجهة (office) + نسأل عن المنطقة + نفتح تكت تلقائي للإدارة لتعيين نقطة اتصال.",
+    "إذا السؤال 'شو صار بقصّة...' وما في رقم معاملة، نسأل رقم معاملة + نفتح تكت متابعة.",
+    "إذا المستخدم قال 'بعدو ما انحل' نفتح تكت فوراً."
+  ],
+  "rules": [
+    {
+      "id": "esc_responsible_missing_person",
+      "when": {
+        "request_type": "responsible"
+      },
+      "if_missing": [
+        "matched_person"
+      ],
+      "do": [
+        {
+          "action": "reply_lb",
+          "template": "responsible_fallback"
+        },
+        {
+          "action": "open_ticket",
+          "ticket_type": "needs_contact_assignment",
+          "priority": "normal"
+        }
+      ]
+    },
+    {
+      "id": "esc_status_story_no_file",
+      "when": {
+        "request_type": "status_story"
+      },
+      "if_missing": [
+        "file_no"
+      ],
+      "do": [
+        {
+          "action": "reply_lb",
+          "template": "status_need_file"
+        },
+        {
+          "action": "open_ticket",
+          "ticket_type": "followup_tracking",
+          "priority": "normal"
+        }
+      ]
+    },
+    {
+      "id": "esc_user_not_resolved",
+      "when": {
+        "user_phrase_any": [
+          "بعدو ما انحل",
+          "ما استفدت",
+          "نفس المشكلة",
+          "ما انحلّت"
+        ]
+      },
+      "do": [
+        {
+          "action": "open_ticket",
+          "ticket_type": "unresolved",
+          "priority": "high"
+        },
+        {
+          "action": "reply_lb",
+          "template": "ticket_opened_confirm"
+        }
+      ]
+    },
+    {
+      "id": "esc_deadline_urgent",
+      "when": {
+        "request_type": "deadline"
+      },
+      "if_phrase_any": [
+        "آخر مهلة",
+        "قبل إمتى",
+        "مهلة"
+      ],
+      "do": [
+        {
+          "action": "set_priority",
+          "priority": "high"
+        },
+        {
+          "action": "reply_lb",
+          "template": "deadline_priority_prompt"
+        }
+      ]
+    }
+  ],
+  "templates_lb": {
+    "responsible_fallback": {
+      "text": "تمام. عادةً هالموضوع بيتبع {{office_name}}. بس كرمال وصّلك للشخص الصح، قولي بأي محافظة/قضاء/مدينة إنت؟ وإذا معك رقم ملف/معاملة اكتبه.\n\nأو شي تاني"
+    },
+    "status_need_file": {
+      "text": "أكيد فيني تابعلك. بس لازم رقم المعاملة/الملف (أو تاريخ التقديم) + تابع لأي جهاز. عطيني هالمعلومتين وبقلك شو تسأل ووين.\n\nأو شي تاني"
+    },
+    "ticket_opened_confirm": {
+      "text": "تمام. فتحتلك متابعة بهالموضوع. عطيني رقم الملف إذا موجود وأي تفاصيل إضافية، وبنمشيها خطوة خطوة.\n\nأو شي تاني"
+    },
+    "deadline_priority_prompt": {
+      "text": "تمام، موضوع مهلة. أهم شي: تاريخ القرار/الرفض أو تاريخ التبليغ. عطيني التاريخ لنثبت آخر مهلة فوراً.\n\nأو شي تاني"
+    }
+  }
+}

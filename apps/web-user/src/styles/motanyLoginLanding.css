@@ -1,0 +1,457 @@
+/* APEX Motany login landing clone — scoped, mobile-first, no global app behavior changes. */
+.motany-login-redesign {
+  --motany-green: #064f38;
+  --motany-green-2: #0b6b4c;
+  --motany-green-dark: #033825;
+  --motany-text: #1e2d29;
+  --motany-muted: #66736f;
+  --motany-border: rgba(6, 79, 56, 0.24);
+  --motany-card-shadow: 0 22px 55px rgba(4, 56, 37, 0.13);
+  --motany-soft-shadow: 0 15px 30px rgba(6, 79, 56, 0.18);
+  direction: rtl;
+  position: relative;
+  isolation: isolate;
+  min-height: 100svh;
+  overflow-y: auto;
+  width: 100%;
+  overflow-x: hidden;
+  color: var(--motany-text);
+  font-family: "Cairo", "Tajawal", "Noto Kufi Arabic", "Noto Sans Arabic", "Segoe UI", Tahoma, Arial, sans-serif;
+  background:
+    url("/assets/motany-auth/motany-login-landscape.svg") center top / cover no-repeat,
+    radial-gradient(circle at 18% 20%, rgba(194, 220, 196, 0.58) 0, transparent 30%),
+    radial-gradient(circle at 84% 24%, rgba(229, 216, 168, 0.38) 0, transparent 27%),
+    linear-gradient(180deg, #fdfef9 0%, #f4faf5 46%, #eef7f0 100%);
+}
+
+.motany-login-redesign::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, var(--motany-green-dark) 0 14px, transparent 14px calc(100% - 14px), var(--motany-green-dark) calc(100% - 14px)),
+    linear-gradient(180deg, var(--motany-green-dark) 0 14px, transparent 14px);
+  z-index: 0;
+}
+
+.motany-login-screen {
+  position: relative;
+  z-index: 1;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  padding: max(14px, env(safe-area-inset-top)) 14px var(--apex-content-bottom-clearance, calc(max(12px, env(safe-area-inset-bottom)) + 116px + 44px));
+}
+
+.motany-login-spacer { min-height: 28px; }
+
+.motany-login-brand {
+  margin-top: 18px;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+
+
+.motany-login-brand-name {
+  margin: 0;
+  color: var(--motany-green);
+  font-size: clamp(42px, 13vw, 62px);
+  line-height: 0.95;
+  font-weight: 950;
+  letter-spacing: -0.05em;
+}
+
+.motany-login-card {
+  width: min(100%, 430px);
+  margin: 0 auto;
+  padding: 28px 22px 26px;
+  border-radius: 36px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(253,254,250,0.96));
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  box-shadow: var(--motany-card-shadow);
+  backdrop-filter: blur(16px);
+}
+
+.motany-login-title {
+  margin: 0;
+  color: var(--motany-green);
+  text-align: center;
+  font-size: clamp(30px, 9vw, 44px);
+  line-height: 1.08;
+  font-weight: 950;
+  letter-spacing: -0.035em;
+  text-shadow: 0 7px 20px rgba(6, 79, 56, 0.12);
+}
+
+.motany-login-subtitle {
+  max-width: 100%;
+  margin: 12px auto 24px;
+  color: #606b67;
+  text-align: center;
+  font-size: 18px;
+  line-height: 1.55;
+  font-weight: 500;
+}
+
+.motany-login-label {
+  display: block;
+  margin-bottom: 10px;
+  color: #2d3734;
+  font-size: 17px;
+  line-height: 1.35;
+  font-weight: 850;
+}
+
+.motany-login-input-shell {
+  width: 100%;
+  min-height: 62px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-radius: 16px;
+  border: 1.5px solid rgba(6, 79, 56, 0.34);
+  background: rgba(255, 255, 255, 0.76);
+  color: var(--motany-text);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.9);
+  cursor: text;
+  text-align: right;
+}
+
+.motany-login-input-shell:focus-visible {
+  outline: none;
+  border-color: var(--motany-green-2);
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(6,79,56,0.09), inset 0 1px 0 rgba(255,255,255,0.9);
+}
+
+.motany-login-input-icon {
+  flex: 0 0 auto;
+  width: 28px;
+  height: 28px;
+  margin-inline-start: 18px;
+  color: var(--motany-green);
+}
+
+.motany-login-input-icon svg { width: 100%; height: 100%; display: block; }
+
+.motany-login-input-fake {
+  flex: 1 1 auto;
+  min-width: 0;
+  color: rgba(72, 80, 77, 0.48);
+  font-size: 17px;
+  font-weight: 500;
+}
+
+.motany-login-primary,
+.motany-login-google,
+.motany-login-guest,
+.motany-login-register-link,
+.motany-login-forgot,
+.motany-login-input-shell {
+  font-family: inherit;
+  touch-action: manipulation;
+}
+
+.motany-login-primary {
+  width: 100%;
+  min-height: 66px;
+  margin-top: 24px;
+  border: 0;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #0b6b4c 0%, #064f38 48%, #033b29 100%);
+  color: #fff;
+  font-size: 18px;
+  font-weight: 950;
+  display: grid;
+  grid-template-columns: 46px 1fr 46px;
+  align-items: center;
+  justify-items: center;
+  box-shadow: var(--motany-soft-shadow), inset 0 1px 0 rgba(255,255,255,0.16);
+  cursor: pointer;
+}
+
+.motany-login-primary:active,
+.motany-login-google:active,
+.motany-login-guest:active { transform: translateY(1px); }
+
+.motany-login-primary-arrow {
+  width: 28px;
+  height: 28px;
+  justify-self: start;
+  margin-inline-start: 18px;
+  font-size: 38px;
+  line-height: 0.8;
+}
+
+.motany-login-divider {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 18px;
+  margin: 28px 0 22px;
+  color: #717a76;
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.motany-login-divider::before,
+.motany-login-divider::after {
+  content: "";
+  height: 1px;
+  background: rgba(30, 45, 41, 0.16);
+}
+
+.motany-login-google {
+  width: 100%;
+  min-height: 62px;
+  border-radius: 16px;
+  border: 1.5px solid var(--motany-green);
+  background: rgba(255, 255, 255, 0.88);
+  color: var(--motany-green);
+  font-size: 18px;
+  font-weight: 950;
+  display: grid;
+  grid-template-columns: 48px 1fr 48px;
+  align-items: center;
+  cursor: pointer;
+}
+
+.motany-login-google-logo {
+  width: 29px;
+  height: 29px;
+  justify-self: center;
+  direction: ltr;
+  font-family: Arial, sans-serif;
+  font-size: 30px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.motany-login-link {
+  color: var(--motany-green);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  font-size: 19px;
+  font-weight: 750;
+}
+
+.motany-login-forgot {
+  width: 100%;
+  justify-content: center;
+  margin-top: 24px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.motany-login-register {
+  width: min(100%, 430px);
+  margin: 18px auto 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: #68716e;
+  font-size: 17px;
+  line-height: 1.4;
+}
+
+.motany-login-register-link {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--motany-green);
+  font-size: inherit;
+  font-weight: 950;
+  text-decoration: underline;
+  text-underline-offset: 5px;
+  cursor: pointer;
+}
+
+.motany-login-register-arrow {
+  color: var(--motany-green);
+  font-size: 26px;
+  line-height: 1;
+}
+
+.motany-login-guest {
+  width: min(100%, 430px);
+  min-height: 78px;
+  margin: 0 auto;
+  padding: 13px 24px;
+  border-radius: 18px;
+  border: 1.5px solid rgba(6,79,56,0.25);
+  background: linear-gradient(180deg, rgba(255,255,255,0.72), rgba(248,252,247,0.8));
+  color: var(--motany-green);
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  gap: 14px;
+  align-items: center;
+  text-align: right;
+  box-shadow: 0 10px 28px rgba(6,79,56,0.07);
+  cursor: pointer;
+}
+
+.motany-login-guest-icon {
+  width: 36px;
+  height: 36px;
+  color: var(--motany-green);
+}
+.motany-login-guest-icon svg { display: block; width: 100%; height: 100%; }
+
+.motany-login-guest-title {
+  display: block;
+  font-size: 23px;
+  line-height: 1.15;
+  font-weight: 950;
+}
+
+.motany-login-guest-subtitle {
+  display: block;
+  margin-top: 5px;
+  color: rgba(42, 51, 48, 0.54);
+  font-size: 16px;
+  line-height: 1.35;
+  font-weight: 500;
+}
+
+/* Hide unrelated main-app chrome only on the login landing. */
+.motany-login-redesign .sticky-hybrid-chat-launcher-shell,
+.motany-login-redesign .kw-bottom-chat,
+.motany-login-redesign .mj-sticky-icon-nav,
+.motany-login-redesign .bottom-sticky,
+.motany-login-redesign [data-bottom-nav],
+.motany-login-redesign [data-sticky-chat] {
+  display: none !important;
+}
+
+@media (max-width: 430px) {
+  .motany-login-screen { padding-inline: 14px; }
+  .motany-login-brand { margin-top: 12px; margin-bottom: 22px; }
+  .motany-login-card { padding: 30px 22px 26px; border-radius: 32px; }
+  .motany-login-subtitle { margin-bottom: 28px; font-size: 19px; }
+  .motany-login-label { font-size: 18px; }
+  .motany-login-input-fake { font-size: 18px; }
+  .motany-login-primary, .motany-login-google { min-height: 60px; font-size: 20px; }
+  .motany-login-register { font-size: 19px; }
+  .motany-login-guest-title { font-size: 21px; }
+  .motany-login-guest-subtitle { font-size: 15px; }
+}
+
+@media (max-width: 360px), (max-height: 760px) {
+  .motany-login-screen {
+    padding: 8px 12px calc(12px + 132px);
+  }
+
+  .motany-login-spacer {
+    display: none;
+  }
+
+  .motany-login-brand {
+    margin-top: 0;
+    margin-bottom: 8px;
+  }
+
+  .motany-login-card {
+    padding: 16px 14px 14px;
+    border-radius: 24px;
+  }
+
+  .motany-login-title {
+    font-size: clamp(22px, 8vw, 28px);
+  }
+
+  .motany-login-subtitle {
+    margin: 8px auto 12px;
+    font-size: 12px;
+    line-height: 1.45;
+  }
+
+  .motany-login-label {
+    margin-bottom: 6px;
+    font-size: 12px;
+  }
+
+  .motany-login-input-shell {
+    min-height: 44px;
+  }
+
+  .motany-login-input-icon {
+    width: 22px;
+    height: 22px;
+    margin-inline-start: 12px;
+  }
+
+  .motany-login-input-fake {
+    font-size: 12px;
+  }
+
+  .motany-login-primary,
+  .motany-login-google {
+    min-height: 44px;
+    font-size: 14px;
+  }
+
+  .motany-login-primary {
+    margin-top: 14px;
+    grid-template-columns: 32px 1fr 32px;
+  }
+
+  .motany-login-google {
+    grid-template-columns: 32px 1fr 32px;
+  }
+
+  .motany-login-primary-arrow {
+    width: 18px;
+    height: 18px;
+    margin-inline-start: 10px;
+    font-size: 28px;
+  }
+
+  .motany-login-divider {
+    margin: 14px 0 10px;
+    gap: 10px;
+    font-size: 12px;
+  }
+
+  .motany-login-link {
+    font-size: 13px;
+  }
+
+  .motany-login-forgot {
+    margin-top: 12px;
+  }
+
+  .motany-login-register {
+    width: min(100%, 430px);
+    margin: 10px auto 8px;
+    gap: 6px;
+    font-size: 12px;
+  }
+
+  .motany-login-register-arrow {
+    font-size: 18px;
+  }
+
+  .motany-login-guest {
+    display: none;
+  }
+}
+
+@media (max-height: 760px) {
+  .motany-login-spacer { min-height: 0; display: none; }
+  .motany-login-brand { margin-top: 0; margin-bottom: 8px; }
+  .motany-login-brand-name { font-size: 32px; }
+  .motany-login-card { padding: 16px 14px 14px; }
+  .motany-login-title { font-size: 27px; }
+  .motany-login-subtitle { margin-top: 6px; margin-bottom: 12px; font-size: 12px; line-height: 1.45; }
+  .motany-login-primary { margin-top: 12px; }
+  .motany-login-divider { margin: 12px 0 10px; }
+  .motany-login-google,
+  .motany-login-register,
+  .motany-login-forgot {
+    display: none;
+  }
+}

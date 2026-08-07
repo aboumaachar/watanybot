@@ -1,0 +1,13 @@
+make,model,arabic_label,vehicle_type,min_year,max_year,active
+toyota,corolla,كورولا,sedan,1990,2026,true
+toyota,camry,كامري,sedan,1990,2026,true
+toyota,rav4,راف فور,suv,1995,2026,true
+nissan,sunny,صني,sedan,1990,2026,true
+nissan,patrol,باترول,suv,1990,2026,true
+hyundai,elantra,إلنترا,sedan,1995,2026,true
+hyundai,tucson,توسان,suv,2004,2026,true
+kia,picanto,بيكانتو,hatchback,2004,2026,true
+kia,sportage,سبورتاج,suv,1995,2026,true
+mercedes,c_class,سي كلاس,sedan,1993,2026,true
+bmw,3_series,الفئة الثالثة,sedan,1990,2026,true
+honda,civic,سيفيك,sedan,1990,2026,true

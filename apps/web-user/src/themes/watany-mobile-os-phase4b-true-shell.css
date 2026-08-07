@@ -1,0 +1,103 @@
+﻿/* APEX WatanyBot Mobile OS Phase 4B: true shell ownership layer
+   This is a controlled visual ownership layer, not a destructive delete. */
+
+:root {
+  --wmo-true-shell-z: 1;
+}
+
+.watany-mobile-shell {
+  position: relative;
+  z-index: var(--wmo-true-shell-z);
+}
+
+.watany-mobile-shell__surface {
+  background:
+    radial-gradient(circle at top right, rgba(46,125,91,.10), transparent 24rem),
+    rgba(255,255,255,.62);
+}
+
+.watany-mobile-shell__route-content {
+  isolation: isolate;
+}
+
+/* Demote legacy route-level shell chrome only when inside the Mobile OS shell. */
+.watany-mobile-shell__route-content .legacy-shell,
+.watany-mobile-shell__route-content .legacy-layout,
+.watany-mobile-shell__route-content .dashboard-shell,
+.watany-mobile-shell__route-content .hybrid-shell,
+.watany-mobile-shell__route-content .app-shell,
+.watany-mobile-shell__route-content .screen-shell {
+  background: transparent !important;
+  box-shadow: none !important;
+  border-color: transparent !important;
+}
+
+/* Prevent duplicate route-level nav from overpowering the master shell. */
+.watany-mobile-shell__route-content .top-menu,
+.watany-mobile-shell__route-content .topbar,
+.watany-mobile-shell__route-content .top-bar,
+.watany-mobile-shell__route-content .bottom-tab-bar,
+.watany-mobile-shell__route-content .bottom-tabs,
+.watany-mobile-shell__route-content .hamburger-nav,
+.watany-mobile-shell__route-content .burger-drawer-trigger {
+  max-width: 100%;
+}
+
+/* App-wide page chrome normalization. */
+.watany-mobile-shell__route-content .page,
+.watany-mobile-shell__route-content .screen,
+.watany-mobile-shell__route-content .route,
+.watany-mobile-shell__route-content .content,
+.watany-mobile-shell__route-content .main {
+  box-sizing: border-box;
+}
+
+.watany-mobile-shell__route-content .page > header,
+.watany-mobile-shell__route-content .screen > header,
+.watany-mobile-shell__route-content .route > header,
+.watany-mobile-shell__route-content .content > header {
+  border-radius: var(--watany-radius-xl, 34px);
+}
+
+/* Standardize feature surfaces without deleting legacy CSS. */
+.watany-mobile-shell__route-content .feature-card,
+.watany-mobile-shell__route-content .info-card,
+.watany-mobile-shell__route-content .action-card,
+.watany-mobile-shell__route-content .service-card,
+.watany-mobile-shell__route-content .document-card,
+.watany-mobile-shell__route-content .profile-card,
+.watany-mobile-shell__route-content .notification-card,
+.watany-mobile-shell__route-content .alert-card,
+.watany-mobile-shell__route-content .faq-card,
+.watany-mobile-shell__route-content .legal-card,
+.watany-mobile-shell__route-content .job-card,
+.watany-mobile-shell__route-content .link-card {
+  border-radius: var(--watany-radius-lg, 28px);
+  background: var(--watany-surface, rgba(255,255,255,.88));
+  border: 1px solid var(--watany-border, rgba(18,53,91,.1));
+}
+
+/* Keep admin and auth free from the user mobile shell. */
+.login-page,
+.register-page,
+.superadmin,
+.superadmin-page {
+  isolation: auto;
+}
+
+@media (max-width: 640px) {
+  .watany-mobile-shell__route-content .desktop-nav,
+  .watany-mobile-shell__route-content .desktop-sidebar,
+  .watany-mobile-shell__route-content .desktop-toolbar {
+    display: none !important;
+  }
+
+  .watany-mobile-shell__route-content .page,
+  .watany-mobile-shell__route-content .screen,
+  .watany-mobile-shell__route-content .route,
+  .watany-mobile-shell__route-content .content,
+  .watany-mobile-shell__route-content .main {
+    width: 100%;
+    max-width: 100%;
+  }
+}

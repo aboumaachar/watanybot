@@ -1,0 +1,39 @@
+{
+  "version": "1.0.0",
+  "updated_at": "2026-02-24T12:53:13.878094Z",
+  "idea_lb": "نحسب Confidence بشكل deterministic (rules) لنقرر: جواب مباشر vs سؤالين متابعة vs فتح Ticket.",
+  "signals": {
+    "unknown_request_type": {
+      "score_penalty": 0.35
+    },
+    "very_short_message": {
+      "score_penalty": 0.2
+    },
+    "generic_problem_phrase": {
+      "score_penalty": 0.15
+    },
+    "missing_scope_for_responsible": {
+      "score_penalty": 0.15
+    },
+    "missing_file_no_for_tracking": {
+      "score_penalty": 0.15
+    },
+    "domain_ambiguous": {
+      "score_penalty": 0.1
+    }
+  },
+  "thresholds": {
+    "high_confidence": 0.75,
+    "medium_confidence": 0.55
+  },
+  "actions": {
+    "high_confidence": "answer_direct",
+    "medium_confidence": "ask_min_then_answer",
+    "low_confidence": "open_ticket_and_ask_min"
+  },
+  "ask_min_templates_lb": {
+    "generic": "تمام. بس كرمال ساعدك صح: تابع لأي جهاز؟ وبأي منطقة (محافظة/مدينة)؟ وإذا معك رقم ملف اكتبه.\n\nأو شي تاني",
+    "tracking": "أكيد. عطيني رقم المعاملة/الملف + تاريخ التقديم + وين قدمت.\n\nأو شي تاني",
+    "responsible": "أكيد. لأي محافظة/قضاء/مدينة؟ وبتخص أي جهة (مالية/تقاعد/مستشفى/مصرف)؟\n\nأو شي تاني"
+  }
+}

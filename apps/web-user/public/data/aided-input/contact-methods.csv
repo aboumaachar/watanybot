@@ -1,0 +1,7 @@
+method,arabic_label,validation_rule,active
+in_app,داخل التطبيق,none,true
+phone,هاتف,phone,true
+whatsapp,واتساب,phone,true
+email,بريد إلكتروني,email,true
+admin_mediated,عبر الإدارة,none,true
+hidden_contact,إخفاء معلومات التواصل,none,true

@@ -1,0 +1,106 @@
+import type { ComponentType, SVGProps } from "react";
+import {
+  Alert24Regular,
+  Apps24Regular,
+  ArrowDownload24Regular,
+  ArrowUpload24Regular,
+  Book24Regular,
+  BookmarkMultiple24Regular,
+  Bot24Regular,
+  Briefcase24Regular,
+  Building24Regular,
+  Calculator24Regular,
+  Calendar24Regular,
+  Chat24Regular,
+  CheckmarkCircle24Regular,
+  Clock24Regular,
+  Delete24Regular,
+  Dismiss24Regular,
+  DocumentText24Regular,
+  Edit24Regular,
+  Folder24Regular,
+  Form24Regular,
+  Home24Regular,
+  Location24Regular,
+  Mail24Regular,
+  Megaphone24Regular,
+  Mic24Regular,
+  Money24Regular,
+  People24Regular,
+  Person24Regular,
+  Phone24Regular,
+  Pin24Regular,
+  QuestionCircle24Regular,
+  Search24Regular,
+  Settings24Regular,
+  Shield24Regular,
+  Star24Regular,
+  Video24Regular,
+  Warning24Regular,
+} from "@fluentui/react-icons";
+
+type IconComponent = ComponentType<SVGProps<SVGSVGElement>>;
+
+const ICON_MAP: Record<string, IconComponent> = {
+  // WatanyIconName values from features.ts
+  add: CheckmarkCircle24Regular,
+  alert: Alert24Regular,
+  apps: Apps24Regular,
+  bookmark: BookmarkMultiple24Regular,
+  bot: Bot24Regular,
+  briefcase: Briefcase24Regular,
+  building: Building24Regular,
+  calculator: Calculator24Regular,
+  calendar: Calendar24Regular,
+  chat: Chat24Regular,
+  check: CheckmarkCircle24Regular,
+  clock: Clock24Regular,
+  delete: Delete24Regular,
+  dismiss: Dismiss24Regular,
+  document: DocumentText24Regular,
+  download: ArrowDownload24Regular,
+  edit: Edit24Regular,
+  education: Book24Regular,
+  faq: QuestionCircle24Regular,
+  folder: Folder24Regular,
+  form: Form24Regular,
+  health: Building24Regular,
+  home: Home24Regular,
+  law: DocumentText24Regular,
+  location: Location24Regular,
+  mail: Mail24Regular,
+  megaphone: Megaphone24Regular,
+  mic: Mic24Regular,
+  money: Money24Regular,
+  news: Megaphone24Regular,
+  people: People24Regular,
+  person: Person24Regular,
+  phone: Phone24Regular,
+  pin: Pin24Regular,
+  search: Search24Regular,
+  settings: Settings24Regular,
+  shield: Shield24Regular,
+  star: Star24Regular,
+  upload: ArrowUpload24Regular,
+  video: Video24Regular,
+  vote: CheckmarkCircle24Regular,
+  warning: Warning24Regular,
+  // Admin-specific nav icon strings
+  dashboard: Home24Regular,
+  users: People24Regular,
+  audit: DocumentText24Regular,
+  knowledge: Book24Regular,
+};
+
+export function AdminFluentIcon({
+  name,
+  className,
+  "aria-hidden": ariaHidden = true,
+}: {
+  name: string;
+  className?: string;
+  "aria-hidden"?: boolean | "true";
+}) {
+  const IconComp: IconComponent = ICON_MAP[name] ?? QuestionCircle24Regular;
+  return <IconComp className={className} aria-hidden={ariaHidden} />;
+}

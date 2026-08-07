@@ -1,0 +1,25 @@
+{
+  "statistics": {
+    "governorates": 8,
+    "districts": 25,
+    "municipalities": 0,
+    "localities": 1586,
+    "aliases": 1586,
+    "localitiesWithCoordinates": 181,
+    "missingArabic": 1586,
+    "duplicateIds": 0,
+    "orphanRows": 0
+  },
+  "litigeCount": 0,
+  "ambiguousAliasCount": 0,
+  "issues": [
+    "MISSING_ARABIC_NAMES"
+  ],
+  "ok": false,
+  "productionReady": false,
+  "status": "BLOCKED",
+  "runtimeLitigeRecordCount": 0,
+  "localitiesMissingArabic": 1586,
+  "orphanAliasCount": 0,
+  "duplicateAliasMappingConflictCount": 0
+}

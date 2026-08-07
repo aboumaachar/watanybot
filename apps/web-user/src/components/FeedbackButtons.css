@@ -1,0 +1,240 @@
+/**
+ * Feedback Buttons Styles - Elite Feature
+ */
+
+.feedback-container {
+  margin-top: 8px;
+  padding: 8px 0;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Feedback Buttons
+   ═══════════════════════════════════════════════════════════ */
+.feedback-buttons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.feedback-label {
+  font-size: 12px;
+  color: #888;
+  margin-left: 8px;
+}
+
+.feedback-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border: 1px solid #e0e0e0;
+  background: #fff;
+  border-radius: 20px;
+  font-size: 13px;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.feedback-btn:hover {
+  border-color: #bbb;
+  background: #f8f8f8;
+}
+
+.feedback-btn--active {
+  border-color: var(--primary, #2563eb);
+  background: var(--primary-light, #e7efff);
+  color: var(--primary, #2563eb);
+}
+
+.feedback-icon {
+  font-size: 14px;
+}
+
+.feedback-text {
+  font-size: 12px;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Feedback Comment
+   ═══════════════════════════════════════════════════════════ */
+.feedback-comment {
+  background: #f9f9f9;
+  border-radius: 12px;
+  padding: 12px;
+  animation: feedback-slide-in 0.2s ease-out;
+}
+
+@keyframes feedback-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.feedback-comment-prompt {
+  font-size: 13px;
+  color: #555;
+  margin: 0 0 8px;
+  font-weight: 500;
+}
+
+.feedback-comment-input {
+  width: 100%;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 14px;
+  font-family: inherit;
+  resize: none;
+  background: #fff;
+  transition: border-color 0.2s;
+}
+
+.feedback-comment-input:focus {
+  outline: none;
+  border-color: var(--primary, #2563eb);
+}
+
+.feedback-comment-input::placeholder {
+  color: #aaa;
+}
+
+.feedback-comment-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  justify-content: flex-end;
+}
+
+.feedback-comment-submit {
+  background: var(--primary, #2563eb);
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.feedback-comment-submit:hover {
+  background: var(--primary-dark, #1d4ed8);
+}
+
+.feedback-comment-skip {
+  background: transparent;
+  color: #888;
+  border: 1px solid #ddd;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.feedback-comment-skip:hover {
+  background: #f0f0f0;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Thanks Message
+   ═══════════════════════════════════════════════════════════ */
+.feedback-thanks {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: var(--primary-light, #e7efff);
+  border-radius: 20px;
+  animation: feedback-thanks-pop 0.3s ease-out;
+}
+
+@keyframes feedback-thanks-pop {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.feedback-thanks-icon {
+  color: var(--primary, #2563eb);
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.feedback-thanks-text {
+  color: var(--primary, #2563eb);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Dark Mode Support
+   ═══════════════════════════════════════════════════════════ */
+@media (prefers-color-scheme: dark) {
+  .feedback-btn {
+    background: #2a2a2a;
+    border-color: #444;
+    color: #aaa;
+  }
+
+  .feedback-btn:hover {
+    background: #333;
+    border-color: #555;
+  }
+
+  .feedback-btn--active {
+    background: rgba(37, 99, 235, 0.14);
+    border-color: var(--primary, #2563eb);
+    color: #ffffff;
+  }
+
+  .feedback-comment {
+    background: #252525;
+  }
+
+  .feedback-comment-input {
+    background: #1e1e1e;
+    border-color: #444;
+    color: #e0e0e0;
+  }
+
+  .feedback-comment-skip {
+    border-color: #444;
+    color: #aaa;
+  }
+
+  .feedback-comment-skip:hover {
+    background: #333;
+  }
+
+  .feedback-thanks {
+    background: rgba(46, 125, 50, 0.2);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RTL Support
+   ═══════════════════════════════════════════════════════════ */
+[dir="rtl"] .feedback-label {
+  margin-left: 0;
+  margin-right: 8px;
+}
+
+[dir="rtl"] .feedback-comment-actions {
+  justify-content: flex-start;
+}

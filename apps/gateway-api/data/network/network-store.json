@@ -1,0 +1,22 @@
+{
+  "profiles": [
+    {
+      "id": "aafffa6c-91da-4db0-a362-5535879fe086",
+      "userId": "admin@koudama.com",
+      "displayName": "مدير النظام المحلي",
+      "address": {
+        "governorateId": "جبل لبنان",
+        "villageId": "غينة"
+      },
+      "visibilityLevel": "VISIBLE_CAZA_ONLY",
+      "familyTier": "BASIC_FAMILY_MEMBER",
+      "points": 0,
+      "isVerifiedUser": false,
+      "approvalStatus": "PENDING",
+      "isActive": true,
+      "createdAt": "2026-07-18T18:52:33.314Z",
+      "updatedAt": "2026-08-06T19:12:07.220Z",
+      "submittedAt": "2026-08-06T19:12:07.220Z"
+    }
+  ]
+}

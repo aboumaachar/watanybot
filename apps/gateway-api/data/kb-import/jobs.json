@@ -1,0 +1,365 @@
+[
+  {
+    "id": "15321ad9-923b-4184-9246-ae8c4d68e69d",
+    "sourceName": "APEX real import image OCR recruitment smoke 20260531-200355",
+    "sourceType": "unknown",
+    "sourceUrl": "apex://feature01/real-import/image-ocr/20260531-200355",
+    "categoryHint": "recruitment_announcements",
+    "detectedCategory": "recruitment_announcements",
+    "languageHint": "en",
+    "detectedLanguage": "en",
+    "status": "NEEDS_ADMIN_REVIEW",
+    "reviewStatus": "pending",
+    "publishStatus": "not_published",
+    "confidence": 0.8,
+    "createdAt": "2026-05-31T17:03:59.750Z",
+    "updatedAt": "2026-05-31T17:04:01.249Z",
+    "createdBy": "apex-real-import-smoke",
+    "asset": {
+      "id": "4c0f0e5c-eeae-4aa0-8ac1-2daafc305065",
+      "originalName": "kb-import-smoke-recruitment.png",
+      "storedName": "1780247039720-kb-import-smoke-recruitment.png",
+      "storedPath": "C:\\xampp\\htdocs\\projectx\\watanybot\\apps\\gateway-api\\data\\kb-import\\quarantine\\1780247039720-kb-import-smoke-recruitment.png",
+      "sha256": "e8113f53ad54ef40c596fcbcaef9dfbb80fb761711cecd588bff7556846eb18b",
+      "bytes": 22909,
+      "mimeType": "image/png",
+      "extension": ".png"
+    },
+    "citations": [
+      {
+        "id": "3469d6c4-9a9f-4018-b961-cdb8937a2b90",
+        "jobId": "15321ad9-923b-4184-9246-ae8c4d68e69d",
+        "sourceLabel": "APEX real import image OCR recruitment smoke 20260531-200355",
+        "sourceUrl": "apex://feature01/real-import/image-ocr/20260531-200355",
+        "assetId": "4c0f0e5c-eeae-4aa0-8ac1-2daafc305065",
+        "pageNumber": 1,
+        "extractedAt": "2026-05-31T17:04:01.248Z",
+        "confidence": 0.8
+      }
+    ],
+    "facts": [
+      {
+        "id": "e7fb5794-a29a-444a-800f-0f4e36151a26",
+        "jobId": "15321ad9-923b-4184-9246-ae8c4d68e69d",
+        "category": "recruitment_announcements",
+        "title": "Recruitment announcement draft",
+        "cleanText": "Recruitment Announcement\nDeadline 2026-07-01\n\nRequired documents: national ID\nWatanyBot KB import OCR smoke",
+        "rawText": "Recruitment Announcement\nDeadline 2026-07-01\n\nRequired documents: national ID\nWatanyBot KB import OCR smoke\n",
+        "language": "en",
+        "confidence": 0.8,
+        "citationId": "3469d6c4-9a9f-4018-b961-cdb8937a2b90",
+        "tags": [
+          "recruitment_announcements",
+          "tatwee3",
+          "deadline",
+          "documents"
+        ],
+        "visibility": "admin_review"
+      }
+    ],
+    "chunks": [
+      {
+        "id": "59e363d9-8aea-49b8-be8a-0afc757b4a2e",
+        "jobId": "15321ad9-923b-4184-9246-ae8c4d68e69d",
+        "category": "recruitment_announcements",
+        "text": "Recruitment Announcement\nDeadline 2026-07-01\n\nRequired documents: national ID\nWatanyBot KB import OCR smoke",
+        "citationId": "3469d6c4-9a9f-4018-b961-cdb8937a2b90",
+        "tags": [
+          "recruitment_announcements",
+          "tatwee3",
+          "deadline",
+          "documents"
+        ],
+        "tokenEstimate": 27
+      }
+    ],
+    "audit": [
+      {
+        "at": "2026-05-31T17:03:59.750Z",
+        "event": "upload-job-created",
+        "detail": "e8113f53ad54ef40c596fcbcaef9dfbb80fb761711cecd588bff7556846eb18b"
+      },
+      {
+        "at": "2026-05-31T17:03:59.793Z",
+        "event": "process-started"
+      },
+      {
+        "at": "2026-05-31T17:04:01.249Z",
+        "event": "kb-draft-created",
+        "detail": "tesseract"
+      }
+    ],
+    "rawText": "Recruitment Announcement\nDeadline 2026-07-01\n\nRequired documents: national ID\nWatanyBot KB import OCR smoke\n",
+    "cleanedText": "Recruitment Announcement\nDeadline 2026-07-01\n\nRequired documents: national ID\nWatanyBot KB import OCR smoke"
+  },
+  {
+    "id": "aa7ea3d9-91af-4cd5-b69f-207648721c71",
+    "sourceName": "APEX real import image OCR recruitment smoke 20260531-200015",
+    "sourceType": "unknown",
+    "sourceUrl": "apex://feature01/real-import/image-ocr/20260531-200015",
+    "categoryHint": "recruitment_announcements",
+    "detectedCategory": "unknown_needs_review",
+    "languageHint": "en",
+    "detectedLanguage": "en",
+    "status": "EXTRACTION_FAILED",
+    "reviewStatus": "pending",
+    "publishStatus": "not_published",
+    "confidence": 0,
+    "createdAt": "2026-05-31T17:00:19.266Z",
+    "updatedAt": "2026-05-31T17:00:19.495Z",
+    "createdBy": "apex-real-import-smoke",
+    "asset": {
+      "id": "58733b6a-40b9-4016-82fc-d3e69f5e0aaa",
+      "originalName": "kb-import-smoke-recruitment.png",
+      "storedName": "1780246819233-kb-import-smoke-recruitment.png",
+      "storedPath": "C:\\xampp\\htdocs\\projectx\\watanybot\\apps\\gateway-api\\data\\kb-import\\quarantine\\1780246819233-kb-import-smoke-recruitment.png",
+      "sha256": "e8113f53ad54ef40c596fcbcaef9dfbb80fb761711cecd588bff7556846eb18b",
+      "bytes": 22909,
+      "mimeType": "image/png",
+      "extension": ".png"
+    },
+    "citations": [],
+    "facts": [],
+    "chunks": [],
+    "audit": [
+      {
+        "at": "2026-05-31T17:00:19.266Z",
+        "event": "upload-job-created",
+        "detail": "e8113f53ad54ef40c596fcbcaef9dfbb80fb761711cecd588bff7556846eb18b"
+      },
+      {
+        "at": "2026-05-31T17:00:19.297Z",
+        "event": "process-started"
+      },
+      {
+        "at": "2026-05-31T17:00:19.495Z",
+        "event": "process-failed",
+        "detail": "Image OCR requires tesseract in PATH with ara/eng traineddata."
+      }
+    ],
+    "errorCode": "EXTRACTION_FAILED",
+    "errorMessage": "Image OCR requires tesseract in PATH with ara/eng traineddata."
+  },
+  {
+    "id": "26933c3d-7c4f-4427-8ed9-cb7604f5f122",
+    "sourceName": "APEX real import image OCR recruitment smoke 20260531-195338",
+    "sourceType": "unknown",
+    "sourceUrl": "apex://feature01/real-import/image-ocr/20260531-195338",
+    "categoryHint": "recruitment_announcements",
+    "detectedCategory": "unknown_needs_review",
+    "languageHint": "en",
+    "detectedLanguage": "en",
+    "status": "EXTRACTION_FAILED",
+    "reviewStatus": "pending",
+    "publishStatus": "not_published",
+    "confidence": 0,
+    "createdAt": "2026-05-31T16:53:46.239Z",
+    "updatedAt": "2026-05-31T16:53:46.445Z",
+    "createdBy": "apex-real-import-smoke",
+    "asset": {
+      "id": "56729068-0568-4638-beb5-ae7dcf5c1b01",
+      "originalName": "kb-import-smoke-recruitment.png",
+      "storedName": "1780246426223-kb-import-smoke-recruitment.png",
+      "storedPath": "C:\\xampp\\htdocs\\projectx\\watanybot\\apps\\gateway-api\\data\\kb-import\\quarantine\\1780246426223-kb-import-smoke-recruitment.png",
+      "sha256": "ed107cce8469b770a9cac6014a5b59c07821da09bc111dca06c74eb74b0cdfae",
+      "bytes": 22901,
+      "mimeType": "image/png",
+      "extension": ".png"
+    },
+    "citations": [],
+    "facts": [],
+    "chunks": [],
+    "audit": [
+      {
+        "at": "2026-05-31T16:53:46.239Z",
+        "event": "upload-job-created",
+        "detail": "ed107cce8469b770a9cac6014a5b59c07821da09bc111dca06c74eb74b0cdfae"
+      },
+      {
+        "at": "2026-05-31T16:53:46.261Z",
+        "event": "process-started"
+      },
+      {
+        "at": "2026-05-31T16:53:46.445Z",
+        "event": "process-failed",
+        "detail": "Image OCR requires tesseract in PATH with ara/eng traineddata."
+      }
+    ],
+    "errorCode": "EXTRACTION_FAILED",
+    "errorMessage": "Image OCR requires tesseract in PATH with ara/eng traineddata."
+  },
+  {
+    "id": "4be7c33e-1602-47cd-bd0f-839d4b101cba",
+    "sourceName": "APEX real import text upload recruitment smoke 20260531-195325",
+    "sourceType": "unknown",
+    "sourceUrl": "apex://feature01/real-import/text-upload/20260531-195325",
+    "categoryHint": "recruitment_announcements",
+    "detectedCategory": "recruitment_announcements",
+    "languageHint": "en",
+    "detectedLanguage": "en",
+    "status": "NEEDS_ADMIN_REVIEW",
+    "reviewStatus": "pending",
+    "publishStatus": "not_published",
+    "confidence": 0.95,
+    "createdAt": "2026-05-31T16:53:29.761Z",
+    "updatedAt": "2026-05-31T16:53:29.804Z",
+    "createdBy": "apex-real-import-smoke",
+    "asset": {
+      "id": "84876deb-ba5f-4363-a3fd-7ee0afadaa9d",
+      "originalName": "kb-import-smoke-recruitment.txt",
+      "storedName": "1780246409725-kb-import-smoke-recruitment.txt",
+      "storedPath": "C:\\xampp\\htdocs\\projectx\\watanybot\\apps\\gateway-api\\data\\kb-import\\quarantine\\1780246409725-kb-import-smoke-recruitment.txt",
+      "sha256": "81c21149305077fa8266a10623061e9d063e7581eff62ed50dda517a48c90756",
+      "bytes": 180,
+      "mimeType": "text/plain",
+      "extension": ".txt"
+    },
+    "citations": [
+      {
+        "id": "9027ae18-7c91-4a5c-9f9f-662947caf583",
+        "jobId": "4be7c33e-1602-47cd-bd0f-839d4b101cba",
+        "sourceLabel": "APEX real import text upload recruitment smoke 20260531-195325",
+        "sourceUrl": "apex://feature01/real-import/text-upload/20260531-195325",
+        "assetId": "84876deb-ba5f-4363-a3fd-7ee0afadaa9d",
+        "pageNumber": 1,
+        "extractedAt": "2026-05-31T16:53:29.803Z",
+        "confidence": 0.95
+      }
+    ],
+    "facts": [
+      {
+        "id": "e9ee4169-ab02-4c52-9275-867ce181b1be",
+        "jobId": "4be7c33e-1602-47cd-bd0f-839d4b101cba",
+        "category": "recruitment_announcements",
+        "title": "Recruitment announcement draft",
+        "cleanText": "Recruitment announcement smoke file. Deadline 2026-07-01. Required documents include national ID and completed application form. WatanyBot KB import should create a reviewed draft.",
+        "rawText": "Recruitment announcement smoke file. Deadline 2026-07-01. Required documents include national ID and completed application form. WatanyBot KB import should create a reviewed draft.",
+        "language": "en",
+        "confidence": 0.95,
+        "citationId": "9027ae18-7c91-4a5c-9f9f-662947caf583",
+        "tags": [
+          "recruitment_announcements",
+          "tatwee3",
+          "deadline",
+          "documents"
+        ],
+        "visibility": "admin_review"
+      }
+    ],
+    "chunks": [
+      {
+        "id": "07b8b066-3e66-4542-b821-59a3a2b54161",
+        "jobId": "4be7c33e-1602-47cd-bd0f-839d4b101cba",
+        "category": "recruitment_announcements",
+        "text": "Recruitment announcement smoke file. Deadline 2026-07-01. Required documents include national ID and completed application form. WatanyBot KB import should create a reviewed draft.",
+        "citationId": "9027ae18-7c91-4a5c-9f9f-662947caf583",
+        "tags": [
+          "recruitment_announcements",
+          "tatwee3",
+          "deadline",
+          "documents"
+        ],
+        "tokenEstimate": 45
+      }
+    ],
+    "audit": [
+      {
+        "at": "2026-05-31T16:53:29.761Z",
+        "event": "upload-job-created",
+        "detail": "81c21149305077fa8266a10623061e9d063e7581eff62ed50dda517a48c90756"
+      },
+      {
+        "at": "2026-05-31T16:53:29.796Z",
+        "event": "process-started"
+      },
+      {
+        "at": "2026-05-31T16:53:29.804Z",
+        "event": "kb-draft-created",
+        "detail": "direct-text"
+      }
+    ],
+    "rawText": "Recruitment announcement smoke file. Deadline 2026-07-01. Required documents include national ID and completed application form. WatanyBot KB import should create a reviewed draft.",
+    "cleanedText": "Recruitment announcement smoke file. Deadline 2026-07-01. Required documents include national ID and completed application form. WatanyBot KB import should create a reviewed draft."
+  },
+  {
+    "id": "442c575f-7088-458d-aa9a-81926f539bca",
+    "sourceName": "APEX authenticated raw import smoke 20260531-194108",
+    "sourceType": "manual",
+    "categoryHint": "recruitment_announcements",
+    "detectedCategory": "recruitment_announcements",
+    "languageHint": "ara+eng",
+    "detectedLanguage": "ara+eng",
+    "status": "NEEDS_ADMIN_REVIEW",
+    "reviewStatus": "pending",
+    "publishStatus": "not_published",
+    "confidence": 0.95,
+    "createdAt": "2026-05-31T16:41:11.351Z",
+    "updatedAt": "2026-05-31T16:41:11.380Z",
+    "createdBy": "apex-feature01-smoke",
+    "rawText": "APEX smoke recruitment announcement sample. Arabic OCR and English OCR are available. Deadline, required documents, contact details, and application method must remain admin-reviewed before publish.",
+    "citations": [
+      {
+        "id": "8c5f5853-4ed2-4ee0-a399-b54f9bf25206",
+        "jobId": "442c575f-7088-458d-aa9a-81926f539bca",
+        "sourceLabel": "APEX authenticated raw import smoke 20260531-194108",
+        "pageNumber": 1,
+        "extractedAt": "2026-05-31T16:41:11.380Z",
+        "confidence": 0.95
+      }
+    ],
+    "facts": [
+      {
+        "id": "53caa9b6-fa09-4cfe-88aa-13a5e8954abc",
+        "jobId": "442c575f-7088-458d-aa9a-81926f539bca",
+        "category": "recruitment_announcements",
+        "title": "Recruitment announcement draft",
+        "cleanText": "APEX smoke recruitment announcement sample. Arabic OCR and English OCR are available. Deadline, required documents, contact details, and application method must remain admin-reviewed before publish.",
+        "rawText": "APEX smoke recruitment announcement sample. Arabic OCR and English OCR are available. Deadline, required documents, contact details, and application method must remain admin-reviewed before publish.",
+        "language": "ara+eng",
+        "confidence": 0.95,
+        "citationId": "8c5f5853-4ed2-4ee0-a399-b54f9bf25206",
+        "tags": [
+          "recruitment_announcements",
+          "tatwee3",
+          "deadline",
+          "documents",
+          "contact"
+        ],
+        "visibility": "admin_review"
+      }
+    ],
+    "chunks": [
+      {
+        "id": "0cf5e62f-9710-4934-a799-78b6abebf521",
+        "jobId": "442c575f-7088-458d-aa9a-81926f539bca",
+        "category": "recruitment_announcements",
+        "text": "APEX smoke recruitment announcement sample. Arabic OCR and English OCR are available. Deadline, required documents, contact details, and application method must remain admin-reviewed before publish.",
+        "citationId": "8c5f5853-4ed2-4ee0-a399-b54f9bf25206",
+        "tags": [
+          "recruitment_announcements",
+          "tatwee3",
+          "deadline",
+          "documents",
+          "contact"
+        ],
+        "tokenEstimate": 50
+      }
+    ],
+    "audit": [
+      {
+        "at": "2026-05-31T16:41:11.351Z",
+        "event": "raw-import-created"
+      },
+      {
+        "at": "2026-05-31T16:41:11.374Z",
+        "event": "process-started"
+      },
+      {
+        "at": "2026-05-31T16:41:11.380Z",
+        "event": "kb-draft-created",
+        "detail": "raw-text"
+      }
+    ],
+    "cleanedText": "APEX smoke recruitment announcement sample. Arabic OCR and English OCR are available. Deadline, required documents, contact details, and application method must remain admin-reviewed before publish."
+  }
+]

@@ -1,0 +1,2 @@
+import type { DeploymentSyncManifest } from '../contracts/deployment-sync-plugin-contract';
+export const deploymentSyncPluginManifest: DeploymentSyncManifest = { pluginKey: 'deployment-sync', displayName: 'Deployment / Sync', version: '0.1.0', modes: ['audit','dry-run','sync','rollback','handoff'], exportable: true, replaceable: true, adminConfigurable: true };

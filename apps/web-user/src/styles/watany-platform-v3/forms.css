@@ -1,0 +1,31 @@
+html.watany-platform-v3
+  :where(input, select, textarea) {
+  min-block-size: 48px;
+  inline-size: 100%;
+  border: 1px solid var(--watany-border-gold);
+  border-radius: 16px;
+  background: #fbf7ee;
+  color: var(--watany-ink);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.88);
+}
+
+html.watany-platform-v3
+  :where(input, select, textarea):focus {
+  border-color: var(--watany-gold-500);
+  outline: none;
+  box-shadow:
+    0 0 0 3px rgb(208 162 70 / 0.14),
+    inset 0 1px 0 rgb(255 255 255 / 0.90);
+}
+
+html.watany-platform-v3
+  :where(label) {
+  color: #5d604f;
+  font-weight: 800;
+}
+
+html.watany-platform-v3
+  :where(form, [class*="form-card" i], [data-watany-form-card]) {
+  border-radius: var(--watany-radius-xl);
+}

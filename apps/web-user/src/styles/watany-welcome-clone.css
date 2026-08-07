@@ -1,0 +1,150 @@
+.watany-welcome-page {
+  height: 100%;
+  min-height: 0;
+  display: grid;
+  place-items: start center;
+  padding: 0 16px;
+  background: linear-gradient(180deg, #f5f0df 0%, #f4edd9 100%);
+  color: #14231f;
+}
+
+.screen.welcome.active {
+  width: min(100%, 389px);
+  height: max(0px, calc(100dvh - 143px));
+  flex: 0 0 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.welcome-top-half,
+.welcome-bottom-half {
+  flex: 1 1 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.welcome-top-half {
+  flex-basis: 42%;
+  padding-top: 8px;
+}
+
+.welcome-logo {
+  display: block;
+  width: 138px;
+  height: 152px;
+  object-fit: contain;
+}
+
+.welcome-bottom-half {
+  flex-basis: 58%;
+  padding: 12px 24px 18px;
+}
+
+.welcome-cta-group {
+  width: 100%;
+  max-width: 310px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 9px;
+}
+
+.welcome-cta-group h1 {
+  margin: 0;
+  color: #182621;
+  font-size: 25px;
+  line-height: 1.2;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+}
+
+.welcome-cta-group p {
+  margin: 0 0 2px;
+  color: #6c6860;
+  font-size: 14px;
+  line-height: 1.45;
+  font-weight: 500;
+}
+
+.welcome-cta-group button {
+  width: min(310px, 100%);
+  height: 44px;
+  border: 0;
+  border-radius: 13px;
+  padding: 0;
+  box-sizing: border-box;
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font: inherit;
+  font-size: 16px;
+  font-weight: 900;
+  line-height: 1;
+  cursor: pointer;
+  transition: transform 140ms ease, filter 140ms ease, box-shadow 140ms ease, background-color 140ms ease, color 140ms ease;
+}
+
+.welcome-cta-group button:focus-visible {
+  outline: 3px solid rgba(11, 107, 79, 0.32);
+  outline-offset: 3px;
+}
+
+.welcome-cta-group button:hover {
+  transform: translateY(-1px);
+}
+
+.welcome-cta-group button:active {
+  transform: translateY(0);
+  filter: brightness(0.98);
+}
+
+.welcome-cta-group .primary {
+  height: 44px;
+  border-radius: 13px;
+  color: #fff;
+  background: linear-gradient(180deg, #0b644a 0%, #084937 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+.welcome-cta-group .secondary {
+  height: 44px;
+  border-radius: 13px;
+  color: #074932;
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(7, 73, 50, 0.28);
+}
+
+@media (max-width: 390px) {
+  .screen.welcome.active {
+    width: min(100%, 360px);
+  }
+
+  .welcome-bottom-half {
+    padding: 12px 22px 18px;
+  }
+
+  .welcome-logo {
+    width: 132px;
+    height: 146px;
+  }
+
+  .welcome-cta-group h1 {
+    font-size: 24px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .welcome-cta-group button {
+    transition: none;
+  }
+
+  .welcome-cta-group button:hover,
+  .welcome-cta-group button:active {
+    transform: none;
+  }
+}

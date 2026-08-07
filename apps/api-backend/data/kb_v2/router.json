@@ -1,0 +1,310 @@
+{
+  "request_types": {
+    "where": [
+      "وين",
+      "وين بقدم",
+      "وين بيقدموا",
+      "وين بروح",
+      "لمين براجع"
+    ],
+    "docs": [
+      "شو الورق",
+      "شو لازم",
+      "مستندات",
+      "وراق",
+      "شو المطلوب"
+    ],
+    "deadline": [
+      "آخر مهلة",
+      "ايمتى آخر",
+      "مهلة",
+      "خلال قديش",
+      "قبل إمتى"
+    ],
+    "payment_time": [
+      "ايمتى القبض",
+      "ايمتى المعاش",
+      "ايمتى بينزل",
+      "ليش تأخر"
+    ],
+    "status": [
+      "شو صار",
+      "وين وصلت",
+      "متابعة",
+      "قصة",
+      "تتبع"
+    ],
+    "problem": [
+      "عندي مشكلة",
+      "مشكلة",
+      "ما عم يزبط",
+      "رفض",
+      "تأخير",
+      "انقطع",
+      "اعتراض",
+      "شكوى",
+      "اعترض",
+      "شكوى رسمية"
+    ],
+    "phonebook": [
+      "شو رقم",
+      "تلفون",
+      "هاتف",
+      "واتساب",
+      "رقم"
+    ],
+    "responsible": [
+      "مين مسؤول",
+      "مع مين بحكي",
+      "مين بيتابع",
+      "مين قلك"
+    ],
+    "salary": [
+      "قديش معاشي",
+      "احتساب",
+      "كيف بينحسب",
+      "راتب"
+    ]
+  },
+  "domains": {
+    "payments": [
+      "بنك",
+      "توطين",
+      "IBAN",
+      "حساب",
+      "براءة ذمة",
+      "تحويل",
+      "المصرف",
+      "عالبنك",
+      "بحوّل",
+      "بحول",
+      "ما نزل"
+    ],
+    "mof": [
+      "المالية",
+      "دائرة التقاعد",
+      "الصرفيات",
+      "tva",
+      "دفتر التقاعد"
+    ],
+    "pension": [
+      "معاش",
+      "تقاعد",
+      "إعادة تخصيص",
+      "تعويض عائلي",
+      "تقاعدي"
+    ],
+    "severance": [
+      "تعويض صرف",
+      "تصفية"
+    ],
+    "medical": [
+      "طبابة",
+      "استشفاء",
+      "دواء",
+      "سجل صحي",
+      "إيصال زهري"
+    ],
+    "school": [
+      "مدارس",
+      "جامعة",
+      "طلاب",
+      "مساعدة مدرسية"
+    ],
+    "survivors": [
+      "ورثة",
+      "وفاة",
+      "حصر الإرث",
+      "أرملة",
+      "يتيم",
+      "توفي",
+      "توفه",
+      "توفى",
+      "مات",
+      "ميت",
+      "اولاد",
+      "بنات",
+      "ابن"
+    ],
+    "compensation": [
+      "تعويض",
+      "مساعدة",
+      "إعانة"
+    ],
+    "medals": [
+      "وسام",
+      "أوسمة",
+      "ميدالية"
+    ],
+    "labor": [
+      "عمل",
+      "عامل",
+      "صاحب عمل"
+    ],
+    "employment": [
+      "موظف",
+      "ملاك",
+      "وظيفة"
+    ],
+    "laf": [
+      "الجيش",
+      "القوات المسلحة",
+      "القطعة"
+    ],
+    "salary": [
+      "راتب",
+      "احتساب",
+      "جدول رواتب",
+      "قديش معاشي",
+      "بينحسب",
+      "كيف بينحسب"
+    ],
+    "administration": [
+      "إدارة",
+      "إدارية",
+      "تنظيم",
+      "ملاك"
+    ]
+  },
+  "menu": [
+    "معاشي/تقاعدي",
+    "طبابة",
+    "ورثة",
+    "مساعدات",
+    "شكاوى",
+    "أرقام وخدمات",
+    "احتساب المعاش",
+    "أو شي تاني"
+  ],
+  "scope_hints_lb": {
+    "muhafaza_keywords": [
+      "محافظة",
+      "بيروت",
+      "جبل لبنان",
+      "الشمال",
+      "عكار",
+      "البقاع",
+      "بعلبك الهرمل",
+      "الجنوب",
+      "النبطية"
+    ],
+    "caza_keywords": [
+      "قضاء",
+      "طرابلس",
+      "زغرتا",
+      "الكورة",
+      "البترون",
+      "بشري",
+      "عاليه",
+      "كسروان",
+      "جبيل",
+      "صيدا",
+      "صور",
+      "مرجعيون",
+      "حاصبيا",
+      "بنت جبيل",
+      "زحلة"
+    ],
+    "city_keywords": [
+      "مدينة",
+      "طرابلس",
+      "بيروت",
+      "صيدا",
+      "صور",
+      "زحلة",
+      "جونية"
+    ]
+  },
+  "escalation_config": {
+    "enabled": true,
+    "rules_file": "admin/escalation_rules_lb.json",
+    "ticket_types_file": "tickets/ticket_types.json"
+  },
+  "learning_config": {
+    "enabled": true,
+    "feedback_store": "dialect/feedback.jsonl",
+    "improvement_queue": "admin/kb_improvement_queue.jsonl",
+    "pipeline": "learning/learn_pipeline.py"
+  },
+  "patching_config": {
+    "enabled": true,
+    "patch_schema": "learning/patch_schema.json",
+    "patch_log": "admin/patch_log.jsonl",
+    "apply_tool": "tools/kb_patch_builder.py"
+  },
+  "release_config": {
+    "enabled": true,
+    "eval_runner": "tools/eval_runner.py",
+    "release_gate": "tools/release_gate.py",
+    "eval_set": "learning/eval_set_template.jsonl"
+  },
+  "replay_eval_config": {
+    "enabled": true,
+    "tool": "tools/replay_evaluator.py",
+    "log_schema": "learning/conversation_log_schema.json"
+  },
+  "learning_focus": {
+    "enabled": true,
+    "policy": "learning/learning_policy_lb.json",
+    "taxonomy": "learning/failure_taxonomy_lb.json",
+    "dashboard_tool": "tools/learning_dashboard.py",
+    "active_learning_sampler": "tools/active_learning_sampler.py",
+    "label_merge_tool": "tools/merge_labels_into_eval.py"
+  },
+  "uncertainty_config": {
+    "enabled": true,
+    "policy": "admin/uncertainty_policy_lb.json",
+    "scorer_tool": "tools/uncertainty_scorer.py"
+  },
+  "auto_router_learning": {
+    "enabled": true,
+    "tool": "tools/auto_router_keyword_learner.py",
+    "outputs": [
+      "reports/router_keyword_suggestions.json",
+      "learning/router_patch_draft.json"
+    ]
+  },
+  "slang_learning": {
+    "enabled": true,
+    "tool": "tools/slang_lexicon_learner.py",
+    "outputs": [
+      "reports/lexicon_suggestions.json",
+      "learning/lexicon_patch_draft.json"
+    ]
+  },
+  "broadcasts": {
+    "enabled": true,
+    "store": "admin/broadcasts_lb.json",
+    "tool": "tools/broadcast_manager.py",
+    "topcards_output": "kb/topcards.json"
+  },
+  "api_security": {
+    "enabled": true,
+    "config": "admin/api_auth_config.json",
+    "supports_rate_limit": true,
+    "supports_admin_broadcast_endpoints": true
+  },
+  "admin_review_workflow": {
+    "enabled": true,
+    "review_console": "tools/admin_review_console.py",
+    "pipeline": "tools/queue_to_patch_pipeline.py",
+    "review_store": "admin/review_queue.jsonl",
+    "audit_log": "audit/audit_log.jsonl",
+    "workflow_doc": "admin/README_ADMIN_REVIEW_WORKFLOW.md"
+  },
+  "salary_engine": {
+    "enabled": true,
+    "schema": "kb/salary_schema.json",
+    "rules": "kb/salary_rules_lb.json",
+    "tables": "kb/salary_tables.json",
+    "medals": "kb/medals_table.json",
+    "ingestor": "tools/salary_kb_ingestor.py",
+    "calculator": "tools/salary_calculator.py",
+    "api_endpoint": "/watany/salary/compute",
+    "auto_mapper": "tools/salary_auto_mapper.py",
+    "compute_engine": "tools/salary_compute_engine.py",
+    "sources_config": "admin/salary_sources_config.json",
+    "sources_suggested": "admin/salary_sources_suggested.json",
+    "sources_locked": "admin/salary_sources_locked.json"
+  }
+}

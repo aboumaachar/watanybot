@@ -1,0 +1,2 @@
+import { kbStudioHostRegistration } from '../host-integration/kb-studio.host-registration';
+export function getKbStudioRegistryConsumptionProof() { const manifest = kbStudioHostRegistration.adapter.getManifest(); const settings = kbStudioHostRegistration.adapter.getSettings(); return { pluginKey: manifest.pluginKey, enabled: settings.enabled, exportable: manifest.exportable, replaceable: manifest.replaceable, adminConfigurable: manifest.adminConfigurable, routeCount: kbStudioHostRegistration.routes.length, apiPrefixCount: kbStudioHostRegistration.apiPrefixes.length }; }

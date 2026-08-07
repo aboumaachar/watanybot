@@ -1,0 +1,1536 @@
+/* =================================================================
+   ELITE DESIGN SYSTEM — Lebanese Military Heritage Premium
+   Cedar Green + Medal Gold · Micro-interactions · Glassmorphism
+  ================================================================= */
+
+/* ── 1. PREMIUM COLOR PALETTE ─────────────────────────────────── */
+:root {
+  /* Cedar Green (Primary) */
+  --cedar-900: #052D1F;
+  --cedar-800: #073D28;
+  --cedar-700: #2563eb;
+  --cedar-600: #0E7A51;
+  --cedar-500: #60a5fa;
+  --cedar-400: #3DB88A;
+  --cedar-300: #7DD4B5;
+  --cedar-200: #B8E9D8;
+  --cedar-100: #E3F7F0;
+
+  /* Medal Gold (Accent) */
+  --gold-900: #4A3A1A;
+  --gold-800: #8B6F2E;
+  --gold-700: #B8962E;
+  --gold-600: #D4AF37;
+  --gold-500: #E6C86B;
+  --gold-400: #F0D98F;
+  --gold-300: #F7E8B8;
+  --gold-200: #FBF3D9;
+  --gold-100: #FEFBEF;
+
+  /* Sophisticated Grays */
+  --gray-950: #030712;
+  --gray-900: #0F172A;
+  --gray-800: #1E293B;
+  --gray-700: #334155;
+  --gray-600: #475569;
+  --gray-500: #64748B;
+  --gray-400: #94A3B8;
+  --gray-300: #CBD5E1;
+  --gray-200: #E2E8F0;
+  --gray-100: #F1F5F9;
+  --gray-50:  #F8FAFC;
+
+  /* Premium Gradients */
+  --gradient-cedar: linear-gradient(135deg, #2563eb 0%, #60a5fa 100%);
+  --gradient-gold: linear-gradient(135deg, #D4AF37 0%, #E6C86B 100%);
+  --gradient-sunset: linear-gradient(135deg, #2563eb 0%, #D4AF37 50%, #2563eb 100%);
+
+  /* Advanced Shadows */
+  --shadow-soft-xl:
+    0 0 0 1px rgba(0, 0, 0, 0.03),
+    0 1px 1px rgba(0, 0, 0, 0.02),
+    0 4px 8px rgba(0, 0, 0, 0.03),
+    0 16px 24px rgba(0, 0, 0, 0.04),
+    0 24px 32px rgba(0, 0, 0, 0.05);
+
+  --shadow-glow-cedar:
+    0 0 20px rgba(10, 92, 61, 0.3),
+    0 0 40px rgba(10, 92, 61, 0.15);
+
+  --shadow-glow-gold:
+    0 0 20px rgba(212, 175, 55, 0.3),
+    0 0 40px rgba(212, 175, 55, 0.15);
+
+  /* Premium Easing */
+  --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+  --ease-in-expo: cubic-bezier(0.95, 0.05, 0.795, 0.035);
+  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+
+/* ── 2. ELITE TYPOGRAPHY ──────────────────────────────────────── */
+body,
+.app-shell {
+  font-family: 'Cairo', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+
+/* ── 3. ELITE HEADER ─────────────────────────────────────────── */
+.top-menu {
+  background:
+    radial-gradient(circle at 16% 0%, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.94) 58%, rgba(236, 241, 247, 0.9)) !important;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08) !important;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08) !important;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle pattern overlay on header */
+.top-menu::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: none;
+  pointer-events: none;
+}
+
+.top-menu .menu-toggle,
+.top-menu .tm-icon-btn,
+.top-menu .tm-login-btn,
+.top-menu .tm-user-btn {
+  color: #111827 !important;
+}
+
+.top-menu .menu-toggle svg,
+.top-menu .tm-icon-btn svg {
+  stroke: currentColor !important;
+}
+
+.top-menu .logo-text {
+  color: #1f2937 !important;
+  font-weight: 800 !important;
+  font-size: 1.25rem !important;
+  text-shadow: none;
+}
+
+.top-menu .tm-icon-btn {
+  width: 54px;
+  height: 54px;
+  border-radius: 18px;
+  background: transparent !important;
+  backdrop-filter: none;
+  border: 0 !important;
+  box-shadow: none !important;
+  transition: all 0.3s var(--ease-out-expo);
+}
+
+.top-menu .tm-icon-btn:hover {
+  background: transparent !important;
+  transform: translateY(-2px);
+}
+
+.top-menu .tm-badge {
+  background: var(--gold-600) !important;
+  color: var(--gray-900) !important;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(212, 175, 55, 0.4);
+}
+
+.top-menu .tm-login-btn {
+  background: rgba(255, 255, 255, 0.15) !important;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  border-radius: 12px !important;
+  color: white !important;
+  padding: 8px 16px !important;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.top-menu .tm-login-btn:hover {
+  background: rgba(255, 255, 255, 0.25) !important;
+}
+
+
+/* ── 4. ELITE SCREEN HEADER ──────────────────────────────────── */
+.screen-header {
+  background:
+    radial-gradient(circle at 16% 0%, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.94) 58%, rgba(236, 241, 247, 0.9)) !important;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08) !important;
+  color: #111827 !important;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08) !important;
+}
+
+.screen-header__title {
+  color: #111827 !important;
+  font-weight: 700;
+}
+
+.screen-header__back {
+  color: #111827 !important;
+  background: transparent !important;
+  border-radius: 16px;
+  backdrop-filter: none;
+}
+
+.screen-header__back:active {
+  background: transparent !important;
+}
+
+.font-btn {
+  background: #ffffff !important;
+  border: 1px solid rgba(15, 23, 42, 0.12) !important;
+  color: #0f172a !important;
+}
+
+.theme-btn,
+.contrast-btn {
+  background: rgba(255, 255, 255, 0.92) !important;
+  border: 1px solid rgba(15, 23, 42, 0.1) !important;
+  color: #111827 !important;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08) !important;
+}
+
+.theme-btn .koudama-feature-icon,
+.contrast-btn .koudama-feature-icon,
+.screen-header__back .koudama-feature-icon {
+  --kfi-size: 32px;
+}
+
+
+/* ── 5. ELITE BOTTOM TAB BAR ─────────────────────────────────── */
+.tab-bar {
+  background: white !important;
+  border-top: none !important;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08) !important;
+}
+
+.tab-btn {
+  color: var(--gray-400) !important;
+  transition: all 0.3s var(--ease-out-expo);
+  position: relative;
+}
+
+.tab-btn.active {
+  color: var(--cedar-700) !important;
+}
+
+/* Active tab indicator line */
+.tab-btn.active::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 25%;
+  right: 25%;
+  height: 3px;
+  background: var(--gradient-cedar);
+  border-radius: 0 0 3px 3px;
+  animation: tabIndicator 0.3s var(--ease-out-expo);
+}
+
+@keyframes tabIndicator {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+.tab-icon {
+  font-size: 1.5rem !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.tab-btn.active .tab-icon {
+  transform: scale(1.15);
+  filter: drop-shadow(0 2px 4px rgba(10, 92, 61, 0.3));
+}
+
+.tab-label {
+  font-weight: 600 !important;
+  font-size: 0.7rem !important;
+}
+
+.tab-btn.active .tab-label {
+  color: var(--cedar-700) !important;
+  font-weight: 800 !important;
+}
+
+
+/* ── 6. ELITE SERVICES GRID ──────────────────────────────────── */
+.services-hero {
+  padding: 8px 0 14px !important;
+  text-align: start;
+}
+
+.services-hero__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(10, 92, 61, 0.08);
+  color: var(--cedar-700) !important;
+  font-size: 0.72rem;
+  font-weight: 800;
+  margin-bottom: 10px;
+}
+
+.services-hero__title {
+  font-size: 1.45rem !important;
+  font-weight: 900 !important;
+  color: var(--cedar-700) !important;
+  line-height: 1.2;
+}
+
+.services-hero__sub {
+  color: var(--gray-500) !important;
+  font-weight: 500;
+  font-size: 0.85rem;
+}
+
+.services-hero__eyebrow,
+.services-hero__sub {
+  display: none;
+}
+
+.services-section__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.services-section__title {
+  margin: 0;
+  font-size: 0.92rem;
+  font-weight: 900;
+  color: var(--gray-900);
+}
+
+.services-section__count {
+  min-width: 24px;
+  height: 24px;
+  padding: 0 8px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--gray-100);
+  color: var(--gray-600);
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.service-card {
+  background: white !important;
+  border: 1px solid var(--gray-200) !important;
+  border-radius: 18px !important;
+  display: grid !important;
+  grid-template-columns: 40px minmax(0, 1fr) 14px;
+  align-items: start;
+  column-gap: 10px;
+  row-gap: 4px;
+  padding: 12px !important;
+  box-shadow: var(--shadow-soft-xl) !important;
+  transition: all 0.4s var(--ease-out-expo) !important;
+  position: relative;
+  overflow: hidden;
+  min-height: 88px;
+}
+
+.services-screen .service-card--square {
+  grid-template-columns: minmax(0, 1fr) !important;
+  grid-template-rows: auto auto 1fr;
+  align-items: stretch !important;
+  row-gap: 10px;
+  min-height: 0;
+  aspect-ratio: 1 / 1;
+  padding: 14px !important;
+}
+
+/* Gradient top bar */
+.service-card::before {
+  height: 3px !important;
+  opacity: 1 !important;
+  background: var(--svc-color, var(--gradient-cedar)) !important;
+  transition: height 0.3s var(--ease-out-expo);
+}
+
+/* Gradient border on hover */
+.service-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  padding: 2px;
+  background: var(--gradient-cedar);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.4s;
+  pointer-events: none;
+}
+
+.service-card:hover,
+.service-card:active {
+  transform: translateY(-4px) scale(1.01) !important;
+  box-shadow:
+    0 14px 28px rgba(10, 92, 61, 0.12),
+    0 0 0 1px rgba(10, 92, 61, 0.1) !important;
+}
+
+.service-card:hover::after,
+.service-card:active::after {
+  opacity: 1;
+}
+
+.service-card:hover::before {
+  height: 4px !important;
+}
+
+.service-card__icon {
+  grid-column: 1;
+  grid-row: 1 / span 2;
+  width: 40px;
+  height: 40px;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  font-size: 1.15rem !important;
+  transition: all 0.4s var(--ease-out-expo);
+}
+
+.services-screen .service-card--square .service-card__icon {
+  grid-column: 1;
+  grid-row: 1;
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  font-size: 1.35rem !important;
+}
+
+.service-card:hover .service-card__icon,
+.service-card:active .service-card__icon {
+  transform: translateY(-1px) scale(1.05);
+}
+
+.service-card__copy {
+  grid-column: 2;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 2px;
+}
+
+.services-screen .service-card--square .service-card__copy {
+  grid-column: 1;
+  align-self: end;
+  gap: 6px;
+}
+
+.service-card__label {
+  font-weight: 800 !important;
+  font-size: 0.9rem !important;
+  color: var(--gray-900) !important;
+  line-height: 1.25;
+  display: -webkit-box;
+  line-clamp: 2;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.services-screen .service-card--square .service-card__label {
+  line-clamp: 3;
+  -webkit-line-clamp: 3;
+  font-size: 0.95rem !important;
+}
+
+.service-card__desc {
+  font-size: 0.72rem !important;
+  color: var(--gray-500) !important;
+  line-height: 1.35;
+  display: -webkit-box;
+  line-clamp: 2;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.services-screen .service-card--square .service-card__desc {
+  line-clamp: 3;
+  -webkit-line-clamp: 3;
+}
+
+.service-card__arrow {
+  grid-column: 3;
+  grid-row: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  color: var(--svc-color, var(--cedar-700));
+  font-size: 0.95rem;
+  opacity: 0.8;
+}
+
+.services-screen .service-card--square .service-card__arrow {
+  grid-column: 1;
+  grid-row: 1;
+  justify-self: end;
+  align-self: start;
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--svc-color, var(--cedar-700)) 12%, white);
+}
+
+
+/* ── 7. ELITE PANELS & CARDS ─────────────────────────────────── */
+.panel {
+  background: white !important;
+  border: 1px solid var(--gray-200) !important;
+  border-radius: 20px !important;
+  box-shadow: var(--shadow-soft-xl) !important;
+}
+
+.section-title {
+  font-weight: 800 !important;
+  color: var(--gray-900);
+  font-size: 1.15rem;
+}
+
+/* Card hover micro-interactions */
+.card {
+  border: 1px solid var(--gray-200);
+  border-radius: 16px;
+  transition: all 0.4s var(--ease-out-expo);
+  position: relative;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 12px 32px rgba(0, 0, 0, 0.08),
+    0 0 0 1px rgba(10, 92, 61, 0.1);
+}
+
+
+/* ── 8. ELITE BUTTONS ────────────────────────────────────────── */
+.btn {
+  border-radius: 14px !important;
+  font-weight: 600 !important;
+  transition: all 0.3s var(--ease-out-expo) !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn:hover {
+  transform: translateY(-2px) !important;
+}
+
+/* Primary button with shimmer */
+.btn-primary,
+.action-btn {
+  background: var(--gradient-cedar) !important;
+  color: white !important;
+  border: none !important;
+  font-weight: 700;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Shimmer sweep effect */
+.btn-primary::before,
+.action-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.3) 50%,
+    transparent 100%
+  );
+  transform: translateX(-100%);
+  transition: transform 0.6s;
+}
+
+.btn-primary:hover::before,
+.action-btn:hover::before {
+  transform: translateX(100%);
+}
+
+
+/* ── 9. ELITE DROPDOWNS/PANELS ───────────────────────────────── */
+.tm-notifications-panel,
+.tm-reports-panel,
+.tm-profile-panel {
+  border-radius: 24px !important;
+  border: 1px solid var(--gray-200) !important;
+  box-shadow: var(--shadow-soft-xl) !important;
+  animation: eliteSlideIn 0.4s var(--ease-out-expo) !important;
+  overflow: hidden;
+}
+
+@keyframes eliteSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.tm-panel-header {
+  background: var(--gradient-cedar) !important;
+  color: white !important;
+  padding: 20px 24px !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.tm-panel-header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E");
+  pointer-events: none;
+}
+
+.tm-panel-header h2 {
+  color: white !important;
+  font-weight: 800;
+  position: relative;
+}
+
+.tm-close-btn {
+  color: white !important;
+  background: rgba(255, 255, 255, 0.2) !important;
+  border-radius: 12px !important;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s;
+  position: relative;
+}
+
+.tm-close-btn:hover {
+  background: rgba(255, 255, 255, 0.3) !important;
+  transform: rotate(90deg);
+}
+
+.tm-notification-item {
+  transition: all 0.3s var(--ease-out-expo);
+  border-radius: 12px;
+  margin: 4px 8px;
+  padding: 12px 16px !important;
+}
+
+.tm-notification-item:hover {
+  background: var(--cedar-100);
+}
+
+.tm-notification-item.unread {
+  border-right: 3px solid var(--cedar-700) !important;
+  background: var(--cedar-100);
+}
+
+.tm-report-item {
+  transition: all 0.3s var(--ease-out-expo);
+  border-radius: 12px !important;
+  margin: 4px 8px;
+}
+
+.tm-report-item:hover {
+  background: var(--cedar-100);
+  padding-right: 24px;
+}
+
+/* Overlay blur */
+.tm-panel-overlay {
+  backdrop-filter: blur(8px) !important;
+  background: rgba(0, 0, 0, 0.4) !important;
+}
+
+
+/* ── 10. ELITE CHAT BUBBLES ──────────────────────────────────── */
+.msg-bubble {
+  border-radius: 18px !important;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06) !important;
+}
+
+.msg-user .msg-bubble {
+  background: var(--gradient-cedar) !important;
+  color: white !important;
+  border: none !important;
+  border-end-start-radius: 4px !important;
+}
+
+.msg-assistant .msg-bubble {
+  background: white !important;
+  border: 1px solid var(--gray-200) !important;
+  border-end-end-radius: 4px !important;
+}
+
+
+/* ── 11. ELITE FORMS/MODALS ──────────────────────────────────── */
+.form-preview-dialog {
+  border-radius: 24px !important;
+  border: 1px solid var(--gray-200) !important;
+  box-shadow: var(--shadow-soft-xl) !important;
+  animation: eliteModalIn 0.4s var(--ease-out-expo);
+}
+
+@keyframes eliteModalIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+.form-preview-header {
+  background: var(--gradient-cedar) !important;
+  color: white !important;
+  border-bottom: none !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.form-preview-header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E");
+  pointer-events: none;
+}
+
+.form-preview-header h3 {
+  color: white !important;
+  position: relative;
+}
+
+.btn-close {
+  background: rgba(255, 255, 255, 0.2) !important;
+  color: white !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s;
+}
+
+.btn-close:hover {
+  background: rgba(255, 255, 255, 0.3) !important;
+  transform: rotate(90deg);
+  color: white !important;
+}
+
+/* Elite form buttons */
+.form-btn {
+  background: white !important;
+  border: 1px solid var(--gray-200) !important;
+  border-radius: 14px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: all 0.4s var(--ease-out-expo) !important;
+}
+
+.form-btn:hover {
+  background: var(--gradient-cedar) !important;
+  color: white !important;
+  border-color: var(--cedar-700) !important;
+  transform: translateY(-4px) scale(1.02) !important;
+  box-shadow: 0 12px 24px rgba(10, 92, 61, 0.2) !important;
+}
+
+.forms-group-header:hover {
+  background: var(--cedar-100) !important;
+}
+
+.forms-group-count {
+  background: var(--gradient-cedar) !important;
+}
+
+
+/* ── 12. ELITE PILLS & BADGES ────────────────────────────────── */
+.pill {
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+.pill.verified {
+  background: var(--cedar-100) !important;
+  border-color: var(--cedar-300) !important;
+  color: var(--cedar-700) !important;
+}
+
+.badge {
+  background: var(--gradient-gold) !important;
+  color: var(--gray-900) !important;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(212, 175, 55, 0.3);
+}
+
+.tag {
+  background: var(--cedar-100) !important;
+  color: var(--cedar-700) !important;
+  border: 1px solid var(--cedar-200) !important;
+  font-weight: 600;
+}
+
+
+/* ── 13. ELITE STATS CARDS ───────────────────────────────────── */
+.stat-card {
+  border: 1px solid var(--gray-200) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04) !important;
+  transition: all 0.3s var(--ease-out-expo);
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--gradient-cedar);
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08) !important;
+}
+
+.stat-value {
+  color: var(--cedar-700) !important;
+  font-weight: 800 !important;
+}
+
+
+/* ── 14. ELITE LOADING ───────────────────────────────────────── */
+.screen-loader__spinner {
+  border-color: var(--cedar-100) !important;
+  border-top-color: var(--cedar-700) !important;
+}
+
+.screen-loader span {
+  color: var(--cedar-700);
+  font-weight: 600;
+}
+
+
+/* ── 15. ELITE SCROLLBAR ─────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--gray-100);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--gradient-cedar);
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--cedar-600);
+}
+
+
+/* ── 16. ELITE AUTH PAGES ────────────────────────────────────── */
+.auth-overlay {
+  backdrop-filter: blur(12px) !important;
+  background: rgba(5, 45, 31, 0.4) !important;
+}
+
+.auth-card {
+  border-radius: 24px !important;
+  box-shadow: var(--shadow-soft-xl) !important;
+  border: 1px solid var(--gray-200) !important;
+}
+
+
+/* ── 17. ELITE SALARY PAGE ───────────────────────────────────── */
+.salary-card {
+  border-radius: 20px !important;
+  border: 1px solid var(--gray-200) !important;
+  box-shadow: var(--shadow-soft-xl) !important;
+}
+
+
+/* ── 18. ELITE SELECTION & FOCUS ─────────────────────────────── */
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none !important;
+  border-color: var(--cedar-500) !important;
+  box-shadow: 0 0 0 3px rgba(10, 92, 61, 0.1) !important;
+}
+
+::selection {
+  background: var(--cedar-200);
+  color: var(--cedar-900);
+}
+
+
+/* ── 19. ANIMATIONS ──────────────────────────────────────────── */
+@keyframes shimmer {
+  0% { transform: translateX(-100%) rotate(45deg); }
+  100% { transform: translateX(100%) rotate(45deg); }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 20px rgba(10, 92, 61, 0.2); }
+  50% { box-shadow: 0 0 30px rgba(10, 92, 61, 0.4); }
+}
+
+/* Service cards staggered entrance */
+.service-card {
+  animation: fadeInUp 0.5s var(--ease-out-expo) both;
+}
+
+.service-card:nth-child(1)  { animation-delay: 0.05s; }
+.service-card:nth-child(2)  { animation-delay: 0.10s; }
+.service-card:nth-child(3)  { animation-delay: 0.15s; }
+.service-card:nth-child(4)  { animation-delay: 0.20s; }
+.service-card:nth-child(5)  { animation-delay: 0.25s; }
+.service-card:nth-child(6)  { animation-delay: 0.30s; }
+.service-card:nth-child(7)  { animation-delay: 0.35s; }
+.service-card:nth-child(8)  { animation-delay: 0.40s; }
+.service-card:nth-child(9)  { animation-delay: 0.45s; }
+.service-card:nth-child(10) { animation-delay: 0.50s; }
+.service-card:nth-child(11) { animation-delay: 0.55s; }
+
+
+/* ── 20. RESPONSIVE ELITE ────────────────────────────────────── */
+@media (min-width: 769px) {
+  /* keep two columns on larger screens as requested */
+  .services-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 20px !important;
+  }
+
+  .service-card {
+    padding: 28px 20px 24px !important;
+  }
+}
+
+@media (min-width: 1200px) {
+  /* still two columns even on extra wide screens */
+  .services-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+
+/* =================================================================
+   ELITE UTILITY CLASSES — Consistent Styling Across All Pages
+  ================================================================= */
+
+/* ── PAGE CONTAINERS ────────────────────────────────────────────── */
+.elite-page {
+  padding: 16px;
+  max-width: 640px;
+  margin: 0 auto;
+  min-height: 100%;
+}
+
+.elite-page-header {
+  margin-bottom: 24px;
+  padding: 20px 0;
+}
+
+.elite-page-title {
+  font-size: 1.75rem !important;
+  font-weight: 900 !important;
+  color: var(--cedar-700) !important;
+  line-height: 1.2;
+  margin: 0 0 8px 0;
+}
+
+.elite-page-subheader {
+  color: var(--gray-500) !important;
+  font-weight: 500;
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+.elite-page-desc {
+  font-size: 0.9rem;
+  color: var(--gray-500);
+  margin: 0;
+  line-height: 1.4;
+}
+
+
+/* ── SEARCH & FILTER ───────────────────────────────────────────────── */
+.elite-search-wrapper {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.elite-search {
+  flex: 1;
+  padding: 12px 16px;
+  border-radius: 14px;
+  border: 1px solid var(--gray-200) !important;
+  background: white !important;
+  color: var(--gray-900) !important;
+  font-size: 14px;
+  font-family: inherit;
+  transition: all 0.3s var(--ease-out-expo);
+  box-shadow: var(--shadow-soft-xl) !important;
+}
+
+.elite-search::placeholder {
+  color: var(--gray-500);
+  opacity: 1;
+}
+
+.elite-search:focus {
+  outline: none !important;
+  border-color: var(--cedar-500) !important;
+  box-shadow: 0 0 0 3px rgba(10, 92, 61, 0.1) !important;
+}
+
+.elite-search-btn {
+  padding: 12px 20px;
+  border-radius: 14px;
+  border: none !important;
+  background: var(--gradient-cedar) !important;
+  color: white !important;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s var(--ease-out-expo);
+  box-shadow: 0 2px 8px rgba(10, 92, 61, 0.15);
+}
+
+.elite-search-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(10, 92, 61, 0.25);
+}
+
+.elite-search-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.elite-filters {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.elite-filter-chip {
+  padding: 8px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--cedar-200) !important;
+  background: var(--cedar-100) !important;
+  color: var(--cedar-700) !important;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s var(--ease-out-expo);
+}
+
+.elite-filter-chip:hover {
+  background: var(--cedar-200) !important;
+  transform: translateY(-2px);
+}
+
+.elite-filter-chip.active {
+  background: var(--gradient-cedar) !important;
+  color: white !important;
+  border-color: transparent !important;
+  box-shadow: 0 2px 8px rgba(10, 92, 61, 0.2);
+}
+
+.elite-filter-select {
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--gray-200) !important;
+  background: white !important;
+  color: var(--gray-900) !important;
+  font-size: 13px;
+  font-family: inherit;
+  transition: all 0.3s var(--ease-out-expo);
+}
+
+.elite-filter-select:focus {
+  outline: none !important;
+  border-color: var(--cedar-500) !important;
+  box-shadow: 0 0 0 3px rgba(10, 92, 61, 0.1) !important;
+}
+
+
+/* ── LISTS & GRIDS ─────────────────────────────────────────────────── */
+.elite-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.elite-list__item {
+  background: white !important;
+  border: 1px solid var(--gray-200) !important;
+  border-radius: 16px !important;
+  padding: 16px;
+  box-shadow: var(--shadow-soft-xl) !important;
+  transition: all 0.4s var(--ease-out-expo) !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.elite-list__item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--cedar-500), var(--cedar-600));
+}
+
+.elite-list__item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(10, 92, 61, 0.15) !important;
+}
+
+.elite-list__item-icon {
+  margin-bottom: 8px;
+  font-size: 1.5rem;
+  color: var(--cedar-700);
+}
+
+.elite-list__item-title {
+  font-weight: 700 !important;
+  color: var(--gray-900) !important;
+  margin: 0 0 4px 0;
+}
+
+.elite-list__item-desc {
+  font-size: 0.85rem;
+  color: var(--gray-600) !important;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.elite-list__item-meta {
+  font-size: 0.75rem;
+  color: var(--gray-500);
+  margin-top: 8px;
+}
+
+.elite-grid {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.elite-grid-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.elite-grid-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+@media (max-width: 640px) {
+  .elite-grid-2,
+  .elite-grid-3 {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* ── TABLE STYLES ──────────────────────────────────────────────────── */
+.elite-table {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+.elite-table th {
+  background: var(--cedar-50) !important;
+  color: var(--cedar-700) !important;
+  font-weight: 700;
+  padding: 12px 16px;
+  text-align: right;
+  border-bottom: 2px solid var(--cedar-200) !important;
+  font-size: 0.85rem;
+}
+
+.elite-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--gray-200) !important;
+  color: var(--gray-900);
+  font-size: 0.9rem;
+}
+
+.elite-table tbody tr {
+  transition: all 0.3s var(--ease-out-expo);
+}
+
+.elite-table tbody tr:hover {
+  background: var(--cedar-50) !important;
+}
+
+.elite-table tbody tr:hover td {
+  color: var(--cedar-700);
+}
+
+
+/* ── STATUS INDICATORS ───────────────────────────────────────────────── */
+.elite-status-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.elite-status-open {
+  background: #dbeafe !important;
+  color: #1e40af !important;
+}
+
+.elite-status-in-progress {
+  background: #fed7aa !important;
+  color: #92400e !important;
+}
+
+.elite-status-closed,
+.elite-status-completed {
+  background: #dcfce7 !important;
+  color: #166534 !important;
+}
+
+.elite-status-error,
+.elite-status-failed {
+  background: #fee2e2 !important;
+  color: #991b1b !important;
+}
+
+
+/* ── EMPTY STATES ──────────────────────────────────────────────────── */
+.elite-empty-state {
+  text-align: center;
+  padding: 48px 24px;
+  color: var(--gray-500);
+}
+
+.elite-empty-state__icon {
+  font-size: 3rem;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.elite-empty-state__title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--gray-700);
+  margin-bottom: 8px;
+}
+
+.elite-empty-state__desc {
+  font-size: 0.9rem;
+  color: var(--gray-500);
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+
+.elite-empty-state__action {
+  background: var(--gradient-cedar) !important;
+  color: white !important;
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-weight: 600;
+  border: none !important;
+  cursor: pointer;
+  transition: all 0.3s var(--ease-out-expo);
+}
+
+.elite-empty-state__action:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(10, 92, 61, 0.25);
+}
+
+
+/* ── LOADING STATES ────────────────────────────────────────────────── */
+.elite-skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--gray-200) 0%,
+    var(--gray-100) 50%,
+    var(--gray-200) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+  border-radius: 8px;
+}
+
+.elite-skeleton.text {
+  height: 16px;
+  margin-bottom: 8px;
+}
+
+.elite-skeleton.card {
+  height: 120px;
+  border-radius: 16px;
+  margin-bottom: 12px;
+}
+
+.elite-loading-spinner {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  border: 3px solid var(--cedar-100);
+  border-top-color: var(--cedar-700);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+
+/* ── HERO SECTIONS ────────────────────────────────────────────────── */
+.elite-hero {
+  background: var(--gradient-cedar);
+  border-radius: 20px;
+  color: white;
+  padding: 32px 24px;
+  margin-bottom: 24px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(10, 92, 61, 0.2);
+}
+
+.elite-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E");
+  pointer-events: none;
+}
+
+.elite-hero > * {
+  position: relative;
+}
+
+.elite-hero__title {
+  font-size: 1.5rem;
+  font-weight: 900;
+  margin: 0 0 8px 0;
+  line-height: 1.2;
+}
+
+.elite-hero__desc {
+  font-size: 0.95rem;
+  opacity: 0.9;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.elite-hero__desc {
+  display: none;
+}
+
+
+/* ── ACTION GROUPS ────────────────────────────────────────────────── */
+.elite-action-group {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 12px 0;
+}
+
+.elite-action-btn {
+  flex: 1;
+  min-width: 120px;
+  padding: 10px 16px;
+  border-radius: 12px;
+  border: none !important;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s var(--ease-out-expo);
+}
+
+.elite-action-btn.primary {
+  background: var(--gradient-cedar) !important;
+  color: white !important;
+  box-shadow: 0 2px 8px rgba(10, 92, 61, 0.15);
+}
+
+.elite-action-btn.primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(10, 92, 61, 0.25);
+}
+
+.elite-action-btn.secondary {
+  background: white !important;
+  color: var(--cedar-700) !important;
+  border: 1px solid var(--cedar-200) !important;
+  box-shadow: var(--shadow-soft-xl) !important;
+}
+
+.elite-action-btn.secondary:hover {
+  background: var(--cedar-50) !important;
+  border-color: var(--cedar-300) !important;
+  transform: translateY(-2px);
+}
+
+.elite-action-btn.outline {
+  background: transparent !important;
+  color: var(--cedar-700) !important;
+  border: 1px solid var(--cedar-300) !important;
+}
+
+.elite-action-btn.outline:hover {
+  background: var(--cedar-50) !important;
+  border-color: var(--cedar-500) !important;
+}
+
+
+/* ── DIVIDERS ──────────────────────────────────────────────────────── */
+.elite-divider {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--gray-200) 20%,
+    var(--gray-200) 80%,
+    transparent 100%
+  );
+  margin: 16px 0;
+}
+
+.elite-divider--gold {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--gold-300) 20%,
+    var(--gold-300) 80%,
+    transparent 100%
+  );
+}
+
+
+/* ── RESPONSIVE MOBILE TWEAKS ──────────────────────────────────────── */
+@media (max-width: 640px) {
+  .elite-page {
+    padding: 12px;
+  }
+
+  .service-card__desc {
+    display: none;
+  }
+
+  .elite-page-title {
+    font-size: 1.5rem !important;
+  }
+
+  .elite-search-wrapper {
+    flex-direction: column;
+  }
+
+  .elite-search-btn {
+    width: 100%;
+  }
+
+  .elite-action-group {
+    flex-direction: column;
+  }
+
+  .elite-action-btn {
+    min-width: unset;
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .services-screen {
+    padding-inline: 12px !important;
+  }
+
+  .services-grid {
+    gap: 10px !important;
+  }
+
+  .top-menu .tm-icon-btn,
+  .top-menu .tm-user-btn,
+  .top-menu .tm-login-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+  }
+
+  .top-menu .logo-text {
+    font-size: 1rem !important;
+  }
+
+  .screen-header__title {
+    line-height: 1.25;
+  }
+
+  .tab-icon {
+    font-size: 1.2rem !important;
+  }
+
+  .tab-label {
+    font-size: 0.58rem !important;
+  }
+
+  .service-card__label,
+  .btn,
+  .elite-table th,
+  .elite-table td {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+}
+
+@media (max-width: 374px) {
+  .tab-label {
+    display: none;
+  }
+
+  .top-menu .logo-text {
+    display: none;
+  }
+}
+
+

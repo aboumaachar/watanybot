@@ -1,0 +1,73 @@
+{
+  "datasetId": "lebanese-administrative-authority",
+  "datasetVersion": "1.1.0",
+  "schemaVersion": "1.0.0",
+  "approvalStatus": "approvedCanonical",
+  "generatedAt": "2026-08-06T08:11:43.434Z",
+  "approvedAt": "2026-08-06T09:01:00Z",
+  "approvedBy": ["Andre Bou Maachar"],
+  "approvalReference": "OWNER_APPROVAL_1.1.0",
+  "sourceHashes": {
+    "SRC-VENDOR-LOCALITIES": "475fb9e3e9f80b4a35c6c23909545163cab49fed4a5b508b10bb4a07a1fd5871",
+    "SRC-STARTER-CSV": "62cceb6264d1dfb57f35bb163355d6b773b7441ba8714167b38c0f19f9ec1ddc",
+    "SRC-ADDRESS-NETWORK-GOV": "0222d407c467ba1c3c7b9ab9776dfa904b8187223b136326529430dfb92c4076",
+    "SRC-ADDRESS-NETWORK-CAZA": "335c321ac185e4a97c5317e87742672e3f1bc8b5251a45431ce095534cf2b985",
+    "SRC-ADDRESS-NETWORK-VILLAGES": "95164423315f1c7d8b6c31e4ee6e40268411544f2f219d54772b27d9835281a2",
+    "SRC-BOUNDARY-INDEX": "b4f574742eddf6e9e2c4834d382fa09dafbaf8ccdc3b967dddb5aafc08397f30",
+    "SRC-AUTHORITY-MANIFEST": "bfc22ba8950178a91d493d37ea66bafa4b6a9eda679ec65620fa5e26b664c88f",
+    "SRC-NATIONAL-VILLAGE-MANIFEST": "7a85e13810bb5c11421b4346518625e632701ecc7999b9de64c8583fab478a88",
+    "SRC-STARTER-ARABIC": "62cceb6264d1dfb57f35bb163355d6b773b7441ba8714167b38c0f19f9ec1ddc"
+  },
+  "artifactHashes": {
+    "aliases.csv": "36ed8b4d9a3f3e052e6458bf05df0352d394814f441d3668f2bdbecaa895c2b6",
+    "arabic-crosswalk.csv": "5a42f86c9d085b20277cd9a781f615612c0bbcf141f6535aaa9a408e0f053fb5",
+    "arabic-name-provenance.csv": "c5e53526b560146319e43b42715989c2f94b23e2c5ba12fcb75100bdfea545d3",
+    "coordinates.csv": "fd064b4653186a3cef7d713a8add2ee3b6cd645b55ba1658f97440eb7b3b1a03",
+    "district-equivalents.csv": "f9340bf8d4b0b4716dd80a91a5a9720b4da846d8c2fe5305616d42f7cb4cc82b",
+    "districts.csv": "8ac20c22aa35193055f9a9837fb69c7fd2b1a8dbff5bc890810b653c26344fdc",
+    "governorates.csv": "3d5ecabe970cc380ff8d2f518cc6e3d73a2acbd1a15f5f63c9c3dd423bfa6067",
+    "localities.csv": "23d2122f702376ea04b2d16df7a70596df8be75dc02109a543c5d4fa99582728",
+    "municipalities.csv": "7966ac970db2fbb5bd22867c464d7d2840623c3c27b21d837ed61209c8e97881",
+    "provenance.csv": "3de9c3d7d87f726efaf5d20e62d6f4a7921e9b046d7df69dec164649d0f4491b",
+    "runtime.json": "56ff08866d837905c1350d411bd6386974fb66789f312276168c80c87ad3f0bf"
+  },
+  "recordCounts": {
+    "governorates": 8,
+    "districts": 26,
+    "municipalities": 0,
+    "localities": 1545,
+    "aliases": 3090,
+    "localitiesWithCoordinates": 1545,
+    "missingArabic": 0,
+    "duplicateIds": 0,
+    "orphanRows": 0
+  },
+  "arabicCoverage": {
+    "acceptedArabic": 1545,
+    "missingArabic": 0,
+    "conflictedArabic": 0,
+    "unresolvedArabic": 0,
+    "status": "PASS",
+    "issues": []
+  },
+  "conflictCounts": {
+    "arabic": 0,
+    "hierarchy": 0,
+    "ambiguous": 0
+  },
+  "validationSummary": {
+    "status": "PASS",
+    "missingArabic": 0,
+    "litigeCount": 0,
+    "ambiguousAliasCount": 6
+  },
+  "knownLimitations": [
+    "Owner approval is pending",
+    "Municipality coverage is not established",
+    "Coordinates are source-reported and require owner review"
+  ],
+  "previousRelease": "1.0.0",
+  "releaseType": "arabic-authority-recovery",
+  "minimumApplicationVersion": "UL2B",
+  "releaseImmutable": true
+}

@@ -1,0 +1,322 @@
+/*
+APEX WatanyBot UI Platform V2.4.0 canonical smartphone-first shell overlay.
+This file is intentionally ASCII-only and is loaded last from the web-user entrypoint.
+It does not delete legacy styles. It restores a stable mobile layout authority while
+the deeper UI architecture is audited.
+*/
+
+:root {
+  --watany-v24-canonical-active: 1;
+  --watany-bg: #f7f2e6;
+  --watany-surface: #fffaf0;
+  --watany-surface-strong: #ffffff;
+  --watany-ink: #12120f;
+  --watany-muted: #5b5244;
+  --watany-green: #063f22;
+  --watany-green-2: #0b5a31;
+  --watany-gold: #c49a38;
+  --watany-gold-soft: #efe0b8;
+  --watany-border: rgba(100, 71, 22, 0.28);
+  --watany-shadow: 0 10px 24px rgba(37, 29, 12, 0.18);
+  --watany-radius: 18px;
+  --watany-safe-inline: clamp(10px, 3vw, 18px);
+  color-scheme: light;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+  background:
+    radial-gradient(circle at top, rgba(255, 247, 225, 0.95), rgba(247, 242, 230, 0.98) 42%, rgba(240, 231, 211, 1));
+  color: var(--watany-ink);
+  font-family: Tahoma, Arial, "Noto Kufi Arabic", "Noto Sans Arabic", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+button,
+a,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+a {
+  color: inherit;
+}
+
+img,
+svg,
+canvas,
+video {
+  max-width: 100%;
+}
+
+#root {
+  width: 100%;
+}
+
+#root > * {
+  max-width: 430px;
+  min-height: 100vh;
+  margin-inline: auto;
+  background: linear-gradient(180deg, rgba(255, 253, 246, 0.96), rgba(245, 238, 221, 0.96));
+  box-shadow: 0 0 0 1px rgba(120, 92, 33, 0.12), 0 22px 50px rgba(31, 25, 10, 0.14);
+}
+
+@media (max-width: 520px) {
+  #root > * {
+    max-width: none;
+    width: 100%;
+    box-shadow: none;
+  }
+}
+
+[class*="shell"],
+[class*="Shell"],
+[class*="page"],
+[class*="Page"],
+main,
+section {
+  min-width: 0;
+}
+
+[class*="home"],
+[class*="Home"],
+main {
+  width: 100%;
+}
+
+[class*="card"],
+[class*="Card"],
+[class*="tile"],
+[class*="Tile"],
+[class*="feature"],
+[class*="Feature"],
+[class*="service"],
+[class*="Service"],
+[class*="menu"],
+[class*="Menu"] {
+  min-width: 0;
+}
+
+[class*="grid"],
+[class*="Grid"],
+[class*="list"],
+[class*="List"] {
+  min-width: 0;
+}
+
+button,
+[role="button"],
+a[href],
+[class*="tile"],
+[class*="Tile"],
+[class*="card"],
+[class*="Card"] {
+  touch-action: manipulation;
+}
+
+img[alt*="logo" i],
+img[src*="logo" i],
+img[src*="watany" i],
+img[src*="motany" i] {
+  display: block;
+  width: min(72vw, 260px);
+  height: auto;
+  margin: 14px auto 10px auto;
+  object-fit: contain;
+}
+
+svg {
+  display: inline-block;
+}
+
+[class*="icon"],
+[class*="Icon"],
+button svg,
+a svg {
+  width: 24px;
+  height: 24px;
+  flex: 0 0 auto;
+  color: currentColor;
+  fill: currentColor;
+  stroke: currentColor;
+}
+
+[role="navigation"],
+nav {
+  width: 100%;
+}
+
+nav a,
+nav button,
+[role="navigation"] a,
+[role="navigation"] button {
+  min-height: 44px;
+}
+
+[class*="top"],
+[class*="Top"],
+header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(255, 250, 240, 0.94);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--watany-border);
+}
+
+[class*="bottom"],
+[class*="Bottom"],
+footer {
+  background: rgba(255, 250, 240, 0.94);
+  border-top: 1px solid var(--watany-border);
+}
+
+[class*="ticker"],
+[class*="Ticker"] {
+  width: calc(100% - (2 * var(--watany-safe-inline)));
+  margin: 8px auto;
+  border: 1px solid var(--watany-border);
+  background: rgba(255, 255, 255, 0.88);
+  border-radius: 12px;
+  color: var(--watany-ink);
+  font-size: 12px;
+  line-height: 1.45;
+  padding: 7px 10px;
+  overflow: hidden;
+}
+
+[class*="grid"],
+[class*="Grid"] {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  width: 100%;
+  padding-inline: var(--watany-safe-inline);
+}
+
+@media (max-width: 360px) {
+  [class*="grid"],
+  [class*="Grid"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+[class*="tile"],
+[class*="Tile"],
+[class*="feature"],
+[class*="Feature"] {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 76px;
+  padding: 10px 8px;
+  border-radius: 16px;
+  border: 1px solid var(--watany-border);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 248, 233, 0.96));
+  box-shadow: 0 6px 16px rgba(43, 32, 11, 0.12);
+  color: var(--watany-ink);
+  text-decoration: none;
+  text-align: center;
+  overflow: hidden;
+}
+
+[class*="tile"] span,
+[class*="Tile"] span,
+[class*="feature"] span,
+[class*="Feature"] span {
+  display: block;
+  max-width: 100%;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.15;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+[class*="card"],
+[class*="Card"] {
+  border: 1px solid var(--watany-border);
+  border-radius: var(--watany-radius);
+  background: var(--watany-surface-strong);
+  box-shadow: var(--watany-shadow);
+  color: var(--watany-ink);
+  margin: 10px var(--watany-safe-inline);
+  padding: 12px;
+}
+
+button,
+.button,
+[class*="button"],
+[class*="Button"] {
+  border-radius: 999px;
+  border: 1px solid rgba(91, 63, 15, 0.28);
+  background: linear-gradient(180deg, #fffdf6, #f4ead2);
+  color: var(--watany-ink);
+  min-height: 40px;
+  box-shadow: 0 5px 12px rgba(42, 31, 9, 0.12);
+}
+
+button:focus-visible,
+a:focus-visible,
+[role="button"]:focus-visible {
+  outline: 3px solid rgba(196, 154, 56, 0.55);
+  outline-offset: 2px;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  border-radius: 14px;
+  border: 1px solid var(--watany-border);
+  background: #fffdf8;
+  color: var(--watany-ink);
+  padding: 10px 12px;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  color: var(--watany-ink);
+  line-height: 1.25;
+}
+
+p,
+li,
+span,
+label {
+  color: inherit;
+}
+
+[dir="rtl"] {
+  text-align: right;
+}
+
+.apex-v24-canonical-sentinel {
+  position: fixed;
+  left: -9999px;
+  top: -9999px;
+  width: 1px;
+  height: 1px;
+}

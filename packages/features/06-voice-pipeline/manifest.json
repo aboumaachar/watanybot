@@ -1,0 +1,10 @@
+﻿{
+    "featureKey":  "06-voice-pipeline",
+    "featureName":  "Voice Pipeline",
+    "doctrine":  "near-zero-recode-v1",
+    "portable":  true,
+    "replaceable":  true,
+    "status":  "BOUNDARY_DECLARED_REQUIRES_VALIDATION",
+    "passRule":  "No PASS without validation and smoke evidence.",
+    "generatedAt":  "2026-06-10T16:42:49.3586456+03:00"
+}

@@ -1,0 +1,7 @@
+{
+  "connected": false,
+  "kb_cards_exists": false,
+  "counts": {},
+  "fts": {},
+  "error": "connection to server at \"localhost\" (::1), port 5432 failed: fe_sendauth: no password supplied\n"
+}

@@ -1,0 +1,663 @@
+html,
+body,
+#root {
+  width: 100% !important;
+  min-width: 100% !important;
+  max-width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: block !important;
+  overflow-x: hidden !important;
+  direction: ltr !important;
+}
+
+body,
+#root {
+  justify-self: stretch !important;
+  align-self: start !important;
+}
+
+#root {
+  width: 100vw !important;
+  min-width: 100vw !important;
+  max-width: 100vw !important;
+}
+
+#root > * {
+  width: 100vw !important;
+  max-width: 100vw !important;
+  margin: 0 !important;
+  box-shadow: none !important;
+}
+
+.wr-shell,
+.wr-shell * {
+  box-sizing: border-box !important;
+}
+
+.wr-shell {
+  width: 100vw !important;
+  max-width: 100vw !important;
+  min-height: 100vh !important;
+  overflow-x: hidden !important;
+  padding-top: 0 !important;
+  padding-bottom: 150px !important;
+  margin: 0 !important;
+  background: #f7f4ea !important;
+  color: #102015 !important;
+  font-family: Tahoma, Arial, sans-serif !important;
+}
+
+.wr-topbar {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 20 !important;
+  display: grid !important;
+  grid-template-columns: 56px minmax(0, 1fr) 56px !important;
+  align-items: center !important;
+  gap: 8px !important;
+  width: 100% !important;
+  height: 82px !important;
+  min-height: 82px !important;
+  max-height: 82px !important;
+  padding: 8px !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  background: #fffdf7 !important;
+  border-bottom: 1px solid rgba(16, 32, 21, 0.14) !important;
+  z-index: 9999 !important;
+  direction: ltr !important;
+}
+
+.wr-topbar > img,
+.wr-topbar > img[data-watany-brand-mark] {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.wr-logo,
+.wr-menu,
+.wr-tile,
+.wr-safe-chat button,
+.wr-safe-bottom button {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  border: 0 !important;
+  background: transparent !important;
+  padding: 0 !important;
+}
+
+.wr-logo {
+  display: grid !important;
+  place-items: center !important;
+  width: 56px !important;
+  height: 56px !important;
+}
+
+.wr-logo img {
+  width: 48px !important;
+  height: 48px !important;
+  object-fit: contain !important;
+}
+
+.wr-ticker {
+  min-width: 0 !important;
+  height: 44px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  border-radius: 10px !important;
+  background: #f4ebd1 !important;
+  padding: 0 10px !important;
+  overflow: hidden !important;
+  white-space: nowrap !important;
+  text-overflow: ellipsis !important;
+  font-size: 14px !important;
+  font-weight: 800 !important;
+  color: #102015 !important;
+}
+
+/* Force visual ordering inside the topbar so logo is left and menu is right */
+.wr-logo { grid-column: 1 !important; justify-self: start !important; }
+.wr-ticker { grid-column: 2 !important; justify-self: center !important; text-align: center !important; direction: rtl !important; }
+.wr-menu { grid-column: 3 !important; justify-self: end !important; }
+
+.wr-ticker strong {
+  flex: 0 0 auto !important;
+}
+
+.wr-menu {
+  width: 56px !important;
+  height: 56px !important;
+  display: grid !important;
+  align-content: center !important;
+  justify-items: center !important;
+  gap: 6px !important;
+  border: 1px solid rgba(16, 32, 21, 0.2) !important;
+  border-radius: 10px !important;
+  background: #fff !important;
+}
+
+.wr-menu span {
+  display: block !important;
+  width: 26px !important;
+  height: 3px !important;
+  border-radius: 99px !important;
+  background: #102015 !important;
+}
+
+.wr-grid {
+  margin-top: 0 !important;
+  padding-top: 18px !important;
+  min-height: 0 !important;
+  height: auto !important;
+  transform: none !important;
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  width: 100% !important;
+  max-width: 100vw !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  padding: 18px 8px 240px !important;
+  gap: 24px 8px !important;
+  overflow: visible !important;
+}
+
+.wr-tile {
+  display: grid !important;
+  place-items: center !important;
+  width: 100% !important;
+}
+
+.wr-tile {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  width: 100% !important;
+  display: grid !important;
+  place-items: center !important;
+  cursor: pointer !important;
+}
+
+
+.wr-icon-image {
+  width: 128px !important;
+  height: auto !important;
+  object-fit: contain !important;
+  display: block !important;
+}
+
+/* Ensure no horizontal scrollbar and safe full-width layout */
+html, body, #root, .wr-shell { overflow-x: hidden !important; }
+
+/* removed duplicate generated labels; icons are raster + title in the image */
+
+.wr-safe-chat {
+  position: fixed !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 68px !important;
+  width: 100vw !important;
+  height: 66px !important;
+  z-index: 100 !important;
+  display: grid !important;
+  grid-template-columns: 56px minmax(0, 1fr) 56px !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 8px !important;
+  margin: 0 !important;
+  background: rgba(255, 253, 247, 0.98) !important;
+  border-top: 1px solid rgba(16, 32, 21, 0.14) !important;
+}
+
+.wr-safe-chat input {
+  width: 100% !important;
+  min-width: 0 !important;
+  height: 40px !important;
+  border: 1px solid rgba(16, 32, 21, 0.2) !important;
+  border-radius: 10px !important;
+  padding: 0 12px !important;
+  font: 700 14px Tahoma, Arial, sans-serif !important;
+  color: #102015 !important;
+  background: #ffffff !important;
+}
+
+.wr-chat-send,
+.wr-chat-mic {
+  width: 56px !important;
+  height: 40px !important;
+  border-radius: 10px !important;
+  border: 1px solid rgba(16, 32, 21, 0.2) !important;
+  background: #ffffff !important;
+  color: #102015 !important;
+  font: 700 12px Tahoma, Arial, sans-serif !important;
+}
+
+.wr-safe-bottom {
+  position: fixed !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100vw !important;
+  height: 68px !important;
+  min-height: 68px !important;
+  max-height: 68px !important;
+  z-index: 100 !important;
+  display: grid !important;
+  grid-template-columns: repeat(5, 1fr) !important;
+  align-items: center !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: rgba(255, 253, 247, 0.99) !important;
+  border-top: 1px solid rgba(16, 32, 21, 0.18) !important;
+  box-sizing: border-box !important;
+}
+
+.wr-safe-bottom button {
+  display: grid !important;
+  place-items: center !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.wr-safe-bottom img {
+  width: 42px !important;
+  height: auto !important;
+  object-fit: contain !important;
+  display: block !important;
+}
+
+/* User-requested visual corrections: remove outer card, provide icon frame + label, and drawer */
+.wr-tile {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  cursor: pointer !important;
+  pointer-events: auto !important;
+}
+
+.wr-icon-frame {
+  width: 118px !important;
+  height: 118px !important;
+  object-fit: contain !important;
+  display: block !important;
+}
+
+/* Drawer overlay when burger opens */
+.wr-drawer {
+  position: fixed !important;
+  top: 82px !important;
+  bottom: 68px !important;
+  left: 0 !important;
+  right: 0 !important;
+  background: rgba(0,0,0,0.35) !important;
+  z-index: 9998 !important;
+  display: grid !important;
+  place-items: end !important;
+}
+
+.wr-drawer-panel {
+  width: 300px !important;
+  max-width: 85vw !important;
+  height: calc(100% - 16px) !important;
+  margin: 8px !important;
+  background: #fffdf7 !important;
+  border-radius: 10px !important;
+  box-shadow: 0 20px 50px rgba(16,32,21,0.3) !important;
+  padding: 12px !important;
+  overflow: auto !important;
+  direction: rtl !important;
+}
+
+.wr-drawer-close {
+  display: inline-grid !important;
+  place-items: center !important;
+  margin-left: auto !important;
+  border: 0 !important;
+  background: transparent !important;
+  font-size: 22px !important;
+}
+
+.wr-drawer-list { list-style: none !important; padding: 0 !important; margin: 12px 0 0 0 !important; }
+.wr-drawer-list li { margin-bottom: 6px !important; }
+.wr-drawer-list button { width: 100% !important; text-align: right !important; padding: 10px !important; border-radius: 8px !important; border: 1px solid rgba(16,32,21,0.06) !important; background: #fff !important; }
+
+/* Ensure buttons remain clickable and no overlays block them */
+button.wr-tile, .wr-menu { pointer-events: auto !important; }
+
+/* Strong overrides to prevent residual flex rules and ensure images aren't cropped */
+main.wr-shell .wr-grid .wr-tile {
+  display: grid !important;
+  grid-auto-rows: min-content !important;
+  align-items: start !important;
+  justify-items: center !important;
+  height: auto !important;
+  min-height: 0 !important;
+  overflow: visible !important;
+}
+
+/* Ensure icon images render fully and are not cropped by parent sizing */
+.wr-icon-image {
+  width: 128px !important;
+  height: auto !important;
+  max-height: none !important;
+  object-fit: contain !important;
+  display: block !important;
+}
+
+/* Final overrides: use cadre+label structure, remove overlay cards, and ensure images render uncropped */
+main.wr-shell .wr-grid {
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 24px 8px !important;
+  padding: 18px 8px 170px !important;
+}
+
+/* Ensure rows expand to image height and tiles don't crop images */
+main.wr-shell .wr-grid {
+  grid-auto-rows: auto !important;
+  align-items: start !important;
+}
+
+main.wr-shell .wr-grid .wr-tile {
+  display: block !important;
+  padding: 6px 0 !important;
+  width: 100% !important;
+  text-align: center !important;
+  overflow: visible !important;
+}
+
+main.wr-shell .wr-grid .wr-tile {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  cursor: pointer !important;
+  pointer-events: auto !important;
+  width: 100% !important;
+  min-height: 0 !important;
+  overflow: visible !important;
+}
+
+
+/* New clean icon card system: cadre + symbol (SVG via background-image) */
+.wr-cadre {
+  width: 128px !important;
+  height: 128px !important;
+  overflow: visible !important;
+  border-radius: 24px !important;
+  display: grid !important;
+  place-items: center !important;
+  background: linear-gradient(180deg, #FFFBE6 0%, #FFFDF5 100%) !important;
+  border: 3px solid #D6A72A !important;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.9) inset, 0 4px 8px rgba(22,59,44,0.06) inset, 0 8px 20px rgba(16,32,21,0.08) !important;
+  position: relative !important;
+  transition: transform .15s ease, box-shadow .15s ease !important;
+}
+
+.wr-cadre::before {
+  content: '' !important;
+  position: absolute !important;
+  inset: 6px !important;
+  border-radius: 18px !important;
+  background: linear-gradient(180deg, rgba(255,255,255,0.6), rgba(255,255,255,0.12)) !important;
+  pointer-events: none !important;
+}
+
+.wr-cadre::after {
+  /* subtle golden glow under the symbol */
+  content: '' !important;
+  position: absolute !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  bottom: 12px !important;
+  width: 48px !important;
+  height: 10px !important;
+  border-radius: 20px !important;
+  background: radial-gradient(closest-side, rgba(214,167,42,0.95), rgba(214,167,42,0.35) 40%, rgba(214,167,42,0.06) 70%, transparent 100%) !important;
+  filter: blur(6px) !important;
+  opacity: 0.95 !important;
+  pointer-events: none !important;
+}
+
+.wr-symbol {
+  width: 72px !important;
+  height: 72px !important;
+  display: block !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  background-size: 72px 72px !important;
+}
+
+/* map symbol classes to approved SVG icons (do not layer over raster images) */
+.wr-symbol-popular { background-image: url('/watany-assets/icons/popular.svg') !important; }
+.wr-symbol-latest  { background-image: url('/watany-assets/icons/latest.svg') !important; }
+.wr-symbol-important{ background-image: url('/watany-assets/icons/important.svg') !important; }
+.wr-symbol-salary  { background-image: url('/watany-assets/icons/salary.svg') !important; }
+.wr-symbol-procedures { background-image: url('/watany-assets/icons/procedures.svg') !important; }
+.wr-symbol-schools { background-image: url('/watany-assets/icons/schools.svg') !important; }
+.wr-symbol-jobs { background-image: url('/watany-assets/icons/jobs.svg') !important; }
+.wr-symbol-market { background-image: url('/watany-assets/icons/market.svg') !important; }
+.wr-symbol-taxi { background-image: url('/watany-assets/icons/taxi.svg') !important; }
+
+/* Hide legacy image layering rules so we don't crop or overlay raster images */
+.wr-icon-art, .wr-icon-overlay, .wr-icon-cadre::after, .wr-icon-image { display: none !important; }
+
+.wr-icon-cadre::after { display: none !important; }
+
+.wr-icon-image { /* keep visible for raster unit images */
+  display: none !important;
+}
+
+.wr-label {
+  display: block !important;
+  margin-top: 8px !important;
+  font-size: 16px !important;
+  font-weight: 800 !important;
+  color: #06351f !important;
+  line-height: 1.1 !important;
+  text-align: center !important;
+  transform: none !important;
+  white-space: nowrap !important;
+}
+
+/* Anti-overlay / clickability guards */
+.wr-tile,
+.wr-menu,
+.wr-drawer button {
+  pointer-events: auto !important;
+  cursor: pointer !important;
+  position: relative !important;
+  z-index: 20 !important;
+}
+
+.wr-grid {
+  pointer-events: auto !important;
+  z-index: 5 !important;
+}
+
+.wr-safe-chat,
+.wr-safe-bottom {
+  z-index: 10 !important;
+}
+
+/* APEX_APPROVED_AFTER_REFERENCE_ICON_SYSTEM_BEGIN */
+:root {
+  --watany-green: #173b2c;
+  --watany-gold: #d6a72a;
+  --watany-cream: #fff8e6;
+  --watany-bg: #fffdf6;
+}
+
+* { box-sizing: border-box; }
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  direction: rtl;
+  font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+  color: var(--watany-green);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(246, 224, 176, 0.30), transparent 34%),
+    linear-gradient(180deg, #fffdf7 0%, #f8f0df 100%);
+}
+
+.watany-viewer {
+  width: min(100%, 1220px);
+  margin: 0 auto;
+  padding: 24px 12px 44px;
+}
+
+.watany-title {
+  width: max-content;
+  max-width: 92%;
+  margin: 0 auto 18px;
+  padding: 10px 26px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #075031, #03351f);
+  color: #fff;
+  font-size: 26px;
+  font-weight: 900;
+  text-align: center;
+  box-shadow: 0 8px 22px rgba(0,0,0,.12);
+}
+
+.watany-note {
+  max-width: 900px;
+  margin: 0 auto 22px;
+  padding: 12px 18px;
+  border: 1px solid rgba(214, 167, 42, .34);
+  border-radius: 20px;
+  background: rgba(255,253,247,.78);
+  text-align: center;
+  font-weight: 800;
+  line-height: 1.5;
+}
+
+/* Same column/row idea as the app screenshot: 3 columns, as many rows as needed. */
+.watany-icons-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(150px, 1fr));
+  gap: 22px 40px;
+  align-items: start;
+  justify-items: center;
+}
+
+.watany-icon-tile {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  max-width: 235px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.watany-icon-tile:focus-visible {
+  outline: 4px solid rgba(214,167,42,.42);
+  outline-offset: 4px;
+  border-radius: 24px;
+}
+
+.watany-icon-unit {
+  width: 100%;
+  max-width: 220px;
+  height: auto;
+  display: block;
+  object-fit: contain;
+  user-select: none;
+  -webkit-user-drag: none;
+  /*
+    Outside the gold cadre is transparent in the PNGs.
+    These effects only animate the finished icon sign.
+  */
+  filter: drop-shadow(0 12px 20px rgba(22,59,44,.07));
+  transition: transform .16s ease, filter .16s ease;
+}
+
+.watany-icon-tile:hover .watany-icon-unit {
+  transform: translateY(-2px);
+  filter:
+    drop-shadow(0 18px 26px rgba(22,59,44,.10))
+    drop-shadow(0 0 14px rgba(214,167,42,.22));
+}
+
+.watany-icon-tile:active .watany-icon-unit {
+  transform: scale(.985);
+}
+
+.watany-click-log {
+  position: sticky;
+  bottom: 0;
+  margin: 24px auto 0;
+  width: min(100%, 720px);
+  padding: 10px 14px;
+  border-radius: 16px;
+  background: rgba(255,255,255,.86);
+  border: 1px solid rgba(214,167,42,.35);
+  color: var(--watany-green);
+  text-align: center;
+  font-weight: 800;
+}
+
+/* React app integration classes */
+.wr-grid.after-reference-icons {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 10px 0 !important;
+  padding: 10px 4px 170px !important;
+  justify-items: center !important;
+  align-items: start !important;
+  overflow-x: hidden !important;
+}
+
+.wr-tile.after-reference-icons {
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  cursor: pointer !important;
+  width: 100% !important;
+  display: grid !important;
+  place-items: center !important;
+  pointer-events: auto !important;
+}
+
+.wr-icon-unit.after-reference-icons {
+  width: min(31vw, 128px) !important;
+  max-width: 128px !important;
+  height: auto !important;
+  display: block !important;
+  object-fit: contain !important;
+  pointer-events: none !important;
+  user-select: none !important;
+}
+
+@media (max-width: 700px) {
+  .watany-viewer { padding: 12px 4px 28px; }
+  .watany-title { font-size: 17px; margin-bottom: 12px; }
+  .watany-note { font-size: 12px; margin-bottom: 12px; }
+  .watany-icons-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px 0;
+  }
+  .watany-icon-tile { max-width: 128px; }
+  .watany-icon-unit { max-width: 128px; }
+}
+/* APEX_APPROVED_AFTER_REFERENCE_ICON_SYSTEM_END */

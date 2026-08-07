@@ -1,0 +1,74 @@
+{
+  "version": "1.0.0",
+  "updated_at": "2026-02-24T11:29:22.171558Z",
+  "notes_lb": "هيدا دفتر أرقام/جهات. الإدارة بتعبّي الأرقام والأسماء الرسمية. البوت بيجاوب بحسب الجهاز/المنطقة ونوع المشكلة.",
+  "entries": [
+    {
+      "id": "dir_2292490fdb83978f",
+      "name_lb": "المستشفى العسكري",
+      "name_formal": "المستشفى العسكري المركزي",
+      "entity_type": "hospital",
+      "domains": [
+        "medical"
+      ],
+      "topics": [
+        "استشفاء",
+        "طبابة",
+        "مواعيد",
+        "طوارئ"
+      ],
+      "phones": [
+        {
+          "label_lb": "سنترال",
+          "number": "+961-XX-XXXXXX"
+        }
+      ],
+      "whatsapp": [],
+      "emails": [],
+      "hours_lb": "حسب الدوام الرسمي",
+      "locations": [
+        {
+          "label_lb": "بيروت",
+          "address_lb": "—"
+        }
+      ],
+      "handoff_lb": "إذا الموضوع طارئ/طوارئ، اتصل بالسنترال واطلب القسم المختص.",
+      "priority": 100
+    },
+    {
+      "id": "dir_c1a45e27dced151d",
+      "name_lb": "دائرة التقاعد",
+      "name_formal": "دائرة التقاعد/الرواتب",
+      "entity_type": "office",
+      "domains": [
+        "mof",
+        "pension",
+        "severance"
+      ],
+      "topics": [
+        "متابعة معاملة",
+        "دفتر تقاعد",
+        "تصفية",
+        "تخصيص",
+        "اعتراض"
+      ],
+      "phones": [
+        {
+          "label_lb": "مكتب المتابعة",
+          "number": "+961-XX-XXXXXX"
+        }
+      ],
+      "whatsapp": [],
+      "emails": [],
+      "hours_lb": "دوام رسمي",
+      "locations": [
+        {
+          "label_lb": "بيروت",
+          "address_lb": "—"
+        }
+      ],
+      "handoff_lb": "حضّر رقم المعاملة/الملف قبل الاتصال.",
+      "priority": 100
+    }
+  ]
+}

@@ -1,0 +1,75 @@
+html.watany-home-grid-order-enabled .watany-home-ordered-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 12px !important;
+  align-items: stretch !important;
+}
+
+html.watany-home-grid-order-enabled .watany-home-ordered-card {
+  width: calc(var(--watany-approved-icon-size) + 24.3125px) !important;
+  max-width: calc(var(--watany-approved-icon-size) + 24.3125px) !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  height: auto !important;
+  display: grid !important;
+  flex-direction: unset !important;
+  align-items: start !important;
+  justify-items: center !important;
+  gap: 8px !important;
+  text-align: center !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  overflow: visible !important;
+  scroll-margin-top: 140px !important;
+}
+
+html.watany-home-grid-order-enabled .watany-home-ordered-card,
+html.watany-home-grid-order-enabled .watany-home-ordered-card * {
+  line-height: 1.2 !important;
+  overflow-wrap: anywhere !important;
+  word-break: normal !important;
+}
+
+html.watany-home-grid-order-enabled .watany-home-ordered-card svg,
+html.watany-home-grid-order-enabled .watany-home-ordered-card img {
+  width: 42px !important;
+  height: 42px !important;
+  min-width: 42px !important;
+  min-height: 42px !important;
+}
+
+html.watany-home-grid-order-enabled .watany-home-ordered-card span,
+html.watany-home-grid-order-enabled .watany-home-ordered-card div,
+html.watany-home-grid-order-enabled .watany-home-ordered-card strong,
+html.watany-home-grid-order-enabled .watany-home-ordered-card p {
+  font-size: 13px !important;
+  font-weight: 900 !important;
+  color: inherit;
+}
+
+@media (max-width: 380px) {
+  html.watany-home-grid-order-enabled .watany-home-ordered-grid {
+    gap: 9px !important;
+  }
+
+  html.watany-home-grid-order-enabled .watany-home-ordered-card {
+    min-height: 0 !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+  }
+
+  html.watany-home-grid-order-enabled .watany-home-ordered-card svg,
+  html.watany-home-grid-order-enabled .watany-home-ordered-card img {
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px !important;
+    min-height: 36px !important;
+  }
+
+  html.watany-home-grid-order-enabled .watany-home-ordered-card span,
+  html.watany-home-grid-order-enabled .watany-home-ordered-card div,
+  html.watany-home-grid-order-enabled .watany-home-ordered-card strong,
+  html.watany-home-grid-order-enabled .watany-home-ordered-card p {
+    font-size: 14px !important;
+  }
+}

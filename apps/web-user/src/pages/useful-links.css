@@ -1,0 +1,114 @@
+.useful-links-page {
+  gap: 10px;
+}
+
+.useful-links-page__hero {
+  padding: 10px 12px;
+}
+
+.useful-links-page__hero h1 {
+  margin: 0 0 8px;
+  font-size: clamp(1.2rem, 3vw, 1.6rem);
+  line-height: 1.15;
+}
+
+.useful-links-page__list {
+  gap: 8px;
+}
+
+.useful-links-page__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 11px;
+}
+
+.useful-links-page__item--link {
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.useful-links-page__item--link:hover {
+  transform: translateY(-1px);
+}
+
+.useful-links-page__item--link:focus-visible {
+  outline: 2px solid rgba(29, 78, 216, 0.5);
+  outline-offset: 2px;
+}
+
+.useful-links-page__main {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.useful-links-page__title {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.98rem;
+  line-height: 1.2;
+}
+
+.useful-links-page__title svg {
+  width: 14px;
+  height: 14px;
+  color: #0b7285;
+  flex: 0 0 auto;
+}
+
+.useful-links-page__sub {
+  margin-top: 2px;
+  font-size: 0.8rem;
+  line-height: 1.35;
+}
+
+.useful-links-page__open {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  min-width: 34px;
+  height: 34px;
+  padding: 0;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #0b7285 0%, #1d4ed8 52%, #7c3aed 100%);
+  color: #fff;
+  box-shadow: 0 10px 20px rgba(29, 78, 216, 0.28), 0 4px 10px rgba(11, 114, 133, 0.18);
+}
+
+.useful-links-page__open:hover {
+  transform: translateY(-1px) scale(1.02);
+}
+
+.useful-links-page__open svg {
+  width: 15px;
+  height: 15px;
+}
+
+@media (max-width: 900px) {
+  .useful-links-page {
+    padding: 8px;
+  }
+
+  .useful-links-page__item {
+    padding: 9px;
+    gap: 6px;
+  }
+
+  .useful-links-page__title {
+    font-size: 0.94rem;
+  }
+
+  .useful-links-page__sub {
+    font-size: 0.74rem;
+  }
+
+  .useful-links-page__open {
+    width: 32px;
+    min-width: 32px;
+    height: 32px;
+  }
+}

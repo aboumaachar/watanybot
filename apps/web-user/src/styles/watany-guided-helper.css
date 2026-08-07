@@ -1,0 +1,99 @@
+.watany-guide-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  background: rgba(8, 18, 32, 0.58);
+  backdrop-filter: blur(7px);
+}
+
+.watany-guide-card {
+  position: relative;
+  width: min(100%, 440px);
+  max-height: calc(100vh - 28px);
+  overflow: auto;
+  text-align: center;
+  border-radius: 34px;
+  padding: 28px 20px 24px;
+  background: linear-gradient(180deg, #ffffff, #f6f9ff);
+  box-shadow: 0 28px 70px rgba(0,0,0,0.22), inset 0 1px 0 rgba(255,255,255,0.95);
+}
+
+.watany-guide-close {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  width: 38px;
+  height: 38px;
+  border: 0;
+  border-radius: 50%;
+  background: #eef3f8;
+  color: #344153;
+  font-size: 26px;
+  line-height: 1;
+}
+
+.watany-guide-brand {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 118px;
+  height: 58px;
+  margin-bottom: 18px;
+  border-radius: 22px;
+  color: #fff;
+  background: linear-gradient(145deg, #0b6b4f, #074d3a);
+  font-size: 29px;
+  font-weight: 950;
+  box-shadow: 0 15px 30px rgba(11,107,79,0.35), inset 0 1px 0 rgba(255,255,255,0.30);
+}
+
+.watany-guide-card h1 {
+  margin: 0;
+  font-size: 25px;
+  line-height: 1.45;
+  font-weight: 950;
+}
+
+.watany-guide-subtitle {
+  margin: 8px 0 22px;
+  color: #637083;
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1.6;
+}
+
+.watany-guide-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.watany-guide-cta {
+  min-height: 158px;
+  border: 0;
+  border-radius: 30px;
+  background: #fff;
+  box-shadow: 0 18px 34px rgba(20,40,70,0.15), inset 0 1px 0 rgba(255,255,255,0.95);
+  display: grid;
+  place-items: center;
+  padding: 12px;
+}
+
+@media (max-width: 390px) {
+  .watany-guide-card { border-radius: 30px; padding: 24px 16px 20px; }
+  .watany-guide-cta { min-height: 144px; border-radius: 26px; }
+}
+
+
+/* APEX_GUIDED_HELP_DIFFUSION_v1_0 */
+:root { --watany-guide-safe-top: var(--watany-safe-sticky-offset, 72px); }
+.watany-guide-overlay, .watany-welcome-guide__overlay { pointer-events: none; }
+.watany-guide-card, .watany-welcome-guide, .watany-welcome-guide__card { pointer-events: auto; max-height: calc(100dvh - var(--watany-guide-safe-top) - 24px); overflow: auto; }
+.watany-guide-card, .watany-welcome-guide__card { margin-top: var(--watany-guide-safe-top); }
+.watany-guide-dismiss, .watany-welcome-guide__close { min-width: 44px; min-height: 44px; }
+@media (max-width: 720px) {
+  .watany-guide-card, .watany-welcome-guide__card { width: min(94vw, 520px); border-radius: 22px; }
+}

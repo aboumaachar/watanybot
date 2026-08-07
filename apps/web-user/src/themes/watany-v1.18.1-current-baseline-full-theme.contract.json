@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "1.18.1",
+  "themeId": "watany-v1.18.1-current-baseline-full-theme",
+  "status": "APPROVED_FOR_CURRENT_BASELINE_BOUND_INSTALLATION",
+  "ownerRules": {
+    "smartphoneShellEveryViewport": true,
+    "desktopCenteredSmartphoneShell": true,
+    "businessLogicChangesProhibited": true,
+    "ordinaryArabicLanguageChangesProhibited": true,
+    "visibleAppName": "MOWATANY_ARABIC",
+    "technicalIdentifiersRemainWatany": true,
+    "deploymentAuthorized": false
+  },
+  "liveSelectorBindings": {
+    "shell": [
+      "[data-watany-recovery-shell=\"true\"]",
+      "[data-watany-public-shell=\"true\"]",
+      ".watany-public-shell",
+      ".watany-shell"
+    ],
+    "topbar": [
+      "[data-watany-topbar=\"true\"]"
+    ],
+    "bottom": [
+      "[data-watany-bottom-bar=\"true\"]"
+    ],
+    "login": [
+      "[data-apex-motany-login-viewer=\"true\"]",
+      ".auth-card"
+    ]
+  },
+  "visualContract": {
+    "referenceShellWidthPx": 390,
+    "desktopRadiusPx": 34,
+    "topbarHeightPx": 74,
+    "bottomAreaMinHeightPx": 72,
+    "homeColumns": 3,
+    "mandatoryBrowserCases": 75,
+    "supplementalBrowserCases": 12,
+    "totalBrowserCases": 87
+  },
+  "importsEnabled": [
+    "../features/market-jobs-mobile-landing/market-jobs-mobile-landing.css",
+    "../features/legal-library/KoudamaLegalLibrarySearchPage.css",
+    "../styles/motanyLoginLanding.css"
+  ]
+}

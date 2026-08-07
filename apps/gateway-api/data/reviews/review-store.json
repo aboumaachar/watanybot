@@ -1,0 +1,12 @@
+{
+  "reviews": [
+    {
+      "id": "2ae6cd3b-de07-4618-81c5-eaf30f2b9321",
+      "targetType": "market_listing",
+      "targetId": "1c06fe23-607d-4647-85ce-d5a7a27a531d",
+      "userId": "market-mobile-local-user",
+      "score": 4,
+      "createdAt": "2026-06-03T22:20:27.092Z"
+    }
+  ]
+}

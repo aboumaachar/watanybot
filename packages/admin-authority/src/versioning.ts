@@ -1,0 +1,3 @@
+export type VersionedEntityType = 'kb_source' | 'kb_entry' | 'document_asset' | 'procedure_entry' | 'payment_notice' | 'payment_override' | 'salary_formula' | 'faq_entry' | 'ticker_item' | 'chatbot_override';
+export type AdminEntityVersion = { id: string; entityType: VersionedEntityType; entityId: string; versionNumber: number; snapshot: unknown; changedByAdminId: string; reason: string; createdAt: string; rollbackOfVersionId?: string; };
+export function nextVersionNumber(existingVersions: readonly AdminEntityVersion[]): number { if (existingVersions.length === 0) return 1; return Math.max(...existingVersions.map((item) => item.versionNumber)) + 1; }

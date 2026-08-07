@@ -1,0 +1,1545 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>عارض معاشات التقاعد - MOF Procedure Viewer</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Cairo', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #f8f6f3 0%, #f0ede8 100%);
+      color: #1a1a1a;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+      padding: 30px 20px;
+    }
+
+    h1 {
+      font-size: 32px;
+      margin-bottom: 10px;
+      color: #d4a574;
+    }
+
+    .subtitle {
+      font-size: 16px;
+      color: #666;
+      margin-bottom: 10px;
+    }
+
+    .description {
+      font-size: 14px;
+      color: #999;
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.8;
+    }
+
+    .overview {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 15px;
+      margin: 30px 0 40px;
+    }
+
+    .overview-card {
+      padding: 20px;
+      background: white;
+      border-radius: 8px;
+      border: 1px solid #e0e0e0;
+      text-align: center;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .overview-card h3 {
+      font-size: 14px;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    .overview-card p {
+      font-size: 18px;
+      font-weight: 600;
+      color: #d4a574;
+    }
+
+    .cases {
+      margin-top: 40px;
+    }
+
+    .cases-header {
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid #d4a574;
+    }
+
+    .cases-header h2 {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    .cases-subtitle {
+      color: #666;
+    }
+
+    .case-list {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .case-item {
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      background: white;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .case-item:hover {
+      border-color: #d4a574;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .case-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px;
+      background: #f8f6f3;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.2s ease;
+    }
+
+    .case-header:hover {
+      background: #f0ede8;
+    }
+
+    .case-header.expanded {
+      background: #f0ede8;
+      border-bottom: 2px solid #d4a574;
+    }
+
+    .case-title-section {
+      display: flex;
+      align-items: flex-start;
+      gap: 15px;
+      flex: 1;
+    }
+
+    .case-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      color: #d4a574;
+      flex-shrink: 0;
+      margin-top: 2px;
+      font-size: 20px;
+    }
+
+    .case-title h3 {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    .case-description {
+      font-size: 14px;
+      color: #666;
+    }
+
+    .case-meta {
+      display: flex;
+      gap: 20px;
+      margin-left: 20px;
+      flex-shrink: 0;
+    }
+
+    .case-meta span {
+      font-size: 13px;
+      font-weight: 600;
+      color: #999;
+    }
+
+    .case-content {
+      padding: 30px;
+      background: white;
+      border-top: 1px solid #e0e0e0;
+      display: none;
+    }
+
+    .case-content.visible {
+      display: block;
+      animation: slideDown 0.3s ease;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .case-section {
+      margin-bottom: 30px;
+    }
+
+    .case-section:last-child {
+      margin-bottom: 0;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 15px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .requirement-item {
+      display: flex;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 15px;
+    }
+
+    .requirement-item:last-child {
+      border-bottom: none;
+    }
+
+    .requirement-number {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #d4a574;
+      color: white;
+      font-size: 13px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .forms-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 15px;
+    }
+
+    .form-card {
+      padding: 20px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      background: #f8f6f3;
+      position: relative;
+    }
+
+    .form-card.required {
+      border-color: #d4a574;
+      background: #fffbf7;
+    }
+
+    .form-card h5 {
+      margin: 8px 0;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .form-description {
+      margin: 8px 0 12px;
+      font-size: 14px;
+      color: #666;
+    }
+
+    .form-badge {
+      position: absolute;
+      top: -12px;
+      left: 20px;
+      background: #d4a574;
+      color: white;
+      padding: 4px 12px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .form-header {
+      margin-bottom: 12px;
+      margin-top: 10px;
+    }
+
+    .form-meta {
+      display: flex;
+      gap: 15px;
+      margin: 12px 0;
+      padding: 10px 0;
+      border-top: 1px solid #e9e9e9;
+      border-bottom: 1px solid #e9e9e9;
+      font-size: 12px;
+      color: #999;
+    }
+
+    .form-actions {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .form-btn {
+      padding: 8px 12px;
+      border: 1px solid #d4a574;
+      border-radius: 6px;
+      background: white;
+      color: #d4a574;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: center;
+      text-decoration: none;
+      font-family: 'Cairo', sans-serif;
+    }
+
+    .form-btn:hover {
+      background: #d4a574;
+      color: white;
+      transform: translateY(-2px);
+    }
+
+    .form-btn.primary {
+      background: #d4a574;
+      color: white;
+      border-color: #d4a574;
+    }
+
+    .form-btn.primary:hover {
+      background: #c89560;
+      border-color: #c89560;
+    }
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background-color: white;
+      padding: 30px;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 700px;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      direction: rtl;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #e0e0e0;
+      padding-bottom: 15px;
+    }
+
+    .modal-header h2 {
+      margin: 0;
+      font-size: 20px;
+      color: #d4a574;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+      color: #999;
+      padding: 0;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .close-btn:hover {
+      color: #d4a574;
+    }
+
+    .form-preview-content {
+      padding: 20px;
+      background: #f8f6f3;
+      border-radius: 6px;
+    }
+
+    .form-field-preview {
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .form-field-preview:last-child {
+      border-bottom: none;
+    }
+
+    .field-label {
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    .field-input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #d4a574;
+      border-radius: 4px;
+      font-family: 'Cairo', sans-serif;
+      background: white;
+    }
+
+    /* Notification */
+    .notification {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      padding: 15px 20px;
+      background: #4caf50;
+      color: white;
+      border-radius: 4px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      display: none;
+      z-index: 1001;
+      animation: slideInUp 0.3s ease;
+    }
+
+    .notification.show {
+      display: block;
+    }
+
+    .notification.error {
+      background: #f44336;
+    }
+
+    @keyframes slideInUp {
+      from {
+        transform: translateY(50px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .steps-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .step-item {
+      display: flex;
+      gap: 15px;
+      padding: 15px 0;
+      border-bottom: 1px solid #e9e9e9;
+    }
+
+    .step-item:last-child {
+      border-bottom: none;
+    }
+
+    .step-number {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #d4a574;
+      color: white;
+      font-size: 14px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .step-text {
+      flex: 1;
+      font-size: 15px;
+      padding-top: 4px;
+    }
+
+    .conditions-section {
+      background: #fff8f0;
+      padding: 15px;
+      border-right: 4px solid #ff9d4a;
+      border-radius: 4px;
+      margin: 0 -15px 30px -15px;
+      padding-right: 19px;
+    }
+
+    .condition-item {
+      padding: 8px 0;
+      border-bottom: 1px solid #f0e0d0;
+    }
+
+    .condition-item:last-child {
+      border-bottom: none;
+    }
+
+    footer {
+      margin-top: 60px;
+      padding: 30px;
+      background: #f8f6f3;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+    }
+
+    footer h3 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 15px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    footer ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    footer li {
+      padding: 8px 0;
+      font-size: 14px;
+      color: #666;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+    }
+
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 24px;
+      }
+
+      .overview {
+        grid-template-columns: 1fr;
+      }
+
+      .forms-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .case-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .case-meta {
+        margin-left: 42px;
+        margin-top: 10px;
+      }
+
+      .footer-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      margin-top: 8px;
+    }
+
+    .status-required {
+      background: #d4a57433;
+      color: #d4a574;
+    }
+
+    .status-optional {
+      background: #e0e0e0;
+      color: #666;
+    }
+
+    /* Form Actions */
+    .form-info {
+      font-size: 12px;
+      color: #999;
+      margin: 8px 0;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .form-action-btn {
+      flex: 1;
+      min-width: 80px;
+      padding: 8px 12px;
+      border: 1px solid #d4a574;
+      background: white;
+      color: #d4a574;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      text-align: center;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .form-action-btn:hover {
+      background: #d4a574;
+      color: white;
+    }
+
+    .form-action-btn.primary {
+      background: #d4a574;
+      color: white;
+      border-color: #d4a574;
+    }
+
+    .form-action-btn.primary:hover {
+      background: #c49563;
+      border-color: #c49563;
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      max-width: 600px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+      direction: rtl;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .modal-header h2 {
+      margin: 0;
+      font-size: 20px;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: #999;
+    }
+
+    .modal-close:hover {
+      color: #d4a574;
+    }
+
+    .form-preview {
+      background: #f8f6f3;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+
+    .form-preview-item {
+      padding: 10px 0;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .form-preview-item:last-child {
+      border-bottom: none;
+    }
+
+    .form-preview-label {
+      font-weight: 600;
+      color: #666;
+      font-size: 13px;
+      margin-bottom: 5px;
+    }
+
+    .form-preview-value {
+      color: #333;
+      font-size: 14px;
+    }
+
+    .share-options {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin: 20px 0;
+    }
+
+    .share-option {
+      padding: 12px;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s ease;
+    }
+
+    .share-option:hover {
+      border-color: #d4a574;
+      background: #fffbf7;
+    }
+
+    .share-option-icon {
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+
+    .share-option-text {
+      font-size: 13px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .notification {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      background: #d4a574;
+      color: white;
+      padding: 15px 20px;
+      border-radius: 6px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      z-index: 2000;
+      animation: slideUp 0.3s ease;
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(20px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .form-actions {
+        flex-direction: column;
+      }
+
+      .form-action-btn {
+        min-width: auto;
+      }
+
+      .share-options {
+        grid-template-columns: 1fr;
+      }
+
+      .modal-content {
+        width: 95%;
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header>
+      <h1>طلب إعادة تخصيص معاش تقاعدي</h1>
+      <p class="subtitle">Pension Reallocation Request</p>
+      <p class="description">
+        بعد وفاة المتقاعد، فيه حق لأفراد عيلته يطلبوا إعادة تخصيص المعاش. المستندات بتختلف حسب صفة المستفيد — زوجة، ابنة عزباء، ابنة أرملة أو مطلقة، ابن قاصر، إلخ.
+      </p>
+    </header>
+
+    <!-- Overview -->
+    <div class="overview">
+      <div class="overview-card">
+        <h3>🏢 جهة الاختصاص</h3>
+        <p>وزارة المالية</p>
+      </div>
+      <div class="overview-card">
+        <h3>💰 الرسوم</h3>
+        <p>مجانية</p>
+      </div>
+      <div class="overview-card">
+        <h3>⏱️ المدة</h3>
+        <p>1-3 أشهر</p>
+      </div>
+    </div>
+
+    <!-- Cases -->
+    <div class="cases">
+      <div class="cases-header">
+        <h2>حالات المستفيدين</h2>
+        <p class="cases-subtitle">7 حالات مختلفة — اختر حالتك لرؤية الخطوات والنماذج المطلوبة</p>
+      </div>
+
+      <div class="case-list" id="casesList"></div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      <div class="footer-grid">
+        <div>
+          <h3>ملاحظات عامة</h3>
+          <ul>
+            <li>• لا يجوز الجمع بين معاشين من الخزينة</li>
+            <li>• المستندات يجب أن تكون صادرة من جهات رسمية موثوقة</li>
+            <li>• قد تكون هناك مستندات إضافية حسب كل حالة</li>
+          </ul>
+        </div>
+        <div>
+          <h3>التواصل</h3>
+          <ul>
+            <li>☎️ وزارة المالية — دائرة التقاعد</li>
+            <li>📍 المحافظات — مكاتب التقاعد</li>
+          </ul>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Form Preview Modal -->
+  <div id="previewModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modalFormName">النموذج</h2>
+        <button class="close-btn" onclick="closeFormModal()">&times;</button>
+      </div>
+      <div id="modalFormContent" class="form-preview-content"></div>
+      <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: flex-start;">
+        <button class="form-btn primary" onclick="downloadFormFromModal()">⬇️ تحميل النموذج</button>
+        <button class="form-btn" onclick="shareFormFromModal()">📤 مشاركة</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notification -->
+  <div id="notification" class="notification"></div>
+
+  <script>
+    const casesData = [
+      {
+        id: "spouse",
+        category: "زوجة المتقاعد المتوفي",
+        categoryEn: "Spouse of Deceased Retiree",
+        description: "الزوجة الشرعية للعسكري المتقاعد الذي توفي",
+        requirements: [
+          "شهادة وفاة زوج (نسخة من تقرير الوفيات)",
+          "عقد زواج أصلي أو موثق",
+          "بطاقة هوية الزوجة",
+          "إثبات عنوان السكن الحالي",
+          "شهادة الحالة الاجتماعية",
+        ],
+        conditions: [
+          "يجب أن تكون الزوجة قد كانت زوجة شرعية وقت وفاة الزوج",
+          "لا يمكن الحصول على المعاش إذا تزوجت من جديد",
+        ],
+        forms: [
+          { code: "ت7", name: "طلب إعادة تخصيص معاش تقاعدي", desc: "النموذج الأساسي", req: true },
+          { code: "ت8", name: "إقرار من مستفيد", desc: "إقرار وتعهد", req: true },
+          { code: "ت9", name: "شهادة أيتام وأرامل", desc: "إثبات الصفة", req: false },
+        ],
+        steps: [
+          "الحصول على شهادة الوفاة من دائرة الصحة العامة",
+          "تجميع كل المستندات المطلوبة",
+          "تعبئة نمودج ت7 و ت8",
+          "التوجه إلى وزارة المالية — دائرة التقاعد مع المستندات كاملة",
+          "تسليم الملف للموظف المختص",
+          "انتظار المراجعة والتحقق من البيانات",
+          "استلام قرار الموافقة أو الرفض",
+          "بدء صرف المعاش الجديد",
+        ],
+      },
+      {
+        id: "single-daughter",
+        category: "الابنة العزباء",
+        categoryEn: "Unmarried Daughter",
+        description: "الابنة العزباء للعسكري المتقاعد المتوفي",
+        requirements: [
+          "شهادة وفاة الوالد",
+          "شهادة ميلاد الابنة",
+          "بطاقة هوية الابنة (أو جواز سفر)",
+          "شهادة حالة اجتماعية (عزباء)",
+          "دفتر العائلة أو قيد النفوس",
+        ],
+        conditions: [
+          "يجب أن تكون عزباء عند تقديم الطلب",
+          "إذا تزوجت لاحقاً، توقف المعاش تلقائياً",
+          "يجب أن تكون عمرها أقل من 21 سنة (أو حتى نهاية الدراسة)",
+        ],
+        forms: [
+          { code: "ت7", name: "طلب إعادة تخصيص معاش تقاعدي", desc: "الطلب الأساسي", req: true },
+          { code: "ت8", name: "إقرار من مستفيد", desc: "إقرار بعدم الزواج", req: true },
+          { code: "ت9", name: "شهادة أيتام وأرامل", desc: "شهادة يتم", req: true },
+        ],
+        steps: [
+          "التأكد من أن الابنة لم تتزوج",
+          "جمع المستندات المطلوبة",
+          "تعبئة الاستمارات ت7 و ت8 و ت9",
+          "التوجه إلى دائرة التقاعد — قسم المستفيدين الإضافيين",
+          "تقديم الملف الكامل",
+          "انتظار المراجعة",
+          "استلام القرار والموافقة",
+          "بدء استقطاع المعاش بين الورثة",
+        ],
+      },
+      {
+        id: "widow-daughter",
+        category: "الابنة الأرملة أو المطلقة",
+        categoryEn: "Widow or Divorced Daughter",
+        description: "الابنة التي أصبحت أرملة أو مطلقة بعد وفاة والدها",
+        requirements: [
+          "شهادة وفاة الوالد",
+          "شهادة ميلاد الابنة",
+          "عقد زواج الابنة",
+          "شهادة الطلاق أو وفاة الزوج",
+          "بطاقة هوية الابنة",
+          "شهادة الحالة الاجتماعية الحالية",
+        ],
+        conditions: [
+          "يجب أن تكون قد أصبحت أرملة أو مطلقة",
+          "لا يمكن الزواج من جديد للحفاظ على المعاش",
+        ],
+        forms: [
+          { code: "ت7", name: "طلب إعادة تخصيص معاش تقاعدي", desc: "طلب إعادة التخصيص", req: true },
+          { code: "ت8", name: "إقرار من مستفيد", desc: "إقرار من الأرملة", req: true },
+          { code: "ت9", name: "شهادة أيتام وأرامل", desc: "شهادة تثبت الوضع", req: true },
+        ],
+        steps: [
+          "الحصول على شهادة الطلاق أو وفاة الزوج",
+          "تجميع كافة الوثائق المطلوبة",
+          "تعبئة النماذج ت7 و ت8 و ت9",
+          "التوجه إلى وزارة المالية بالملف",
+          "عرض المستندات على الموظفين",
+          "انتظار التحقق من الأهلية",
+          "استلام قرار الموافقة",
+          "بدء صرف معاش الأرملة/المطلقة",
+        ],
+      },
+      {
+        id: "minor-son",
+        category: "الابن القاصر",
+        categoryEn: "Minor Son",
+        description: "الابن الذي لم يبلغ سن الرشد",
+        requirements: [
+          "شهادة وفاة الوالد",
+          "شهادة ميلاد الابن",
+          "بطاقة هوية الابن أو شهادة ميلاد",
+          "دفتر العائلة",
+          "شهادة ولاية للولي القانوني",
+        ],
+        conditions: [
+          "يجب أن يكون أقل من 18 سنة",
+          "يتم صرف المعاش للولي القانوني",
+          "عند بلوغ الابن، يتحول الصرف باسمه مباشرة",
+        ],
+        forms: [
+          { code: "ت7", name: "طلب إعادة تخصيص معاش تقاعدي", desc: "الطلب باسم الولي", req: true },
+          { code: "ت8", name: "إقرار من مستفيد", desc: "إقرار من الولي", req: true },
+          { code: "ت9", name: "شهادة أيتام وأرامل", desc: "شهادة يتم", req: true },
+        ],
+        steps: [
+          "تحديد الولي القانوني (الأم أو جد أو عم)",
+          "جمع جميع المستندات",
+          "تعبئة النماذج من قبل الولي",
+          "التوجه إلى وزارة المالية — قسم المعاشات",
+          "تقديم الملف",
+          "انتظار دراسة الطلب",
+          "استلام الموافقة",
+          "صرف المعاش للولي القانوني لصالح الابن",
+        ],
+      },
+      {
+        id: "student-son",
+        category: "الابن الذي يتابع الدراسة",
+        categoryEn: "Son Pursuing Studies",
+        description: "الابن الذي لم يكمل دراسته بعد",
+        requirements: [
+          "شهادة وفاة الوالد",
+          "شهادة ميلاد الابن",
+          "شهادة القيد من الجامعة أو المدرسة",
+          "بطاقة هوية الابن",
+          "دفتر العائلة",
+          "شهادة الحالة الاجتماعية",
+        ],
+        conditions: [
+          "يجب أن يكون قيده فعال في الجامعة أو المدرسة",
+          "عند التخرج، يتطلب إعادة تقييم للأهلية",
+          "المعاش يستمر حتى نهاية الدراسة",
+        ],
+        forms: [
+          { code: "ت7", name: "طلب إعادة تخصيص معاش تقاعدي", desc: "طلب تخصيص الطالب", req: true },
+          { code: "ت8", name: "إقرار من مستفيد", desc: "إقرار من الطالب", req: true },
+          { code: "ت9", name: "شهادة أيتام وأرامل", desc: "شهادة يتم", req: true },
+        ],
+        steps: [
+          "الحصول على شهادة القيد الجامعي الحالية",
+          "إعداد كافة الوثائق المطلوبة",
+          "تعبئة النماذج ت7 و ت8 و ت9",
+          "التوجه إلى دائرة التقاعد",
+          "تقديم الملف مع شهادة القيد",
+          "انتظار الموافقة",
+          "استلام قرار الموافقة",
+          "بدء صرف المعاش",
+        ],
+      },
+      {
+        id: "disabled-son",
+        category: "الابن المعوق جسدياً أو عقلياً",
+        categoryEn: "Disabled Son",
+        description: "الابن الذي يعاني من إعاقة جسدية أو عقلية",
+        requirements: [
+          "شهادة وفاة الوالد",
+          "شهادة ميلاد الابن",
+          "تقرير طبي يثبت الإعاقة",
+          "شهادة إعاقة من وزارة الشؤون الاجتماعية",
+          "بطاقة هوية الابن",
+          "دفتر العائلة",
+        ],
+        conditions: [
+          "يجب أن تتم الموافقة على الإعاقة من قبل اللجان الطبية",
+          "المعاش يستمر طالما الإعاقة موجودة",
+          "قد تكون هناك مراجعات دورية للحالة",
+        ],
+        forms: [
+          { code: "ت7", name: "طلب إعادة تخصيص معاش تقاعدي", desc: "طلب تخصيص الابن المعوق", req: true },
+          { code: "ت8", name: "إقرار من مستفيد", desc: "إقرار من الولي القانوني", req: true },
+          { code: "ت9", name: "شهادة أيتام وأرامل", desc: "شهادة يتم", req: true },
+        ],
+        steps: [
+          "الحصول على تقرير طبي شامل يثبت الإعاقة",
+          "الحصول على شهادة إعاقة من الشؤون الاجتماعية",
+          "جمع كل المستندات المطلوبة",
+          "تعبئة النماذج ت7 و ت8 و ت9",
+          "التوجه إلى وزارة المالية — قسم الحالات الخاصة",
+          "تقديم الملف الكامل",
+          "انتظار المراجعة الطبية والإدارية",
+          "استلام الموافقة وبدء الصرف",
+        ],
+      },
+      {
+        id: "parent",
+        category: "الوالد أو الوالدة",
+        categoryEn: "Parent",
+        description: "والد أو والدة العسكري المتقاعد المتوفي",
+        requirements: [
+          "شهادة وفاة الابن",
+          "شهادة ميلاد الوالد/الوالدة",
+          "بطاقة هوية الوالد/الوالدة",
+          "شهادة الحالة الاجتماعية",
+          "شهادة تثبت خلو الذمة",
+          "إثبات أن الوالد/الوالدة لم يكن موظفاً حكومياً",
+        ],
+        conditions: [
+          "الوالد/الوالدة يجب أن يكون معالاً من قبل المتقاعد",
+          "لا يجوز الحصول على معاش حكومي آخر",
+          "يجب أن يكون بلا دخل",
+        ],
+        forms: [
+          { code: "ت7", name: "طلب إعادة تخصيص معاش تقاعدي", desc: "طلب تخصيص الوالد", req: true },
+          { code: "ت8", name: "إقرار من مستفيد", desc: "إقرار من الوالد", req: true },
+          { code: "ت9", name: "شهادة أيتام وأرامل", desc: "شهادة تثبت العلاقة", req: false },
+        ],
+        steps: [
+          "التأكد من عدم كون الوالد/الوالدة موظفاً حكومياً",
+          "جمع كل المستندات المطلوبة",
+          "تعبئة النماذج ت7 و ت8",
+          "التوجه إلى وزارة المالية — قسم المعاشات",
+          "تقديم الطلب بشكل رسمي",
+          "انتظار دراسة الطلب",
+          "استلام الموافقة",
+          "بدء صرف المعاش",
+        ],
+      },
+    ];
+
+    function renderCases() {
+      const casesList = document.getElementById("casesList");
+
+      casesData.forEach((caseData, index) => {
+        const caseDiv = document.createElement("div");
+        caseDiv.className = "case-item";
+        caseDiv.id = `case-${caseData.id}`;
+
+        const headerDiv = document.createElement("div");
+        headerDiv.className = "case-header";
+        headerDiv.onclick = () => toggleCase(caseData.id);
+
+        headerDiv.innerHTML = `
+          <div class="case-title-section">
+            <div class="case-toggle">▼</div>
+            <div class="case-title">
+              <h3>${caseData.category}</h3>
+              <p class="case-description">${caseData.description}</p>
+            </div>
+          </div>
+          <div class="case-meta">
+            <span>${caseData.forms.length} نماذج</span>
+            <span>${caseData.steps.length} خطوات</span>
+          </div>
+        `;
+
+        const contentDiv = document.createElement("div");
+        contentDiv.className = "case-content";
+        contentDiv.id = `content-${caseData.id}`;
+
+        let html = "";
+
+        // Requirements section
+        html += `
+          <div class="case-section">
+            <div class="section-title">✓ المستندات المطلوبة</div>
+        `;
+        caseData.requirements.forEach((req, i) => {
+          html += `
+            <div class="requirement-item">
+              <div class="requirement-number">${i + 1}</div>
+              <div>${req}</div>
+            </div>
+          `;
+        });
+        html += "</div>";
+
+        // Conditions section
+        if (caseData.conditions && caseData.conditions.length > 0) {
+          html += `
+            <div class="case-section conditions-section">
+              <div class="section-title">⚠️ الشروط والتنبيهات</div>
+          `;
+          caseData.conditions.forEach((cond) => {
+            html += `<div class="condition-item">${cond}</div>`;
+          });
+          html += "</div>";
+        }
+
+        // Forms section
+        html += `
+          <div class="case-section">
+            <div class="section-title">📋 النماذج المطلوبة</div>
+            <div class="forms-grid">
+        `;
+        caseData.forms.forEach((form) => {
+          html += `
+            <div class="form-card ${form.req ? "required" : ""}">
+              ${form.req ? '<div class="form-badge">إلزامي</div>' : ''}
+              <div class="form-header">
+                <h5>${form.name}</h5>
+              </div>
+              <p class="form-description">${form.desc}</p>
+              <div class="form-meta">
+                <span>📄 ${form.code}</span>
+                <span>${form.req ? "✓ مطلوب" : "○ اختياري"}</span>
+              </div>
+              <div class="form-actions">
+                <button class="form-btn" onclick="previewForm('${form.code}', '${form.name.replace(/'/g, "\\'")}')">👁️ عرض</button>
+                <button class="form-btn" onclick="downloadForm('${form.code}', '${form.name.replace(/'/g, "\\'")}')">⬇️ تحميل</button>
+                <button class="form-btn" onclick="shareForm('${form.code}', '${form.name.replace(/'/g, "\\'")}')">📤 مشاركة</button>
+                <button class="form-btn primary" onclick="chatAboutForm('${form.code}', '${form.name.replace(/'/g, "\\'")}')">💬 استفسر</button>
+              </div>
+            </div>
+          `;
+        });
+        html += "</div></div>";
+
+        // Steps section
+        html += `
+          <div class="case-section">
+            <div class="section-title">📝 خطوات الإجراء</div>
+            <ol class="steps-list">
+        `;
+        caseData.steps.forEach((step, i) => {
+          html += `
+            <li class="step-item">
+              <div class="step-number">${i + 1}</div>
+              <div class="step-text">${step}</div>
+            </li>
+          `;
+        });
+        html += "</ol></div>";
+
+        contentDiv.innerHTML = html;
+
+        caseDiv.appendChild(headerDiv);
+        caseDiv.appendChild(contentDiv);
+        casesList.appendChild(caseDiv);
+
+        if (index === 0) {
+          toggleCase(caseData.id);
+        }
+      });
+    }
+
+    function toggleCase(caseId) {
+      const allCases = document.querySelectorAll(".case-item");
+      const allContents = document.querySelectorAll(".case-content");
+      const allHeaders = document.querySelectorAll(".case-header");
+
+      allCases.forEach((c) => c.querySelector(".case-header").classList.remove("expanded"));
+      allContents.forEach((c) => c.classList.remove("visible"));
+
+      const caseElement = document.getElementById(`case-${caseId}`);
+      const contentElement = document.getElementById(`content-${caseId}`);
+      const headerElement = caseElement.querySelector(".case-header");
+
+      if (contentElement.classList.contains("visible")) {
+        contentElement.classList.remove("visible");
+        headerElement.classList.remove("expanded");
+      } else {
+        contentElement.classList.add("visible");
+        headerElement.classList.add("expanded");
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", renderCases);
+
+    // Form action handlers
+    const formsData = {
+      "ت7": {
+        name: "طلب إعادة تخصيص معاش تقاعدي",
+        description: "نموذج الطلب الأساسي لإعادة تخصيص المعاش التقاعدي للمستفيدين",
+        fields: [
+          { label: "الاسم الكامل", type: "text", required: true },
+          { label: "رقم الهوية الوطنية", type: "text", required: true },
+          { label: "تاريخ الميلاد", type: "date", required: true },
+          { label: "الحالة الاجتماعية", type: "select", required: true, options: ["متزوج", "أعزب", "أرملة", "مطلق"] },
+          { label: "رقم الهاتف", type: "tel", required: true },
+          { label: "البريد الإلكتروني", type: "email", required: false },
+          { label: "العنوان الحالي", type: "text", required: true },
+          { label: "علاقتك بالمتقاعد", type: "text", required: true },
+          { label: "رقم معاش المتقاعد", type: "text", required: true },
+          { label: "تاريخ الوفاة (إن وجد)", type: "date", required: false },
+          { label: "الدخل الشهري", type: "number", required: false },
+          { label: "الحالة الصحية", type: "select", required: false, options: ["سليمة", "معوق", "مريض مزمن"] },
+          { label: "ملاحظات إضافية", type: "textarea", required: false }
+        ]
+      },
+      "ت8": {
+        name: "إقرار من مستفيد",
+        description: "نموذج الإقرار والتعهد من المستفيد بصحة المعلومات المقدمة",
+        fields: [
+          { label: "الاسم الكامل", type: "text", required: true },
+          { label: "رقم الهوية الوطنية", type: "text", required: true },
+          { label: "أقر بأن جميع البيانات المقدمة صحيحة", type: "checkbox", required: true },
+          { label: "أتعهد بإخطار الوزارة بأي تغيير في حالتي", type: "checkbox", required: true },
+          { label: "أوافق على المراجعة الدورية لوضعي", type: "checkbox", required: true },
+          { label: "لم أتقاضى معاشاً حكومياً آخر", type: "checkbox", required: true },
+          { label: "المحافظة", type: "text", required: true },
+          { label: "الناحية/القضاء", type: "text", required: false },
+          { label: "تاريخ الإقرار", type: "date", required: true },
+          { label: "التوقيع أو البصمة", type: "text", required: true }
+        ]
+      },
+      "ت9": {
+        name: "شهادة أيتام وأرامل",
+        description: "شهادة من السلطات المختصة تثبت صفة الأيتام والأرامل",
+        fields: [
+          { label: "الاسم الكامل", type: "text", required: true },
+          { label: "رقم الهوية الوطنية", type: "text", required: true },
+          { label: "اسم الوالد/الزوج المتوفي", type: "text", required: true },
+          { label: "تاريخ الوفاة", type: "date", required: true },
+          { label: "مقر الوفاة", type: "text", required: true },
+          { label: "شهادة الوفاة رقم", type: "text", required: true },
+          { label: "الدائرة الصادرة للشهادة", type: "text", required: true },
+          { label: "تاريخ الشهادة", type: "date", required: true },
+          { label: "اسم الموظف المصدر", type: "text", required: false },
+          { label: "الختم الرسمي", type: "text", required: true }
+        ]
+      }
+    };
+
+    function showNotification(message, isError = false) {
+      const notif = document.getElementById("notification");
+      notif.textContent = message;
+      notif.className = `notification show ${isError ? "error" : ""}`;
+      setTimeout(() => {
+        notif.classList.remove("show");
+      }, 3000);
+    }
+
+    function previewForm(formCode, formName) {
+      const form = formsData[formCode];
+      if (!form) {
+        showNotification("النموذج غير متاح", true);
+        return;
+      }
+
+      const modal = document.getElementById("previewModal");
+      const modalFormName = document.getElementById("modalFormName");
+      const modalFormContent = document.getElementById("modalFormContent");
+
+      modalFormName.textContent = formName;
+
+      let content = `
+        <p style="color: #666; margin-bottom: 20px; font-size: 14px;">${form.description}</p>
+        <div style="background: white; padding: 15px; border-radius: 6px;">
+      `;
+
+      form.fields.forEach((field) => {
+        content += `
+          <div class="form-field-preview">
+            <label class="field-label">${field.label} ${field.required ? '<span style="color: red;">*</span>' : ''}</label>
+        `;
+
+        if (field.type === "textarea") {
+          content += `<textarea class="field-input" rows="4" placeholder="أدخل ${field.label}"></textarea>`;
+        } else if (field.type === "checkbox") {
+          content += `<input type="checkbox" style="margin-top: 8px;"> ${field.label}`;
+        } else if (field.type === "select") {
+          content += `
+            <select class="field-input">
+              <option value="">اختر...</option>
+              ${field.options ? field.options.map(opt => `<option value="${opt}">${opt}</option>`).join("") : ""}
+            </select>
+          `;
+        } else {
+          content += `<input type="${field.type}" class="field-input" placeholder="أدخل ${field.label}">`;
+        }
+
+        content += `</div>`;
+      });
+
+      content += `</div>`;
+      modalFormContent.innerHTML = content;
+
+      // Store current form code for download/share
+      modal.dataset.formCode = formCode;
+      modal.dataset.formName = formName;
+
+      modal.classList.add("active");
+    }
+
+    function closeFormModal() {
+      const modal = document.getElementById("previewModal");
+      modal.classList.remove("active");
+    }
+
+    function downloadForm(formCode, formName) {
+      showNotification(`جاري تحميل نموذج: ${formName}...`);
+
+      // Simulate download by creating a simple text file with form data
+      setTimeout(() => {
+        const formData = formsData[formCode];
+        if (!formData) {
+          showNotification("خطأ في التحميل", true);
+          return;
+        }
+
+        const content = `
+نموذج: ${formName}
+رمز النموذج: ${formCode}
+===============================
+
+${formData.description}
+
+المعلومات المطلوبة:
+${formData.fields.map(f => `- ${f.label} ${f.required ? "(مطلوب)" : "(اختياري)"}`).join("\n")}
+
+تعليمات الملء:
+1. عبئ جميع الحقول المطلوبة بدقة
+2. تأكد من صحة البيانات المقدمة
+3. احفظ نسخة لديك قبل التسليم
+4. قدم النموذج الأصلي الموقع
+
+تاريخ الطباعة: ${new Date().toLocaleString("ar-SA")}
+        `.trim();
+
+        // Create and download file
+        const blob = new Blob([content], { type: "text/plain; charset=utf-8" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = `${formCode}-${formName}.txt`;
+        link.click();
+
+        showNotification(`تم تحميل النموذج: ${formName}`);
+      }, 500);
+    }
+
+    function downloadFormFromModal() {
+      const modal = document.getElementById("previewModal");
+      const formCode = modal.dataset.formCode;
+      const formName = modal.dataset.formName;
+      downloadForm(formCode, formName);
+      closeFormModal();
+    }
+
+    function shareForm(formCode, formName) {
+      showNotification(`جاري إعداد خيارات المشاركة للنموذج...`);
+
+      setTimeout(() => {
+        // Create shareable message
+        const shareMessage = `
+الرجاء تعبئة النموذج التالي:
+
+📋 النموذج: ${formName}
+📌 رمز النموذج: ${formCode}
+
+الوصف: ${formsData[formCode].description}
+
+يمكنك تحميل النموذج من:
+عارض معاشات التقاعد - MOF Procedure Viewer
+        `.trim();
+
+        // Try to share via Web Share API if available
+        if (navigator.share) {
+          navigator.share({
+            title: formName,
+            text: shareMessage,
+            url: window.location.href
+          }).then(() => {
+            showNotification("تمت مشاركة النموذج بنجاح");
+          }).catch(() => {
+            copyToClipboard(shareMessage, formName);
+          });
+        } else {
+          // Fallback: copy to clipboard
+          copyToClipboard(shareMessage, formName);
+        }
+      }, 300);
+    }
+
+    function shareFormFromModal() {
+      const modal = document.getElementById("previewModal");
+      const formCode = modal.dataset.formCode;
+      const formName = modal.dataset.formName;
+      shareForm(formCode, formName);
+      closeFormModal();
+    }
+
+    function copyToClipboard(text, formName) {
+      const tempInput = document.createElement("textarea");
+      tempInput.value = text;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand("copy");
+      document.body.removeChild(tempInput);
+      showNotification(`تم نسخ بيانات النموذج إلى الحافظة: ${formName}`);
+    }
+
+    function chatAboutForm(formCode, formName) {
+      showNotification(`جاري إضافة النموذج إلى المحادثة...`);
+
+      setTimeout(() => {
+        const formData = formsData[formCode];
+        const chatMessage = `
+أنا بحاجة إلى مساعدة حول النموذج التالي:
+
+📋 **النموذج**: ${formName}
+📌 **الرمز**: ${formCode}
+
+**الوصف**: ${formData.description}
+
+**الحقول المطلوبة**:
+${formData.fields.filter(f => f.required).map(f => `✓ ${f.label}`).join("\n")}
+
+**الحقول الاختيارية**:
+${formData.fields.filter(f => !f.required).map(f => `○ ${f.label}`).join("\n")}
+
+برجاء مساعدتي في فهم كيفية تعبئة هذا النموذج بشكل صحيح.
+        `.trim();
+
+        // Copy to clipboard for pasting in chat
+        copyToClipboard(chatMessage, formName);
+
+        showNotification(`✓ تم إعداد السؤال - يمكنك الآن لصقه في المحادثة`);
+
+        // In a real app, this would integrate with the chat system
+        console.log("Chat message ready:", chatMessage);
+      }, 300);
+    }
+
+    // Close modal when clicking outside
+    document.addEventListener("click", function(event) {
+      const modal = document.getElementById("previewModal");
+      if (event.target === modal) {
+        closeFormModal();
+      }
+    });
+  </script>
+</body>
+</html>

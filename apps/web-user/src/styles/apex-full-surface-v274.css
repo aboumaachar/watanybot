@@ -1,0 +1,442 @@
+/*
+ * APEX WatanyBot V2.7.4 — full-surface theme installation.
+ * Shared presentation only. No business logic, route data, or feature content.
+ */
+
+:root {
+  --apex-shell-base: 390px;
+  --apex-shell-max: 430px;
+  --apex-bg: #e8e5de;
+  --apex-surface: #fffdf7;
+  --apex-surface-soft: #fbf6e8;
+  --apex-ink: #14231f;
+  --apex-muted: #64736d;
+  --apex-green: #0b4a3a;
+  --apex-green-2: #052b22;
+  --apex-gold: #d7a43a;
+  --apex-danger: #a83e4b;
+  --apex-border: #ded6c2;
+  --apex-shell-border: rgba(7, 57, 46, 0.22);
+  --apex-shadow: 0 18px 48px rgba(5, 43, 34, 0.18);
+  --apex-shadow-inset: inset 0 0 0 5px rgba(255, 255, 255, 0.65);
+  --apex-radius-shell: 34px;
+  --apex-radius-lg: 16px;
+  --apex-radius-md: 15px;
+  --apex-radius-sm: 13px;
+  --apex-topbar-h: 74px;
+  --apex-ticker-h: 42px;
+  --apex-bottom-navigation-height: 116px;
+  --apex-bottom-nav-h: var(--apex-bottom-navigation-height);
+  --apex-list-row-h: 85px;
+  --apex-space-1: 8px;
+  --apex-space-2: 12px;
+  --apex-space-3: 16px;
+  --apex-space-4: 24px;
+  --apex-safe-area-bottom: max(12px, env(safe-area-inset-bottom));
+  --apex-safe-bottom: var(--apex-safe-area-bottom);
+  --apex-content-bottom-clearance: calc(
+    var(--apex-bottom-navigation-height)
+    + var(--apex-safe-area-bottom)
+    + 44px
+  );
+  color-scheme: light;
+}
+
+html[data-apex-theme="v274"],
+html[data-apex-theme="v274"] body {
+  min-height: 100%;
+  margin: 0;
+  background: var(--apex-bg);
+  background-color: var(--apex-bg);
+  background-image: none;
+  color: var(--apex-ink);
+  direction: rtl;
+  overflow-x: hidden;
+  font-family:
+    Cairo,
+    "Noto Kufi Arabic",
+    "Noto Sans Arabic",
+    Tahoma,
+    Arial,
+    sans-serif;
+}
+
+html[data-apex-theme="v274"] *,
+html[data-apex-theme="v274"] *::before,
+html[data-apex-theme="v274"] *::after {
+  box-sizing: border-box;
+}
+
+html[data-apex-theme="v274"] body > #root {
+  min-height: 100dvh;
+}
+
+/* Canonical phone shell on every viewport. */
+html[data-apex-theme="v274"] [data-apex-shell],
+html[data-apex-theme="v274"] .watany-mobile-shell,
+html[data-apex-theme="v274"] .app-shell {
+  position: relative;
+  width: min(100%, var(--apex-shell-base));
+  max-width: var(--apex-shell-max);
+  min-height: 100dvh;
+  margin-inline: auto;
+  background: var(--apex-surface);
+  border: 1px solid var(--apex-shell-border);
+  border-radius: var(--apex-radius-shell);
+  color: var(--apex-ink);
+  overflow-x: clip;
+  overflow-y: visible;
+  box-shadow: var(--apex-shadow), var(--apex-shadow-inset);
+  isolation: isolate;
+}
+
+@media (max-width: 430px) {
+  html[data-apex-theme="v274"] [data-apex-shell],
+  html[data-apex-theme="v274"] .watany-mobile-shell,
+  html[data-apex-theme="v274"] .app-shell {
+    width: 100%;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+}
+
+html[data-apex-theme="v274"] main {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  padding-inline: clamp(12px, 4vw, 18px);
+  padding-bottom: var(--apex-content-bottom-clearance);
+}
+
+html[data-apex-theme="v274"] :where(
+  .watany-recovery-main,
+  .watany-drawer-page,
+  .watany-feature-template,
+  .motany-login-redesign
+) {
+  padding-bottom: var(--apex-content-bottom-clearance);
+}
+
+html[data-apex-theme="v274"] header {
+  max-width: 100%;
+}
+
+html[data-apex-theme="v274"] :where(
+  .app-topbar,
+  .top-bar,
+  .topbar,
+  .screen-header,
+  .mobile-header,
+  [class*="TopBar"]
+) {
+  min-height: var(--apex-topbar-h);
+  padding: var(--apex-space-2) var(--apex-space-2) var(--apex-space-1);
+  color: #fff;
+  box-shadow: 0 7px 18px rgba(5, 43, 34, 0.18);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--apex-green) 88%, #fff), var(--apex-green-2));
+}
+
+html[data-apex-theme="v274"] :where(
+  .inline-ticker,
+  .ticker,
+  [role="status"]
+) {
+  min-height: var(--apex-ticker-h);
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(0, 0, 0, 0.14);
+  color: #fff;
+}
+
+html[data-apex-theme="v274"] h1,
+html[data-apex-theme="v274"] h2,
+html[data-apex-theme="v274"] h3 {
+  color: var(--apex-ink);
+  line-height: 1.35;
+  text-wrap: balance;
+}
+
+html[data-apex-theme="v274"] p,
+html[data-apex-theme="v274"] li,
+html[data-apex-theme="v274"] label,
+html[data-apex-theme="v274"] span {
+  overflow-wrap: anywhere;
+}
+
+/* Unified cards, panels, lists, forms and tables. */
+html[data-apex-theme="v274"] :where(
+  article,
+  section,
+  .card,
+  [class*="Card"],
+  [class*="panel"],
+  [class*="Panel"],
+  [class*="tile"],
+  [class*="Tile"]
+) {
+  max-width: 100%;
+}
+
+html[data-apex-theme="v274"] :where(
+  .card,
+  [class*="Card"],
+  [class*="panel"],
+  [class*="Panel"]
+):not([role="dialog"]):not([aria-modal="true"]) {
+  border-radius: var(--apex-radius-md);
+  padding: var(--apex-space-2);
+  background: #fff;
+  border-color: var(--apex-border);
+}
+
+html[data-apex-theme="v274"] :where(
+  .list-row,
+  .list-item,
+  [class*="list-row"],
+  [class*="ListRow"],
+  [class*="row-item"],
+  [class*="RowItem"]
+) {
+  min-height: var(--apex-list-row-h);
+  border-radius: var(--apex-radius-md);
+  background: #fff;
+  border: 1px solid var(--apex-border);
+  padding: calc(var(--apex-space-1) + 3px) var(--apex-space-2);
+}
+
+html[data-apex-theme="v274"] :where(
+  input,
+  select,
+  textarea
+) {
+  width: 100%;
+  min-height: 44px;
+  border: 1px solid #d9cfbc;
+  border-radius: var(--apex-radius-sm);
+  background: #fff;
+  color: var(--apex-ink);
+  padding: 0 var(--apex-space-2);
+  font: inherit;
+}
+
+html[data-apex-theme="v274"] textarea {
+  min-height: 104px;
+  padding-top: 10px;
+  resize: vertical;
+}
+
+html[data-apex-theme="v274"] :where(
+  button,
+  [role="button"],
+  a
+) {
+  -webkit-tap-highlight-color: transparent;
+}
+
+html[data-apex-theme="v274"] button,
+html[data-apex-theme="v274"] [role="button"] {
+  min-height: 44px;
+  max-width: 100%;
+  border-radius: 14px;
+  border: 1px solid transparent;
+}
+
+html[data-apex-theme="v274"] :where(
+  .primary,
+  [class*="primary"],
+  button[data-variant="primary"]
+) {
+  color: #fff;
+  background: linear-gradient(135deg, var(--apex-green), var(--apex-green-2));
+  box-shadow: 0 12px 24px rgba(5, 43, 34, 0.2);
+}
+
+html[data-apex-theme="v274"] :where(button, [role="button"], a):focus-visible {
+  outline: 3px solid rgba(215, 164, 58, 0.72);
+  outline-offset: 2px;
+}
+
+html[data-apex-theme="v274"] table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+html[data-apex-theme="v274"] :where(th, td) {
+  padding: 10px 8px;
+  border-bottom: 1px solid var(--apex-border);
+  text-align: right;
+  vertical-align: top;
+  overflow-wrap: anywhere;
+}
+
+html[data-apex-theme="v274"] :where(
+  [class*="grid"],
+  [class*="Grid"]
+) {
+  min-width: 0;
+}
+
+@media (max-width: 430px) {
+  html[data-apex-theme="v274"] :where(
+    [class*="grid"],
+    [class*="Grid"]
+  ) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Drawer and overlay lifecycle. */
+html[data-apex-theme="v274"] :where(
+  [role="dialog"],
+  [aria-modal="true"],
+  [data-drawer],
+  [class*="drawer"],
+  [class*="Drawer"],
+  [class*="sidebar"],
+  [class*="Sidebar"],
+  [class*="menu-panel"],
+  [class*="MenuPanel"]
+) {
+  max-width: min(88vw, 360px);
+  border-radius: 18px;
+  border: 1px solid var(--apex-border);
+  background: var(--apex-surface);
+  color: var(--apex-ink);
+}
+
+html[data-apex-theme="v274"] :where(
+  [data-overlay],
+  [class*="backdrop"],
+  [class*="Backdrop"],
+  [class*="overlay"],
+  [class*="Overlay"]
+) {
+  backdrop-filter: blur(2px);
+}
+
+html[data-apex-theme="v274"][data-apex-drawer-open="true"] body {
+  overflow: hidden;
+}
+
+/* Navigation remains reachable and clear. */
+html[data-apex-theme="v274"] :where(
+  [class*="bottom-nav"],
+  [class*="BottomNav"],
+  .bottom-chat,
+  nav[aria-label*="bottom" i],
+  nav[aria-label*="سفل"]
+) {
+  position: sticky;
+  bottom: 0;
+  z-index: 40;
+  width: 100%;
+  max-width: var(--apex-shell-max);
+  margin-inline: auto;
+  min-height: var(--apex-bottom-navigation-height);
+  padding-bottom: var(--apex-safe-area-bottom);
+  background: color-mix(in srgb, var(--apex-surface) 94%, transparent);
+  border-top: 1px solid var(--apex-border);
+  box-shadow: 0 -6px 18px rgba(5, 43, 34, 0.08);
+  backdrop-filter: blur(12px);
+}
+
+/* Loading, empty and error presentation. */
+html[data-apex-theme="v274"] :where(
+  [aria-busy="true"],
+  [class*="loading"],
+  [class*="Loading"],
+  [class*="skeleton"],
+  [class*="Skeleton"]
+) {
+  border-radius: var(--apex-radius-md);
+  background:
+    linear-gradient(90deg, rgba(215, 164, 58, 0.08), rgba(255, 255, 255, 0.64), rgba(215, 164, 58, 0.08));
+  background-size: 220% 100%;
+  animation: apex-loading-shimmer 1.5s linear infinite;
+}
+
+html[data-apex-theme="v274"] :where(
+  [class*="empty"],
+  [class*="Empty"],
+  [class*="error"],
+  [class*="Error"]
+) {
+  max-width: 100%;
+  margin-inline: auto;
+  padding: 18px;
+  border: 1px solid var(--apex-border);
+  border-radius: var(--apex-radius-md);
+  background: var(--apex-surface-soft);
+}
+
+@keyframes apex-loading-shimmer {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: -220% 0;
+  }
+}
+
+/* Superadmin: preserve functionality while removing the isolated dark theme. */
+html[data-apex-theme="v274"] :where(
+  [data-route*="superadmin"],
+  [class*="superadmin"],
+  [class*="SuperAdmin"]
+) {
+  --background: var(--apex-surface);
+  --foreground: var(--apex-ink);
+  color: var(--apex-ink);
+  background: var(--apex-surface);
+}
+
+html[data-apex-theme="v274"] :where(
+  [data-route*="superadmin"],
+  [class*="superadmin"],
+  [class*="SuperAdmin"]
+) :where(
+  [class*="card"],
+  [class*="Card"],
+  [class*="panel"],
+  [class*="Panel"]
+) {
+  background: #fff;
+  color: var(--apex-ink);
+  border-color: var(--apex-border);
+}
+
+/* Marketplace: normalize developer-like command buttons without hiding features. */
+html[data-apex-theme="v274"] :where(
+  [data-route*="marketplace"],
+  [class*="marketplace"],
+  [class*="Marketplace"]
+) :where(button, [role="button"]) {
+  font-family: inherit;
+  letter-spacing: 0;
+  text-transform: none;
+  white-space: normal;
+}
+
+/* Prevent wide content from escaping the shell. */
+html[data-apex-theme="v274"] :where(
+  img,
+  svg,
+  video,
+  canvas,
+  iframe
+) {
+  max-width: 100%;
+}
+
+html[data-apex-theme="v274"] pre,
+html[data-apex-theme="v274"] code {
+  max-width: 100%;
+  overflow-x: auto;
+  white-space: pre-wrap;
+}
+
+html[data-apex-theme="v274"] [hidden] {
+  display: none !important;
+}

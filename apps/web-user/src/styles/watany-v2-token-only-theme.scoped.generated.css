@@ -1,0 +1,29 @@
+﻿:root {
+  --watany-v2-token-bridge-active: 1;
+  --watany-bg-soft: #eef4fb;
+  --watany-bg-warm: #fbf7ec;
+  --watany-surface-soft: #fbfdf8;
+  --watany-surface-gloss: #edf5e9;
+  --watany-line-soft: #dbe7f1;
+  --watany-green: #0b8f5a;
+  --watany-green-deep: #076b45;
+  --watany-blue: #1478ff;
+  --watany-text-strong: #173047;
+  --watany-shadow-soft: 0 12px 34px rgba(23, 48, 71, 0.14);
+  --watany-shadow-icon: 0 10px 22px rgba(23, 48, 71, 0.18);
+  background: linear-gradient(135deg, var(--watany-bg-soft), var(--watany-bg-warm));
+  color: var(--watany-text-strong);
+  accent-color: var(--watany-green);
+}
+
+body {
+  background: linear-gradient(135deg, var(--watany-bg-soft), var(--watany-bg-warm));
+  color: var(--watany-text-strong);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+#root {
+  background: transparent;
+  color: var(--watany-text-strong);
+}

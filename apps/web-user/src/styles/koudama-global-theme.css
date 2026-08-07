@@ -1,0 +1,166 @@
+:root,
+html[data-theme='watani'] {
+  --kw-page: #f3efe6;
+  --kw-surface: #ffffff;
+  --kw-soft: #f8f4ec;
+  --kw-text: #2d2923;
+  --kw-muted: #6c6254;
+  --kw-border: rgba(92, 78, 55, 0.16);
+  --kw-shadow: rgba(44, 36, 24, 0.13);
+  --kw-accent: #b99d67;
+  --kw-blue: #4988e8;
+  --kw-red: #e94b61;
+  --kw-teal: #3ba99a;
+  --kw-green: #6ea354;
+  --kw-orange: #dc8a25;
+  --kw-purple: #9256d4;
+  --kw-gray: #928a7f;
+  --koudama-page-bg: var(--kw-page);
+  --koudama-surface: color-mix(in srgb, var(--kw-surface) 94%, transparent);
+  --koudama-surface-strong: var(--kw-surface);
+  --koudama-text: var(--kw-text);
+  --koudama-text-soft: var(--kw-muted);
+  --koudama-border: var(--kw-border);
+  --koudama-primary: var(--kw-blue);
+  --koudama-primary-soft: color-mix(in srgb, var(--kw-blue) 14%, transparent);
+}
+
+html[data-theme='layli'] {
+  --kw-page: #121212;
+  --kw-surface: #1f1f1f;
+  --kw-soft: #171717;
+  --kw-text: #f2f0eb;
+  --kw-muted: #d6d0c8;
+  --kw-border: rgba(255, 255, 255, 0.16);
+  --kw-shadow: rgba(0, 0, 0, 0.55);
+  --kw-accent: #6da8ef;
+  --koudama-page-bg: var(--kw-page);
+  --koudama-surface: color-mix(in srgb, var(--kw-surface) 94%, transparent);
+  --koudama-surface-strong: var(--kw-surface);
+  --koudama-text: var(--kw-text);
+  --koudama-text-soft: var(--kw-muted);
+  --koudama-border: var(--kw-border);
+  --koudama-primary: #6da8ef;
+  --koudama-primary-soft: color-mix(in srgb, #6da8ef 14%, transparent);
+}
+
+html[data-theme='wadih'] {
+  --kw-page: #f6efe5;
+  --kw-surface: #fffdf9;
+  --kw-soft: #f1e8d8;
+  --kw-text: #3b2e22;
+  --kw-muted: #725f4a;
+  --kw-border: rgba(123, 97, 68, 0.16);
+  --kw-shadow: rgba(68, 53, 37, 0.14);
+  --kw-accent: #9d7d51;
+  --koudama-page-bg: var(--kw-page);
+  --koudama-surface: color-mix(in srgb, var(--kw-surface) 94%, transparent);
+  --koudama-surface-strong: var(--kw-surface);
+  --koudama-text: var(--kw-text);
+  --koudama-text-soft: var(--kw-muted);
+  --koudama-border: var(--kw-border);
+  --koudama-primary: #9d7d51;
+  --koudama-primary-soft: color-mix(in srgb, #9d7d51 14%, transparent);
+}
+
+html[data-theme='nahasi'] {
+  --kw-page: #f6efe5;
+  --kw-surface: #fffdf9;
+  --kw-soft: #f1e8d8;
+  --kw-text: #3b2e22;
+  --kw-muted: #725f4a;
+  --kw-border: rgba(123, 97, 68, 0.16);
+  --kw-shadow: rgba(68, 53, 37, 0.14);
+  --kw-accent: #9d7d51;
+  --koudama-page-bg: var(--kw-page);
+  --koudama-surface: color-mix(in srgb, var(--kw-surface) 94%, transparent);
+  --koudama-surface-strong: var(--kw-surface);
+  --koudama-text: var(--kw-text);
+  --koudama-text-soft: var(--kw-muted);
+  --koudama-border: var(--kw-border);
+  --koudama-primary: #9d7d51;
+  --koudama-primary-soft: color-mix(in srgb, #9d7d51 14%, transparent);
+}
+
+html[data-theme='ramli'] {
+  --kw-page: #f5efe4;
+  --kw-surface: #fffaf2;
+  --kw-soft: #efe4d3;
+  --kw-text: #362f27;
+  --kw-muted: #736756;
+  --kw-border: rgba(112, 97, 76, 0.15);
+  --kw-shadow: rgba(61, 51, 39, 0.14);
+  --kw-accent: #aa9064;
+  --koudama-page-bg: var(--kw-page);
+  --koudama-surface: color-mix(in srgb, var(--kw-surface) 94%, transparent);
+  --koudama-surface-strong: var(--kw-surface);
+  --koudama-text: var(--kw-text);
+  --koudama-text-soft: var(--kw-muted);
+  --koudama-border: var(--kw-border);
+  --koudama-primary: #aa9064;
+  --koudama-primary-soft: color-mix(in srgb, #aa9064 14%, transparent);
+}
+
+html[data-theme='azraq'] {
+  --kw-page: #eef4fb;
+  --kw-surface: #ffffff;
+  --kw-soft: #e3edf8;
+  --kw-text: #1d2c3c;
+  --kw-muted: #54697e;
+  --kw-border: rgba(81, 109, 141, 0.16);
+  --kw-shadow: rgba(29, 44, 60, 0.12);
+  --kw-accent: #4e8fd8;
+  --koudama-page-bg: var(--kw-page);
+  --koudama-surface: color-mix(in srgb, var(--kw-surface) 94%, transparent);
+  --koudama-surface-strong: var(--kw-surface);
+  --koudama-text: var(--kw-text);
+  --koudama-text-soft: var(--kw-muted);
+  --koudama-border: var(--kw-border);
+  --koudama-primary: #4e8fd8;
+  --koudama-primary-soft: color-mix(in srgb, #4e8fd8 14%, transparent);
+}
+
+html[data-theme='arzi'] {
+  --kw-page: #eff5ed;
+  --kw-surface: #ffffff;
+  --kw-soft: #e3eddf;
+  --kw-text: #1d3728;
+  --kw-muted: #597160;
+  --kw-border: rgba(85, 113, 94, 0.15);
+  --kw-shadow: rgba(29, 55, 40, 0.12);
+  --kw-accent: #5b8c69;
+  --koudama-page-bg: var(--kw-page);
+  --koudama-surface: color-mix(in srgb, var(--kw-surface) 94%, transparent);
+  --koudama-surface-strong: var(--kw-surface);
+  --koudama-text: var(--kw-text);
+  --koudama-text-soft: var(--kw-muted);
+  --koudama-border: var(--kw-border);
+  --koudama-primary: #5b8c69;
+  --koudama-primary-soft: color-mix(in srgb, #5b8c69 14%, transparent);
+}
+
+html[data-theme='askari'] {
+  --kw-page: #f0efe5;
+  --kw-surface: #ffffff;
+  --kw-soft: #e7e4d8;
+  --kw-text: #263827;
+  --kw-muted: #65745f;
+  --kw-border: rgba(101, 116, 95, 0.15);
+  --kw-shadow: rgba(38, 56, 39, 0.12);
+  --kw-accent: #84783e;
+  --koudama-page-bg: var(--kw-page);
+  --koudama-surface: color-mix(in srgb, var(--kw-surface) 94%, transparent);
+  --koudama-surface-strong: var(--kw-surface);
+  --koudama-text: var(--kw-text);
+  --koudama-text-soft: var(--kw-muted);
+  --koudama-border: var(--kw-border);
+  --koudama-primary: #84783e;
+  --koudama-primary-soft: color-mix(in srgb, #84783e 14%, transparent);
+}
+
+body {
+  background:
+    radial-gradient(circle at 10% 3%, color-mix(in srgb, var(--kw-accent) 14%, transparent), transparent 28%),
+    linear-gradient(180deg, var(--kw-page), color-mix(in srgb, var(--kw-page) 94%, #fff 6%));
+  color: var(--koudama-text);
+}

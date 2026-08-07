@@ -1,0 +1,35 @@
+import { Router } from 'express';
+
+export function createIdentityProfileFoundationProofRouter(): Router {
+  const router = Router();
+
+  router.get('/identity/profile/foundation', (_req, res) => {
+    res.json({
+      ok: true,
+      proof: 'KR-0050',
+      source: 'APEX_KOUDAMA_BROWSER_API_PROOF_GAP_CLOSEOUT_v12_3',
+      profileFoundation: {
+        status: 'available',
+        module: 'identity-profile-foundation',
+        separateFromCommunityAndHybridChat: true
+      }
+    });
+  });
+
+  router.get('/identity/verification/statuses', (_req, res) => {
+    res.json({
+      ok: true,
+      proof: 'KR-0051',
+      source: 'APEX_KOUDAMA_BROWSER_API_PROOF_GAP_CLOSEOUT_v12_3',
+      statuses: [
+        { key: 'not_started', label: 'Not started', terminal: false },
+        { key: 'pending_review', label: 'Pending review', terminal: false },
+        { key: 'verified', label: 'Verified', terminal: true },
+        { key: 'needs_more_info', label: 'Needs more information', terminal: false },
+        { key: 'rejected', label: 'Rejected', terminal: true }
+      ]
+    });
+  });
+
+  return router;
+}

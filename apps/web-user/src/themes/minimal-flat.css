@@ -1,0 +1,190 @@
+/* ═══════════════════════════════════════════════════════════
+   THEME: Minimal Flat
+   Clean flat cards, sharp corners, no shadows, solid colors
+   ═══════════════════════════════════════════════════════════ */
+
+.theme-minimal-flat {
+  /* ── Palette ── */
+  --ink: #111827;
+  --ink-secondary: #374151;
+  --muted: #6b7280;
+  --paper: #f9fafb;
+  --surface: #ffffff;
+  --surface-hover: #f3f4f6;
+  --surface-solid: #ffffff;
+  --accent: #2563eb;
+  --accent-hover: #1d4ed8;
+  --accent-soft: rgba(37, 99, 235, 0.08);
+  --accent-2: #f59e0b;
+  --accent-3: #7c3aed;
+  --danger: #ef4444;
+  --success: #22c55e;
+  --warning: #eab308;
+  --stroke: #e5e7eb;
+  --stroke-strong: #d1d5db;
+
+  /* ── Flat ── */
+  --glass-bg: #ffffff;
+  --glass-blur: 0px;
+  --glass-border: 1px solid #e5e7eb;
+  --glass-shadow: none;
+  --glass-shadow-lg: none;
+
+  /* ── Shape ── */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --radius-full: 999px;
+
+  /* ── Spacing ── */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 20px;
+  --sp-6: 24px;
+  --sp-8: 32px;
+  --sp-10: 40px;
+  --sp-12: 48px;
+
+  /* ── Motion ── */
+  --ease-spring: ease;
+  --ease-out: ease-out;
+  --ease-smooth: ease;
+  --duration-fast: 100ms;
+  --duration-normal: 150ms;
+  --duration-slow: 250ms;
+  --duration-panel: 200ms;
+
+  /* ── Typography ── */
+  --font-body: -apple-system, BlinkMacSystemFont, "Cairo", "Segoe UI", sans-serif;
+  --font-mono: "SF Mono", "Fira Code", monospace;
+  --text-xs: 0.75rem;
+  --text-sm: 0.8125rem;
+  --text-base: 0.875rem;
+  --text-md: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 2rem;
+
+  /* ── Elevation ── */
+  --shadow-sm: none;
+  --shadow-md: none;
+  --shadow-lg: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow-xl: 0 4px 6px rgba(0, 0, 0, 0.07);
+
+  /* ── Chat Bubbles ── */
+  --bubble-user-bg: var(--accent);
+  --bubble-user-border: none;
+  --bubble-bot-bg: #f3f4f6;
+  --bubble-bot-border: none;
+
+  /* ── Background ── */
+  background: #f9fafb;
+}
+
+/* Cards */
+.theme-minimal-flat .ds-card {
+  background: var(--surface);
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-md);
+  box-shadow: none;
+  transition: background var(--duration-fast);
+}
+
+.theme-minimal-flat .ds-card:hover {
+  background: var(--surface-hover);
+  transform: none;
+  box-shadow: none;
+}
+
+/* Buttons */
+.theme-minimal-flat .ds-btn-primary {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: var(--sp-2) var(--sp-5);
+  font-weight: 500;
+  cursor: pointer;
+  transition: background var(--duration-fast);
+}
+
+.theme-minimal-flat .ds-btn-primary:hover {
+  background: var(--accent-hover);
+}
+
+.theme-minimal-flat .ds-btn-primary:active {
+  opacity: 0.9;
+}
+
+.theme-minimal-flat .ds-btn-ghost {
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-sm);
+  padding: var(--sp-2) var(--sp-4);
+  cursor: pointer;
+  transition: background var(--duration-fast);
+}
+
+.theme-minimal-flat .ds-btn-ghost:hover {
+  background: var(--surface-hover);
+}
+
+/* FAB */
+.theme-minimal-flat .ds-fab {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 56px;
+  height: 56px;
+  font-size: 22px;
+  cursor: pointer;
+  transition: background var(--duration-fast);
+}
+
+.theme-minimal-flat .ds-fab:hover {
+  background: var(--accent-hover);
+}
+
+/* Panel animation */
+.theme-minimal-flat .ds-panel-enter {
+  animation: flatFadeIn var(--duration-panel) ease forwards;
+}
+
+@keyframes flatFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Inputs */
+.theme-minimal-flat .ds-input {
+  background: var(--surface);
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-sm);
+  padding: var(--sp-2) var(--sp-3);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+}
+
+.theme-minimal-flat .ds-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-soft);
+}
+
+/* Badge */
+.theme-minimal-flat .ds-badge {
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+}

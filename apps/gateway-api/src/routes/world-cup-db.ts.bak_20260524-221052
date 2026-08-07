@@ -1,0 +1,226 @@
+﻿import { createDefaultWorldCupService } from '../worldcup';
+
+const worldCupService = createDefaultWorldCupService();
+
+function worldCupOk<T>(payload: { data: T; source: string; generatedAt: string }) {
+  return { ok: true, data: payload.data, source: payload.source, generatedAt: payload.generatedAt };
+}
+
+function worldCupError(error: unknown) {
+  return {
+    ok: false,
+    error: error instanceof Error ? error.message : 'World Cup service error',
+    generatedAt: new Date().toISOString(),
+  };
+}
+
+export type WorldCupVoteRecord = {
+  pollId: string;
+  optionId: string;
+  userId: string;
+  createdAt: string;
+};
+
+export type WorldCupFavoriteRecord = {
+  userId: string;
+  teamId: string;
+  createdAt: string;
+};
+
+export type WorldCupReminderRecord = {
+  id: string;
+  userId: string;
+  matchId: string;
+  remindAt: string;
+  createdAt: string;
+};
+
+interface PluginDbStatement {
+  all: (...args: any[]) => Array<Record<string, unknown>>;
+  get: (...args: any[]) => Record<string, unknown> | undefined;
+  run: (...args: any[]) => { changes?: number } | Record<string, unknown>;
+}
+
+interface PluginDb {
+  prepare: (sql: string) => PluginDbStatement;
+}
+
+const votes = new Map<string, WorldCupVoteRecord>();
+const favorites = new Map<string, WorldCupFavoriteRecord>();
+const reminders = new Map<string, WorldCupReminderRecord>();
+let pluginDb: PluginDb | null = null;
+let schemaReady = false;
+
+function makeId(prefix: string) {
+  return `${prefix}-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+}
+
+function ensureSchema() {
+  if (!pluginDb || schemaReady) return;
+
+  pluginDb.prepare(`
+    CREATE TABLE IF NOT EXISTS world_cup_votes (
+      id TEXT PRIMARY KEY,
+      poll_id TEXT NOT NULL,
+      option_id TEXT NOT NULL,
+      user_id TEXT NOT NULL,
+      created_at TEXT NOT NULL,
+      UNIQUE (poll_id, user_id)
+    )
+  `).run();
+
+  pluginDb.prepare(`
+    CREATE TABLE IF NOT EXISTS world_cup_favorites (
+      user_id TEXT NOT NULL,
+      team_id TEXT NOT NULL,
+      created_at TEXT NOT NULL,
+      PRIMARY KEY (user_id, team_id)
+    )
+  `).run();
+
+  pluginDb.prepare(`
+    CREATE TABLE IF NOT EXISTS world_cup_reminders (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL,
+      match_id TEXT NOT NULL,
+      remind_at TEXT NOT NULL,
+      created_at TEXT NOT NULL,
+      UNIQUE (user_id, match_id, remind_at)
+    )
+  `).run();
+
+  schemaReady = true;
+}
+
+function toVoteRecord(row: Record<string, unknown>): WorldCupVoteRecord {
+  return {
+    pollId: String(row.poll_id),
+    optionId: String(row.option_id),
+    userId: String(row.user_id),
+    createdAt: String(row.created_at),
+  };
+}
+
+function toFavoriteRecord(row: Record<string, unknown>): WorldCupFavoriteRecord {
+  return {
+    userId: String(row.user_id),
+    teamId: String(row.team_id),
+    createdAt: String(row.created_at),
+  };
+}
+
+function toReminderRecord(row: Record<string, unknown>): WorldCupReminderRecord {
+  return {
+    id: String(row.id),
+    userId: String(row.user_id),
+    matchId: String(row.match_id),
+    remindAt: String(row.remind_at),
+    createdAt: String(row.created_at),
+  };
+}
+
+export const worldCupPersistence = {
+  attachDb(db?: PluginDb | null) {
+    pluginDb = db || null;
+    schemaReady = false;
+    ensureSchema();
+  },
+
+  async upsertVote(vote: WorldCupVoteRecord) {
+    if (pluginDb) {
+      ensureSchema();
+      pluginDb
+        .prepare(`
+          INSERT INTO world_cup_votes (id, poll_id, option_id, user_id, created_at)
+          VALUES (?, ?, ?, ?, ?)
+          ON CONFLICT (poll_id, user_id)
+          DO UPDATE SET option_id = excluded.option_id, created_at = excluded.created_at
+        `)
+        .run(makeId("wcv"), vote.pollId, vote.optionId, vote.userId, vote.createdAt);
+      return vote;
+    }
+
+    votes.set(`${vote.pollId}:${vote.userId}`, vote);
+    return vote;
+  },
+
+  async listVotes(pollId?: string) {
+    if (pluginDb) {
+      ensureSchema();
+      const rows = pollId
+        ? pluginDb.prepare("SELECT poll_id, option_id, user_id, created_at FROM world_cup_votes WHERE poll_id = ? ORDER BY created_at ASC").all(pollId)
+        : pluginDb.prepare("SELECT poll_id, option_id, user_id, created_at FROM world_cup_votes ORDER BY created_at ASC").all();
+      return rows.map(toVoteRecord);
+    }
+
+    return Array.from(votes.values()).filter((item) => !pollId || item.pollId === pollId);
+  },
+
+  async upsertFavorite(favorite: WorldCupFavoriteRecord) {
+    if (pluginDb) {
+      ensureSchema();
+      pluginDb
+        .prepare(`
+          INSERT INTO world_cup_favorites (user_id, team_id, created_at)
+          VALUES (?, ?, ?)
+          ON CONFLICT (user_id, team_id)
+          DO UPDATE SET created_at = excluded.created_at
+        `)
+        .run(favorite.userId, favorite.teamId, favorite.createdAt);
+      return favorite;
+    }
+
+    favorites.set(`${favorite.userId}:${favorite.teamId}`, favorite);
+    return favorite;
+  },
+
+  async listFavorites(userId?: string) {
+    if (pluginDb) {
+      ensureSchema();
+      const rows = userId
+        ? pluginDb.prepare("SELECT user_id, team_id, created_at FROM world_cup_favorites WHERE user_id = ? ORDER BY created_at ASC").all(userId)
+        : pluginDb.prepare("SELECT user_id, team_id, created_at FROM world_cup_favorites ORDER BY created_at ASC").all();
+      return rows.map(toFavoriteRecord);
+    }
+
+    return Array.from(favorites.values()).filter((item) => !userId || item.userId === userId);
+  },
+
+  async createReminder(reminder: WorldCupReminderRecord) {
+    if (pluginDb) {
+      ensureSchema();
+      pluginDb
+        .prepare(`
+          INSERT INTO world_cup_reminders (id, user_id, match_id, remind_at, created_at)
+          VALUES (?, ?, ?, ?, ?)
+          ON CONFLICT (user_id, match_id, remind_at)
+          DO UPDATE SET created_at = excluded.created_at
+        `)
+        .run(reminder.id, reminder.userId, reminder.matchId, reminder.remindAt, reminder.createdAt);
+      return reminder;
+    }
+
+    reminders.set(reminder.id, reminder);
+    return reminder;
+  },
+
+  async listReminders(userId?: string) {
+    if (pluginDb) {
+      ensureSchema();
+      const rows = userId
+        ? pluginDb.prepare("SELECT id, user_id, match_id, remind_at, created_at FROM world_cup_reminders WHERE user_id = ? ORDER BY remind_at ASC").all(userId)
+        : pluginDb.prepare("SELECT id, user_id, match_id, remind_at, created_at FROM world_cup_reminders ORDER BY remind_at ASC").all();
+      return rows.map(toReminderRecord);
+    }
+
+    return Array.from(reminders.values()).filter((item) => !userId || item.userId === userId);
+  }
+};
+
+// WORLD_CUP_SERVICE_BRIDGE_READY
+// The active world-cup route file has been prepared to delegate to src/worldcup service layer.
+// Next surgical step may replace specific endpoint handlers with:
+//   worldCupOk(await worldCupService.getTodayMatches())
+//   worldCupOk(await worldCupService.getLiveMatches())
+//   worldCupOk(await worldCupService.getStandings())
+//   worldCupOk(await worldCupService.getMatchById(id))

@@ -1,0 +1,6 @@
+/* WatanyBot V1 - V2 theme bridge disabled by APEX rollback.
+   Reason: raw V2 CSS bridge caused V1 layout distortion.
+   V1 layout/routes/features are restored. */
+:root {
+  --watany-v2-bridge-disabled: 1;
+}

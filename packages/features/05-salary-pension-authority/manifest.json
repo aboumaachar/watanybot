@@ -1,0 +1,10 @@
+﻿{
+    "featureKey":  "05-salary-pension-authority",
+    "featureName":  "Salary/Pension Authority",
+    "doctrine":  "near-zero-recode-v1",
+    "portable":  true,
+    "replaceable":  true,
+    "status":  "BOUNDARY_DECLARED_REQUIRES_VALIDATION",
+    "passRule":  "No PASS without validation and smoke evidence.",
+    "generatedAt":  "2026-06-10T16:41:40.8332722+03:00"
+}

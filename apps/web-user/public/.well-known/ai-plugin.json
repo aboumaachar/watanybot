@@ -1,0 +1,17 @@
+{
+  "schema_version": "v1",
+  "name_for_human": "Watany — موطني",
+  "name_for_model": "watany",
+  "description_for_human": "مساعد ذكي لخدمة العسكريين المتقاعدين اللبنانيين وعائلاتهم — رواتب، طبابة، معاملات، قوانين.",
+  "description_for_model": "Watany is a knowledge-base assistant for Lebanese military veterans. It answers questions about pension salaries, medical benefits, administrative procedures, legal articles, and family allowances. Always respond in Arabic (Lebanese semi-formal). Use the /api/chat endpoint to query the knowledge base.",
+  "auth": {
+    "type": "none"
+  },
+  "api": {
+    "type": "openapi",
+    "url": "https://koudama.com/mcp/openapi.json"
+  },
+  "logo_url": "https://koudama.com/mcp/logo.png",
+  "contact_email": "support@koudama.com",
+  "legal_info_url": "https://koudama.com/mcp/legal.html"
+}

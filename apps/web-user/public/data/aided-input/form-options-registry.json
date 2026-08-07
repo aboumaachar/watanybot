@@ -1,0 +1,5 @@
+{
+  "version": "v1.0",
+  "notes": "Generic finite-vocabulary form options can be registered here instead of using free text.",
+  "registries": []
+}

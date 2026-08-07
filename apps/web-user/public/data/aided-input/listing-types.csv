@@ -1,0 +1,13 @@
+listing_type,arabic_label,approval_required,owner_scope,active
+general_ad,إعلان عام,true,user,true
+market_sell,أريد البيع,true,user,true
+market_buy,أريد الشراء,true,user,true
+job_promotion,أبحث عن عمل,true,user,true
+freelance_skill,مهارة أو خدمة حرة,true,eligible_user,true
+taxi_service,خدمة تاكسي,true,approved_provider,true
+tourist_guide_service,مرشد سياحي,true,approved_provider,true
+service_provider_listing,مزود خدمة,true,approved_provider,true
+assistance_request,طلب مساعدة,true,eligible_user,true
+community_info_post,معلومة أو خبر,true,user,true
+system_ticket,تذكرة نظام,false,user,true
+open_case,قضية مفتوحة,false,user,true

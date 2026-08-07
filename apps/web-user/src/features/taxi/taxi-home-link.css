@@ -1,0 +1,17 @@
+﻿.taxi-home-link {
+  align-items: center;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  border-radius: 999px;
+  display: inline-flex;
+  font-weight: 700;
+  gap: 0.35rem;
+  line-height: 1;
+  margin-block-end: 1rem;
+  padding: 0.55rem 0.85rem;
+  text-decoration: none;
+}
+
+.taxi-home-link:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, 0.35);
+  outline-offset: 3px;
+}

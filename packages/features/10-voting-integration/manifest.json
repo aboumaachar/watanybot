@@ -1,0 +1,10 @@
+﻿{
+    "featureKey":  "10-voting-integration",
+    "featureName":  "Voting Integration",
+    "doctrine":  "near-zero-recode-v1",
+    "portable":  true,
+    "replaceable":  true,
+    "status":  "BOUNDARY_DECLARED_REQUIRES_VALIDATION",
+    "passRule":  "No PASS without validation and smoke evidence.",
+    "generatedAt":  "2026-06-10T16:46:01.9224099+03:00"
+}

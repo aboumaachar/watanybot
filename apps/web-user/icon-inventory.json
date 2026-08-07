@@ -1,0 +1,1552 @@
+[
+  {
+    "Component": "apps\\web-user\\src\\koudama-visual-parity.css",
+    "Page": "source",
+    "Owner": "koudama-visual-parity.css",
+    "CurrentRenderer": "pseudo-element",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\styles.css",
+    "Page": "source",
+    "Owner": "styles.css",
+    "CurrentRenderer": "legacy-asset,pseudo-element",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\components\\BottomTabBar.tsx",
+    "Page": "source",
+    "Owner": "BottomTabBar.tsx",
+    "CurrentRenderer": "wrapper",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\components\\BurgerDrawer.tsx",
+    "Page": "source",
+    "Owner": "BurgerDrawer.tsx",
+    "CurrentRenderer": "wrapper",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\components\\clean-watany-shell.css",
+    "Page": "source",
+    "Owner": "clean-watany-shell.css",
+    "CurrentRenderer": "pseudo-element",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\components\\CommunityScreen.tsx",
+    "Page": "source",
+    "Owner": "CommunityScreen.tsx",
+    "CurrentRenderer": "fluent,react-icon-library",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\components\\CrisisResources.tsx",
+    "Page": "source",
+    "Owner": "CrisisResources.tsx",
+    "CurrentRenderer": "fluent,react-icon-library",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\components\\DesignSelector.tsx",
+    "Page": "source",
+    "Owner": "DesignSelector.tsx",
+    "CurrentRenderer": "wrapper",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\components\\GlobalFeatureNav.tsx",
+    "Page": "source",
+    "Owner": "GlobalFeatureNav.tsx",
+    "CurrentRenderer": "fluent,react-icon-library,inline-svg",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\components\\HomeScreen.test.tsx",
+    "Page": "source",
+    "Owner": "HomeScreen.test.tsx",
+    "CurrentRenderer": "wrapper",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\components\\HomeScreen.tsx",
+    "Page": "source",
+    "Owner": "HomeScreen.tsx",
+    "CurrentRenderer": "wrapper",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\components\\IconShell.tsx",
+    "Page": "source",
+    "Owner": "IconShell.tsx",
+    "CurrentRenderer": "wrapper",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\components\\InlineInfoButton.tsx",
+    "Page": "source",
+    "Owner": "InlineInfoButton.tsx",
+    "CurrentRenderer": "fluent,react-icon-library",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\components\\KoudamaGroupedDashboard.tsx",
+    "Page": "source",
+    "Owner": "KoudamaGroupedDashboard.tsx",
+    "CurrentRenderer": "wrapper",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\components\\landing.css",
+    "Page": "source",
+    "Owner": "landing.css",
+    "CurrentRenderer": "legacy-asset,pseudo-element",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\components\\LandingPage.tsx",
+    "Page": "source",
+    "Owner": "LandingPage.tsx",
+    "CurrentRenderer": "fluent,react-icon-library,inline-svg,wrapper",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\components\\MobileHeader.tsx",
+    "Page": "source",
+    "Owner": "MobileHeader.tsx",
+    "CurrentRenderer": "wrapper",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\components\\Modal.tsx",
+    "Page": "source",
+    "Owner": "Modal.tsx",
+    "CurrentRenderer": "fluent,react-icon-library",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\components\\PopupModal.tsx",
+    "Page": "source",
+    "Owner": "PopupModal.tsx",
+    "CurrentRenderer": "fluent,react-icon-library,inline-svg,wrapper",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\components\\PredictiveDashboard.tsx",
+    "Page": "source",
+    "Owner": "PredictiveDashboard.tsx",
+    "CurrentRenderer": "fluent,react-icon-library",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\components\\PwaInstallController.tsx",
+    "Page": "source",
+    "Owner": "PwaInstallController.tsx",
+    "CurrentRenderer": "wrapper",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\components\\ScreenHeader.tsx",
+    "Page": "source",
+    "Owner": "ScreenHeader.tsx",
+    "CurrentRenderer": "fluent,react-icon-library",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\components\\TopMenu.tsx",
+    "Page": "source",
+    "Owner": "TopMenu.tsx",
+    "CurrentRenderer": "inline-svg,wrapper",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\components\\UtilityActionIcon.tsx",
+    "Page": "source",
+    "Owner": "UtilityActionIcon.tsx",
+    "CurrentRenderer": "wrapper",
+    "CurrentAsset": "/watany-v4/icons",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "partial"
+  },
+  {
+    "Component": "apps\\web-user\\src\\components\\VoiceMode.tsx",
+    "Page": "source",
+    "Owner": "VoiceMode.tsx",
+    "CurrentRenderer": "fluent,react-icon-library",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\components\\WatanyApprovedHome.tsx",
+    "Page": "source",
+    "Owner": "WatanyApprovedHome.tsx",
+    "CurrentRenderer": "legacy-asset",
+    "CurrentAsset": "/watany-assets",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\components\\WatanyCleanHome.tsx",
+    "Page": "source",
+    "Owner": "WatanyCleanHome.tsx",
+    "CurrentRenderer": "legacy-asset",
+    "CurrentAsset": "/watany-assets",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\components\\WatanyRasterCloneHome.tsx",
+    "Page": "source",
+    "Owner": "WatanyRasterCloneHome.tsx",
+    "CurrentRenderer": "legacy-asset",
+    "CurrentAsset": "/watany-assets",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\components\\WatanyV3FeatureLanding.tsx",
+    "Page": "source",
+    "Owner": "WatanyV3FeatureLanding.tsx",
+    "CurrentRenderer": "legacy-asset",
+    "CurrentAsset": "/watany-assets",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\components\\WatanyV3Home.tsx",
+    "Page": "source",
+    "Owner": "WatanyV3Home.tsx",
+    "CurrentRenderer": "legacy-asset",
+    "CurrentAsset": "/watany-assets",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\components\\WatanyV4Chrome.tsx",
+    "Page": "source",
+    "Owner": "WatanyV4Chrome.tsx",
+    "CurrentRenderer": "legacy-asset",
+    "CurrentAsset": "/watany-v4/icons",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\components\\WatanyV4FeatureLanding.tsx",
+    "Page": "source",
+    "Owner": "WatanyV4FeatureLanding.tsx",
+    "CurrentRenderer": "legacy-asset",
+    "CurrentAsset": "/watany-v4/icons",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\components\\WatanyV4Home.tsx",
+    "Page": "source",
+    "Owner": "WatanyV4Home.tsx",
+    "CurrentRenderer": "legacy-asset",
+    "CurrentAsset": "/watany-v4/icons",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\components\\WatanyVisualCloneHome.tsx",
+    "Page": "source",
+    "Owner": "WatanyVisualCloneHome.tsx",
+    "CurrentRenderer": "legacy-asset",
+    "CurrentAsset": "/watany-assets",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\components\\admin\\RecruitmentAdminPanel.tsx",
+    "Page": "source",
+    "Owner": "RecruitmentAdminPanel.tsx",
+    "CurrentRenderer": "fluent,react-icon-library",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\components\\admin\\SurveyAdminPanel.tsx",
+    "Page": "source",
+    "Owner": "SurveyAdminPanel.tsx",
+    "CurrentRenderer": "fluent,react-icon-library",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\components\\admin\\TaxiMobilityAdminPanel.tsx",
+    "Page": "source",
+    "Owner": "TaxiMobilityAdminPanel.tsx",
+    "CurrentRenderer": "fluent,react-icon-library",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\components\\chat\\sticky-hybrid-chat-launcher.css",
+    "Page": "source",
+    "Owner": "sticky-hybrid-chat-launcher.css",
+    "CurrentRenderer": "pseudo-element",
+    "CurrentAsset": "/watany-v4/icons",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\components\\chat\\StickyHybridChatLauncher.tsx",
+    "Page": "source",
+    "Owner": "StickyHybridChatLauncher.tsx",
+    "CurrentRenderer": "inline-svg,wrapper",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\components\\guided-helper\\watany-prelanding-guide.css",
+    "Page": "source",
+    "Owner": "watany-prelanding-guide.css",
+    "CurrentRenderer": "pseudo-element",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\components\\guided-helper\\WatanyPreLandingGuideProvider.tsx",
+    "Page": "source",
+    "Owner": "WatanyPreLandingGuideProvider.tsx",
+    "CurrentRenderer": "legacy-asset",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\components\\guided-helper\\WatanyWelcomeGuide.tsx",
+    "Page": "source",
+    "Owner": "WatanyWelcomeGuide.tsx",
+    "CurrentRenderer": "wrapper",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\components\\icons\\WatanyFeatureIcon.tsx",
+    "Page": "source",
+    "Owner": "WatanyFeatureIcon.tsx",
+    "CurrentRenderer": "wrapper",
+    "CurrentAsset": "/watany-v4/icons",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "partial"
+  },
+  {
+    "Component": "apps\\web-user\\src\\components\\icons\\WatanyFluentIcon.tsx",
+    "Page": "source",
+    "Owner": "WatanyFluentIcon.tsx",
+    "CurrentRenderer": "wrapper",
+    "CurrentAsset": "/watany-v4/icons",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "partial"
+  },
+  {
+    "Component": "apps\\web-user\\src\\components\\koudama-icons\\koudamaFeatureIcon.css",
+    "Page": "source",
+    "Owner": "koudamaFeatureIcon.css",
+    "CurrentRenderer": "pseudo-element",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\components\\koudama-icons\\KoudamaFeatureIcon.tsx",
+    "Page": "source",
+    "Owner": "KoudamaFeatureIcon.tsx",
+    "CurrentRenderer": "wrapper",
+    "CurrentAsset": "/watany-v4/icons",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "partial"
+  },
+  {
+    "Component": "apps\\web-user\\src\\components\\layouts\\WatanyMobileShell.tsx",
+    "Page": "source",
+    "Owner": "WatanyMobileShell.tsx",
+    "CurrentRenderer": "fluent,react-icon-library",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\components\\layouts\\WatanyPublicShellV20.tsx",
+    "Page": "source",
+    "Owner": "WatanyPublicShellV20.tsx",
+    "CurrentRenderer": "wrapper",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\components\\navigation\\BottomTabRailNav.tsx",
+    "Page": "source",
+    "Owner": "BottomTabRailNav.tsx",
+    "CurrentRenderer": "wrapper",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\components\\navigation\\HamburgerNav.tsx",
+    "Page": "source",
+    "Owner": "HamburgerNav.tsx",
+    "CurrentRenderer": "wrapper",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\components\\watanybot\\koudama-homepage.css",
+    "Page": "source",
+    "Owner": "koudama-homepage.css",
+    "CurrentRenderer": "pseudo-element",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\components\\watanybot\\WatanyAppIcon.tsx",
+    "Page": "source",
+    "Owner": "WatanyAppIcon.tsx",
+    "CurrentRenderer": "legacy-asset,wrapper",
+    "CurrentAsset": "/watany-assets",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\components\\watanybot\\WatanyDrawerPage.tsx",
+    "Page": "source",
+    "Owner": "WatanyDrawerPage.tsx",
+    "CurrentRenderer": "fluent,react-icon-library,wrapper",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\components\\worldcup\\worldCupFeatures.ts",
+    "Page": "source",
+    "Owner": "worldCupFeatures.ts",
+    "CurrentRenderer": "fluent,react-icon-library,inline-svg",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\components\\worldcup\\WorldCupMatchDetail.tsx",
+    "Page": "source",
+    "Owner": "WorldCupMatchDetail.tsx",
+    "CurrentRenderer": "fluent,react-icon-library",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\components\\worldcup\\WorldCupPredictionPolls.tsx",
+    "Page": "source",
+    "Owner": "WorldCupPredictionPolls.tsx",
+    "CurrentRenderer": "inline-svg",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\data\\watanyHomeIcons.ts",
+    "Page": "source",
+    "Owner": "watanyHomeIcons.ts",
+    "CurrentRenderer": "legacy-asset",
+    "CurrentAsset": "/watany-assets",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\data\\watanyRasterIcons.ts",
+    "Page": "source",
+    "Owner": "watanyRasterIcons.ts",
+    "CurrentRenderer": "legacy-asset",
+    "CurrentAsset": "/watany-assets",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\data\\watanyVisualIcons.ts",
+    "Page": "source",
+    "Owner": "watanyVisualIcons.ts",
+    "CurrentRenderer": "legacy-asset",
+    "CurrentAsset": "/watany-assets",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\features\\al-wafiyat\\AlWafiyatCompactListing.css",
+    "Page": "source",
+    "Owner": "AlWafiyatCompactListing.css",
+    "CurrentRenderer": "pseudo-element",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\features\\auth\\MotanyLoginLanding.tsx",
+    "Page": "source",
+    "Owner": "MotanyLoginLanding.tsx",
+    "CurrentRenderer": "inline-svg",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\features\\guided-help\\watanyGuidedHelpModalFreezeSafety.css",
+    "Page": "source",
+    "Owner": "watanyGuidedHelpModalFreezeSafety.css",
+    "CurrentRenderer": "pseudo-element",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\features\\help-center-preview\\help-center-preview.css",
+    "Page": "source",
+    "Owner": "help-center-preview.css",
+    "CurrentRenderer": "legacy-asset",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\features\\help-center-preview\\HelpCenterPreviewPage.tsx",
+    "Page": "source",
+    "Owner": "HelpCenterPreviewPage.tsx",
+    "CurrentRenderer": "wrapper",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\features\\icons\\watanyIconSystemV2.tsx",
+    "Page": "source",
+    "Owner": "watanyIconSystemV2.tsx",
+    "CurrentRenderer": "inline-svg",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\features\\koudama-agent5\\KoudamaAgent5Home.css",
+    "Page": "source",
+    "Owner": "KoudamaAgent5Home.css",
+    "CurrentRenderer": "pseudo-element",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\features\\koudama-agent5\\KoudamaAgent5HomeView.tsx",
+    "Page": "source",
+    "Owner": "KoudamaAgent5HomeView.tsx",
+    "CurrentRenderer": "wrapper",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\features\\koudama-agent5\\KoudamaAgent5Icons.tsx",
+    "Page": "source",
+    "Owner": "KoudamaAgent5Icons.tsx",
+    "CurrentRenderer": "inline-svg,wrapper",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\features\\koudama-categories\\KoudamaDemo01AllIconsLayout.css",
+    "Page": "source",
+    "Owner": "KoudamaDemo01AllIconsLayout.css",
+    "CurrentRenderer": "pseudo-element",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\features\\market-jobs-mobile-landing\\market-jobs-mobile-landing.css",
+    "Page": "source",
+    "Owner": "market-jobs-mobile-landing.css",
+    "CurrentRenderer": "pseudo-element",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\features\\market-mobile-commerce\\market-mobile-commerce.css",
+    "Page": "source",
+    "Owner": "market-mobile-commerce.css",
+    "CurrentRenderer": "pseudo-element",
+    "CurrentAsset": "/watany-v4/icons",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\features\\smart-attention-native\\SmartAttentionDashboardIcons.css",
+    "Page": "source",
+    "Owner": "SmartAttentionDashboardIcons.css",
+    "CurrentRenderer": "pseudo-element",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\features\\superadmin-users\\superadminUsers.css",
+    "Page": "source",
+    "Owner": "superadminUsers.css",
+    "CurrentRenderer": "pseudo-element",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\features\\taxi\\taxi-mobile-commerce.css",
+    "Page": "source",
+    "Owner": "taxi-mobile-commerce.css",
+    "CurrentRenderer": "pseudo-element",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\features\\taxi\\TaxiHomeLink.tsx",
+    "Page": "source",
+    "Owner": "TaxiHomeLink.tsx",
+    "CurrentRenderer": "fluent,react-icon-library",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\features\\taxi\\TaxiMobileCommerceLayout.tsx",
+    "Page": "source",
+    "Owner": "TaxiMobileCommerceLayout.tsx",
+    "CurrentRenderer": "fluent,react-icon-library",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\features\\taxi\\TaxiTrustedMobilityPage.tsx",
+    "Page": "source",
+    "Owner": "TaxiTrustedMobilityPage.tsx",
+    "CurrentRenderer": "fluent,react-icon-library",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\features\\ui-platform\\WatanyUiPlatform.tsx",
+    "Page": "source",
+    "Owner": "WatanyUiPlatform.tsx",
+    "CurrentRenderer": "inline-svg,wrapper",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\features\\ui-platform\\WatanyUiPlatformPreview.tsx",
+    "Page": "source",
+    "Owner": "WatanyUiPlatformPreview.tsx",
+    "CurrentRenderer": "wrapper",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\features\\ui-platform\\WatanyUiPlatformV1.tsx",
+    "Page": "source",
+    "Owner": "WatanyUiPlatformV1.tsx",
+    "CurrentRenderer": "inline-svg,wrapper",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\features\\unified-pillars\\pillar-config.ts",
+    "Page": "source",
+    "Owner": "pillar-config.ts",
+    "CurrentRenderer": "fluent,react-icon-library,inline-svg",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\features\\unified-pillars\\UnifiedPillarPage.tsx",
+    "Page": "source",
+    "Owner": "UnifiedPillarPage.tsx",
+    "CurrentRenderer": "inline-svg",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\features\\universal-feature-menu\\UniversalFeatureMenu.tsx",
+    "Page": "source",
+    "Owner": "UniversalFeatureMenu.tsx",
+    "CurrentRenderer": "wrapper",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\lib\\apparatusIcons.ts",
+    "Page": "source",
+    "Owner": "apparatusIcons.ts",
+    "CurrentRenderer": "legacy-asset",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\pages\\AlertsPage.tsx",
+    "Page": "source",
+    "Owner": "AlertsPage.tsx",
+    "CurrentRenderer": "fluent,react-icon-library,wrapper",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\pages\\BookmarksPage.tsx",
+    "Page": "source",
+    "Owner": "BookmarksPage.tsx",
+    "CurrentRenderer": "fluent,react-icon-library,wrapper",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\pages\\CasesPage.tsx",
+    "Page": "source",
+    "Owner": "CasesPage.tsx",
+    "CurrentRenderer": "fluent,react-icon-library,wrapper",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\pages\\ChatSessionsPage.tsx",
+    "Page": "source",
+    "Owner": "ChatSessionsPage.tsx",
+    "CurrentRenderer": "fluent,react-icon-library,wrapper",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\pages\\CommunityThreadsPage.tsx",
+    "Page": "source",
+    "Owner": "CommunityThreadsPage.tsx",
+    "CurrentRenderer": "fluent,react-icon-library",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\pages\\DisasterPage.tsx",
+    "Page": "source",
+    "Owner": "DisasterPage.tsx",
+    "CurrentRenderer": "fluent,react-icon-library,inline-svg,wrapper",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\pages\\FakeNewsPage.tsx",
+    "Page": "source",
+    "Owner": "FakeNewsPage.tsx",
+    "CurrentRenderer": "fluent,react-icon-library",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\pages\\FaqPage.tsx",
+    "Page": "source",
+    "Owner": "FaqPage.tsx",
+    "CurrentRenderer": "fluent,react-icon-library",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\pages\\LegalPage.legacy-koudama-20260604-090832.tsx",
+    "Page": "source",
+    "Owner": "LegalPage.legacy-koudama-20260604-090832.tsx",
+    "CurrentRenderer": "fluent,react-icon-library",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\pages\\LoginPageOriginal.tsx",
+    "Page": "source",
+    "Owner": "LoginPageOriginal.tsx",
+    "CurrentRenderer": "fluent,react-icon-library",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\pages\\MediaCenterPage.tsx",
+    "Page": "source",
+    "Owner": "MediaCenterPage.tsx",
+    "CurrentRenderer": "fluent,react-icon-library,inline-svg",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\pages\\MessagesPage.tsx",
+    "Page": "source",
+    "Owner": "MessagesPage.tsx",
+    "CurrentRenderer": "fluent,react-icon-library,wrapper",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\pages\\NewsPage.tsx",
+    "Page": "source",
+    "Owner": "NewsPage.tsx",
+    "CurrentRenderer": "fluent,react-icon-library",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\pages\\NotificationsPage.test.tsx",
+    "Page": "source",
+    "Owner": "NotificationsPage.test.tsx",
+    "CurrentRenderer": "wrapper",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\pages\\NotificationsPage.tsx",
+    "Page": "source",
+    "Owner": "NotificationsPage.tsx",
+    "CurrentRenderer": "fluent,react-icon-library,wrapper",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\pages\\OfficialServicesPage.tsx",
+    "Page": "source",
+    "Owner": "OfficialServicesPage.tsx",
+    "CurrentRenderer": "fluent,react-icon-library",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\pages\\ProfilePage.tsx",
+    "Page": "source",
+    "Owner": "ProfilePage.tsx",
+    "CurrentRenderer": "fluent,react-icon-library,inline-svg,wrapper",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\pages\\RecruitmentPage.tsx",
+    "Page": "source",
+    "Owner": "RecruitmentPage.tsx",
+    "CurrentRenderer": "fluent,react-icon-library",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\pages\\RegisterPage.tsx",
+    "Page": "source",
+    "Owner": "RegisterPage.tsx",
+    "CurrentRenderer": "fluent,react-icon-library",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\pages\\SalaryPage.tsx",
+    "Page": "source",
+    "Owner": "SalaryPage.tsx",
+    "CurrentRenderer": "fluent,react-icon-library",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\pages\\SavedChatsPage.tsx",
+    "Page": "source",
+    "Owner": "SavedChatsPage.tsx",
+    "CurrentRenderer": "fluent,react-icon-library",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\pages\\SettingsPage.tsx",
+    "Page": "source",
+    "Owner": "SettingsPage.tsx",
+    "CurrentRenderer": "fluent,react-icon-library",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\pages\\SuperAdminPage.tsx",
+    "Page": "source",
+    "Owner": "SuperAdminPage.tsx",
+    "CurrentRenderer": "fluent,react-icon-library,inline-svg,wrapper",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\pages\\SurveyDetailPage.tsx",
+    "Page": "source",
+    "Owner": "SurveyDetailPage.tsx",
+    "CurrentRenderer": "fluent,react-icon-library,wrapper",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\pages\\SurveyPage.tsx",
+    "Page": "source",
+    "Owner": "SurveyPage.tsx",
+    "CurrentRenderer": "fluent,react-icon-library",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\pages\\SurveyResultsPage.tsx",
+    "Page": "source",
+    "Owner": "SurveyResultsPage.tsx",
+    "CurrentRenderer": "fluent,react-icon-library,wrapper",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\pages\\TickerPage.tsx",
+    "Page": "source",
+    "Owner": "TickerPage.tsx",
+    "CurrentRenderer": "fluent,react-icon-library,inline-svg",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\pages\\UnifiedPillarShowcasePage.tsx",
+    "Page": "source",
+    "Owner": "UnifiedPillarShowcasePage.tsx",
+    "CurrentRenderer": "inline-svg",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\pages\\UsefulLinksPage.tsx",
+    "Page": "source",
+    "Owner": "UsefulLinksPage.tsx",
+    "CurrentRenderer": "fluent,react-icon-library",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\pages\\VoicePage.tsx",
+    "Page": "source",
+    "Owner": "VoicePage.tsx",
+    "CurrentRenderer": "fluent,react-icon-library",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\styles\\admin-procedures.css",
+    "Page": "source",
+    "Owner": "admin-procedures.css",
+    "CurrentRenderer": "pseudo-element",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\styles\\apex-full-surface-v274.css",
+    "Page": "source",
+    "Owner": "apex-full-surface-v274.css",
+    "CurrentRenderer": "legacy-asset,pseudo-element",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\styles\\Auth.css",
+    "Page": "source",
+    "Owner": "Auth.css",
+    "CurrentRenderer": "legacy-asset,pseudo-element",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\styles\\disaster.css",
+    "Page": "source",
+    "Owner": "disaster.css",
+    "CurrentRenderer": "pseudo-element",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\styles\\elite.css",
+    "Page": "source",
+    "Owner": "elite.css",
+    "CurrentRenderer": "pseudo-element",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\styles\\groups.css",
+    "Page": "source",
+    "Owner": "groups.css",
+    "CurrentRenderer": "legacy-asset,pseudo-element",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\styles\\hybrid-shell.css",
+    "Page": "source",
+    "Owner": "hybrid-shell.css",
+    "CurrentRenderer": "pseudo-element",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\styles\\jobs.css",
+    "Page": "source",
+    "Owner": "jobs.css",
+    "CurrentRenderer": "pseudo-element",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\styles\\MfeSchoolGrantsCalculator.css",
+    "Page": "source",
+    "Owner": "MfeSchoolGrantsCalculator.css",
+    "CurrentRenderer": "pseudo-element",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\styles\\mobile.css",
+    "Page": "source",
+    "Owner": "mobile.css",
+    "CurrentRenderer": "pseudo-element",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\styles\\motanyLoginLanding.css",
+    "Page": "source",
+    "Owner": "motanyLoginLanding.css",
+    "CurrentRenderer": "legacy-asset,pseudo-element",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\styles\\procedures.css",
+    "Page": "source",
+    "Owner": "procedures.css",
+    "CurrentRenderer": "pseudo-element",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\styles\\SalaryCalculator.css",
+    "Page": "source",
+    "Owner": "SalaryCalculator.css",
+    "CurrentRenderer": "pseudo-element",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\styles\\superadmin-critical-dashboard.css",
+    "Page": "source",
+    "Owner": "superadmin-critical-dashboard.css",
+    "CurrentRenderer": "pseudo-element",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\styles\\superadmin.css",
+    "Page": "source",
+    "Owner": "superadmin.css",
+    "CurrentRenderer": "pseudo-element",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\styles\\watany-approved-home-icons-runtime.css",
+    "Page": "source",
+    "Owner": "watany-approved-home-icons-runtime.css",
+    "CurrentRenderer": "legacy-asset,pseudo-element",
+    "CurrentAsset": "/watany-v4/icons",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\styles\\watany-approved-home-icons.css",
+    "Page": "source",
+    "Owner": "watany-approved-home-icons.css",
+    "CurrentRenderer": "legacy-asset,pseudo-element",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\styles\\watany-compact-procedures-viewer.css",
+    "Page": "source",
+    "Owner": "watany-compact-procedures-viewer.css",
+    "CurrentRenderer": "pseudo-element",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\styles\\watany-homepage-all-level-icons-unified.css",
+    "Page": "source",
+    "Owner": "watany-homepage-all-level-icons-unified.css",
+    "CurrentRenderer": "pseudo-element",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\styles\\watany-homepage-icons-authority.css",
+    "Page": "source",
+    "Owner": "watany-homepage-icons-authority.css",
+    "CurrentRenderer": "legacy-asset",
+    "CurrentAsset": "/watany-assets",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\styles\\watany-mobile-containment.css",
+    "Page": "source",
+    "Owner": "watany-mobile-containment.css",
+    "CurrentRenderer": "pseudo-element",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\styles\\watany-universal-theme-content.css",
+    "Page": "source",
+    "Owner": "watany-universal-theme-content.css",
+    "CurrentRenderer": "pseudo-element",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\styles\\watany-v1-stabilizer.css",
+    "Page": "source",
+    "Owner": "watany-v1-stabilizer.css",
+    "CurrentRenderer": "pseudo-element",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\styles\\watany-v24-canonical-mobile-shell.css",
+    "Page": "source",
+    "Owner": "watany-v24-canonical-mobile-shell.css",
+    "CurrentRenderer": "pseudo-element",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\styles\\watanybot-icon-grid-sign-propagation-fix.css",
+    "Page": "source",
+    "Owner": "watanybot-icon-grid-sign-propagation-fix.css",
+    "CurrentRenderer": "pseudo-element",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\styles\\watanyCleanHome.css",
+    "Page": "source",
+    "Owner": "watanyCleanHome.css",
+    "CurrentRenderer": "pseudo-element",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\styles\\watanyRasterCloneHome.css",
+    "Page": "source",
+    "Owner": "watanyRasterCloneHome.css",
+    "CurrentRenderer": "legacy-asset,pseudo-element",
+    "CurrentAsset": "/watany-assets",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\styles\\wc-sticky-header.css",
+    "Page": "source",
+    "Owner": "wc-sticky-header.css",
+    "CurrentRenderer": "pseudo-element",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\styles\\world-cup.css",
+    "Page": "source",
+    "Owner": "world-cup.css",
+    "CurrentRenderer": "pseudo-element",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\styles\\watany-platform-v3\\foundations.css",
+    "Page": "source",
+    "Owner": "foundations.css",
+    "CurrentRenderer": "pseudo-element",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\theme\\watany-v4\\base.css",
+    "Page": "source",
+    "Owner": "base.css",
+    "CurrentRenderer": "pseudo-element",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\theme\\watany-v4\\components.css",
+    "Page": "source",
+    "Owner": "components.css",
+    "CurrentRenderer": "pseudo-element",
+    "CurrentAsset": "/watany-v4/icons",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\theme\\watany-v4\\legacy-layer.css",
+    "Page": "source",
+    "Owner": "legacy-layer.css",
+    "CurrentRenderer": "wrapper",
+    "CurrentAsset": "/watany-v4/icons",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\themes\\koudama-app-layout-theme.css",
+    "Page": "source",
+    "Owner": "koudama-app-layout-theme.css",
+    "CurrentRenderer": "legacy-asset",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\themes\\watany-ui-light-contrast-chat.css",
+    "Page": "source",
+    "Owner": "watany-ui-light-contrast-chat.css",
+    "CurrentRenderer": "legacy-asset",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\themes\\watany-unified-smartphone-tokens.css",
+    "Page": "source",
+    "Owner": "watany-unified-smartphone-tokens.css",
+    "CurrentRenderer": "legacy-asset",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\themes\\watany-v1.18.0-theme.css",
+    "Page": "source",
+    "Owner": "watany-v1.18.0-theme.css",
+    "CurrentRenderer": "pseudo-element",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\themes\\watany-v1.18.1-current-baseline-full-theme.css",
+    "Page": "source",
+    "Owner": "watany-v1.18.1-current-baseline-full-theme.css",
+    "CurrentRenderer": "pseudo-element",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\themes\\watany-v1.19.0.20-final-cascade.css",
+    "Page": "source",
+    "Owner": "watany-v1.19.0.20-final-cascade.css",
+    "CurrentRenderer": "pseudo-element",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\themes\\watany-v1.19.0.22-final-cascade.css",
+    "Page": "source",
+    "Owner": "watany-v1.19.0.22-final-cascade.css",
+    "CurrentRenderer": "pseudo-element",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  },
+  {
+    "Component": "apps\\web-user\\src\\watany-theme-sdk\\watany-theme-live.css",
+    "Page": "source",
+    "Owner": "watany-theme-live.css",
+    "CurrentRenderer": "legacy-asset,pseudo-element",
+    "CurrentAsset": "",
+    "ReplacementAsset": "/watany-v4/icons",
+    "RegistryKey": "unresolved",
+    "MigrationStatus": "pending"
+  }
+]

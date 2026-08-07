@@ -1,0 +1,7 @@
+﻿export type ApplicantKind = "VETERAN" | "FAMILY_MEMBER" | "FREELANCER" | "VOLUNTEER";
+export type SkillCategory = "CARPENTRY" | "ELECTRICAL" | "PLUMBING" | "PAINTING" | "DRIVING" | "SECURITY" | "LOGISTICS" | "ADMIN" | "IT" | "MAINTENANCE" | "OTHER";
+export interface CivilianSkillOption { id: string; labelAr: string; labelEn: string; category: SkillCategory; aliasesAr: string[]; aliasesEn: string[]; }
+export interface FreelancerProfile { id: string; userId: string; displayName: string; phone?: string; location?: string; skillIds: string[]; availability: "AVAILABLE" | "BUSY" | "HIDDEN"; notes?: string; verified: boolean; createdAt: string; updatedAt: string; }
+export interface CandidateProfile { id: string; userId: string; applicantKind: ApplicantKind; location?: string; skillIds: string[]; preferredOpportunityTypes: string[]; availability?: string; notes?: string; }
+export interface MatchScoreBreakdown { skill: number; location: number; type: number; availability: number; veteranFit: number; total: number; reasonsAr: string[]; }
+export interface OpportunityMatchResult { opportunityId: string; candidateId: string; score: number; breakdown: MatchScoreBreakdown; explanationAr: string; }

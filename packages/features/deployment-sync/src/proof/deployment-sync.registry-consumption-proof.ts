@@ -1,0 +1,2 @@
+import { createDeploymentSyncHostRegistration } from '../host-integration/deployment-sync.host-registration';
+export function proveDeploymentSyncRegistryConsumption() { const registration = createDeploymentSyncHostRegistration(); return { ok: registration.pluginKey === 'deployment-sync' && registration.manifest.exportable && registration.manifest.replaceable && registration.manifest.adminConfigurable, pluginKey: registration.pluginKey, status: registration.status }; }

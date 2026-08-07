@@ -1,0 +1,11 @@
+{
+  "governorates": 8,
+  "districts": 26,
+  "municipalities": 0,
+  "localities": 1545,
+  "aliases": 3090,
+  "localitiesWithCoordinates": 1545,
+  "missingArabic": 0,
+  "duplicateIds": 0,
+  "orphanRows": 0
+}

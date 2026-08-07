@@ -1,0 +1,714 @@
+:root,
+html[data-theme="watani"] {
+  --koudama-page-bg: #faf7f0;
+  --koudama-page-wash: rgba(199, 165, 90, 0.12);
+  --koudama-page-wash-alt: rgba(0, 168, 167, 0.08);
+  --koudama-surface: rgba(255, 255, 255, 0.94);
+  --koudama-surface-strong: #ffffff;
+  --koudama-text: #2c2b2a;
+  --koudama-text-soft: #5f5d59;
+  --koudama-border: rgba(44, 43, 42, 0.12);
+  --koudama-shadow: 0 22px 48px rgba(44, 43, 42, 0.12);
+  --koudama-accent: #c7a55a;
+  --koudama-accent-strong: #a78742;
+  --koudama-chip: rgba(199, 165, 90, 0.12);
+  --koudama-primary: #1478d7;
+  --koudama-primary-soft: rgba(20, 120, 215, 0.12);
+  --koudama-success: #2e7d32;
+  --koudama-danger: #d32f2f;
+}
+
+html[data-theme="wadih"] {
+  --koudama-page-bg: #000000;
+  --koudama-page-wash: rgba(255, 183, 77, 0.16);
+  --koudama-page-wash-alt: rgba(114, 182, 255, 0.12);
+  --koudama-surface: rgba(23, 23, 23, 0.94);
+  --koudama-surface-strong: #111111;
+  --koudama-text: #ffffff;
+  --koudama-text-soft: #eeeeee;
+  --koudama-border: rgba(255, 255, 255, 0.2);
+  --koudama-shadow: 0 22px 48px rgba(0, 0, 0, 0.42);
+  --koudama-accent: #ffb74d;
+  --koudama-accent-strong: #ffca7f;
+  --koudama-chip: rgba(255, 183, 77, 0.18);
+  --koudama-primary: #72b6ff;
+  --koudama-primary-soft: rgba(114, 182, 255, 0.2);
+  --koudama-success: #71e58b;
+  --koudama-danger: #ff6b8b;
+}
+
+html[data-theme="layli"] {
+  --koudama-page-bg: #121212;
+  --koudama-page-wash: rgba(100, 181, 246, 0.16);
+  --koudama-page-wash-alt: rgba(77, 208, 225, 0.1);
+  --koudama-surface: rgba(30, 30, 30, 0.94);
+  --koudama-surface-strong: #1e1e1e;
+  --koudama-text: #ededed;
+  --koudama-text-soft: #bdbdbd;
+  --koudama-border: rgba(255, 255, 255, 0.16);
+  --koudama-shadow: 0 22px 48px rgba(0, 0, 0, 0.4);
+  --koudama-accent: #64b5f6;
+  --koudama-accent-strong: #8fcbfb;
+  --koudama-chip: rgba(100, 181, 246, 0.18);
+  --koudama-primary: #64b5f6;
+  --koudama-primary-soft: rgba(100, 181, 246, 0.18);
+  --koudama-success: #66bb6a;
+  --koudama-danger: #ef5350;
+}
+
+html[data-theme="nahasi"] {
+  --koudama-page-bg: #f6efe5;
+  --koudama-page-wash: rgba(157, 125, 81, 0.14);
+  --koudama-page-wash-alt: rgba(73, 136, 232, 0.08);
+  --koudama-surface: rgba(255, 253, 249, 0.95);
+  --koudama-surface-strong: #fffdf9;
+  --koudama-text: #3b2e22;
+  --koudama-text-soft: #725f4a;
+  --koudama-border: rgba(59, 46, 34, 0.12);
+  --koudama-shadow: 0 22px 48px rgba(59, 46, 34, 0.12);
+  --koudama-accent: #9d7d51;
+  --koudama-accent-strong: #7e6240;
+  --koudama-chip: rgba(157, 125, 81, 0.12);
+  --koudama-primary: #4988e8;
+  --koudama-primary-soft: rgba(73, 136, 232, 0.12);
+  --koudama-success: #6ea354;
+  --koudama-danger: #e94b61;
+}
+
+html[data-theme="askari"] {
+  --koudama-page-bg: #f2f0e6;
+  --koudama-page-wash: rgba(139, 123, 60, 0.14);
+  --koudama-page-wash-alt: rgba(85, 127, 101, 0.08);
+  --koudama-surface: rgba(255, 255, 255, 0.95);
+  --koudama-surface-strong: #ffffff;
+  --koudama-text: #2c3a2b;
+  --koudama-text-soft: #5f6f5d;
+  --koudama-border: rgba(44, 58, 43, 0.14);
+  --koudama-shadow: 0 22px 48px rgba(44, 58, 43, 0.12);
+  --koudama-accent: #8b7b3c;
+  --koudama-accent-strong: #6d612f;
+  --koudama-chip: rgba(139, 123, 60, 0.12);
+  --koudama-primary: #557a95;
+  --koudama-primary-soft: rgba(85, 122, 149, 0.12);
+  --koudama-success: #4d8a49;
+  --koudama-danger: #b71c1c;
+}
+
+html[data-theme="arzi"] {
+  --koudama-page-bg: #f0f4ec;
+  --koudama-page-wash: rgba(93, 138, 111, 0.14);
+  --koudama-page-wash-alt: rgba(17, 133, 111, 0.08);
+  --koudama-surface: rgba(255, 255, 255, 0.95);
+  --koudama-surface-strong: #ffffff;
+  --koudama-text: #1e3a2b;
+  --koudama-text-soft: #587565;
+  --koudama-border: rgba(30, 58, 43, 0.13);
+  --koudama-shadow: 0 22px 48px rgba(30, 58, 43, 0.12);
+  --koudama-accent: #5d8a6f;
+  --koudama-accent-strong: #466954;
+  --koudama-chip: rgba(93, 138, 111, 0.12);
+  --koudama-primary: #2e7da8;
+  --koudama-primary-soft: rgba(46, 125, 168, 0.12);
+  --koudama-success: #168a54;
+  --koudama-danger: #d0444d;
+}
+
+html[data-theme="azraq"] {
+  --koudama-page-bg: #f0f4f8;
+  --koudama-page-wash: rgba(74, 144, 217, 0.14);
+  --koudama-page-wash-alt: rgba(0, 155, 181, 0.08);
+  --koudama-surface: rgba(255, 255, 255, 0.95);
+  --koudama-surface-strong: #ffffff;
+  --koudama-text: #1a2b3c;
+  --koudama-text-soft: #596b7c;
+  --koudama-border: rgba(26, 43, 60, 0.13);
+  --koudama-shadow: 0 22px 48px rgba(26, 43, 60, 0.12);
+  --koudama-accent: #4a90d9;
+  --koudama-accent-strong: #2e71b6;
+  --koudama-chip: rgba(74, 144, 217, 0.12);
+  --koudama-primary: #0877c9;
+  --koudama-primary-soft: rgba(8, 119, 201, 0.12);
+  --koudama-success: #28a77c;
+  --koudama-danger: #d13e64;
+}
+
+html[data-theme="ramli"] {
+  --koudama-page-bg: #f5f0e8;
+  --koudama-page-wash: rgba(166, 144, 96, 0.14);
+  --koudama-page-wash-alt: rgba(108, 155, 143, 0.08);
+  --koudama-surface: rgba(255, 255, 255, 0.95);
+  --koudama-surface-strong: #ffffff;
+  --koudama-text: #3a352e;
+  --koudama-text-soft: #746b5e;
+  --koudama-border: rgba(58, 53, 46, 0.13);
+  --koudama-shadow: 0 22px 48px rgba(58, 53, 46, 0.12);
+  --koudama-accent: #a69060;
+  --koudama-accent-strong: #816f47;
+  --koudama-chip: rgba(166, 144, 96, 0.12);
+  --koudama-primary: #697fa8;
+  --koudama-primary-soft: rgba(105, 127, 168, 0.12);
+  --koudama-success: #6f914c;
+  --koudama-danger: #c35b52;
+}
+
+.watany-drawer-page {
+  min-height: 100dvh;
+  padding: 10px 10px 188px;
+  color: var(--koudama-text);
+  background:
+    radial-gradient(circle at 12% 6%, var(--koudama-page-wash), transparent 28%),
+    radial-gradient(circle at 88% 10%, var(--koudama-page-wash-alt), transparent 26%),
+    var(--koudama-page-bg);
+}
+
+.watany-drawer-phone {
+  width: min(100%, 560px);
+  margin: 0 auto;
+  display: grid;
+  gap: 18px;
+}
+
+.koudama-home__hero,
+.koudama-home__section,
+.watany-runtime-debug,
+.koudama-home__panel {
+  border: 1px solid var(--koudama-border);
+  background: var(--koudama-surface);
+  box-shadow: var(--koudama-shadow);
+}
+
+.koudama-home__hero {
+  display: grid;
+  gap: 16px;
+  padding: 18px;
+  border-radius: 30px;
+  backdrop-filter: blur(18px);
+  box-shadow:
+    0 26px 54px rgba(44, 43, 42, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.65);
+}
+
+.koudama-home__status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.koudama-home__badge,
+.koudama-home__theme-chip,
+.koudama-home__preview-chip,
+.koudama-home__panel-chip,
+.koudama-home__news-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 34px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: var(--koudama-chip);
+  color: var(--koudama-text);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.koudama-home__hero h1,
+.koudama-home__section h2,
+.koudama-home__panel h2,
+.koudama-home__panel h3 {
+  margin: 0;
+}
+
+.koudama-home__hero-copy {
+  display: grid;
+  gap: 8px;
+}
+
+.koudama-home__hero-copy h1 {
+  font-size: clamp(1.5rem, 2vw + 1rem, 2rem);
+  line-height: 1.35;
+}
+
+.koudama-home__hero-copy p,
+.koudama-home__section-head p,
+.koudama-home__panel-copy p,
+.koudama-home__news-copy time,
+.watany-runtime-debug__note {
+  margin: 0;
+  color: var(--koudama-text-soft);
+  line-height: 1.8;
+}
+
+.koudama-home__hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.koudama-home__action,
+.koudama-home__category,
+.koudama-home__panel-close,
+.koudama-home__tile,
+.koudama-home__theme-option,
+.watany-runtime-debug__btn {
+  appearance: none;
+  border: 1px solid var(--koudama-border);
+  background: var(--koudama-surface-strong);
+  color: var(--koudama-text);
+  font: inherit;
+}
+
+.koudama-home__action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 0 16px;
+  border-radius: 16px;
+  text-decoration: none;
+  font-weight: 800;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+}
+
+.koudama-home__action--primary {
+  border-color: transparent;
+  background: linear-gradient(135deg, var(--koudama-accent), var(--koudama-accent-strong));
+  color: #ffffff;
+}
+
+.koudama-home__action--ghost {
+  background: color-mix(in srgb, var(--koudama-surface-strong) 90%, var(--koudama-accent) 10%);
+}
+
+.koudama-home__action--full {
+  width: 100%;
+}
+
+.koudama-home__section {
+  display: grid;
+  gap: 14px;
+  padding: 16px;
+  border-radius: 28px;
+  box-shadow:
+    0 22px 46px rgba(44, 43, 42, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.56);
+}
+
+.koudama-home__section-head {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.koudama-home__categories {
+  display: grid;
+  gap: 12px;
+}
+
+.koudama-home__category {
+  display: grid;
+  gap: 12px;
+  width: 100%;
+  inline-size: 100% !important;
+  min-inline-size: 0 !important;
+  max-inline-size: none !important;
+  justify-self: stretch !important;
+  align-self: stretch !important;
+  justify-items: stretch !important;
+  align-items: stretch !important;
+  justify-content: normal !important;
+  padding: 14px;
+  border-radius: 22px;
+  text-align: start;
+  background:
+    linear-gradient(180deg, var(--koudama-surface-strong), color-mix(in srgb, var(--koudama-surface-strong) 92%, var(--koudama-page-bg) 8%));
+  box-shadow:
+    0 16px 30px rgba(15, 23, 42, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+}
+
+.koudama-home__category-top,
+.koudama-home__news-link,
+.koudama-home__match-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.koudama-home__category-title {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.koudama-home__category-title strong {
+  font-size: 1rem;
+}
+
+.koudama-home__count {
+  color: var(--koudama-primary);
+  font-weight: 900;
+  flex: 0 0 auto;
+}
+
+.koudama-home__preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.koudama-home__preview-chip {
+  background: var(--koudama-primary-soft);
+  color: var(--koudama-primary);
+}
+
+.koudama-home__focus-grid,
+.koudama-home__panel-grid,
+.koudama-home__themes,
+.koudama-home__matches-grid {
+  display: grid;
+  gap: 10px;
+}
+
+.koudama-home__focus-grid,
+.koudama-home__themes {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.koudama-home__panel-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.koudama-home__tile,
+.koudama-home__theme-option,
+.koudama-home__news-link,
+.koudama-home__match-link {
+  border-radius: 24px;
+  padding: 12px;
+  text-decoration: none;
+  box-shadow:
+    0 18px 30px rgba(15, 23, 42, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.64);
+}
+
+.koudama-home__tile {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  min-height: 156px;
+  text-align: center;
+  cursor: pointer;
+  background:
+    linear-gradient(180deg, var(--koudama-surface-strong), color-mix(in srgb, var(--koudama-surface-strong) 90%, var(--koudama-page-bg) 10%));
+}
+
+.koudama-home__tile-icon {
+  position: relative;
+  --watany-icon-shell-size: 72px;
+  --watany-icon-shell-radius: 22px;
+  --watany-icon-shell-border: 3px;
+  --watany-icon-glyph-size: 56px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--watany-icon-shell-size);
+  height: var(--watany-icon-shell-size);
+  min-height: var(--watany-icon-shell-size);
+  aspect-ratio: 1 / 1;
+  padding: 6px;
+  border-radius: 22px;
+  border: var(--watany-icon-shell-border) solid color-mix(in srgb, currentColor 76%, white 24%);
+  background: transparent;
+  color: var(--koudama-primary);
+  box-shadow:
+    0 18px 34px color-mix(in srgb, currentColor 18%, transparent),
+    0 8px 18px rgba(35, 31, 25, 0.10),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    inset 0 -10px 20px rgba(15, 23, 42, 0.02);
+  flex-shrink: 0;
+}
+
+.koudama-home__tile-icon[data-koudama-color="green"] {
+  color: var(--koudama-success);
+}
+
+.koudama-home__tile-icon[data-koudama-color="red"] {
+  color: var(--koudama-danger);
+}
+
+.koudama-home__tile-icon[data-koudama-color="slate"] {
+  color: color-mix(in srgb, var(--koudama-text-soft) 88%, var(--koudama-page-bg) 12%);
+}
+
+.koudama-home__tile-icon .koudama-feature-icon {
+  --kfi-size: var(--watany-icon-glyph-size);
+}
+
+.koudama-home__tile-icon .koudama-feature-icon,
+.koudama-home__tile-icon svg {
+  position: relative;
+  z-index: 1;
+}
+
+.koudama-home__tile-icon[data-sign]::after {
+  content: attr(data-sign);
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 2;
+  display: block;
+  color: #0f172a;
+  font-size: clamp(32px, 10vw, 46px);
+  line-height: 1;
+  filter:
+    saturate(1.2)
+    contrast(1.12)
+    brightness(1.02)
+    drop-shadow(0 1px 0 rgba(255, 255, 255, .55))
+    drop-shadow(0 4px 7px rgba(15, 23, 42, .24));
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.koudama-home__tile-icon[data-sign] .koudama-feature-icon,
+.koudama-home__tile-icon[data-sign] svg {
+  opacity: 0;
+}
+
+.koudama-home__tile-title {
+  display: grid;
+  gap: 3px;
+}
+
+.koudama-home__tile-title small {
+  color: var(--koudama-text-soft);
+  line-height: 1.6;
+}
+
+.koudama-home__focus-card {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border-radius: 24px;
+  background: var(--koudama-surface-strong);
+  border: 1px solid var(--koudama-border);
+  box-shadow:
+    0 16px 30px rgba(15, 23, 42, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.62);
+}
+
+.koudama-home__focus-card strong,
+.koudama-home__match-link strong,
+.koudama-home__news-copy strong {
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.koudama-home__panel-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 2147482000;
+  display: grid;
+  place-items: end center;
+  padding: 16px;
+  background: rgba(15, 23, 42, 0.38);
+  backdrop-filter: blur(8px);
+}
+
+.koudama-home__panel {
+  width: min(100%, 680px);
+  max-height: min(80dvh, 760px);
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  border-radius: 30px 30px 22px 22px;
+  overflow: auto;
+}
+
+.koudama-home__panel-head {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.koudama-home__panel-copy {
+  display: grid;
+  gap: 6px;
+}
+
+.koudama-home__panel-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.koudama-home__panel-actions {
+  position: sticky;
+  bottom: -18px;
+  display: grid;
+  gap: 10px;
+  margin-top: 2px;
+  padding-top: 12px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0), var(--koudama-surface) 30%);
+}
+
+.koudama-home__theme-option {
+  display: grid;
+  gap: 10px;
+  text-align: start;
+  cursor: pointer;
+}
+
+.koudama-home__theme-option.is-active {
+  border-color: color-mix(in srgb, var(--koudama-accent) 55%, var(--koudama-border));
+  background: color-mix(in srgb, var(--koudama-accent) 10%, var(--koudama-surface-strong));
+}
+
+.koudama-home__swatch {
+  display: block;
+  height: 44px;
+  border-radius: 14px;
+  background: var(--koudama-swatch, linear-gradient(135deg, #c7a55a, #faf7f0));
+}
+
+.koudama-home__theme-meta {
+  display: grid;
+  gap: 4px;
+}
+
+.koudama-home__news-list {
+  display: grid;
+  gap: 10px;
+}
+
+.koudama-home__news-link,
+.koudama-home__match-link {
+  align-items: start;
+  background: var(--koudama-surface-strong);
+  border: 1px solid var(--koudama-border);
+  color: inherit;
+}
+
+.koudama-home__news-copy,
+.koudama-home__match-copy {
+  display: grid;
+  gap: 6px;
+}
+
+.koudama-home__match-meta {
+  color: var(--koudama-text-soft);
+  font-size: 0.82rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.koudama-home__match-badge {
+  min-width: 28px;
+  height: 28px;
+  padding: 0 8px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: var(--koudama-danger);
+  color: #ffffff;
+  font-size: 0.74rem;
+  font-style: normal;
+  font-weight: 900;
+}
+
+.watany-runtime-debug {
+  padding: 14px;
+  border-radius: 22px;
+}
+
+.watany-runtime-debug__summary {
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.watany-runtime-debug__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.watany-runtime-debug__btn {
+  min-height: 40px;
+  padding: 0 14px;
+  border-radius: 14px;
+  cursor: pointer;
+}
+
+.watany-runtime-debug__btn--secondary {
+  background: color-mix(in srgb, var(--koudama-primary) 10%, var(--koudama-surface-strong));
+}
+
+.watany-runtime-debug__pre {
+  margin: 10px 0 0;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--koudama-surface-strong) 92%, #000000 8%);
+  border: 1px solid var(--koudama-border);
+  color: var(--koudama-text);
+  font-size: 11px;
+  line-height: 1.6;
+  direction: ltr;
+  text-align: left;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+@media (max-width: 720px) {
+  .watany-drawer-page {
+    padding-inline: 10px;
+  }
+
+  .watany-drawer-phone {
+    gap: 18px;
+  }
+
+  .koudama-home__focus-grid,
+  .koudama-home__themes,
+  .koudama-home__panel-grid,
+  .koudama-home__matches-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 520px) {
+  .koudama-home__hero,
+  .koudama-home__section,
+  .koudama-home__panel,
+  .watany-runtime-debug {
+    border-radius: 22px;
+  }
+
+  .koudama-home__panel-backdrop {
+    padding: 10px;
+  }
+
+  .koudama-home__panel {
+    border-radius: 24px 24px 18px 18px;
+  }
+
+  .koudama-home__focus-grid,
+  .koudama-home__themes,
+  .koudama-home__panel-grid,
+  .koudama-home__matches-grid {
+    grid-template-columns: 1fr;
+  }
+}

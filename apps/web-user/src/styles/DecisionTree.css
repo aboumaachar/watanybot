@@ -1,0 +1,358 @@
+/* ── Decision Tree styles ─────────────────────────────────── */
+
+.decision-tree {
+  padding: var(--space-2, 16px);
+  direction: rtl;
+}
+
+.dt-back {
+  background: none;
+  border: 2px solid var(--stroke, #e5e7eb);
+  color: var(--primary, #2563eb);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: var(--space-1, 8px) var(--space-2, 16px);
+  border-radius: var(--r-md, 12px);
+  margin-bottom: var(--space-2, 16px);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1, 8px);
+  transition: all 0.2s;
+  min-height: var(--touch-min, 44px);
+}
+
+.dt-back:hover {
+  border-color: var(--primary, #2563eb);
+  background: rgba(37, 99, 235, 0.05);
+}
+
+.dt-card {
+  background: var(--surface, #fff);
+  border-radius: var(--r-xl, 20px);
+  padding: var(--space-3, 24px);
+  box-shadow: var(--shadow-md, 0 4px 12px rgba(0, 0, 0, 0.08));
+}
+
+.dt-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--ink, #1a1a2e);
+  margin: 0 0 var(--space-1, 8px);
+}
+
+.dt-body {
+  color: var(--muted, #666);
+  font-size: 0.95rem;
+  margin: 0 0 var(--space-3, 24px);
+  line-height: 1.6;
+}
+.dt-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2, 16px);
+}
+
+.dt-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2, 16px);
+  padding: var(--space-2, 16px);
+  border: 2px solid var(--stroke, #e5e7eb);
+  border-radius: var(--r-lg, 16px);
+  background: var(--surface, #fff);
+  color: var(--ink, #1a1a2e);
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: right;
+  cursor: pointer;
+  transition: all 0.25s;
+  min-height: 72px;
+}
+
+.dt-btn:hover {
+  border-color: var(--primary, #2563eb);
+  background: rgba(37, 99, 235, 0.04);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.12);
+  transform: translateY(-2px);
+}
+
+.dt-btn:active {
+  transform: scale(0.98);
+}
+
+.dt-btn-main {
+  margin-top: var(--space-2, 16px);
+  border-color: var(--primary, #2563eb);
+  color: var(--primary, #2563eb);
+  background: rgba(37, 99, 235, 0.04);
+}
+
+.dt-result {
+  background: var(--primary-bg, #E8F5EE);
+  border-radius: var(--r-lg, 16px);
+  padding: var(--space-2, 16px);
+  margin-bottom: var(--space-2, 16px);
+}
+
+.dt-result p {
+  margin: var(--space-1, 8px) 0;
+  font-size: 0.95rem;
+  color: var(--ink, #1a1a2e);
+  line-height: 1.6;
+}
+
+/* ── Quick Reply Buttons ─────────────────────────────────── */
+
+.quick-reply-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1, 8px);
+  margin-top: var(--space-1, 8px);
+}
+
+.quick-reply-btn {
+  padding: var(--space-1, 8px) var(--space-2, 16px);
+  min-height: var(--touch-min, 44px);
+  border: 2px solid var(--primary, #2563eb);
+  border-radius: var(--r-full, 9999px);
+  background: transparent;
+  color: var(--primary, #2563eb);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.quick-reply-btn:hover {
+  background: var(--primary, #2563eb);
+  color: #fff;
+}
+
+/* ── Service Card Grid ───────────────────────────────────── */
+
+.chat-service-card-grid {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0.5rem 0;
+  grid-template-columns: repeat(2, 1fr) !important;
+}
+
+/* larger screen might show three columns if preferred */
+/* default and wide screens enforce two columns */
+
+/* on very large displays we can still expand to three columns if desired */
+@media (min-width: 1024px) {
+  .chat-service-card-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+}
+
+.chat-service-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto auto 1fr;
+  justify-items: center;
+  row-gap: 10px;
+  aspect-ratio: 1 / 1;
+  padding: 14px;
+  border: 1px solid color-mix(in srgb, var(--chat-service-color, var(--accent, #2563eb)) 22%, white);
+  border-radius: 16px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--chat-service-color, var(--accent, #2563eb)) 9%, white), var(--card, #fff));
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.chat-service-card:hover {
+  border-color: var(--chat-service-color, var(--accent, #2563eb));
+  box-shadow: 0 10px 24px color-mix(in srgb, var(--chat-service-color, #2563eb) 18%, transparent);
+  transform: translateY(-2px);
+}
+
+.chat-service-card__icon {
+  width: 56px;
+  height: 56px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16px;
+  background: linear-gradient(135deg, var(--chat-service-color, var(--accent, #2563eb)), color-mix(in srgb, var(--chat-service-color, var(--accent, #2563eb)) 62%, white));
+  color: #fff;
+  font-size: 1.35rem;
+}
+
+.chat-service-card__label {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: var(--ink, #1a1a2e);
+  text-align: center;
+  line-height: 1.25;
+}
+
+.chat-service-card__desc {
+  font-size: 0.68rem;
+  color: var(--ink-secondary, #4b5563);
+  text-align: center;
+  line-height: 1.35;
+  display: -webkit-box;
+  line-clamp: 2;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+@media (max-width: 399px) {
+  .chat-service-card {
+    padding: 12px;
+  }
+
+  .chat-service-card__icon {
+    width: 48px;
+    height: 48px;
+    font-size: 1.2rem;
+  }
+
+  .chat-service-card__desc {
+    display: none;
+  }
+}
+
+/* ── Procedure Card ──────────────────────────────────────── */
+
+.procedure-card {
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 0.5rem 0;
+}
+
+.procedure-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: none;
+  background: var(--bg, #f9fafb);
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--ink, #1a1a2e);
+}
+
+.procedure-card__body {
+  padding: 0.75rem 1rem;
+}
+
+.procedure-card__summary {
+  margin-bottom: 0.75rem;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: var(--ink-secondary, #4b5563);
+}
+
+.procedure-steps {
+  margin: 0;
+  padding-right: 1.25rem;
+}
+
+.procedure-step {
+  margin-bottom: 0.4rem;
+  font-size: 0.85rem;
+}
+
+.procedure-docs {
+  margin-top: 0.75rem;
+  font-size: 0.85rem;
+}
+
+.procedure-docs ul {
+  margin: 0.25rem 0 0;
+  padding-right: 1rem;
+}
+
+.procedure-card__attachments {
+  margin-top: 0.85rem;
+}
+
+/* ── Form Action Card ────────────────────────────────────── */
+
+.form-action-card {
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  margin: 0.5rem 0;
+  background: var(--card, #fff);
+}
+
+.form-action-card__header {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+}
+
+.form-action-card__icon {
+  font-size: 1.5rem;
+}
+
+.form-action-card__title {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.form-action-card__desc {
+  margin: 0.15rem 0 0;
+  font-size: 0.8rem;
+  color: var(--ink-secondary, #666);
+}
+
+.form-action-card__meta {
+  display: flex;
+  gap: 0.5rem;
+  margin: 0.5rem 0;
+}
+
+.form-action-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.form-action-card__code,
+.form-action-card__category {
+  font-size: 0.75rem;
+  background: var(--bg, #f3f4f6);
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  color: var(--ink-secondary, #666);
+}
+
+.form-action-card__btn {
+  flex: 1 1 180px;
+  padding: 0.5rem;
+  border: 1.5px solid var(--accent, #2563eb);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--accent, #2563eb);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.form-action-card__btn:hover {
+  background: var(--accent, #2563eb);
+  color: #fff;
+}
+
+.form-action-card__btn--secondary {
+  border-color: var(--stroke, rgba(24, 24, 27, 0.12));
+  color: var(--ink, #111827);
+}
+
+.form-action-card__btn--secondary:hover {
+  background: rgba(31, 122, 107, 0.08);
+  color: var(--ink, #111827);
+}

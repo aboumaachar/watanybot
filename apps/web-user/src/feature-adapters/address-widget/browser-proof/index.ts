@@ -1,0 +1,1 @@
+export { AddressWidgetPluginProofPage } from './AddressWidgetPluginProofPage';

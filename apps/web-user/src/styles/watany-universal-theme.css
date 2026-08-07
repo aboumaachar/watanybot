@@ -1,0 +1,9 @@
+﻿/* APEX_WATANY_FULL_REBUILD_GENERATED_ENTRYPOINT_V1 */
+/* Order preserves the former main.tsx direct stylesheet sequence. */
+@import "./watany-ui-platform.css";
+@import "./watany/tokens.css";
+@import "./watany/foundations.css";
+@import "./watany-universal-theme-content.css";
+@import "./watany-canonical-shell-v2.css";
+@import "./watany/runtime-contract-repairs.css";
+@import "./watany-platform-v3/index.css";

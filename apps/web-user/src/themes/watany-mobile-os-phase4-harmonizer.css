@@ -1,0 +1,106 @@
+﻿/* APEX WatanyBot Mobile OS Phase 4: shell harmonization layer
+   Non-destructive CSS overrides only. No business logic. */
+
+.watany-mobile-shell {
+  --wmo-page-max: 1040px;
+}
+
+.watany-mobile-shell__route-content {
+  width: 100%;
+  max-width: var(--wmo-page-max);
+  margin-inline: auto;
+}
+
+.watany-mobile-shell__route-content > * {
+  box-sizing: border-box;
+}
+
+.watany-mobile-shell__route-content .dashboard,
+.watany-mobile-shell__route-content .dashboard-shell,
+.watany-mobile-shell__route-content .legacy-dashboard,
+.watany-mobile-shell__route-content .app-dashboard {
+  background: transparent;
+  box-shadow: none;
+}
+
+.watany-mobile-shell__route-content .container,
+.watany-mobile-shell__route-content .page-container,
+.watany-mobile-shell__route-content .content-container,
+.watany-mobile-shell__route-content .main-content {
+  max-width: 100%;
+}
+
+.watany-mobile-shell__route-content .page-header,
+.watany-mobile-shell__route-content .section-header,
+.watany-mobile-shell__route-content .header-card,
+.watany-mobile-shell__route-content .hero,
+.watany-mobile-shell__route-content .card,
+.watany-mobile-shell__route-content .panel,
+.watany-mobile-shell__route-content .box,
+.watany-mobile-shell__route-content .tile {
+  border-radius: var(--watany-radius-lg, 28px);
+}
+
+.watany-mobile-shell__route-content .page-header,
+.watany-mobile-shell__route-content .section-header,
+.watany-mobile-shell__route-content .header-card,
+.watany-mobile-shell__route-content .hero {
+  background:
+    radial-gradient(circle at top right, rgba(46,125,91,.10), transparent 22rem),
+    var(--watany-surface, rgba(255,255,255,.88));
+  border: 1px solid var(--watany-border, rgba(18,53,91,.1));
+  box-shadow: 0 14px 32px rgba(18,53,91,.10);
+}
+
+.watany-mobile-shell__route-content .card,
+.watany-mobile-shell__route-content .panel,
+.watany-mobile-shell__route-content .box,
+.watany-mobile-shell__route-content .tile {
+  background: var(--watany-surface, rgba(255,255,255,.88));
+  border: 1px solid var(--watany-border, rgba(18,53,91,.1));
+  box-shadow: 0 12px 28px rgba(18,53,91,.08);
+}
+
+.watany-mobile-shell__route-content button,
+.watany-mobile-shell__route-content .btn,
+.watany-mobile-shell__route-content a[role='button'],
+.watany-mobile-shell__route-content input,
+.watany-mobile-shell__route-content select,
+.watany-mobile-shell__route-content textarea {
+  min-height: 44px;
+}
+
+.watany-mobile-shell__route-content table {
+  width: 100%;
+}
+
+.watany-mobile-shell__route-content .sidebar,
+.watany-mobile-shell__route-content .left-sidebar,
+.watany-mobile-shell__route-content .right-sidebar {
+  border-radius: var(--watany-radius-lg, 28px);
+}
+
+@media (max-width: 640px) {
+  .watany-mobile-shell__route-content {
+    width: 100%;
+    max-width: 100%;
+    margin-inline: 0;
+  }
+
+  .watany-mobile-shell__route-content > * {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .watany-mobile-shell__route-content .desktop-only,
+  .watany-mobile-shell__route-content .hide-mobile {
+    display: none !important;
+  }
+
+  .watany-mobile-shell__route-content .grid,
+  .watany-mobile-shell__route-content .cards-grid,
+  .watany-mobile-shell__route-content .row {
+    max-width: 100%;
+  }
+}

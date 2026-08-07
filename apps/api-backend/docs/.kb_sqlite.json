@@ -1,0 +1,18 @@
+{
+  "kb_path": ".\\data\\kb.sqlite",
+  "exists": false,
+  "readable": false,
+  "sqlite_version": null,
+  "page_count": null,
+  "page_size": null,
+  "tables": [],
+  "required_tables": {},
+  "required_columns": {},
+  "fts": {},
+  "counts": {},
+  "mapping_coverage": null,
+  "fts_sanity": {},
+  "join_test": null,
+  "kb_age": null,
+  "compat_mapping": {}
+}

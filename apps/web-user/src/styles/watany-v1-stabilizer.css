@@ -1,0 +1,2027 @@
+/*
+  Watany V1 Interim Stabilizer
+  Scope: temporary visual stabilization for the existing V1 React/Vite web app.
+  This file intentionally avoids business logic and route changes.
+*/
+:root {
+  --watany-v1-bg-a: #eef7f2;
+  --watany-v1-bg-b: #f7fbff;
+  --watany-v1-card: rgba(255, 255, 255, 0.92);
+  --watany-v1-border: rgba(18, 83, 61, 0.12);
+  --watany-v1-text: #17382d;
+  --watany-v1-muted: #5c756d;
+  --watany-v1-green: #148653;
+  --watany-v1-blue: #1d74d8;
+  --watany-v1-gold: #d89b20;
+  --watany-v1-red: #d84a3a;
+  --watany-v1-shadow: 0 14px 32px rgba(24, 63, 52, 0.14), 0 4px 10px rgba(24, 63, 52, 0.08);
+  --watany-v1-radius: 22px;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+html.watany-v1-boot {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  direction: rtl;
+  color: var(--watany-v1-text);
+  background:
+    radial-gradient(circle at top right, rgba(20, 134, 83, 0.14), transparent 36rem),
+    radial-gradient(circle at bottom left, rgba(29, 116, 216, 0.12), transparent 34rem),
+    linear-gradient(180deg, var(--watany-v1-bg-b), var(--watany-v1-bg-a));
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+/* Mobile-first app frame stabilization. */
+#root > div,
+.app,
+.app-shell,
+.layout,
+.page,
+main {
+  max-width: 100%;
+}
+
+/* Sticky top shell/header evidence and interim behavior. */
+header,
+.app-header,
+.top-header,
+.topbar,
+.navbar,
+[class*="Header"],
+[class*="TopBar"],
+[class*="AppShell"] > :first-child {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+/* Home/service grid: force the requested 3-column compact mobile rhythm where the V1 UI exposes a grid-like container. */
+.watany-v1-home-grid,
+[data-watany-home-grid],
+[data-home-grid],
+.home-grid,
+.homeTiles,
+.home-tiles,
+.feature-grid,
+.features-grid,
+.services-grid,
+.quick-actions,
+.quickActions,
+:not(html):not(body)[class*="home-grid"],
+:not(html):not(body)[class*="HomeGrid"],
+:not(html):not(body)[class*="service-grid"],
+:not(html):not(body)[class*="ServiceGrid"],
+:not(html):not(body)[class*="quick-actions"],
+:not(html):not(body)[class*="QuickActions"] {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 12px !important;
+  align-items: stretch !important;
+}
+
+/* Tile/card geometry: same height, rounded glossy card, visual weight suitable for older users. */
+.watany-v1-home-grid > *,
+[data-watany-home-grid] > *,
+[data-home-grid] > *,
+.home-grid > *,
+.homeTiles > *,
+.home-tiles > *,
+.feature-grid > *,
+.features-grid > *,
+.services-grid > *,
+.quick-actions > *,
+.quickActions > *,
+:not(html):not(body)[class*="home-grid"] > *,
+:not(html):not(body)[class*="HomeGrid"] > *,
+:not(html):not(body)[class*="service-grid"] > *,
+:not(html):not(body)[class*="ServiceGrid"] > *,
+:not(html):not(body)[class*="quick-actions"] > *,
+:not(html):not(body)[class*="QuickActions"] > * {
+  min-height: 92px !important;
+  border-radius: var(--watany-v1-radius) !important;
+  background: var(--watany-v1-card) !important;
+  border: 1px solid var(--watany-v1-border) !important;
+  box-shadow: var(--watany-v1-shadow) !important;
+  overflow: hidden !important;
+}
+
+/* Filled colored icon treatment. Keeps existing icon libraries but makes outline-only symbols read as filled/glossy where possible. */
+.watany-v1-home-grid svg,
+[data-watany-home-grid] svg,
+[data-home-grid] svg,
+.home-grid svg,
+.homeTiles svg,
+.home-tiles svg,
+.feature-grid svg,
+.features-grid svg,
+.services-grid svg,
+.quick-actions svg,
+.quickActions svg,
+[class*="home-grid"] svg,
+[class*="HomeGrid"] svg,
+[class*="service-grid"] svg,
+[class*="ServiceGrid"] svg,
+[class*="quick-actions"] svg,
+[class*="QuickActions"] svg {
+  width: 28px;
+  height: 28px;
+  color: var(--watany-v1-green);
+  fill: currentColor;
+  stroke: currentColor;
+  filter: drop-shadow(0 5px 10px rgba(20, 134, 83, 0.22));
+}
+
+.watany-v1-home-grid > *:nth-child(3n + 1) svg,
+[data-watany-home-grid] > *:nth-child(3n + 1) svg,
+.home-grid > *:nth-child(3n + 1) svg,
+.feature-grid > *:nth-child(3n + 1) svg,
+.services-grid > *:nth-child(3n + 1) svg,
+.quick-actions > *:nth-child(3n + 1) svg {
+  color: var(--watany-v1-green);
+}
+
+.watany-v1-home-grid > *:nth-child(3n + 2) svg,
+[data-watany-home-grid] > *:nth-child(3n + 2) svg,
+.home-grid > *:nth-child(3n + 2) svg,
+.feature-grid > *:nth-child(3n + 2) svg,
+.services-grid > *:nth-child(3n + 2) svg,
+.quick-actions > *:nth-child(3n + 2) svg {
+  color: var(--watany-v1-blue);
+}
+
+.watany-v1-home-grid > *:nth-child(3n + 3) svg,
+[data-watany-home-grid] > *:nth-child(3n + 3) svg,
+.home-grid > *:nth-child(3n + 3) svg,
+.feature-grid > *:nth-child(3n + 3) svg,
+.services-grid > *:nth-child(3n + 3) svg,
+.quick-actions > *:nth-child(3n + 3) svg {
+  color: var(--watany-v1-gold);
+}
+
+/* Keep cards readable on narrow phones without collapsing below 3 columns unless the screen is very small. */
+@media (max-width: 360px) {
+  .watany-v1-home-grid,
+  [data-watany-home-grid],
+  [data-home-grid],
+  .home-grid,
+  .homeTiles,
+  .home-tiles,
+  .feature-grid,
+  .features-grid,
+  .services-grid,
+  .quick-actions,
+  .quickActions,
+  [class*="home-grid"],
+  [class*="HomeGrid"],
+  [class*="service-grid"],
+  [class*="ServiceGrid"],
+  [class*="quick-actions"],
+  [class*="QuickActions"] {
+    gap: 8px !important;
+  }
+
+  .watany-v1-home-grid > *,
+  [data-watany-home-grid] > *,
+  [data-home-grid] > *,
+  .home-grid > *,
+  .feature-grid > *,
+  .features-grid > *,
+  .services-grid > *,
+  .quick-actions > *,
+  .quickActions > * {
+    min-height: 82px !important;
+    border-radius: 18px !important;
+  }
+}
+
+
+/* APEX Watany V1 Tools/Schools Public Access External Runtime v1.4.4 */
+:root { --watany-v1-popup-top: 74px; }
+html[data-watany-v1-public-access="true"] [data-requires-login],
+html[data-watany-v1-public-access="true"] .requires-login,
+html[data-watany-v1-public-access="true"] .login-required,
+html[data-watany-v1-public-access="true"] .auth-required { display: none !important; }
+
+.watany-v1-fullwidth-popup, .watany-v1-fullwidth-popup * { box-sizing: border-box !important; }
+.watany-v1-fullwidth-popup {
+  position: fixed !important;
+  z-index: 2147483000 !important;
+  top: var(--watany-v1-popup-top) !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: min(430px, calc(100vw - 14px)) !important;
+  max-width: calc(100vw - 14px) !important;
+  max-height: calc(100vh - var(--watany-v1-popup-top) - 10px) !important;
+  overflow: auto !important;
+  direction: rtl !important;
+  background: rgba(255,255,255,.985) !important;
+  border: 1px solid rgba(17,82,72,.16) !important;
+  border-radius: 22px !important;
+  box-shadow: 0 22px 60px rgba(15,23,42,.24), inset 0 1px 0 rgba(255,255,255,.82) !important;
+  padding: 14px !important;
+  color: #112b28 !important;
+  font-family: inherit !important;
+}
+.watany-v1-popup-backdrop {
+  position: fixed !important;
+  z-index: 2147482999 !important;
+  inset: 0 !important;
+  background: rgba(2,22,19,.28) !important;
+  backdrop-filter: blur(2px) !important;
+}
+.watany-v1-popup-head {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 10px !important;
+  margin-bottom: 12px !important;
+}
+.watany-v1-popup-title {
+  margin: 0 !important;
+  font-size: 1.24rem !important;
+  line-height: 1.35 !important;
+  font-weight: 900 !important;
+  color: #0f4039 !important;
+}
+.watany-v1-popup-close {
+  appearance: none !important;
+  border: 0 !important;
+  background: rgba(16,94,82,.10) !important;
+  color: #0f4039 !important;
+  border-radius: 999px !important;
+  min-width: 38px !important;
+  min-height: 38px !important;
+  font-size: 1.35rem !important;
+  font-weight: 900 !important;
+  cursor: pointer !important;
+}
+.watany-v1-tools-grid, .watany-v1-school-grid, .watany-v1-useful-links-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+  width: 100% !important;
+}
+.watany-v1-tool-card, .watany-v1-school-card, .watany-v1-useful-link-card {
+  min-height: 92px !important;
+  border: 1px solid rgba(17,82,72,.14) !important;
+  border-radius: 18px !important;
+  background: linear-gradient(145deg, rgba(255,255,255,.98), rgba(232,249,244,.94)) !important;
+  box-shadow: 0 10px 24px rgba(15,42,38,.14), inset 0 1px 0 rgba(255,255,255,.92) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  text-align: center !important;
+  padding: 10px 8px !important;
+  cursor: pointer !important;
+  color: #123c35 !important;
+  text-decoration: none !important;
+  white-space: normal !important;
+  word-break: normal !important;
+  writing-mode: horizontal-tb !important;
+  unicode-bidi: plaintext !important;
+}
+.watany-v1-tool-icon, .watany-v1-school-icon, .watany-v1-useful-link-icon {
+  font-size: 2rem !important;
+  line-height: 1 !important;
+  filter: drop-shadow(0 5px 7px rgba(15,42,38,.18)) !important;
+}
+.watany-v1-card-label {
+  font-size: .95rem !important;
+  line-height: 1.25 !important;
+  font-weight: 850 !important;
+}
+.watany-v1-school-card { min-height: 110px !important; }
+.watany-v1-school-card .watany-v1-school-icon { font-size: 2.45rem !important; }
+.watany-v1-school-card svg, .watany-v1-school-card img,
+.watany-v1-school-grid svg, .watany-v1-school-grid img,
+.watany-v1-popup-panel .watany-v1-school-icon svg,
+.watany-v1-popup-panel .watany-v1-school-icon img {
+  width: 46px !important; height: 46px !important; min-width: 46px !important; min-height: 46px !important;
+}
+body [class*="popup" i], body [class*="modal" i], body [role="dialog"] {
+  max-width: min(430px, calc(100vw - 14px)) !important;
+}
+@media (max-width: 430px) {
+  .watany-v1-fullwidth-popup { width: calc(100vw - 10px) !important; max-width: calc(100vw - 10px) !important; border-radius: 18px !important; }
+}
+
+
+/* APEX Watany V1 Jobs Market Public Access v1.5.0 */
+:root{--watany-v1-jm-top:74px}
+html[data-watany-v1-public-access=true] [data-requires-login],
+html[data-watany-v1-public-access=true] .requires-login,
+html[data-watany-v1-public-access=true] .login-required,
+html[data-watany-v1-public-access=true] .auth-required{display:none!important}
+.watany-v1-jm-backdrop{position:fixed!important;z-index:2147483009!important;inset:0!important;background:rgba(2,22,19,.28)!important;backdrop-filter:blur(2px)!important}
+.watany-v1-jm-popup{position:fixed!important;z-index:2147483010!important;top:var(--watany-v1-jm-top)!important;left:50%!important;transform:translateX(-50%)!important;width:min(430px,calc(100vw - 14px))!important;max-height:calc(100vh - var(--watany-v1-jm-top) - 10px)!important;overflow:auto!important;direction:rtl!important;background:rgba(255,255,255,.985)!important;border:1px solid rgba(17,82,72,.16)!important;border-radius:22px!important;box-shadow:0 22px 60px rgba(15,23,42,.24)!important;padding:14px!important;color:#112b28!important}
+.watany-v1-jm-head{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:10px!important;margin-bottom:12px!important}
+.watany-v1-jm-title{margin:0!important;font-size:1.24rem!important;line-height:1.35!important;font-weight:900!important;color:#0f4039!important}
+.watany-v1-jm-close{appearance:none!important;border:0!important;background:rgba(16,94,82,.10)!important;color:#0f4039!important;border-radius:999px!important;min-width:38px!important;min-height:38px!important;font-size:1.35rem!important;font-weight:900!important;cursor:pointer!important}
+.watany-v1-jm-grid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important;width:100%!important}
+.watany-v1-jm-card{min-height:102px!important;border:1px solid rgba(17,82,72,.14)!important;border-radius:18px!important;background:linear-gradient(145deg,rgba(255,255,255,.98),rgba(232,249,244,.94))!important;box-shadow:0 10px 24px rgba(15,42,38,.14)!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:8px!important;text-align:center!important;padding:10px 8px!important;cursor:pointer!important;color:#123c35!important;white-space:normal!important;writing-mode:horizontal-tb!important;unicode-bidi:plaintext!important}
+.watany-v1-jm-icon{font-size:2.2rem!important;line-height:1!important}
+.watany-v1-jm-label{font-size:.98rem!important;line-height:1.25!important;font-weight:900!important}
+.watany-v1-jm-sub{font-size:.78rem!important;line-height:1.3!important;font-weight:650!important;color:rgba(18,60,53,.76)!important}
+.watany-v1-jm-note{margin:10px 0 0!important;padding:10px 12px!important;border-radius:16px!important;background:rgba(16,94,82,.08)!important;color:#123c35!important;font-size:.86rem!important;line-height:1.5!important;font-weight:700!important}
+@media(max-width:430px){.watany-v1-jm-popup{width:calc(100vw - 10px)!important;max-width:calc(100vw - 10px)!important;border-radius:18px!important}}
+
+
+/* APEX Watany V1 Going Now Feed v1.6.0 */
+:root {
+  --watany-v1-now-top: 74px;
+}
+
+.watany-v1-now-backdrop {
+  position: fixed !important;
+  z-index: 2147483029 !important;
+  inset: 0 !important;
+  background: rgba(2,22,19,.28) !important;
+  backdrop-filter: blur(2px) !important;
+}
+
+.watany-v1-now-popup {
+  position: fixed !important;
+  z-index: 2147483030 !important;
+  top: var(--watany-v1-now-top) !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: min(430px, calc(100vw - 14px)) !important;
+  max-width: calc(100vw - 14px) !important;
+  max-height: calc(100vh - var(--watany-v1-now-top) - 10px) !important;
+  overflow: auto !important;
+  direction: rtl !important;
+  background: rgba(255,255,255,.985) !important;
+  border: 1px solid rgba(17,82,72,.16) !important;
+  border-radius: 22px !important;
+  box-shadow: 0 22px 60px rgba(15,23,42,.24), inset 0 1px 0 rgba(255,255,255,.82) !important;
+  padding: 14px !important;
+  color: #112b28 !important;
+  font-family: inherit !important;
+  box-sizing: border-box !important;
+}
+
+.watany-v1-now-popup * {
+  box-sizing: border-box !important;
+}
+
+.watany-v1-now-head {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 10px !important;
+  margin-bottom: 12px !important;
+}
+
+.watany-v1-now-title {
+  margin: 0 !important;
+  font-size: 1.25rem !important;
+  line-height: 1.35 !important;
+  font-weight: 950 !important;
+  color: #0f4039 !important;
+}
+
+.watany-v1-now-close {
+  appearance: none !important;
+  border: 0 !important;
+  background: rgba(16,94,82,.10) !important;
+  color: #0f4039 !important;
+  border-radius: 999px !important;
+  min-width: 38px !important;
+  min-height: 38px !important;
+  font-size: 1.35rem !important;
+  font-weight: 900 !important;
+  cursor: pointer !important;
+}
+
+.watany-v1-now-summary {
+  margin: 0 0 12px !important;
+  padding: 10px 12px !important;
+  border-radius: 16px !important;
+  background: rgba(16,94,82,.08) !important;
+  color: #123c35 !important;
+  font-size: .88rem !important;
+  line-height: 1.55 !important;
+  font-weight: 750 !important;
+}
+
+.watany-v1-now-list {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 10px !important;
+  width: 100% !important;
+}
+
+.watany-v1-now-item {
+  min-height: 76px !important;
+  border: 1px solid rgba(17,82,72,.14) !important;
+  border-radius: 18px !important;
+  background: linear-gradient(145deg, rgba(255,255,255,.98), rgba(232,249,244,.94)) !important;
+  box-shadow: 0 10px 24px rgba(15,42,38,.12), inset 0 1px 0 rgba(255,255,255,.92) !important;
+  display: grid !important;
+  grid-template-columns: 44px 1fr !important;
+  align-items: center !important;
+  gap: 10px !important;
+  text-align: right !important;
+  padding: 10px !important;
+  color: #123c35 !important;
+  white-space: normal !important;
+  word-break: normal !important;
+  writing-mode: horizontal-tb !important;
+  unicode-bidi: plaintext !important;
+}
+
+.watany-v1-now-icon {
+  width: 44px !important;
+  height: 44px !important;
+  border-radius: 15px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 1.55rem !important;
+  background: rgba(16,94,82,.10) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.75) !important;
+}
+
+.watany-v1-now-main {
+  min-width: 0 !important;
+}
+
+.watany-v1-now-label {
+  display: block !important;
+  font-size: .98rem !important;
+  line-height: 1.35 !important;
+  font-weight: 900 !important;
+  color: #103d36 !important;
+}
+
+.watany-v1-now-detail {
+  display: block !important;
+  margin-top: 3px !important;
+  font-size: .78rem !important;
+  line-height: 1.4 !important;
+  color: rgba(18,60,53,.75) !important;
+  font-weight: 680 !important;
+}
+
+.watany-v1-now-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  margin-top: 6px !important;
+  padding: 3px 8px !important;
+  border-radius: 999px !important;
+  background: rgba(16,94,82,.10) !important;
+  color: #0f4039 !important;
+  font-size: .72rem !important;
+  font-weight: 850 !important;
+}
+
+@media (max-width: 430px) {
+  .watany-v1-now-popup {
+    width: calc(100vw - 10px) !important;
+    max-width: calc(100vw - 10px) !important;
+    border-radius: 18px !important;
+  }
+}
+
+
+/* APEX Watany V1 World Cup 9 Icons v1.7.0 */
+:root {
+  --watany-v1-wc-top: 74px;
+}
+
+.watany-v1-wc-backdrop {
+  position: fixed !important;
+  z-index: 2147483039 !important;
+  inset: 0 !important;
+  background: rgba(2,22,19,.28) !important;
+  backdrop-filter: blur(2px) !important;
+}
+
+.watany-v1-wc-popup {
+  position: fixed !important;
+  z-index: 2147483040 !important;
+  top: var(--watany-v1-wc-top) !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: min(430px, calc(100vw - 14px)) !important;
+  max-width: calc(100vw - 14px) !important;
+  max-height: calc(100vh - var(--watany-v1-wc-top) - 10px) !important;
+  overflow: auto !important;
+  direction: rtl !important;
+  background: rgba(255,255,255,.985) !important;
+  border: 1px solid rgba(17,82,72,.16) !important;
+  border-radius: 22px !important;
+  box-shadow: 0 22px 60px rgba(15,23,42,.24), inset 0 1px 0 rgba(255,255,255,.82) !important;
+  padding: 14px !important;
+  color: #112b28 !important;
+  font-family: inherit !important;
+  box-sizing: border-box !important;
+}
+
+.watany-v1-wc-popup * {
+  box-sizing: border-box !important;
+}
+
+.watany-v1-wc-head {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 10px !important;
+  margin-bottom: 12px !important;
+}
+
+.watany-v1-wc-title {
+  margin: 0 !important;
+  font-size: 1.25rem !important;
+  line-height: 1.35 !important;
+  font-weight: 950 !important;
+  color: #0f4039 !important;
+}
+
+.watany-v1-wc-close {
+  appearance: none !important;
+  border: 0 !important;
+  background: rgba(16,94,82,.10) !important;
+  color: #0f4039 !important;
+  border-radius: 999px !important;
+  min-width: 38px !important;
+  min-height: 38px !important;
+  font-size: 1.35rem !important;
+  font-weight: 900 !important;
+  cursor: pointer !important;
+}
+
+.watany-v1-wc-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+  width: 100% !important;
+}
+
+.watany-v1-wc-card {
+  min-height: 112px !important;
+  border: 1px solid rgba(17,82,72,.14) !important;
+  border-radius: 20px !important;
+  background: linear-gradient(145deg, rgba(255,255,255,.98), rgba(232,249,244,.94)) !important;
+  box-shadow: 0 10px 24px rgba(15,42,38,.13), inset 0 1px 0 rgba(255,255,255,.92) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  text-align: center !important;
+  padding: 10px 6px !important;
+  color: #123c35 !important;
+  white-space: normal !important;
+  word-break: normal !important;
+  writing-mode: horizontal-tb !important;
+  unicode-bidi: plaintext !important;
+}
+
+.watany-v1-wc-icon {
+  width: 56px !important;
+  height: 56px !important;
+  border-radius: 19px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 2.45rem !important;
+  line-height: 1 !important;
+  background: rgba(16,94,82,.10) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.75), 0 8px 16px rgba(15,42,38,.13) !important;
+}
+
+.watany-v1-wc-label {
+  font-size: .86rem !important;
+  line-height: 1.28 !important;
+  font-weight: 900 !important;
+  color: #103d36 !important;
+}
+
+.watany-v1-wc-note {
+  margin: 12px 0 0 !important;
+  padding: 10px 12px !important;
+  border-radius: 16px !important;
+  background: rgba(16,94,82,.08) !important;
+  color: #123c35 !important;
+  font-size: .84rem !important;
+  line-height: 1.5 !important;
+  font-weight: 720 !important;
+}
+
+body [class*="world" i] svg,
+body [class*="world" i] img,
+body [class*="cup" i] svg,
+body [class*="cup" i] img {
+  width: 48px !important;
+  height: 48px !important;
+  min-width: 48px !important;
+  min-height: 48px !important;
+}
+
+@media (max-width: 430px) {
+  .watany-v1-wc-popup {
+    width: calc(100vw - 10px) !important;
+    max-width: calc(100vw - 10px) !important;
+    border-radius: 18px !important;
+  }
+  .watany-v1-wc-card {
+    min-height: 104px !important;
+  }
+  .watany-v1-wc-icon {
+    width: 52px !important;
+    height: 52px !important;
+    font-size: 2.25rem !important;
+  }
+}
+
+
+/* APEX Watany V1 Universal Form Viewer Template v1.8.2 */
+/* Layout contract only: contained between app sticky header and sticky footer. Uses app variables/icons. */
+:root {
+  --watany-form-viewer-top: calc(var(--wmo-topbar-height, 64px) + 8px);
+  --watany-form-viewer-bottom: 64px;
+  --watany-form-viewer-zoom: 1;
+  --watany-form-viewer-fit: 1;
+  --watany-form-page-width: min(794px, 100vw);
+}
+
+.watany-form-viewer-backdrop {
+  position: fixed !important;
+  z-index: 2147482400 !important;
+  inset: auto !important;
+  top: var(--watany-form-viewer-top) !important;
+  bottom: var(--watany-form-viewer-bottom) !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: 100vw !important;
+  max-width: 100vw !important;
+  transform: none !important;
+  display: grid !important;
+  align-items: stretch !important;
+  justify-items: stretch !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.24), rgba(15, 23, 42, 0.45)) !important;
+  backdrop-filter: blur(6px) saturate(115%) !important;
+}
+
+.watany-form-viewer {
+  position: relative !important;
+  z-index: 2147483060 !important;
+  top: 0 !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  transform: none !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  direction: rtl !important;
+  background: #ffffff !important;
+  color: var(--watany-text, var(--foreground, CanvasText, #111)) !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  font: inherit !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+#watany-form-viewer-backdrop.watany-form-viewer-backdrop {
+  z-index: 2147482400 !important;
+}
+
+#watany-form-viewer-root.watany-form-viewer {
+  position: fixed !important;
+  z-index: 2147483060 !important;
+  top: var(--watany-form-viewer-top, 64px) !important;
+  bottom: var(--watany-form-viewer-bottom, 64px) !important;
+  left: 50% !important;
+  right: auto !important;
+  width: min(430px, calc(100vw - 8px)) !important;
+  max-width: calc(100vw - 8px) !important;
+  height: calc(100dvh - var(--watany-form-viewer-top, 64px) - var(--watany-form-viewer-bottom, 64px)) !important;
+  min-height: 240px !important;
+  max-height: calc(100dvh - var(--watany-form-viewer-top, 64px) - var(--watany-form-viewer-bottom, 64px)) !important;
+  transform: translateX(-50%) !important;
+}
+
+#watany-form-viewer-root .watany-form-viewer-toolbar {
+  flex: 0 0 auto !important;
+  height: auto !important;
+  min-height: 52px !important;
+  max-height: 96px !important;
+}
+
+#watany-form-viewer-root .watany-form-viewer-body {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+}
+
+#watany-form-viewer-root .watany-form-viewer-file-frame {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 100% !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: #fff !important;
+}
+
+#watany-form-viewer-root .watany-form-viewer-file-fallback {
+  display: none !important;
+}
+
+#watany-form-viewer-root .watany-form-viewer-file-fallback span,
+#watany-form-viewer-root .watany-form-viewer-file-fallback a {
+  display: none !important;
+}
+
+.watany-form-viewer * {
+  box-sizing: border-box !important;
+}
+
+.watany-form-viewer-title-header {
+  flex: 0 0 auto !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 44px !important;
+  padding: 8px 12px 4px !important;
+  background: var(--watany-surface, var(--card, Canvas, #fff)) !important;
+  border-bottom: 1px solid var(--watany-border, rgba(0,0,0,.08)) !important;
+}
+
+.watany-form-viewer-title {
+  margin: 0 !important;
+  font-size: .98rem !important;
+  line-height: 1.3 !important;
+  font-weight: 900 !important;
+  color: var(--watany-text, var(--foreground, CanvasText, #111)) !important;
+  text-align: center !important;
+}
+
+.watany-form-viewer-toolbar {
+  flex: 0 0 auto !important;
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: var(--watany-space-xs, 6px) !important;
+  padding: var(--watany-space-xs, 6px) !important;
+  background: var(--watany-surface, var(--card, Canvas, #fff)) !important;
+  border-bottom: 1px solid var(--watany-border, rgba(0,0,0,.12)) !important;
+}
+
+/* Bottom toolbar should stick to the viewer bottom inside the flex column layout. */
+.watany-form-viewer-toolbar.watany-form-viewer-toolbar--bottom {
+  margin-top: auto !important;
+  /* visually separate from body with a top border instead of a bottom border */
+  border-top: 1px solid var(--watany-border, rgba(0,0,0,.12)) !important;
+  border-bottom: none !important;
+}
+
+.watany-form-viewer-button {
+  appearance: none !important;
+  border: 1px solid var(--watany-border, rgba(0,0,0,.14)) !important;
+  border-radius: var(--watany-radius-md, 12px) !important;
+  min-height: 40px !important;
+  padding: 4px 2px !important;
+  background: var(--watany-control-bg, var(--button-bg, transparent)) !important;
+  color: var(--watany-control-text, var(--foreground, currentColor)) !important;
+  font: inherit !important;
+  font-size: .58rem !important;
+  line-height: 1.1 !important;
+  font-weight: 800 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 2px !important;
+  cursor: pointer !important;
+}
+
+.watany-form-viewer-button i,
+.watany-form-viewer-button .ph,
+.watany-form-viewer-button .watany-app-icon {
+  font-size: 1.4rem !important;
+  line-height: 1 !important;
+}
+
+.watany-form-viewer-body {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  padding: 0 !important;
+  background: var(--watany-app-bg, var(--background, #f6f7f8)) !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+
+.watany-form-viewer-page-holder {
+  width: 100% !important;
+  min-height: 100% !important;
+  display: flex !important;
+  justify-content: stretch !important;
+  align-items: flex-start !important;
+}
+
+#watany-form-viewer-root .watany-form-viewer-page-holder--file,
+#watany-form-viewer-root .watany-form-viewer-file-scale,
+#watany-form-viewer-root .watany-form-viewer-file-shell {
+  width: 100% !important;
+  max-width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+}
+
+#watany-form-viewer-root .proc-viewer__doc-rail,
+#watany-form-viewer-root .watany-form-viewer-doc-rail,
+#watany-form-viewer-root [class*="doc-rail"] {
+  display: none !important;
+}
+
+.watany-form-viewer-page-scale {
+  width: var(--watany-form-page-width) !important;
+  max-width: none !important;
+  transform-origin: top center !important;
+  transform: scale(calc(var(--watany-form-viewer-fit) * var(--watany-form-viewer-zoom))) !important;
+}
+
+.watany-form-viewer-page {
+  width: var(--watany-form-page-width) !important;
+  min-height: 1123px !important;
+  background: #fff !important;
+  color: #111827 !important;
+  direction: rtl !important;
+  border: 1px solid rgba(0,0,0,.12) !important;
+  padding: 38px 42px !important;
+  font-family: Arial, Tahoma, sans-serif !important;
+  font-size: 18px !important;
+  line-height: 1.75 !important;
+}
+
+.watany-form-viewer-page.watany-form-viewer-page--image {
+  width: 100% !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  line-height: 0 !important;
+}
+
+.watany-form-viewer-page img,
+.watany-form-viewer-page svg,
+.watany-form-viewer-page canvas,
+.watany-form-viewer-page video,
+.watany-form-viewer-page embed,
+.watany-form-viewer-page object {
+  max-width: 100% !important;
+  height: auto !important;
+}
+
+.watany-form-viewer-page table {
+  width: 100% !important;
+  max-width: 100% !important;
+  display: block !important;
+  overflow-x: auto !important;
+}
+
+.watany-form-viewer-page h1,
+.watany-form-viewer-page h2,
+.watany-form-viewer-page h3 {
+  margin-top: 0 !important;
+}
+
+/* Defensive backup: hide embedded legacy toolbars from source HTML. */
+.watany-form-viewer-page .toolbar {
+  display: none !important;
+}
+
+.watany-form-viewer-page .form-row {
+  display: grid !important;
+  grid-template-columns: 170px 1fr !important;
+  gap: 10px !important;
+  align-items: center !important;
+  padding: 10px 0 !important;
+  border-bottom: 1px solid rgba(0,0,0,.12) !important;
+}
+
+.watany-form-viewer-page .form-label {
+  font-weight: 900 !important;
+}
+
+.watany-form-viewer-page .form-value,
+.watany-form-viewer-page input,
+.watany-form-viewer-page textarea {
+  min-height: 36px !important;
+  border: 1px solid rgba(0,0,0,.22) !important;
+  border-radius: 6px !important;
+  padding: 7px 9px !important;
+  background: #fff !important;
+  color: #111827 !important;
+}
+
+.watany-form-viewer-toast {
+  position: absolute !important;
+  right: 10px !important;
+  bottom: 10px !important;
+  left: 10px !important;
+  z-index: 1 !important;
+  padding: 10px 12px !important;
+  border-radius: var(--watany-radius-md, 12px) !important;
+  background: var(--watany-toast-bg, rgba(0,0,0,.84)) !important;
+  color: var(--watany-toast-text, #fff) !important;
+  font-size: .84rem !important;
+  line-height: 1.4 !important;
+  font-weight: 800 !important;
+  text-align: center !important;
+  display: none !important;
+}
+
+.watany-form-viewer-toast.is-visible {
+  display: block !important;
+}
+
+@media (max-width: 430px) {
+  .watany-form-viewer {
+    width: 100vw !important;
+    max-width: 100vw !important;
+  }
+  .watany-form-viewer-toolbar {
+    gap: 4px !important;
+    padding: 5px !important;
+  }
+  .watany-form-viewer-button {
+    min-height: 38px !important;
+    font-size: .5rem !important;
+  }
+}
+
+/* Mobile dock/workaround: ensure bottom dock and hybrid chat are fixed to viewport bottom
+   and receive pointer events on devices with non-standard viewport insets (Xiaomi/Android). */
+@media (max-width: 900px) {
+  .watany-mobile-shell__chrome-bottom {
+    /* Keep wrapper pass-through; canonical shell theme owns geometry. */
+    pointer-events: none !important;
+    z-index: 92 !important;
+  }
+  .watany-mobile-shell__dock {
+    z-index: 93 !important;
+    pointer-events: auto !important;
+  }
+  .watany-mobile-shell__dock-link {
+    pointer-events: auto !important;
+    touch-action: manipulation !important;
+  }
+  .watany-mobile-shell__assistant {
+    z-index: 94 !important;
+    pointer-events: auto !important;
+  }
+}
+
+/* Do not globally hide route menus; per-route dedup layers handle that safely. */
+@media (max-width: 900px) {
+  [data-watany-universal-feature-menu="true"] {
+    max-width: 100%;
+  }
+}
+
+
+/* APEX Watany V1 Procedures Page Polish v1.9.0 */
+:root {
+  --watany-v1-procedures-top: 74px;
+}
+
+html[data-watany-v1-procedures-polish-ready="true"] .watany-v1-procedures-title-polished,
+body.watany-v1-procedures-polish-active .watany-v1-procedures-title-polished {
+  display: block !important;
+  width: 100% !important;
+  margin: 10px auto 14px !important;
+  padding: 16px 14px !important;
+  border: 1px solid var(--watany-border, rgba(17,82,72,.16)) !important;
+  border-radius: var(--watany-radius-lg, 20px) !important;
+  background:
+    radial-gradient(circle at 0 0, rgba(16,94,82,.13), transparent 35%),
+    linear-gradient(145deg, var(--watany-surface, #fff), rgba(232,249,244,.96)) !important;
+  box-shadow: var(--watany-elevation-lg, 0 14px 34px rgba(15,42,38,.14)) !important;
+  color: var(--watany-heading, #0f4039) !important;
+  font-size: clamp(1.55rem, 7vw, 2.15rem) !important;
+  line-height: 1.22 !important;
+  font-weight: 950 !important;
+  letter-spacing: -0.02em !important;
+  text-align: right !important;
+}
+
+.watany-v1-procedures-title-polished::after {
+  content: "" !important;
+  display: block !important;
+  width: 76px !important;
+  height: 5px !important;
+  margin-top: 10px !important;
+  margin-right: 0 !important;
+  border-radius: 999px !important;
+  background: linear-gradient(90deg, rgba(16,94,82,.95), rgba(123,191,151,.85)) !important;
+}
+
+.watany-v1-procedures-group-panel {
+  direction: rtl !important;
+  width: 100% !important;
+  margin: 8px auto 16px !important;
+  padding: 12px !important;
+  border: 1px solid var(--watany-border, rgba(17,82,72,.15)) !important;
+  border-radius: var(--watany-radius-lg, 18px) !important;
+  background: var(--watany-surface, rgba(255,255,255,.96)) !important;
+  box-shadow: var(--watany-elevation-md, 0 10px 26px rgba(15,42,38,.11)) !important;
+  box-sizing: border-box !important;
+}
+
+.watany-v1-procedures-group-panel * {
+  box-sizing: border-box !important;
+}
+
+.watany-v1-procedures-group-panel-title {
+  margin: 0 0 8px !important;
+  color: var(--watany-heading, #0f4039) !important;
+  font-size: 1.05rem !important;
+  line-height: 1.35 !important;
+  font-weight: 950 !important;
+}
+
+.watany-v1-procedures-group-panel-subtitle {
+  margin: 0 0 12px !important;
+  color: var(--watany-muted, rgba(15,64,57,.72)) !important;
+  font-size: .84rem !important;
+  line-height: 1.55 !important;
+  font-weight: 760 !important;
+}
+
+.watany-v1-procedures-source-group {
+  border: 1px solid var(--watany-border, rgba(17,82,72,.12)) !important;
+  border-radius: var(--watany-radius-md, 14px) !important;
+  background: var(--watany-card, rgba(255,255,255,.92)) !important;
+  overflow: hidden !important;
+  margin: 9px 0 !important;
+}
+
+.watany-v1-procedures-source-summary {
+  cursor: pointer !important;
+  list-style: none !important;
+  min-height: 46px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 10px !important;
+  padding: 10px 12px !important;
+  color: var(--watany-heading, #123c35) !important;
+  font-size: .95rem !important;
+  line-height: 1.35 !important;
+  font-weight: 930 !important;
+  background: linear-gradient(145deg, rgba(255,255,255,.96), rgba(239,250,247,.92)) !important;
+}
+
+.watany-v1-procedures-source-summary::-webkit-details-marker {
+  display: none !important;
+}
+
+.watany-v1-procedures-source-count {
+  flex: 0 0 auto !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 28px !important;
+  height: 28px !important;
+  padding: 0 8px !important;
+  border-radius: 999px !important;
+  background: rgba(16,94,82,.12) !important;
+  color: var(--watany-heading, #0f4039) !important;
+  font-size: .78rem !important;
+  font-weight: 950 !important;
+}
+
+.watany-v1-procedures-item-list {
+  display: grid !important;
+  gap: 8px !important;
+  padding: 10px !important;
+}
+
+.watany-v1-procedures-item {
+  appearance: none !important;
+  border: 1px solid var(--watany-border, rgba(17,82,72,.12)) !important;
+  border-radius: var(--watany-radius-md, 13px) !important;
+  background: var(--watany-control-bg, rgba(255,255,255,.94)) !important;
+  color: var(--watany-text, #142c28) !important;
+  min-height: 48px !important;
+  width: 100% !important;
+  padding: 10px 12px !important;
+  text-align: right !important;
+  font: inherit !important;
+  font-size: .89rem !important;
+  line-height: 1.45 !important;
+  font-weight: 820 !important;
+  cursor: pointer !important;
+}
+
+.watany-v1-procedures-item-source {
+  display: inline-block !important;
+  margin-left: 6px !important;
+  padding: 2px 8px !important;
+  border-radius: 999px !important;
+  background: rgba(16,94,82,.10) !important;
+  color: var(--watany-muted, rgba(15,64,57,.82)) !important;
+  font-size: .72rem !important;
+  font-weight: 850 !important;
+}
+
+.watany-v1-procedures-source-badge {
+  display: inline-flex !important;
+  vertical-align: middle !important;
+  margin: 2px 6px 2px 0 !important;
+  padding: 2px 8px !important;
+  border-radius: 999px !important;
+  background: rgba(16,94,82,.10) !important;
+  color: var(--watany-muted, rgba(15,64,57,.82)) !important;
+  font-size: .72rem !important;
+  line-height: 1.4 !important;
+  font-weight: 850 !important;
+}
+
+body.watany-v1-procedures-polish-active main,
+body.watany-v1-procedures-polish-active [role="main"] {
+  scroll-margin-top: var(--watany-v1-procedures-top) !important;
+}
+
+@media (max-width: 430px) {
+  .watany-v1-procedures-group-panel {
+    margin-left: 4px !important;
+    margin-right: 4px !important;
+    padding: 10px !important;
+    border-radius: 16px !important;
+  }
+
+  .watany-v1-procedures-title-polished {
+    margin-left: 4px !important;
+    margin-right: 4px !important;
+    font-size: clamp(1.5rem, 8vw, 2rem) !important;
+  }
+}
+
+
+/* APEX Watany V1 Clean Settings Canonicalization v1.9.1 */
+:root {
+  --watany-v1-settings-top: 74px;
+}
+
+body.watany-v1-clean-settings-active main,
+body.watany-v1-clean-settings-active [role="main"] {
+  scroll-margin-top: var(--watany-v1-settings-top) !important;
+}
+
+.watany-v1-clean-settings-panel {
+  direction: rtl !important;
+  width: 100% !important;
+  max-width: min(430px, calc(100vw - 12px)) !important;
+  margin: 10px auto 18px !important;
+  padding: 12px !important;
+  border: 1px solid var(--watany-border, rgba(17,82,72,.15)) !important;
+  border-radius: var(--watany-radius-lg, 18px) !important;
+  background: var(--watany-surface, rgba(255,255,255,.96)) !important;
+  color: var(--watany-text, #142c28) !important;
+  box-shadow: var(--watany-elevation-md, 0 10px 26px rgba(15,42,38,.11)) !important;
+  box-sizing: border-box !important;
+}
+
+.watany-v1-clean-settings-panel * {
+  box-sizing: border-box !important;
+}
+
+.watany-v1-clean-settings-title {
+  margin: 0 0 6px !important;
+  color: var(--watany-heading, #0f4039) !important;
+  font-size: clamp(1.35rem, 6.8vw, 1.85rem) !important;
+  line-height: 1.25 !important;
+  font-weight: 950 !important;
+  letter-spacing: -0.02em !important;
+}
+
+.watany-v1-clean-settings-subtitle {
+  margin: 0 0 12px !important;
+  color: var(--watany-muted, rgba(15,64,57,.74)) !important;
+  font-size: .86rem !important;
+  line-height: 1.55 !important;
+  font-weight: 760 !important;
+}
+
+.watany-v1-clean-settings-section {
+  margin: 10px 0 !important;
+  padding: 10px !important;
+  border: 1px solid var(--watany-border, rgba(17,82,72,.12)) !important;
+  border-radius: var(--watany-radius-md, 14px) !important;
+  background: var(--watany-card, rgba(255,255,255,.92)) !important;
+}
+
+.watany-v1-clean-settings-section-title {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  margin: 0 0 9px !important;
+  color: var(--watany-heading, #123c35) !important;
+  font-size: .98rem !important;
+  line-height: 1.35 !important;
+  font-weight: 930 !important;
+}
+
+.watany-v1-clean-settings-section-title i,
+.watany-v1-clean-settings-section-title .ph {
+  font-size: 1.08rem !important;
+}
+
+.watany-v1-clean-settings-row {
+  display: grid !important;
+  grid-template-columns: 1fr auto !important;
+  gap: 10px !important;
+  align-items: center !important;
+  min-height: 48px !important;
+  padding: 8px 0 !important;
+  border-top: 1px solid rgba(17,82,72,.08) !important;
+}
+
+.watany-v1-clean-settings-row:first-of-type {
+  border-top: 0 !important;
+}
+
+.watany-v1-clean-settings-label {
+  color: var(--watany-text, #142c28) !important;
+  font-size: .9rem !important;
+  line-height: 1.45 !important;
+  font-weight: 860 !important;
+}
+
+.watany-v1-clean-settings-hint {
+  display: block !important;
+  margin-top: 2px !important;
+  color: var(--watany-muted, rgba(15,64,57,.68)) !important;
+  font-size: .74rem !important;
+  line-height: 1.35 !important;
+  font-weight: 650 !important;
+}
+
+.watany-v1-clean-settings-control {
+  appearance: none !important;
+  min-height: 38px !important;
+  min-width: 92px !important;
+  border: 1px solid var(--watany-border, rgba(17,82,72,.16)) !important;
+  border-radius: var(--watany-radius-md, 12px) !important;
+  padding: 6px 10px !important;
+  background: var(--watany-control-bg, rgba(255,255,255,.94)) !important;
+  color: var(--watany-control-text, currentColor) !important;
+  font: inherit !important;
+  font-size: .78rem !important;
+  font-weight: 850 !important;
+}
+
+.watany-v1-clean-settings-button {
+  appearance: none !important;
+  min-height: 38px !important;
+  border: 1px solid var(--watany-border, rgba(17,82,72,.16)) !important;
+  border-radius: var(--watany-radius-md, 12px) !important;
+  padding: 7px 10px !important;
+  background: var(--watany-control-bg, rgba(255,255,255,.94)) !important;
+  color: var(--watany-control-text, currentColor) !important;
+  font: inherit !important;
+  font-size: .78rem !important;
+  font-weight: 850 !important;
+  cursor: pointer !important;
+}
+
+.watany-v1-clean-settings-button.is-active {
+  background: var(--watany-accent-soft, rgba(16,94,82,.12)) !important;
+  color: var(--watany-heading, #0f4039) !important;
+  border-color: rgba(16,94,82,.30) !important;
+}
+
+.watany-v1-clean-settings-button-group {
+  display: inline-grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 4px !important;
+  min-width: 148px !important;
+}
+
+.watany-v1-clean-settings-note {
+  margin: 10px 0 0 !important;
+  padding: 9px 10px !important;
+  border-radius: var(--watany-radius-md, 12px) !important;
+  background: rgba(16,94,82,.08) !important;
+  color: var(--watany-muted, rgba(15,64,57,.82)) !important;
+  font-size: .75rem !important;
+  line-height: 1.45 !important;
+  font-weight: 740 !important;
+}
+
+.watany-v1-settings-clutter-hidden {
+  display: none !important;
+}
+
+body.watany-v1-clean-settings-active [data-watany-v1-settings-clutter="true"] {
+  display: none !important;
+}
+
+@media (max-width: 430px) {
+  .watany-v1-clean-settings-panel {
+    margin-left: 4px !important;
+    margin-right: 4px !important;
+    padding: 10px !important;
+  }
+
+  .watany-v1-clean-settings-row {
+    grid-template-columns: 1fr !important;
+    gap: 6px !important;
+  }
+
+  .watany-v1-clean-settings-control,
+  .watany-v1-clean-settings-button-group {
+    width: 100% !important;
+  }
+}
+
+
+/* APEX Watany V1 Clean Settings Canonicalization v1.9.2 */
+.watany-v1-clean-settings-panel {
+  direction: rtl !important;
+  width: 100% !important;
+  max-width: min(430px, calc(100vw - 12px)) !important;
+  margin: 10px auto 18px !important;
+  padding: 12px !important;
+  border: 1px solid var(--watany-border, rgba(17,82,72,.15)) !important;
+  border-radius: var(--watany-radius-lg, 18px) !important;
+  background: var(--watany-surface, rgba(255,255,255,.96)) !important;
+  color: var(--watany-text, #142c28) !important;
+  box-shadow: var(--watany-elevation-md, 0 10px 26px rgba(15,42,38,.11)) !important;
+  box-sizing: border-box !important;
+}
+
+.watany-v1-clean-settings-panel * { box-sizing: border-box !important; }
+
+.watany-v1-clean-settings-title {
+  margin: 0 0 6px !important;
+  color: var(--watany-heading, #0f4039) !important;
+  font-size: clamp(1.35rem, 6.8vw, 1.85rem) !important;
+  line-height: 1.25 !important;
+  font-weight: 950 !important;
+}
+
+.watany-v1-clean-settings-subtitle {
+  margin: 0 0 12px !important;
+  color: var(--watany-muted, rgba(15,64,57,.74)) !important;
+  font-size: .86rem !important;
+  line-height: 1.55 !important;
+  font-weight: 760 !important;
+}
+
+.watany-v1-clean-settings-section {
+  margin: 10px 0 !important;
+  padding: 10px !important;
+  border: 1px solid var(--watany-border, rgba(17,82,72,.12)) !important;
+  border-radius: var(--watany-radius-md, 14px) !important;
+  background: var(--watany-card, rgba(255,255,255,.92)) !important;
+}
+
+.watany-v1-clean-settings-section-title {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  margin: 0 0 9px !important;
+  color: var(--watany-heading, #123c35) !important;
+  font-size: .98rem !important;
+  line-height: 1.35 !important;
+  font-weight: 930 !important;
+}
+
+.watany-v1-clean-settings-section-title i,
+.watany-v1-clean-settings-section-title .ph { font-size: 1.08rem !important; }
+
+.watany-v1-clean-settings-row {
+  display: grid !important;
+  grid-template-columns: 1fr auto !important;
+  gap: 10px !important;
+  align-items: center !important;
+  min-height: 48px !important;
+  padding: 8px 0 !important;
+  border-top: 1px solid rgba(17,82,72,.08) !important;
+}
+
+.watany-v1-clean-settings-row:first-of-type { border-top: 0 !important; }
+
+.watany-v1-clean-settings-label {
+  color: var(--watany-text, #142c28) !important;
+  font-size: .9rem !important;
+  line-height: 1.45 !important;
+  font-weight: 860 !important;
+}
+
+.watany-v1-clean-settings-hint {
+  display: block !important;
+  margin-top: 2px !important;
+  color: var(--watany-muted, rgba(15,64,57,.68)) !important;
+  font-size: .74rem !important;
+  line-height: 1.35 !important;
+  font-weight: 650 !important;
+}
+
+.watany-v1-clean-settings-control,
+.watany-v1-clean-settings-button {
+  appearance: none !important;
+  min-height: 38px !important;
+  border: 1px solid var(--watany-border, rgba(17,82,72,.16)) !important;
+  border-radius: var(--watany-radius-md, 12px) !important;
+  padding: 6px 10px !important;
+  background: var(--watany-control-bg, rgba(255,255,255,.94)) !important;
+  color: var(--watany-control-text, currentColor) !important;
+  font: inherit !important;
+  font-size: .78rem !important;
+  font-weight: 850 !important;
+}
+
+.watany-v1-clean-settings-button { cursor: pointer !important; }
+
+.watany-v1-clean-settings-button.is-active {
+  background: var(--watany-accent-soft, rgba(16,94,82,.12)) !important;
+  color: var(--watany-heading, #0f4039) !important;
+  border-color: rgba(16,94,82,.30) !important;
+}
+
+.watany-v1-clean-settings-button-group {
+  display: inline-grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 4px !important;
+  min-width: 148px !important;
+}
+
+.watany-v1-clean-settings-note {
+  margin: 10px 0 0 !important;
+  padding: 9px 10px !important;
+  border-radius: var(--watany-radius-md, 12px) !important;
+  background: rgba(16,94,82,.08) !important;
+  color: var(--watany-muted, rgba(15,64,57,.82)) !important;
+  font-size: .75rem !important;
+  line-height: 1.45 !important;
+  font-weight: 740 !important;
+}
+
+body.watany-v1-clean-settings-active [data-watany-v1-settings-clutter="true"],
+.watany-v1-settings-clutter-hidden { display: none !important; }
+
+@media (max-width: 430px) {
+  .watany-v1-clean-settings-panel { margin-left: 4px !important; margin-right: 4px !important; padding: 10px !important; }
+  .watany-v1-clean-settings-row { grid-template-columns: 1fr !important; gap: 6px !important; }
+  .watany-v1-clean-settings-control, .watany-v1-clean-settings-button-group { width: 100% !important; }
+}
+
+
+/* APEX Watany V1 School Forms Universal Viewer Bridge v1.8.4 */
+.watany-school-form-bridge-panel {
+  width: min(100%, 430px) !important;
+  margin: 10px auto !important;
+  padding: 10px !important;
+  direction: rtl !important;
+  background: var(--watany-surface, var(--card, #fff)) !important;
+  border: 1px solid var(--watany-border, rgba(0,0,0,.12)) !important;
+  border-radius: var(--watany-radius-lg, 16px) !important;
+  box-shadow: var(--watany-elevation-md, 0 8px 18px rgba(0,0,0,.10)) !important;
+}
+.watany-school-form-bridge-title {
+  margin: 0 0 8px !important;
+  font: inherit !important;
+  font-weight: 900 !important;
+  font-size: 1rem !important;
+}
+.watany-school-form-bridge-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 8px !important;
+}
+.watany-school-form-bridge-card {
+  appearance: none !important;
+  min-height: 74px !important;
+  border: 1px solid var(--watany-border, rgba(0,0,0,.14)) !important;
+  border-radius: var(--watany-radius-md, 12px) !important;
+  background: var(--watany-control-bg, var(--button-bg, #fff)) !important;
+  color: var(--watany-control-text, inherit) !important;
+  font: inherit !important;
+  font-weight: 850 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 5px !important;
+  cursor: pointer !important;
+  text-align: center !important;
+}
+.watany-school-form-bridge-icon .ph,
+.watany-school-form-bridge-icon .watany-app-icon {
+  font-size: 1.35rem !important;
+}
+.watany-school-form-bridge-label {
+  font-size: .82rem !important;
+  line-height: 1.25 !important;
+}
+
+
+/* APEX Watany V1 School Forms Universal Viewer Bridge v1.8.5 */
+.watany-school-form-bridge-panel {
+  width: min(100%, 430px) !important;
+  margin: 10px auto !important;
+  padding: 10px !important;
+  direction: rtl !important;
+  background: var(--watany-surface, var(--card, #fff)) !important;
+  border: 1px solid var(--watany-border, rgba(0,0,0,.12)) !important;
+  border-radius: var(--watany-radius-lg, 16px) !important;
+  box-shadow: var(--watany-elevation-md, 0 8px 18px rgba(0,0,0,.10)) !important;
+}
+.watany-school-form-bridge-title {
+  margin: 0 0 8px !important;
+  font: inherit !important;
+  font-weight: 900 !important;
+  font-size: 1rem !important;
+}
+.watany-school-form-bridge-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 8px !important;
+}
+.watany-school-form-bridge-card {
+  appearance: none !important;
+  min-height: 74px !important;
+  border: 1px solid var(--watany-border, rgba(0,0,0,.14)) !important;
+  border-radius: var(--watany-radius-md, 12px) !important;
+  background: var(--watany-control-bg, var(--button-bg, #fff)) !important;
+  color: var(--watany-control-text, inherit) !important;
+  font: inherit !important;
+  font-weight: 850 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 5px !important;
+  cursor: pointer !important;
+  text-align: center !important;
+}
+.watany-school-form-bridge-icon .ph,
+.watany-school-form-bridge-icon .watany-app-icon {
+  font-size: 1.35rem !important;
+}
+.watany-school-form-bridge-label {
+  font-size: .82rem !important;
+  line-height: 1.25 !important;
+}
+
+
+/* APEX Watany V1 Clean Settings Single Template v1.9.0 */
+.watany-clean-settings-template {
+  width: min(100%, var(--watany-mobile-shell-width, 430px)) !important;
+  max-width: calc(100vw - 8px) !important;
+  margin: 8px auto 80px !important;
+  padding: 10px !important;
+  direction: rtl !important;
+  background: var(--watany-surface, var(--card, #fff)) !important;
+  color: var(--watany-text, inherit) !important;
+  border: 1px solid var(--watany-border, rgba(0,0,0,.12)) !important;
+  border-radius: var(--watany-radius-lg, 16px) !important;
+  box-shadow: var(--watany-elevation-md, 0 10px 22px rgba(0,0,0,.10)) !important;
+}
+.watany-clean-settings-head {
+  padding: 4px 4px 10px !important;
+  text-align: right !important;
+}
+.watany-clean-settings-head h1 {
+  margin: 0 !important;
+  font: inherit !important;
+  font-size: 1.35rem !important;
+  line-height: 1.2 !important;
+  font-weight: 950 !important;
+}
+.watany-clean-settings-head p {
+  margin: 5px 0 0 !important;
+  font: inherit !important;
+  font-size: .86rem !important;
+  line-height: 1.45 !important;
+  opacity: .78 !important;
+}
+.watany-clean-settings-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 8px !important;
+}
+.watany-clean-settings-card {
+  appearance: none !important;
+  min-height: 112px !important;
+  padding: 10px 8px !important;
+  border: 1px solid var(--watany-border, rgba(0,0,0,.14)) !important;
+  border-radius: var(--watany-radius-md, 14px) !important;
+  background: var(--watany-control-bg, var(--card, #fff)) !important;
+  color: var(--watany-control-text, inherit) !important;
+  font: inherit !important;
+  text-align: right !important;
+  cursor: pointer !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  gap: 8px !important;
+}
+.watany-clean-settings-card-top {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 8px !important;
+  font-size: .98rem !important;
+  line-height: 1.25 !important;
+}
+.watany-clean-settings-card-top .ph,
+.watany-clean-settings-card-top .watany-app-icon {
+  font-size: 1.45rem !important;
+  line-height: 1 !important;
+}
+
+/* Runtime icon classes may get attached to the whole settings row container; neutralize them here. */
+.watany-clean-settings-card-top.watany-approved-runtime-tile,
+.watany-clean-settings-card-top.watany-approved-runtime-glyph {
+  width: auto !important;
+  height: auto !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-width: 100% !important;
+  max-height: none !important;
+  flex: 0 1 auto !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 8px !important;
+  font-size: .98rem !important;
+  line-height: 1.25 !important;
+  overflow: visible !important;
+}
+
+.watany-clean-settings-card-top.watany-approved-runtime-tile::before {
+  content: none !important;
+  display: none !important;
+}
+
+.watany-clean-settings-card-top > strong {
+  display: inline-block !important;
+  max-width: 100% !important;
+  font-size: .98rem !important;
+  line-height: 1.25 !important;
+  font-weight: 800 !important;
+}
+.watany-clean-settings-card-items {
+  font-size: .72rem !important;
+  line-height: 1.35 !important;
+  opacity: .78 !important;
+}
+
+/* User-requested: remove secondary settings subtitle element when runtime mutates it as an icon label. */
+.watany-clean-settings-card-items.watany-approved-runtime-label {
+  display: none !important;
+}
+.watany-clean-settings-sheet-backdrop {
+  position: fixed !important;
+  z-index: 2147483070 !important;
+  inset: 0 !important;
+  background: rgba(0,0,0,.18) !important;
+}
+.watany-clean-settings-sheet {
+  position: fixed !important;
+  z-index: 2147483071 !important;
+  left: 50% !important;
+  bottom: max(8px, env(safe-area-inset-bottom)) !important;
+  transform: translateX(-50%) !important;
+  width: min(var(--watany-mobile-shell-width, 430px), calc(100vw - 10px)) !important;
+  max-height: min(70vh, 620px) !important;
+  overflow: auto !important;
+  direction: rtl !important;
+  background: var(--watany-surface, var(--card, #fff)) !important;
+  color: var(--watany-text, inherit) !important;
+  border: 1px solid var(--watany-border, rgba(0,0,0,.14)) !important;
+  border-radius: 18px 18px 12px 12px !important;
+  box-shadow: var(--watany-elevation-lg, 0 14px 32px rgba(0,0,0,.20)) !important;
+}
+.watany-clean-settings-sheet-header {
+  position: sticky !important;
+  top: 0 !important;
+  background: inherit !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  gap: 8px !important;
+  align-items: center !important;
+  padding: 10px !important;
+  border-bottom: 1px solid var(--watany-border, rgba(0,0,0,.10)) !important;
+}
+.watany-clean-settings-close {
+  appearance: none !important;
+  border: 1px solid var(--watany-border, rgba(0,0,0,.14)) !important;
+  border-radius: 12px !important;
+  background: var(--watany-control-bg, transparent) !important;
+  color: inherit !important;
+  font: inherit !important;
+  font-weight: 800 !important;
+  min-height: 36px !important;
+  padding: 4px 8px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  cursor: pointer !important;
+}
+.watany-clean-settings-sheet-body {
+  padding: 10px !important;
+  display: grid !important;
+  gap: 8px !important;
+}
+.watany-clean-settings-row {
+  min-height: 46px !important;
+  padding: 8px 10px !important;
+  border: 1px solid var(--watany-border, rgba(0,0,0,.10)) !important;
+  border-radius: 12px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 8px !important;
+}
+.watany-clean-settings-status {
+  font-size: .75rem !important;
+  font-weight: 900 !important;
+  opacity: .7 !important;
+}
+[data-watany-clean-settings-hidden="true"] {
+  display: none !important;
+}
+@media (max-width: 370px) {
+  .watany-clean-settings-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+
+/* APEX Watany V1 Procedures Title Source Grouping Polish v2.0.0 */
+.watany-procedures-polish {
+  width: min(100%, var(--watany-mobile-shell-width, 430px)) !important;
+  max-width: calc(100vw - 8px) !important;
+  margin: 8px auto 82px !important;
+  padding: 10px !important;
+  direction: rtl !important;
+  color: var(--watany-text, inherit) !important;
+}
+.watany-procedures-polish-hero {
+  position: relative !important;
+  overflow: hidden !important;
+  padding: 16px 14px !important;
+  border-radius: 20px !important;
+  background:
+    radial-gradient(circle at 12% 16%, rgba(255,255,255,.55), transparent 30%),
+    linear-gradient(135deg, var(--watany-primary-soft, rgba(28,91,69,.15)), var(--watany-surface, #fff)) !important;
+  border: 1px solid var(--watany-border, rgba(0,0,0,.12)) !important;
+  box-shadow: var(--watany-elevation-md, 0 12px 26px rgba(0,0,0,.12)) !important;
+}
+.watany-procedures-polish-eyebrow {
+  display: inline-flex !important;
+  align-items: center !important;
+  min-height: 24px !important;
+  padding: 3px 9px !important;
+  margin-bottom: 8px !important;
+  border-radius: 999px !important;
+  background: var(--watany-chip-bg, rgba(255,255,255,.62)) !important;
+  border: 1px solid var(--watany-border, rgba(0,0,0,.10)) !important;
+  font: inherit !important;
+  font-size: .76rem !important;
+  font-weight: 900 !important;
+}
+.watany-procedures-polish-title {
+  margin: 0 !important;
+  font: inherit !important;
+  font-weight: 1000 !important;
+  letter-spacing: -0.03em !important;
+  font-size: clamp(2rem, 8.5vw, 2.8rem) !important;
+  line-height: .96 !important;
+}
+.watany-procedures-polish-subtitle {
+  max-width: 34ch !important;
+  margin: 10px 0 0 !important;
+  font: inherit !important;
+  font-size: .92rem !important;
+  line-height: 1.55 !important;
+  font-weight: 700 !important;
+  opacity: .82 !important;
+}
+.watany-procedures-polish-source-grid {
+  display: grid !important;
+  gap: 10px !important;
+  margin-top: 10px !important;
+}
+.watany-procedures-polish-source {
+  padding: 10px !important;
+  border-radius: 18px !important;
+  background: var(--watany-surface, var(--card, #fff)) !important;
+  border: 1px solid var(--watany-border, rgba(0,0,0,.12)) !important;
+  box-shadow: var(--watany-elevation-sm, 0 6px 14px rgba(0,0,0,.08)) !important;
+}
+.watany-procedures-polish-source-head {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  margin-bottom: 8px !important;
+}
+.watany-procedures-polish-source-head .ph,
+.watany-procedures-polish-source-head .watany-app-icon {
+  font-size: 1.45rem !important;
+  line-height: 1 !important;
+}
+.watany-procedures-polish-source-head h2 {
+  margin: 0 !important;
+  font: inherit !important;
+  font-size: 1.02rem !important;
+  line-height: 1.25 !important;
+  font-weight: 950 !important;
+}
+.watany-procedures-polish-cards {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 8px !important;
+}
+.watany-procedures-polish-card {
+  appearance: none !important;
+  min-height: 74px !important;
+  border: 1px solid var(--watany-border, rgba(0,0,0,.12)) !important;
+  border-radius: 14px !important;
+  background: var(--watany-control-bg, var(--card, #fff)) !important;
+  color: inherit !important;
+  font: inherit !important;
+  text-decoration: none !important;
+  padding: 8px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  gap: 5px !important;
+  text-align: right !important;
+}
+.watany-procedures-polish-card-label {
+  font-size: .83rem !important;
+  line-height: 1.32 !important;
+  font-weight: 900 !important;
+}
+.watany-procedures-polish-card-hint {
+  font-size: .68rem !important;
+  line-height: 1.25 !important;
+  opacity: .62 !important;
+  font-weight: 750 !important;
+}
+@media (max-width: 365px) {
+  .watany-procedures-polish-cards {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+
+/* APEX Watany V1 Procedures Title Source Grouping Polish v2.0.1 title-size closeout */
+.watany-procedures-polish-title {
+  font-size: clamp(2.15rem, 9.3vw, 3.05rem) !important;
+  line-height: .96 !important;
+  font-weight: 1000 !important;
+}
+
+
+/* APEX Watany V1 Procedures Title Inline Size Closeout v2.0.2 */
+.watany-procedures-polish-title[data-watany-procedures-title-size-closeout="v2.0.2"] {
+  font-size: 34px !important;
+  line-height: .96 !important;
+  font-weight: 1000 !important;
+}
+
+
+/* APEX Watany V1 Full Width Snapped Popup Consistency Audit v2.1.0 rewritten safe layer */
+.watany-v1-snapped-popup-overlay {
+  width: var(--watany-v1-snap-width, min(430px, calc(100vw - 8px))) !important;
+  max-width: calc(100vw - 8px) !important;
+  max-height: var(--watany-v1-snap-max-height, calc(100dvh - 120px)) !important;
+  box-sizing: border-box !important;
+  border-radius: var(--watany-radius-lg, 18px) !important;
+  overflow: auto !important;
+  overscroll-behavior: contain !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+.watany-v1-snapped-popup-overlay:not(#watany-form-viewer-root) {
+  position: fixed !important;
+  left: 50% !important;
+  right: auto !important;
+  top: var(--watany-v1-snap-top, 0px) !important;
+  bottom: var(--watany-v1-snap-bottom, 0px) !important;
+  transform: translateX(-50%) !important;
+  z-index: 2147482500 !important;
+}
+.watany-v1-snapped-popup-overlay .kw-child-item,
+.watany-v1-snapped-popup-overlay [role="button"],
+.watany-v1-snapped-popup-overlay button,
+.watany-v1-snapped-popup-overlay a {
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+html[data-watany-v1-snapped-popup-ready="true"] .kw-group-sheet,
+html[data-watany-v1-snapped-popup-ready="true"] .kw-bottom-sheet,
+html[data-watany-v1-snapped-popup-ready="true"] .kw-feature-sheet {
+  width: var(--watany-v1-snap-width, min(430px, calc(100vw - 8px))) !important;
+  max-width: calc(100vw - 8px) !important;
+}
+
+
+/* APEX Watany V1 Full Width Snapped Popup Header Snap Closeout v2.1.1 */
+.watany-v1-header-snap-closeout[data-watany-v1-header-snap-closeout="v2.1.1"] {
+  position: fixed !important;
+  inset: auto !important;
+  top: var(--watany-v1-header-snap-top-px, var(--watany-v1-snap-top, 0px)) !important;
+  bottom: var(--watany-v1-header-snap-bottom-px, var(--watany-v1-snap-bottom, 0px)) !important;
+  left: 50% !important;
+  right: auto !important;
+  width: var(--watany-v1-header-snap-width-px, min(430px, calc(100vw - 8px))) !important;
+  max-width: calc(100vw - 8px) !important;
+  max-height: var(--watany-v1-header-snap-max-height-px, calc(100dvh - 120px)) !important;
+  margin: 0 !important;
+  transform: translateX(-50%) !important;
+  translate: none !important;
+  scale: none !important;
+  rotate: none !important;
+  overflow: auto !important;
+  overscroll-behavior: contain !important;
+  box-sizing: border-box !important;
+  z-index: 2147482600 !important;
+}
+
+
+/* APEX Watany V1 Full Width Snapped Popup Body Portal Closeout v2.1.2 */
+.watany-v1-body-portal-snap-closeout[data-watany-v1-body-portal-snap-closeout="v2.1.2"] {
+  position: fixed !important;
+  inset: auto !important;
+  top: var(--watany-v1-body-portal-top-px, 0px) !important;
+  bottom: var(--watany-v1-body-portal-bottom-px, 0px) !important;
+  left: 50% !important;
+  right: auto !important;
+  width: var(--watany-v1-body-portal-width-px, min(430px, calc(100vw - 8px))) !important;
+  max-width: calc(100vw - 8px) !important;
+  max-height: var(--watany-v1-body-portal-max-height-px, calc(100dvh - 120px)) !important;
+  margin: 0 !important;
+  transform: translateX(-50%) !important;
+  translate: none !important;
+  scale: none !important;
+  rotate: none !important;
+  overflow: auto !important;
+  overscroll-behavior: contain !important;
+  box-sizing: border-box !important;
+  z-index: 2147482700 !important;
+}
+
+
+/* APEX Watany V1 Home Height Published Icons Closeout v2.2.0
+  Only clamp the launcher shell on the actual home route. */
+html[data-watany-current-route="/"] .watany-v1-home-height-published-icons-root[data-watany-v1-home-height-published-icons="v2.2.0"] {
+  height: var(--watany-v1-home-published-icons-height) !important;
+  min-height: var(--watany-v1-home-published-icons-height) !important;
+  max-height: var(--watany-v1-home-published-icons-height) !important;
+  overflow: visible !important;
+  box-sizing: border-box !important;
+  margin-bottom: 0 !important;
+  padding-bottom: 8px !important;
+}
+.watany-v1-home-height-published-icons-parent {
+  min-height: 0 !important;
+  height: auto !important;
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+}
+html[data-watany-v1-home-height-ready="true"] body {
+  overscroll-behavior-y: contain;
+}

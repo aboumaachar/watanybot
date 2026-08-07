@@ -1,0 +1,121 @@
+.watany-address-widget {
+  display: grid;
+  gap: 14px;
+  border: 1px solid rgba(15, 23, 42, 0.1);
+  border-radius: 24px;
+  padding: 16px;
+  background: linear-gradient(145deg, rgba(255,255,255,0.96), rgba(240,248,255,0.9));
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+}
+
+.watany-address-widget__header {
+  display: grid;
+  gap: 10px;
+}
+
+.watany-address-widget__header strong {
+  display: block;
+  font-size: 1rem;
+  color: #0f172a;
+}
+
+.watany-address-widget__header span {
+  display: block;
+  color: rgba(15, 23, 42, 0.68);
+  font-size: 0.85rem;
+  line-height: 1.55;
+}
+
+.watany-address-widget__summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.watany-address-widget__chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.watany-address-widget__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.watany-address-widget__field,
+.watany-address-widget__derived,
+.watany-address-widget__manual-pin {
+  display: grid;
+  gap: 6px;
+  color: #0f172a;
+  font-weight: 700;
+}
+
+.watany-address-widget__field span,
+.watany-address-widget__derived span,
+.watany-address-widget__manual-pin span {
+  font-size: 0.88rem;
+}
+
+.watany-address-widget__field select,
+.watany-address-widget__field textarea,
+.watany-address-widget__manual-pin input {
+  width: 100%;
+  min-height: 48px;
+  border: 1px solid rgba(15, 23, 42, 0.14);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.98);
+  padding: 11px 12px;
+  font: inherit;
+  color: #0f172a;
+}
+
+.watany-address-widget__derived {
+  padding: 12px;
+  border-radius: 18px;
+  background: #f8fafc;
+  border: 1px dashed rgba(37, 99, 235, 0.18);
+}
+
+.watany-address-widget__derived strong {
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1.6;
+}
+
+.watany-address-widget__field--wide {
+  grid-column: 1 / -1;
+}
+
+.watany-address-widget__manual-pin {
+  grid-column: 1 / -1;
+  padding: 12px;
+  border-radius: 18px;
+  background: #fff;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.watany-address-widget__manual-pin button,
+.watany-address-widget [data-address-gps] {
+  min-height: 44px;
+  border: none;
+  border-radius: 14px;
+  background: #2563eb;
+  color: #fff;
+  font-weight: 800;
+  padding: 0 14px;
+}
+
+@media (max-width: 720px) {
+  .watany-address-widget__grid {
+    grid-template-columns: 1fr;
+  }
+}

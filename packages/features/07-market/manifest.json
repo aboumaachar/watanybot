@@ -1,0 +1,10 @@
+﻿{
+    "featureKey":  "07-market",
+    "featureName":  "Market",
+    "doctrine":  "near-zero-recode-v1",
+    "portable":  true,
+    "replaceable":  true,
+    "status":  "BOUNDARY_DECLARED_REQUIRES_VALIDATION",
+    "passRule":  "No PASS without validation and smoke evidence.",
+    "generatedAt":  "2026-06-10T16:43:38.1412357+03:00"
+}

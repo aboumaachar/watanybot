@@ -1,0 +1,8 @@
+{
+  "httpStatus": 200,
+  "compactBefore": true,
+  "expanded": true,
+  "badgeText": null,
+  "applyHref": "http://127.0.0.1:5174/register?next=%2Fjobs",
+  "saveLabel": "☆ احفظ"
+}

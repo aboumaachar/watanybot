@@ -1,0 +1,90 @@
+{
+  "intents": [
+    {
+      "name": "pension_eligibility",
+      "menu_label": "معاشي/تقاعدي",
+      "required_slots": [
+        "service_branch",
+        "service_years"
+      ],
+      "slot_questions_lb": {
+        "service_branch": "حضرتك متقاعد من أي جهاز؟",
+        "service_years": "قديش مدة الخدمة الفعلية؟"
+      }
+    },
+    {
+      "name": "survivor_pension",
+      "menu_label": "ورثة/معاش العيلة بعد الوفاة",
+      "required_slots": [
+        "heirs"
+      ],
+      "slot_questions_lb": {
+        "heirs": "مين الورثة الموجودين؟"
+      }
+    },
+    {
+      "name": "renew_social_card",
+      "menu_label": "طبابة وبطاقات خدمات",
+      "required_slots": [
+        "service_branch",
+        "beneficiary"
+      ],
+      "slot_questions_lb": {
+        "service_branch": "الملف تابع للجيش أو قوى الأمن؟",
+        "beneficiary": "لمين البطاقة؟"
+      }
+    },
+    {
+      "name": "aid_request",
+      "menu_label": "مساعدات (مدرسية/مرضية/اجتماعية)",
+      "required_slots": [
+        "aid_type"
+      ],
+      "slot_questions_lb": {
+        "aid_type": "أي نوع مساعدة؟ (مدرسية/مرضية/اجتماعية)"
+      }
+    },
+    {
+      "name": "complaint_appeal",
+      "menu_label": "شكوى/اعتراض",
+      "required_slots": [
+        "topic",
+        "decision_date"
+      ],
+      "slot_questions_lb": {
+        "topic": "شو المشكلة؟ (رفض/تأخير/غلط بالقيمة)",
+        "decision_date": "إمتى صار القرار؟"
+      }
+    },
+    {
+      "name": "directory_links",
+      "menu_label": "أرقام ومراكز وخدمات",
+      "required_slots": [
+        "need"
+      ],
+      "slot_questions_lb": {
+        "need": "وين بدك تراجع؟"
+      }
+    },
+    {
+      "name": "salary_compute",
+      "menu_label": "احتساب المعاش/التعويض",
+      "required_slots": [
+        "rank",
+        "degree",
+        "category"
+      ],
+      "slot_questions_lb": {
+        "rank": "شو رتبتك؟",
+        "degree": "شو درجتك؟",
+        "category": "ضابط/رتيب/فرد؟"
+      }
+    },
+    {
+      "name": "other",
+      "menu_label": "أو شي تاني",
+      "required_slots": [],
+      "slot_questions_lb": {}
+    }
+  ]
+}

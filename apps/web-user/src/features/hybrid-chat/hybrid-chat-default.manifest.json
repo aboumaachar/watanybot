@@ -1,0 +1,34 @@
+{
+    "id":  "watany-hybrid-chat-default-v1-1",
+    "generatedBy":  "APEX_WATANYBOT_HYBRID_CHAT_DEFAULT_HARDENED_REPLACER",
+    "version":  "v1.1",
+    "generatedAt":  "2026-06-02T11:06:52.5524699+03:00",
+    "mode":  "strict-live-entrypoints-only",
+    "preserveCommunityChat":  true,
+    "endpoint":  "/api/kb/hybrid-chat",
+    "defaultWrapper":  "apps/web-user/src/features/hybrid-chat/WatanyHybridDefaultChat.tsx",
+    "patchTargets":  [
+                         "apps/web-user/src/components/ChatFirstWindow.tsx",
+                         "apps/web-user/src/components/ChatPopup.tsx",
+                         "apps/web-user/src/components/ChatScreen.tsx",
+                         "apps/web-user/src/components/UniversalChatWidget.tsx",
+                         "apps/web-user/src/pages/ChatSessionsPage.tsx",
+                         "apps/web-user/src/pages/GroupChatsPage.tsx",
+                         "apps/web-user/src/pages/MobileOsChatPage.tsx",
+                         "apps/web-user/src/pages/SavedChatsPage.tsx",
+                         "apps/web-user/src/pages/hybrid-kb-chat.tsx"
+                     ],
+    "exclusions":  [
+                       "community",
+                       ".apex",
+                       ".pma",
+                       "backups",
+                       "node_modules",
+                       "dist",
+                       "build",
+                       ".next",
+                       "layouts",
+                       "shared primitives",
+                       "internal hybrid-chat"
+                   ]
+}

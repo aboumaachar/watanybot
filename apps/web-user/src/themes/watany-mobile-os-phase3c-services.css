@@ -1,0 +1,79 @@
+﻿/* APEX WatanyBot Mobile OS Phase 3C: service route rebuild layer */
+
+.wmo-service-route {
+  min-height: 100%;
+}
+
+.wmo-service-route .wmo-route-service-hero,
+.wmo-service-hero {
+  padding: 18px;
+  margin-bottom: 14px;
+  border-radius: var(--watany-radius-xl, 34px);
+  background:
+    radial-gradient(circle at top right, rgba(46,125,91,.16), transparent 20rem),
+    var(--watany-surface, rgba(255,255,255,.88));
+  border: 1px solid var(--watany-border, rgba(18,53,91,.1));
+  box-shadow: 0 16px 34px rgba(18,53,91,.12);
+}
+
+.wmo-service-route .wmo-route-service-title,
+.wmo-service-title {
+  margin: 0;
+  font-size: clamp(22px, 5vw, 32px);
+  font-weight: 950;
+  line-height: 1.15;
+  color: var(--watany-text, #172033);
+}
+
+.wmo-service-route .wmo-route-service-subtitle,
+.wmo-service-subtitle {
+  margin: 8px 0 0;
+  color: var(--watany-muted, #6b7280);
+  line-height: 1.65;
+  font-size: 14px;
+}
+
+.wmo-service-route .service-card,
+.wmo-service-route .document-card,
+.wmo-service-route .procedure-card,
+.wmo-service-route .salary-card,
+.wmo-service-route .form-card,
+.wmo-service-route .card,
+.wmo-service-route .panel {
+  border-radius: var(--watany-radius-lg, 28px);
+  border: 1px solid var(--watany-border, rgba(18,53,91,.1));
+  box-shadow: 0 12px 28px rgba(18,53,91,.10);
+  background: var(--watany-surface, rgba(255,255,255,.88));
+}
+
+.wmo-service-route .grid,
+.wmo-service-route .cards-grid,
+.wmo-service-route .services-grid,
+.wmo-service-route .documents-grid,
+.wmo-service-route .forms-grid,
+.wmo-service-route .procedures-grid {
+  gap: 14px;
+}
+
+.wmo-service-route input,
+.wmo-service-route select,
+.wmo-service-route textarea,
+.wmo-service-route button,
+.wmo-service-route a {
+  min-height: 44px;
+}
+
+.wmo-service-route .search,
+.wmo-service-route .search-bar,
+.wmo-service-route .filter-bar,
+.wmo-service-route .filters {
+  border-radius: var(--watany-radius-lg, 28px);
+}
+
+@media (max-width: 520px) {
+  .wmo-service-route .wmo-route-service-hero,
+  .wmo-service-hero {
+    padding: 15px;
+    border-radius: 24px;
+  }
+}

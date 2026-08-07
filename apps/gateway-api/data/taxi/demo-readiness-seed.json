@@ -1,0 +1,103 @@
+{
+  "version": "taxi-trusted-mobility-demo-seed-v1",
+  "simulationOnly": true,
+  "featureStatus": "DEMO_VERIFIED_PRODUCTION_HARDENING_PENDING",
+  "generatedFor": "WatanyBot Taxi Trusted Mobility",
+  "notes": [
+    "This seed is for demo/readiness simulation only.",
+    "Do not treat seeded data as production driver verification.",
+    "Production requires database persistence, auth, admin approvals, OTP, audit logs, encrypted storage, and document review."
+  ],
+  "drivers": [
+    {
+      "id": "demo-driver-beirut-001",
+      "fullName": "سائق تجريبي - بيروت",
+      "phone": "+96170000001",
+      "whatsappPhone": "+96170000001",
+      "status": "APPROVED",
+      "verificationLevel": "TRUSTED_DEMO",
+      "serviceAreas": ["بيروت", "المتن", "بعبدا"],
+      "availability": { "status": "AVAILABLE", "locationLabel": "المتحف - بيروت", "availableUntil": "23:00" },
+      "vehicle": { "make": "Toyota", "model": "Corolla", "year": 2018, "color": "أبيض", "platePublicLastDigits": "123", "plateType": "RED_PUBLIC_DEMO", "seats": 4 },
+      "rating": 4.8,
+      "demoBadges": ["مرخّص تجريبي", "مناسب لكبار السن", "واتساب متاح"]
+    },
+    {
+      "id": "demo-driver-keserwan-002",
+      "fullName": "سائق تجريبي - كسروان",
+      "phone": "+96170000002",
+      "whatsappPhone": "+96170000002",
+      "status": "APPROVED",
+      "verificationLevel": "TRUSTED_DEMO",
+      "serviceAreas": ["جونية", "كسروان", "فتوح كسروان"],
+      "availability": { "status": "AVAILABLE", "locationLabel": "جونية - السراي", "availableUntil": "21:30" },
+      "vehicle": { "make": "Kia", "model": "Rio", "year": 2019, "color": "فضي", "platePublicLastDigits": "458", "plateType": "RED_PUBLIC_DEMO", "seats": 4 },
+      "rating": 4.7,
+      "demoBadges": ["سريع الاستجابة", "حجز مسبق"]
+    },
+    {
+      "id": "demo-driver-north-003",
+      "fullName": "سائق تجريبي - الشمال",
+      "phone": "+96170000003",
+      "whatsappPhone": "+96170000003",
+      "status": "APPROVED",
+      "verificationLevel": "BASIC_DEMO",
+      "serviceAreas": ["طرابلس", "الكورة", "زغرتا"],
+      "availability": { "status": "BUSY", "locationLabel": "طرابلس - التل", "availableUntil": "20:00" },
+      "vehicle": { "make": "Hyundai", "model": "Accent", "year": 2017, "color": "أسود", "platePublicLastDigits": "781", "plateType": "RED_PUBLIC_DEMO", "seats": 4 },
+      "rating": 4.5,
+      "demoBadges": ["مناطق واسعة", "اتصال مباشر"]
+    },
+    {
+      "id": "demo-driver-bekaa-004",
+      "fullName": "سائق تجريبي - البقاع",
+      "phone": "+96170000004",
+      "whatsappPhone": "+96170000004",
+      "status": "APPROVED",
+      "verificationLevel": "TRUSTED_DEMO",
+      "serviceAreas": ["زحلة", "البقاع الأوسط", "شتورا"],
+      "availability": { "status": "AVAILABLE", "locationLabel": "زحلة - المعلقة", "availableUntil": "22:00" },
+      "vehicle": { "make": "Nissan", "model": "Sunny", "year": 2020, "color": "رمادي", "platePublicLastDigits": "604", "plateType": "RED_PUBLIC_DEMO", "seats": 4 },
+      "rating": 4.6,
+      "demoBadges": ["حجز لاحق", "مناسب للمواعيد الرسمية"]
+    },
+    {
+      "id": "demo-driver-south-005",
+      "fullName": "سائق تجريبي - الجنوب",
+      "phone": "+96170000005",
+      "whatsappPhone": "+96170000005",
+      "status": "APPROVED",
+      "verificationLevel": "BASIC_DEMO",
+      "serviceAreas": ["صيدا", "صور", "الزهراني"],
+      "availability": { "status": "OFFLINE", "locationLabel": "صيدا", "availableUntil": "غداً 08:00" },
+      "vehicle": { "make": "Renault", "model": "Logan", "year": 2018, "color": "أزرق", "platePublicLastDigits": "219", "plateType": "RED_PUBLIC_DEMO", "seats": 4 },
+      "rating": 4.4,
+      "demoBadges": ["منطقة الجنوب", "حجز مسبق"]
+    }
+  ],
+  "reservations": [
+    {
+      "id": "demo-reservation-001",
+      "driverId": "demo-driver-beirut-001",
+      "riderLabel": "مستخدم تجريبي",
+      "pickupText": "المتحف - بيروت",
+      "destinationText": "الطبابة العسكرية",
+      "scheduledAt": "today 14:30",
+      "status": "ACCEPTED",
+      "notes": "اتفاق السعر قبل الانطلاق - عرض تجريبي"
+    },
+    {
+      "id": "demo-reservation-002",
+      "driverId": "demo-driver-keserwan-002",
+      "riderLabel": "عائلة متقاعد",
+      "pickupText": "جونية",
+      "destinationText": "رابطة قدماء القوى المسلحة",
+      "scheduledAt": "tomorrow 09:00",
+      "status": "REQUESTED",
+      "notes": "حجز لاحق"
+    }
+  ],
+  "adminDemoQueue": [
+    { "id": "demo-application-pending-001", "fullName": "طلب سائق قيد المراجعة", "phone": "+96170000999", "status": "PENDING_ADMIN_REVIEW" }
+  ]
+}

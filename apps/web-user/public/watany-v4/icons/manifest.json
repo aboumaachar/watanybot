@@ -1,0 +1,365 @@
+{
+  "version": "1.0.6",
+  "authority": "WatanyBot V4 approved universal homepage icon system",
+  "count": 35,
+  "assetBase": "/watany-v4/icons",
+  "frameOwner": "universal theme tile",
+  "glyphContract": {
+    "transparentBackground": true,
+    "outerFrameInAsset": false,
+    "innerFrame": false,
+    "titleInsideAsset": false
+  },
+  "features": [
+    {
+      "order": 1,
+      "featureId": "most-requested",
+      "labelAr": "الأكثر طلباً",
+      "viewerAction": "feature",
+      "roleRestricted": false,
+      "asset": "/watany-v4/icons/most-requested.png",
+      "file": "most-requested.png",
+      "sha256": "CD81045ADCC0A7DBF8D7A839EFB722F165F1FE15997A320FB2FFF5D8BEA72596"
+    },
+    {
+      "order": 2,
+      "featureId": "latest",
+      "labelAr": "الأحدث",
+      "viewerAction": "ticker",
+      "roleRestricted": false,
+      "asset": "/watany-v4/icons/latest.png",
+      "file": "latest.png",
+      "sha256": "A38EFE124576C9186A4473239F523695DD9643D3DF5EA7877C61364F7894578A"
+    },
+    {
+      "order": 3,
+      "featureId": "for-you",
+      "labelAr": "ممكن يهمك",
+      "viewerAction": "feature",
+      "roleRestricted": false,
+      "asset": "/watany-v4/icons/for-you.png",
+      "file": "for-you.png",
+      "sha256": "AAAF45E28CD804B0C66AF3699BBDE5D4E22BC283B58CC91945F9618C9B705411"
+    },
+    {
+      "order": 4,
+      "featureId": "login",
+      "labelAr": "الدخول",
+      "viewerAction": "login",
+      "roleRestricted": false,
+      "asset": "/watany-v4/icons/login.png",
+      "file": "login.png",
+      "sha256": "9CE6F117CE1D25426A0C7BA9B8E58783757B79F497A91D94BC8A048D60497D16"
+    },
+    {
+      "order": 5,
+      "featureId": "profile",
+      "labelAr": "الملف",
+      "viewerAction": "feature",
+      "roleRestricted": false,
+      "asset": "/watany-v4/icons/profile.png",
+      "file": "profile.png",
+      "sha256": "3C672201FEB44AA3296FB879BF5CE9692E9C45ACB6DAB95616820375A8DA3DC2"
+    },
+    {
+      "order": 6,
+      "featureId": "install",
+      "labelAr": "تثبيت التطبيق",
+      "viewerAction": "feature",
+      "roleRestricted": false,
+      "asset": "/watany-v4/icons/install.png",
+      "file": "install.png",
+      "sha256": "D8F647E90C7C01F10E20D35AD7CA99429B04A7F3D804D88E055F9E09725EBB15"
+    },
+    {
+      "order": 7,
+      "featureId": "documents",
+      "labelAr": "مستنداتي",
+      "viewerAction": "forms",
+      "roleRestricted": false,
+      "asset": "/watany-v4/icons/documents.png",
+      "file": "documents.png",
+      "sha256": "02E25CAADC88217862A1DFAE804011E1FCDA1D853CC3901787C2B697D9ABE7C4"
+    },
+    {
+      "order": 8,
+      "featureId": "notifications",
+      "labelAr": "الإشعارات",
+      "viewerAction": "feature",
+      "roleRestricted": false,
+      "asset": "/watany-v4/icons/notifications.png",
+      "file": "notifications.png",
+      "sha256": "F06BC5988E5AA8E97D52EC0E2B7DB0FF58846530550554FBC942A2FD3F3EB596"
+    },
+    {
+      "order": 9,
+      "featureId": "messages",
+      "labelAr": "الرسائل",
+      "viewerAction": "chat",
+      "roleRestricted": false,
+      "asset": "/watany-v4/icons/messages.png",
+      "file": "messages.png",
+      "sha256": "1F313E001F3F3CDC9E407412D9282A1688859F62B2AB72562E1CD9D7B9DBFDEC"
+    },
+    {
+      "order": 10,
+      "featureId": "administration",
+      "labelAr": "الإدارة",
+      "viewerAction": "feature",
+      "roleRestricted": true,
+      "asset": "/watany-v4/icons/administration.png",
+      "file": "administration.png",
+      "sha256": "438261438BB727A46F352615506CB592955E4B021B93D2865AA86B2123A6A95A"
+    },
+    {
+      "order": 11,
+      "featureId": "users",
+      "labelAr": "المستخدمون",
+      "viewerAction": "feature",
+      "roleRestricted": true,
+      "asset": "/watany-v4/icons/users.png",
+      "file": "users.png",
+      "sha256": "8898A3484A40A81C3119F4AC32BE3E86E8CDF5AE0D44FA117608768ED1F25EBD"
+    },
+    {
+      "order": 12,
+      "featureId": "roles",
+      "labelAr": "الأدوار",
+      "viewerAction": "feature",
+      "roleRestricted": true,
+      "asset": "/watany-v4/icons/roles.png",
+      "file": "roles.png",
+      "sha256": "833616A99FC01A2C72EA07D3ECC973AC4903756B0B659DBC19459E7613BA9788"
+    },
+    {
+      "order": 13,
+      "featureId": "activity-log",
+      "labelAr": "سجل النشاط",
+      "viewerAction": "feature",
+      "roleRestricted": true,
+      "asset": "/watany-v4/icons/activity-log.png",
+      "file": "activity-log.png",
+      "sha256": "101D83F2F77A0D8072BFFDB55297638186A36FB87FBA4EFAB1AA73136E0C5973"
+    },
+    {
+      "order": 14,
+      "featureId": "news",
+      "labelAr": "الأخبار",
+      "viewerAction": "ticker",
+      "roleRestricted": false,
+      "asset": "/watany-v4/icons/news.png",
+      "file": "news.png",
+      "sha256": "C1BF7671E9B8FDCF524416D9D50FF8EB2149F107929D7BF684045BD22E56DA53"
+    },
+    {
+      "order": 15,
+      "featureId": "fake-fact",
+      "labelAr": "زائف / حقيقة",
+      "viewerAction": "feature",
+      "roleRestricted": false,
+      "asset": "/watany-v4/icons/fake-fact.png",
+      "file": "fake-fact.png",
+      "sha256": "1C14CFBC43EB9A056213D51F18FBF071319414068B5A97BF6D401965DEC1DFE8"
+    },
+    {
+      "order": 16,
+      "featureId": "circulars",
+      "labelAr": "التعاميم",
+      "viewerAction": "listings",
+      "roleRestricted": false,
+      "asset": "/watany-v4/icons/circulars.png",
+      "file": "circulars.png",
+      "sha256": "2F6D2287255E2E8FC88A0B5392C759C9F1D626F506BF1957FA9E8E041D320EC0"
+    },
+    {
+      "order": 17,
+      "featureId": "marketplace",
+      "labelAr": "السوق",
+      "viewerAction": "listings",
+      "roleRestricted": false,
+      "asset": "/watany-v4/icons/marketplace.png",
+      "file": "marketplace.png",
+      "sha256": "C8B1993E7467478465800F21050BDF85E742F33AE8B335A2C43EA8DA397666AF"
+    },
+    {
+      "order": 18,
+      "featureId": "jobs",
+      "labelAr": "الوظائف",
+      "viewerAction": "listings",
+      "roleRestricted": false,
+      "asset": "/watany-v4/icons/jobs.png",
+      "file": "jobs.png",
+      "sha256": "1549D751F68CD802587F63A888F329C6F60658FAD9E11E1E310CC89DAE193605"
+    },
+    {
+      "order": 19,
+      "featureId": "ads",
+      "labelAr": "الإعلانات",
+      "viewerAction": "listings",
+      "roleRestricted": false,
+      "asset": "/watany-v4/icons/ads.png",
+      "file": "ads.png",
+      "sha256": "2C907F888B4841D9391795E085D12B510AC6E9F177C26A8620DC2A0E0F1BCEBB"
+    },
+    {
+      "order": 20,
+      "featureId": "salary",
+      "labelAr": "المعاش",
+      "viewerAction": "salary",
+      "roleRestricted": false,
+      "asset": "/watany-v4/icons/salary.png",
+      "file": "salary.png",
+      "sha256": "2CBE6ADBAA6D4E150779C8076679D32F0DA61DCFFE5EC1E1316A9D6F0339E3D1"
+    },
+    {
+      "order": 21,
+      "featureId": "transactions",
+      "labelAr": "المعاملات",
+      "viewerAction": "feature",
+      "roleRestricted": false,
+      "asset": "/watany-v4/icons/transactions.png",
+      "file": "transactions.png",
+      "sha256": "3BFBD66D606B59E278CE6BF49FEFABABCF28E1F4575D617B71C0B1510A2DC398"
+    },
+    {
+      "order": 22,
+      "featureId": "forms",
+      "labelAr": "النماذج",
+      "viewerAction": "forms",
+      "roleRestricted": false,
+      "asset": "/watany-v4/icons/forms.png",
+      "file": "forms.png",
+      "sha256": "C366FE1895B6E5408E19CA4D143421A45113172C0C0CDF491BC9312159FD80A1"
+    },
+    {
+      "order": 23,
+      "featureId": "schools",
+      "labelAr": "المدارس",
+      "viewerAction": "feature",
+      "roleRestricted": false,
+      "asset": "/watany-v4/icons/schools.png",
+      "file": "schools.png",
+      "sha256": "0EB01FC64DEFB3025895E3747D004D8197F7E1F8AC60F519C1234B1EB733458C"
+    },
+    {
+      "order": 24,
+      "featureId": "network",
+      "labelAr": "الشبكة",
+      "viewerAction": "feature",
+      "roleRestricted": false,
+      "asset": "/watany-v4/icons/network.png",
+      "file": "network.png",
+      "sha256": "AC4696939864C54A1BAD38B2D7183F944DEDA96C96FA420FAFE802505CB72835"
+    },
+    {
+      "order": 25,
+      "featureId": "taxi",
+      "labelAr": "تاكسي",
+      "viewerAction": "feature",
+      "roleRestricted": false,
+      "asset": "/watany-v4/icons/taxi.png",
+      "file": "taxi.png",
+      "sha256": "F45F5249C7B44A8606B969787C5779AC5B572AA26143BA5E56EC71AE6C2A52DF"
+    },
+    {
+      "order": 26,
+      "featureId": "voting",
+      "labelAr": "التصويت",
+      "viewerAction": "feature",
+      "roleRestricted": false,
+      "asset": "/watany-v4/icons/voting.png",
+      "file": "voting.png",
+      "sha256": "46E68098FE69EC90D7311C4276AD888B957B2876CFB6ABA1FC782BCFECD4942C"
+    },
+    {
+      "order": 27,
+      "featureId": "faq",
+      "labelAr": "الأسئلة الشائعة",
+      "viewerAction": "feature",
+      "roleRestricted": false,
+      "asset": "/watany-v4/icons/faq.png",
+      "file": "faq.png",
+      "sha256": "28FB796D40B05116F35FE90CF446A37559DD1F844E483A636E7C323C031AB6EA"
+    },
+    {
+      "order": 28,
+      "featureId": "laws",
+      "labelAr": "القوانين",
+      "viewerAction": "feature",
+      "roleRestricted": false,
+      "asset": "/watany-v4/icons/laws.png",
+      "file": "laws.png",
+      "sha256": "4E2889422338CB0A90F63286E847DC5D084B4B7A221015D61CED97288760B130"
+    },
+    {
+      "order": 29,
+      "featureId": "procedures",
+      "labelAr": "الإجراءات",
+      "viewerAction": "feature",
+      "roleRestricted": false,
+      "asset": "/watany-v4/icons/procedures.png",
+      "file": "procedures.png",
+      "sha256": "7CD7F7F430A6830781447AE637C45291A7E74CC9BD2B3508AEDCC45CABDF80CA"
+    },
+    {
+      "order": 30,
+      "featureId": "world-cup",
+      "labelAr": "كأس العالم 2026",
+      "viewerAction": "feature",
+      "roleRestricted": false,
+      "asset": "/watany-v4/icons/world-cup.png",
+      "file": "world-cup.png",
+      "sha256": "16A4D451066658DA2002ABE7341B8F4E9034D3ED22480732C9E9ECD235C07D5E"
+    },
+    {
+      "order": 31,
+      "featureId": "community",
+      "labelAr": "نشاطات المجتمع",
+      "viewerAction": "feature",
+      "roleRestricted": false,
+      "asset": "/watany-v4/icons/community.png",
+      "file": "community.png",
+      "sha256": "4BB8959F55F6FD622BAD33DAEFCD1A504AED25ED88C871104D97D95FBDDA581B"
+    },
+    {
+      "order": 32,
+      "featureId": "voice",
+      "labelAr": "صوت",
+      "viewerAction": "feature",
+      "roleRestricted": false,
+      "asset": "/watany-v4/icons/voice.png",
+      "file": "voice.png",
+      "sha256": "283E47E99C036DAA0869D80421A7110249474F1C64D409919D1930A75C0BA165"
+    },
+    {
+      "order": 33,
+      "featureId": "deaths",
+      "labelAr": "الوفيات",
+      "viewerAction": "listings",
+      "roleRestricted": false,
+      "asset": "/watany-v4/icons/deaths.png",
+      "file": "deaths.png",
+      "sha256": "DA1B10BE9267FFC88F5F98B59E0FBFC035E4DAAF602DEE3E1D4EC7082E9D4D79"
+    },
+    {
+      "order": 34,
+      "featureId": "health",
+      "labelAr": "الصحة",
+      "viewerAction": "feature",
+      "roleRestricted": false,
+      "asset": "/watany-v4/icons/health.png",
+      "file": "health.png",
+      "sha256": "F8D8E5A504A6863C481B5FE8C78B5619AC8F2AA3427CB7D2EB8DE368EFC7D195"
+    },
+    {
+      "order": 35,
+      "featureId": "ask-watany",
+      "labelAr": "اسأل وطني",
+      "viewerAction": "chat",
+      "roleRestricted": false,
+      "asset": "/watany-v4/icons/ask-watany.png",
+      "file": "ask-watany.png",
+      "sha256": "AA9F5B8225515021CF0D10BB9C7D9041896F7C535644EC6CD6A407CD586A6EA7"
+    }
+  ]
+}

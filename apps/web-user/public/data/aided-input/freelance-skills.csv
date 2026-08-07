@@ -1,0 +1,14 @@
+skill_id,arabic_label,category,requires_approval,active
+plumber,سمكري,home_services,true,true
+electrician,كهربائي,home_services,true,true
+carpenter,نجار,home_services,true,true
+painter,دهان,home_services,true,true
+mason,عامل بناء,home_services,true,true
+driver,سائق,transport,true,true
+taxi_driver,سائق تاكسي,transport,true,true
+tourist_guide,مرشد سياحي,tourism,true,true
+translator,مترجم,professional,true,true
+security_guard,حارس أمن,security,true,true
+photographer,مصور,media,true,true
+it_support,دعم تقني,technology,true,true
+camera_installer,فني كاميرات,technology,true,true

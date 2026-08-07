@@ -1,0 +1,2 @@
+import { createHybridChatDefaultAdapter } from '../adapter/hybrid-chat-default.adapter';
+export function createHybridChatHostRegistration() { const adapter = createHybridChatDefaultAdapter(); return { pluginKey: 'hybrid-chat', manifest: adapter.getManifest(), settings: adapter.getSettings(), adapter }; }

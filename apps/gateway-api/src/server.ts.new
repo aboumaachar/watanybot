@@ -1,0 +1,558 @@
+﻿import { handleChatFeedbackBody } from "./routes/chat-feedback-api";
+/**
+ * WatanyBot Gateway API — Bootstrap server.
+ * All business logic has been extracted into modules under lib/, db/, routes/, data/.
+ * This file handles only Fastify instantiation, plugin registration, and startup.
+ *
+ * @see docs/ADR-001-gateway-decomposition.md
+ */
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import fs from "node:fs";
+import Fastify from "fastify";
+import cookie from "@fastify/cookie";
+import cors from "@fastify/cors";
+import compress from "@fastify/compress";
+import rateLimit from "@fastify/rate-limit";
+import websocket from "@fastify/websocket";
+
+// ── Config ──────────────────────────────────────────────────────
+import {
+  isDev, port, host, LOG_LEVEL,
+  usePython, getPythonBase, setPythonBase,
+  useKbStub, useAi,
+  aiBaseUrl, aiMaxTokens, aiTemperature, aiTimeoutMs, aiRagTopK, aiSystemPrompt,
+  dataDir, kbSalariesDir, kbStudioRoot, pluginDbPath, disablePluginDb,
+  kbCbThreshold, kbCbTimeout, pythonCbThreshold, pythonCbTimeout, aiCbThreshold, aiCbTimeout,
+  trainingDir, trainingFilePath, kbNodesDbPath,
+  resolveRagPath, resolveKbPath, resolveRuntimeKbPath,
+} from "./lib/config";
+
+// ── Pre-existing route modules ──────────────────────────────────
+import salaryRoutes from "./routes/salary";
+import voiceRoutes from "./routes/voice";
+import mcpRoutes from "./routes/mcp";
+import { eliteRoutes } from "./routes/elite";
+import { advancedRoutes } from "./routes/advanced";
+import { authRoutes } from "./auth/auth-routes.js";
+import { adminRulesRoutes } from "./routes/admin-rules.js";
+import { adminKbRoutes } from "./routes/admin-kb.js";
+import { adminKbStudioRoutes } from "./routes/admin-kb-studio.js";
+import { adminAiRoutes } from "./routes/admin-ai.js";
+import { adminAiRuntimeRoutes } from "./routes/admin-ai-runtime.js";
+import { adminUsersRoutes } from "./routes/admin-users.js";
+import { adminTickerRoutes } from "./routes/admin-ticker.js";
+import { casesRoutes } from "./routes/cases.js";
+import { documentsRoutes } from "./routes/documents.js";
+import { adminWSRoutes } from "./ws/admin-ws.js";
+import { mediaWSRoutes } from "./ws/media-ws.js";
+import { unifiedSearchRoutes } from "./routes/unified-search.js";
+import { diagnosticsRoutes } from "./routes/diagnostics.js";
+import { proceduresRoutes } from "./procedures/index.js";
+import { jobsRoutes } from "./jobs/index.js";
+import { disasterRoutes } from "./disaster/index.js";
+import { adminDashboardRoutes } from "./routes/admin-dashboard.js";
+import { voiceAdvancedRoutes } from "./integrations/voice-advanced.js";
+
+// ── Extracted route modules ─────────────────────────────────────
+import { salaryInlineRoutes } from "./routes/salary-inline";
+import { profileRoutes } from "./routes/profile";
+import { historyRoutes } from "./routes/history";
+import { chatSessionRoutes } from "./routes/chat-sessions";
+import { notificationRoutes } from "./routes/notifications";
+import { savedChatsRoutes } from "./routes/saved-chats";
+import { pluginsRoutes } from "./routes/plugins";
+import { kbV2ProxyRoutes } from "./routes/kb-v2-proxy";
+import { kbVNextRoutes } from "./routes/kb-vnext";
+import { tickerRoutes } from "./routes/ticker";
+import { txRoutes } from "./routes/tx";
+import { formsInlineRoutes } from "./routes/forms-inline";
+import { adminOverviewRoutes } from "./routes/admin-overview";
+import { chatRoutes } from "./routes/chat";
+
+// ── Extracted services & utilities ──────────────────────────────
+import { initPluginDb } from "./db/plugin-db";
+import { createVersioningService, writeJsonFile } from "./lib/versioning";
+import { createVoiceE2EService, voiceE2ERoutes } from "./lib/voice-e2e";
+import { loadSmallTalkIntents, getSmallTalkIntents, setSmallTalkIntents, classifySmallTalk } from "./lib/intent-classifier";
+import { computeEmotionalScore, EMPATHY_SYSTEM_INJECTION } from "./lib/emotional";
+import { initUnrecognizedLog, logUnrecognizedInput, getRandomClarifyResponse } from "./lib/unrecognized";
+import { createChatService } from "./lib/chat-service";
+import { MOCK_TX, MOCK_DETAIL } from "./data/seed-data";
+
+// ── External dependencies ───────────────────────────────────────
+import { request } from "undici";
+import { createCircuitBreaker } from "./lib/circuit-breaker";
+import { createSqliteV3Store } from "@watany/kb";
+import { runMigrations } from "./db/migrate.js";
+import { registerAuthHook } from "./auth/auth-middleware.js";
+import { debugPlugin } from "./debug/plugin";
+import { debugConsole } from "./debug/console";
+import { initKbNodes, searchKbNodes, getKbNodesStats, isKbNodesReady, listKbNodes } from "./kb/kb-nodes";
+import {
+  createAiProvider, loadRagChunks, retrieveChunks, buildAiMessages,
+  extractIntents, getRagChunkCount, evaluateRelevance,
+  listChunks, getChunkById, updateChunkById, persistChunksToFile,
+} from "./ai/index";
+import type { AiChatProvider, AiMessage } from "./ai/types";
+import { getFormsCatalog, getFormById, searchForms, detectFormIntent, isGenericFormRequest } from "./data/forms-catalog";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+/* ================================================================
+ *  Fastify Instance
+ * ================================================================ */
+export const app = Fastify({ logger: { level: LOG_LEVEL }, bodyLimit: 10 * 1024 * 1024 });
+
+// ── Security headers ────────────────────────────────────────────
+app.addHook("onSend", async (_request, reply, payload) => {
+  reply.header("Content-Security-Policy", "default-src 'self'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; object-src 'none'");
+  reply.header("Referrer-Policy", "no-referrer");
+  reply.header("X-Content-Type-Options", "nosniff");
+  reply.header("X-Frame-Options", "DENY");
+  if (!isDev) {
+    reply.header("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
+  }
+  return payload;
+});
+
+/* ── Small helper functions (kept inline — too small for a module) ── */
+function loadJson(p: string, fallback: unknown) {
+  if (!fs.existsSync(p)) return fallback;
+  return JSON.parse(fs.readFileSync(p, "utf8"));
+}
+
+function loadLocalSalariesKB(repoRoot: string) {
+  const dir = path.join(repoRoot, "kb", "salaries");
+  return {
+    salariesIndex: loadJson(path.join(dir, "salariesIndex.json"), {}),
+    rankMeta: loadJson(path.join(dir, "rankMeta.json"), {}),
+  };
+}
+
+function loadRuntimeKbJson(p: string) {
+  try {
+    if (!fs.existsSync(p)) return null;
+    const raw = fs.readFileSync(p, "utf8");
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
+
+/* ================================================================
+ *  Resolve paths
+ * ================================================================ */
+const resolvedRagPath = resolveRagPath();
+const kbPath = resolveKbPath();
+const runtimeKbPath = resolveRuntimeKbPath();
+
+debugConsole.info("KB runtime paths resolved", { useKbStub, kbPath, runtimeKbPath });
+
+/* ================================================================
+ *  KB (salaries) bootstrap
+ * ================================================================ */
+try {
+  const repoRoot = process.env.KB_DATA_ROOT || path.resolve(__dirname, "../../..");
+  const kb = loadLocalSalariesKB(repoRoot);
+  app.decorate("kb", kb);
+  const nEntries = Object.keys(kb.salariesIndex || {}).length;
+  app.log.info({ kbDir: path.join(repoRoot, "kb", "salaries"), salaryEntries: nEntries }, "Watany salaries KB v4 loaded");
+} catch (e) {
+  app.log.error({ err: e }, "Watany salaries KB load failed");
+}
+
+/* ================================================================
+ *  Core Fastify plugins
+ * ================================================================ */
+await app.register(cookie);
+await app.register(cors, { origin: true, credentials: true, methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"] });
+
+try {
+  await app.register(compress, { global: true, encodings: ["br", "gzip", "deflate"], threshold: 1024 });
+} catch (compressErr: unknown) {
+  app.log.warn({ err: compressErr instanceof Error ? compressErr.message : String(compressErr) }, "@fastify/compress registration failed; continuing without compression");
+}
+
+await app.register(rateLimit, {
+  max: 100,
+  timeWindow: "1 minute",
+  allowList: ["127.0.0.1", "::1"],
+  addHeadersOnExceeding: { "x-ratelimit-limit": true, "x-ratelimit-remaining": true, "x-ratelimit-reset": true },
+  addHeaders: { "x-ratelimit-limit": true, "x-ratelimit-remaining": true, "x-ratelimit-reset": true, "retry-after": true },
+});
+
+await app.register(debugPlugin, { enabled: isDev, logRequests: true, logResponses: true, trackPerformance: true });
+
+debugConsole.info("Watany Gateway API starting", { port, host, isDev, usePython, pythonBase: getPythonBase(), useKbStub, kbPath, useAi });
+
+/* ================================================================
+ *  AI provider initialization
+ * ================================================================ */
+let aiChat: AiChatProvider | null = null;
+let aiProvider = process.env.AI_PROVIDER || "openai";
+let aiApiKey = process.env.AI_API_KEY || "";
+let aiModel = process.env.AI_MODEL || "gpt-4o-mini";
+const aiConversationHistory = new Map<string, AiMessage[]>();
+const aiFailureCount = { value: 0 };
+const lastAiFailure = { value: null as { at: number; route: string; message: string } | null };
+
+// RAG chunks — powers relevance scoring even without AI
+{
+  const loaded = loadRagChunks(resolvedRagPath);
+  app.log.info({ ragPath: resolvedRagPath, chunks: loaded }, "RAG chunks loaded (relevance + search)");
+}
+
+if (useAi) {
+  try {
+    aiChat = createAiProvider({ provider: aiProvider, baseUrl: aiBaseUrl, apiKey: aiApiKey, model: aiModel, maxTokens: aiMaxTokens, temperature: aiTemperature, timeoutMs: aiTimeoutMs, systemPrompt: aiSystemPrompt || undefined });
+    app.log.info({ provider: aiProvider, model: aiModel }, "AI chat provider initialized");
+  } catch (e) {
+    app.log.error({ err: e }, "AI provider initialization failed — falling back to legacy");
+    aiChat = null;
+  }
+}
+
+/* ================================================================
+ *  KB store & vNext nodes
+ * ================================================================ */
+(app as any).kb = (app as any).kb || loadRuntimeKbJson(runtimeKbPath) || null;
+
+// Serve local KB attachments
+app.get("/kb/attachments/*", async (req: any, reply) => {
+  try {
+    const rel = (req.params["*"] || "").toString();
+    const safe = path.normalize(rel).replace(/^\.+(\/|\\)/, "");
+    const filePath = path.join(process.cwd(), "data", "kb", "attachments", safe);
+    if (!fs.existsSync(filePath) || !fs.statSync(filePath).isFile()) return reply.code(404).send({ ok: false, error: "not found" });
+    const ext = path.extname(filePath).toLowerCase();
+    const mimeMap: Record<string, string> = { ".pdf": "application/pdf", ".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document", ".doc": "application/msword", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".png": "image/png", ".txt": "text/plain" };
+    reply.header("cache-control", "public, max-age=86400");
+    reply.type(mimeMap[ext] || "application/octet-stream");
+    return reply.send(fs.createReadStream(filePath));
+  } catch (e) {
+    app.log.warn({ err: e }, "attachment_serve_error");
+    return reply.code(500).send({ ok: false, error: "internal" });
+  }
+});
+
+let kbStore = null as ReturnType<typeof createSqliteV3Store> | null;
+if (!useKbStub) {
+  try {
+    kbStore = createSqliteV3Store({ dbPath: kbPath });
+  } catch (e) {
+    app.log.warn({ err: e }, "KB store disabled (sqlite-wasm init failed)");
+    kbStore = null;
+  }
+}
+
+// KB vNext nodes (FTS5)
+try {
+  const kbNodesOk = await initKbNodes(kbNodesDbPath);
+  if (kbNodesOk) {
+    app.log.info({ kbNodesDbPath, stats: getKbNodesStats() }, "kb_nodes_fts_ready");
+  } else {
+    app.log.warn({ kbNodesDbPath }, "kb_nodes_fts_not_available");
+  }
+} catch (err) {
+  app.log.warn({ err, kbNodesDbPath }, "kb_nodes_fts_init_failed");
+}
+
+/* ================================================================
+ *  Plugin DB
+ * ================================================================ */
+const pluginDb = await initPluginDb(pluginDbPath, disablePluginDb, { info: app.log.info.bind(app.log), warn: app.log.warn.bind(app.log) });
+app.decorate("pluginDb", pluginDb);
+
+declare module "fastify" {
+  interface FastifyInstance {
+    pluginDb: import("./types/domain").PluginDb;
+  }
+}
+
+/* ================================================================
+ *  Circuit breakers
+ * ================================================================ */
+const kbCircuitBreaker = createCircuitBreaker("kb-search", { failureThreshold: kbCbThreshold, resetTimeout: kbCbTimeout });
+const pythonApiCircuitBreaker = createCircuitBreaker("python-api", { failureThreshold: pythonCbThreshold, resetTimeout: pythonCbTimeout });
+const aiProviderCircuitBreaker = createCircuitBreaker("ai-provider", { failureThreshold: aiCbThreshold, resetTimeout: aiCbTimeout });
+
+/* ================================================================
+ *  Versioning service
+ * ================================================================ */
+const versionsDir = path.join(dataDir, "kb_versions");
+const versionService = createVersioningService(versionsDir);
+
+/* ================================================================
+ *  Intent classifier & unrecognized log
+ * ================================================================ */
+const intentsPath = path.resolve(__dirname, "../../data/intents.json");
+loadSmallTalkIntents(intentsPath);
+initUnrecognizedLog(dataDir);
+
+/* ================================================================
+ *  Voice E2E service
+ * ================================================================ */
+const voiceE2E = createVoiceE2EService(app, { dataDir, host, port });
+await voiceE2E.init();
+voiceE2E.startScheduler();
+
+/* ================================================================
+ *  Python probe endpoint (mutable pythonBase)
+ * ================================================================ */
+app.post("/api/admin/python/probe", async (req: any) => {
+  const base = String((req.body || {}).base || "").trim();
+  if (!base) return { ok: false, error: "base required" };
+  setPythonBase(base);
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 1500);
+  const started = Date.now();
+  try {
+    const res = await request(`${getPythonBase()}/health`, { method: "GET", signal: controller.signal });
+    const latencyMs = Date.now() - started;
+    return { ok: true, base: getPythonBase(), okHost: res.statusCode >= 200 && res.statusCode < 300, statusCode: res.statusCode, latencyMs };
+  } catch (err: unknown) {
+    return { ok: false, base: getPythonBase(), error: err instanceof Error ? err.message : String(err) };
+  } finally {
+    clearTimeout(timeout);
+  }
+});
+
+/* ================================================================
+ *  Chat service (AI + legacy + unified)
+ * ================================================================ */
+const chatService = createChatService({
+  usePython,
+  getPythonBase,
+  getKbStore: () => kbStore,
+  useAi,
+  getAiChat: () => aiChat,
+  getAiProvider: () => aiProvider,
+  getAiModel: () => aiModel,
+  aiRagTopK,
+  aiSystemPrompt,
+  aiConversationHistory,
+  retrieveChunks,
+  buildAiMessages,
+  extractIntents,
+  evaluateRelevance,
+  getRagChunkCount,
+  isKbNodesReady,
+  searchKbNodes,
+  computeEmotionalScore,
+  empathySystemInjection: EMPATHY_SYSTEM_INJECTION,
+  classifySmallTalk,
+  logUnrecognizedInput,
+  getRandomClarifyResponse,
+  aiFailureCount,
+  lastAiFailure,
+  log: { info: app.log.info.bind(app.log), warn: app.log.warn.bind(app.log), error: app.log.error.bind(app.log) },
+});
+
+/* ================================================================
+ *  Global error handler
+ * ================================================================ */
+app.setErrorHandler((error: any, request, reply) => {
+  app.log.error({ err: error, url: request.url, method: request.method }, "unhandled_route_error");
+  const statusCode = error?.statusCode || 500;
+  reply.status(statusCode).send({
+    error: statusCode >= 500 ? "Internal Server Error" : (error?.message || "Unknown error"),
+    statusCode,
+    ...(isDev && { stack: error?.stack }),
+  });
+});
+
+/* ================================================================
+ *  Register pre-existing route modules
+ * ================================================================ */
+app.register(salaryRoutes);
+app.register(voiceRoutes);
+app.register(mcpRoutes);
+app.register(eliteRoutes);
+app.register(advancedRoutes);
+
+/* ================================================================
+ *  Register extracted route modules
+ * ================================================================ */
+app.register(salaryInlineRoutes, { getKb: () => (app as any).kb });
+app.register(profileRoutes, { pluginDb });
+app.register(historyRoutes, { pluginDb });
+app.register(chatSessionRoutes, { pluginDb });
+app.register(notificationRoutes, { pluginDb });
+app.register(savedChatsRoutes, { pluginDb });
+app.register(pluginsRoutes, { pluginDb });
+app.register(kbV2ProxyRoutes, { getPythonBase });
+app.register(kbVNextRoutes, { isKbNodesReady, searchKbNodes, getKbNodesStats, listKbNodes });
+app.register(tickerRoutes, { pluginDb });
+app.register(txRoutes, { mockTx: MOCK_TX, mockDetail: MOCK_DETAIL });
+app.register(formsInlineRoutes, { getFormsCatalog, getFormById, searchForms, detectFormIntent, isGenericFormRequest });
+app.register(adminOverviewRoutes, {
+  usePython,
+  getPythonBase,
+  pythonApiCircuitBreaker,
+  aiProviderCircuitBreaker,
+  getAiChat: () => aiChat,
+  getAiModel: () => aiModel,
+  getAiProvider: () => aiProvider,
+  getRagChunkCount,
+  getAiFailureCount: () => aiFailureCount.value,
+  getLastAiFailure: () => lastAiFailure.value,
+  getKbStore: () => kbStore,
+  getVoiceE2EHistory: () => voiceE2E.getHistory(),
+  host,
+  port,
+});
+app.register(chatRoutes, {
+  pluginDb,
+  fetchChatResponse: chatService.fetchChatResponse,
+  fetchChatResponseLegacy: chatService.fetchChatResponseLegacy,
+  useAi,
+  getAiChat: () => aiChat,
+  getAiProvider: () => aiProvider,
+  getAiModel: () => aiModel,
+  aiRagTopK,
+  aiSystemPrompt,
+  aiConversationHistory,
+  retrieveChunks,
+  buildAiMessages,
+  extractIntents,
+  evaluateRelevance,
+  getRagChunkCount,
+  isKbNodesReady,
+  searchKbNodes,
+  classifySmallTalk,
+  logUnrecognizedInput,
+  getRandomClarifyResponse,
+  aiFailureCount,
+  lastAiFailure,
+  getKbStore: () => kbStore,
+});
+app.register(voiceE2ERoutes, { voiceE2E });
+
+/* ================================================================
+ *  Register auth & admin route modules
+ * ================================================================ */
+registerAuthHook(app);
+app.register(websocket);
+app.register(authRoutes);
+app.register(adminRulesRoutes);
+app.register(adminKbRoutes, {
+  kbSalariesDir,
+  runtimeKbPath,
+  resolvedRagPath,
+  repoRootPath: path.resolve(__dirname, "../../.."),
+  versionRootPath: path.resolve(__dirname, "../../"),
+  isKbNodesReady,
+  listKbNodes,
+  writeJsonFile,
+  addVersionEntry: (fileRelPath: string, note?: string) =>
+    versionService.addVersionEntry(fileRelPath, note || "", path.resolve(__dirname, "../../")),
+  listVersions: versionService.listVersions,
+  restoreVersion: versionService.restoreVersion,
+  loadLocalSalariesKB,
+  loadRuntimeKbJson,
+  loadRagChunks,
+  listChunks,
+  getChunkById,
+  updateChunkById,
+  persistChunksToFile,
+});
+app.register(adminKbStudioRoutes, {
+  kbStudioRoot,
+  repoRootPath: path.resolve(__dirname, "../../.."),
+});
+app.register(adminAiRoutes, {
+  dataDir,
+  trainingDir,
+  trainingFilePath,
+  versionRootPath: path.resolve(__dirname, "../../"),
+  addVersionEntry: (fileRelPath: string, note?: string) =>
+    versionService.addVersionEntry(fileRelPath, note || "", path.resolve(__dirname, "../../")),
+  getSmallTalkIntents,
+  setSmallTalkIntents,
+});
+app.register(adminAiRuntimeRoutes, {
+  dataDir,
+  runtimeKbPath,
+  resolvedRagPath,
+  versionRootPath: path.resolve(__dirname, "../../"),
+  useAi,
+  getAiChat: () => aiChat,
+  setAiChat: (value) => { aiChat = value as AiChatProvider | null; },
+  getAiProvider: () => aiProvider,
+  setAiProvider: (value) => { aiProvider = value; },
+  getAiModel: () => aiModel,
+  setAiModel: (value) => { aiModel = value; },
+  getAiApiKey: () => aiApiKey,
+  setAiApiKey: (value) => { aiApiKey = value; },
+  getRagChunkCount,
+  writeJsonFile,
+  createAiProvider,
+  aiBaseUrl,
+  aiMaxTokens,
+  aiTemperature,
+  aiTimeoutMs,
+  loadRagChunks,
+  persistChunksToFile,
+  addVersionEntry: (fileRelPath: string, note?: string) =>
+    versionService.addVersionEntry(fileRelPath, note || "", path.resolve(__dirname, "../../")),
+  loadRuntimeKbJson,
+  setRuntimeKb: (runtime) => { (app as any).runtimeKb = runtime; },
+});
+app.register(adminUsersRoutes);
+app.register(adminTickerRoutes);
+app.register(adminWSRoutes);
+app.register(mediaWSRoutes);
+app.register(unifiedSearchRoutes);
+app.register(adminDashboardRoutes);
+app.register(diagnosticsRoutes, {
+  getRagChunkCount,
+  hasKbStore: () => !!kbStore,
+  hasAiChat: () => !!aiChat,
+  getAiProvider: () => aiProvider,
+  getAiModel: () => aiModel,
+  isKbNodesReady,
+  getKbNodesStats,
+});
+app.register(voiceAdvancedRoutes);
+app.register(casesRoutes, { pluginDb, makeId: (await import("./lib/helpers")).makeId });
+app.register(documentsRoutes, { pluginDb, makeId: (await import("./lib/helpers")).makeId });
+app.register(proceduresRoutes);
+app.register(jobsRoutes);
+app.register(disasterRoutes);
+
+/* ================================================================
+ *  Startup
+ * ================================================================ */
+if (process.env.NODE_ENV !== "test") {
+  process.on("uncaughtException", (err) => { app.log.fatal({ err }, "uncaught_exception"); process.exit(1); });
+  process.on("unhandledRejection", (reason) => { app.log.error({ reason }, "unhandled_rejection"); });
+
+  runMigrations()
+    .then(() => {
+      app.listen({ port, host, backlog: 2048 }).catch((err) => { app.log.error(err); process.exit(1); });
+    })
+    .catch((err) => {
+      app.log.warn({ err }, "PostgreSQL migrations skipped (DB may not be running)");
+      app.listen({ port, host, backlog: 2048 }).catch((err2) => { app.log.error(err2); process.exit(1); });
+    });
+}
+
+export default app;
+
+/*
+APEX Phase 1 feedback API wiring needed:
+Register POST /api/chat/feedback and call handleChatFeedbackBody(request.body).
+Fastify:
+  app.post("/api/chat/feedback", async (request, reply) => {
+    const result = await handleChatFeedbackBody(request.body as any);
+    return reply.code(result.status).send(result);
+  });
+
+Express:
+  app.post("/api/chat/feedback", async (req, res) => {
+    const result = await handleChatFeedbackBody(req.body);
+    res.status(result.status).json(result);
+  });
+*/

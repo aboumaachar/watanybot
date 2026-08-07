@@ -1,0 +1,416 @@
+﻿:root {
+  --watany-chat-vh: 100dvh;
+  --watany-chat-safe-bottom: env(safe-area-inset-bottom, 0px);
+  --watany-chat-composer-min-height: 76px;
+}
+
+/* Emergency guard: keep chat content visible even if another theme layer collapses contrast/visibility. */
+html.watany-chat-viewport-mode,
+html.watany-chat-viewport-mode body,
+html.watany-chat-viewport-mode #root,
+html.watany-chat-viewport-mode .watany-mobile-shell,
+html.watany-chat-viewport-mode .watany-mobile-shell__surface,
+html.watany-chat-viewport-mode .watany-mobile-shell__main,
+html.watany-chat-viewport-mode .watany-mobile-shell__content,
+html.watany-chat-viewport-mode .watany-mobile-shell__route-content,
+html.watany-chat-viewport-mode main,
+html.watany-chat-viewport-mode .chat-page,
+html.watany-chat-viewport-mode .chat-shell,
+html.watany-chat-viewport-mode .chat-screen,
+html.watany-chat-viewport-mode .chat-container,
+html.watany-chat-viewport-mode [data-chat-root] {
+  opacity: 1 !important;
+  visibility: visible !important;
+  color: #0f172a !important;
+  background-color: #eef2f7 !important;
+}
+
+/* Activate a true chat viewport only on detected chat routes/DOM. */
+html.watany-chat-viewport-mode,
+html.watany-chat-viewport-mode body {
+  width: 100%;
+  height: var(--watany-chat-vh) !important;
+  min-height: var(--watany-chat-vh) !important;
+  max-height: var(--watany-chat-vh) !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  overscroll-behavior: none !important;
+  background: #eef2f7;
+}
+
+html.watany-chat-viewport-mode #root {
+  width: 100%;
+  height: var(--watany-chat-vh) !important;
+  min-height: var(--watany-chat-vh) !important;
+  max-height: var(--watany-chat-vh) !important;
+  overflow: hidden !important;
+}
+
+/* Full smartphone container; remove dead lower space. */
+html.watany-chat-viewport-mode .app-shell,
+html.watany-chat-viewport-mode .app-shell--phone,
+html.watany-chat-viewport-mode .watany-mobile-shell,
+html.watany-chat-viewport-mode .watany-mobile-shell__viewport,
+html.watany-chat-viewport-mode .watany-mobile-shell__surface {
+  width: 100% !important;
+  max-width: 100% !important;
+  height: var(--watany-chat-vh) !important;
+  min-height: var(--watany-chat-vh) !important;
+  max-height: var(--watany-chat-vh) !important;
+  border-radius: 0 !important;
+  margin: 0 auto !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* Hide non-chat chrome in chat mode. */
+html.watany-chat-viewport-mode .device-statusbar,
+html.watany-chat-viewport-mode .device-statusbar__time,
+html.watany-chat-viewport-mode .device-statusbar__signals,
+html.watany-chat-viewport-mode .watany-mobile-shell__dock,
+html.watany-chat-viewport-mode .watany-mobile-shell__assistant,
+html.watany-chat-viewport-mode .bottom-nav,
+html.watany-chat-viewport-mode .app-bottom-nav,
+html.watany-chat-viewport-mode .mobile-bottom-nav,
+html.watany-chat-viewport-mode .tab-bar,
+html.watany-chat-viewport-mode .nav-tabs,
+html.watany-chat-viewport-mode .floating-nav,
+html.watany-chat-viewport-mode [data-bottom-nav],
+html.watany-chat-viewport-mode [data-wmo-shell-dock],
+html.watany-chat-viewport-mode [aria-label="التنقل السفلي"],
+html.watany-chat-viewport-mode [aria-label="Bottom navigation"] {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+/* Hide app header chrome but keep internal chat header if a component has one. */
+html.watany-chat-viewport-mode .app-shell > header,
+html.watany-chat-viewport-mode .app-shell--phone > header,
+html.watany-chat-viewport-mode .watany-mobile-shell__topbar,
+html.watany-chat-viewport-mode .app-header,
+html.watany-chat-viewport-mode .screen-header,
+html.watany-chat-viewport-mode .top-menu,
+html.watany-chat-viewport-mode .phone-header,
+html.watany-chat-viewport-mode .top-nav,
+html.watany-chat-viewport-mode .topbar,
+html.watany-chat-viewport-mode .device-topbar,
+html.watany-chat-viewport-mode [data-wmo-shell-top-nav] {
+  display: none !important;
+}
+
+/* App content becomes the entire chat viewport. */
+html.watany-chat-viewport-mode .app-content,
+html.watany-chat-viewport-mode main.app-content,
+html.watany-chat-viewport-mode .watany-mobile-shell__main,
+html.watany-chat-viewport-mode .watany-mobile-shell__content,
+html.watany-chat-viewport-mode .watany-mobile-shell__route-content,
+html.watany-chat-viewport-mode .wmo-appshell-route-boundary {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  height: 100% !important;
+  max-height: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* Common chat roots and group chat roots. */
+html.watany-chat-viewport-mode .chat-page,
+html.watany-chat-viewport-mode .chat-shell,
+html.watany-chat-viewport-mode .chat-screen,
+html.watany-chat-viewport-mode .watany-chat-surface,
+html.watany-chat-viewport-mode .chat-window,
+html.watany-chat-viewport-mode .chat-container,
+html.watany-chat-viewport-mode .chat-layout,
+html.watany-chat-viewport-mode .group-chat-page,
+html.watany-chat-viewport-mode .group-chat-shell,
+html.watany-chat-viewport-mode .group-chat-container,
+html.watany-chat-viewport-mode .conversation-panel,
+html.watany-chat-viewport-mode .message-thread,
+html.watany-chat-viewport-mode .community-threads-page,
+html.watany-chat-viewport-mode [data-chat-root],
+html.watany-chat-viewport-mode [data-chat-shell] {
+  width: 100% !important;
+  max-width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: 100% !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* Scrollable conversation area. */
+html.watany-chat-viewport-mode .chat-messages,
+html.watany-chat-viewport-mode .messages-list,
+html.watany-chat-viewport-mode .message-list,
+html.watany-chat-viewport-mode .conversation-messages,
+html.watany-chat-viewport-mode .conversation-feed,
+html.watany-chat-viewport-mode .chat-feed,
+html.watany-chat-viewport-mode .thread-messages,
+html.watany-chat-viewport-mode [data-chat-messages],
+html.watany-chat-viewport-mode [class*="messages"],
+html.watany-chat-viewport-mode [class*="Messages"] {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  overscroll-behavior: contain !important;
+  padding-bottom: calc(var(--watany-chat-composer-min-height) + var(--watany-chat-safe-bottom) + 10px) !important;
+  scroll-padding-bottom: calc(var(--watany-chat-composer-min-height) + var(--watany-chat-safe-bottom) + 10px) !important;
+}
+
+/* Composer pinned to the real viewport bottom. */
+html.watany-chat-viewport-mode .chat-composer,
+html.watany-chat-viewport-mode .message-composer,
+html.watany-chat-viewport-mode .composer,
+html.watany-chat-viewport-mode .chat-input,
+html.watany-chat-viewport-mode .message-input,
+html.watany-chat-viewport-mode .input-composer,
+html.watany-chat-viewport-mode form[class*="composer"],
+html.watany-chat-viewport-mode form[class*="Composer"],
+html.watany-chat-viewport-mode [data-chat-composer] {
+  flex: 0 0 auto !important;
+  position: sticky !important;
+  bottom: 0 !important;
+  z-index: 60 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: auto 0 0 0 !important;
+  padding-bottom: max(10px, var(--watany-chat-safe-bottom)) !important;
+  background: rgba(255, 255, 255, 0.96) !important;
+  backdrop-filter: blur(14px) !important;
+}
+
+html.watany-chat-viewport-mode .community-thread-composer[data-chat-composer] {
+  position: static !important;
+  bottom: auto !important;
+  z-index: auto !important;
+  margin: 4px 0 0 !important;
+  padding: 10px 4px !important;
+  background: var(--surface) !important;
+  backdrop-filter: none !important;
+}
+
+/* If current chat uses a central panel with dead padding, collapse it in chat mode. */
+html.watany-chat-viewport-mode .screen,
+html.watany-chat-viewport-mode .page,
+html.watany-chat-viewport-mode .content,
+html.watany-chat-viewport-mode .panel {
+  min-height: 0;
+}
+
+/* Inputs remain touch-friendly and never float above a dead zone. */
+html.watany-chat-viewport-mode textarea,
+html.watany-chat-viewport-mode input[type="text"],
+html.watany-chat-viewport-mode input[type="search"] {
+  font-size: 16px !important;
+}
+
+/* Small-screen enforcement. */
+@media (max-width: 820px) {
+  html.watany-chat-viewport-mode .app-shell,
+  html.watany-chat-viewport-mode .app-shell--phone {
+    box-shadow: none !important;
+  }
+}
+
+@media (max-height: 720px) {
+  :root {
+    --watany-chat-composer-min-height: 66px;
+  }
+
+  html.watany-chat-viewport-mode .watany-mobile-shell__ticker .ticker-bar {
+    padding-block: 2px !important;
+  }
+
+  html.watany-chat-viewport-mode .watany-mobile-shell__ticker .ticker-item {
+    font-size: 11px !important;
+    padding: 1px 7px !important;
+  }
+
+  html.watany-chat-viewport-mode .chat-messages,
+  html.watany-chat-viewport-mode .messages-list,
+  html.watany-chat-viewport-mode .message-list,
+  html.watany-chat-viewport-mode .conversation-messages,
+  html.watany-chat-viewport-mode .conversation-feed,
+  html.watany-chat-viewport-mode .chat-feed,
+  html.watany-chat-viewport-mode .thread-messages,
+  html.watany-chat-viewport-mode [data-chat-messages],
+  html.watany-chat-viewport-mode [class*="messages"],
+  html.watany-chat-viewport-mode [class*="Messages"] {
+    padding-bottom: calc(var(--watany-chat-composer-min-height) + var(--watany-chat-safe-bottom) + 6px) !important;
+    scroll-padding-bottom: calc(var(--watany-chat-composer-min-height) + var(--watany-chat-safe-bottom) + 6px) !important;
+  }
+
+  html.watany-chat-viewport-mode .chat-composer,
+  html.watany-chat-viewport-mode .message-composer,
+  html.watany-chat-viewport-mode .composer,
+  html.watany-chat-viewport-mode .chat-input,
+  html.watany-chat-viewport-mode .message-input,
+  html.watany-chat-viewport-mode .input-composer,
+  html.watany-chat-viewport-mode form[class*="composer"],
+  html.watany-chat-viewport-mode form[class*="Composer"],
+  html.watany-chat-viewport-mode [data-chat-composer] {
+    padding-bottom: max(6px, var(--watany-chat-safe-bottom)) !important;
+  }
+}
+
+@media (max-height: 640px) {
+  :root {
+    --watany-chat-composer-min-height: 58px;
+  }
+
+  html.watany-chat-viewport-mode .chat-quick-prompts {
+    gap: 6px !important;
+    padding: 6px 10px !important;
+  }
+
+  html.watany-chat-viewport-mode .chat-quick-prompts .quick-chip {
+    min-height: 34px !important;
+    padding: 6px 10px !important;
+    font-size: 12px !important;
+  }
+
+  html.watany-chat-viewport-mode .composer-input {
+    min-height: 38px !important;
+    max-height: 94px !important;
+  }
+
+  html.watany-chat-viewport-mode .chat-composer,
+  html.watany-chat-viewport-mode .message-composer,
+  html.watany-chat-viewport-mode .composer,
+  html.watany-chat-viewport-mode .chat-input,
+  html.watany-chat-viewport-mode .message-input,
+  html.watany-chat-viewport-mode .input-composer,
+  html.watany-chat-viewport-mode form[class*="composer"],
+  html.watany-chat-viewport-mode form[class*="Composer"],
+  html.watany-chat-viewport-mode [data-chat-composer] {
+    padding-bottom: max(4px, var(--watany-chat-safe-bottom)) !important;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 500px) {
+  :root {
+    --watany-chat-composer-min-height: 52px;
+  }
+
+  html.watany-chat-viewport-mode .chat-quick-prompts {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    gap: 4px !important;
+    padding: 4px 8px !important;
+    scrollbar-width: none;
+  }
+
+  html.watany-chat-viewport-mode .chat-quick-prompts::-webkit-scrollbar {
+    display: none;
+  }
+
+  html.watany-chat-viewport-mode .chat-quick-prompts .quick-chip {
+    min-height: 30px !important;
+    padding: 4px 8px !important;
+    font-size: 11px !important;
+    white-space: nowrap !important;
+  }
+
+  html.watany-chat-viewport-mode .chat-composer,
+  html.watany-chat-viewport-mode .message-composer,
+  html.watany-chat-viewport-mode .composer,
+  html.watany-chat-viewport-mode .chat-input,
+  html.watany-chat-viewport-mode .message-input,
+  html.watany-chat-viewport-mode .input-composer,
+  html.watany-chat-viewport-mode form[class*="composer"],
+  html.watany-chat-viewport-mode form[class*="Composer"],
+  html.watany-chat-viewport-mode [data-chat-composer] {
+    padding-top: 4px !important;
+    padding-bottom: max(3px, var(--watany-chat-safe-bottom)) !important;
+  }
+
+  html.watany-chat-viewport-mode .chat-composer__primary {
+    gap: 6px !important;
+  }
+
+  html.watany-chat-viewport-mode .chat-composer__primary-spacer,
+  html.watany-chat-viewport-mode .composer-btn,
+  html.watany-chat-viewport-mode .composer-btn--reset,
+  html.watany-chat-viewport-mode .composer-btn--primary,
+  html.watany-chat-viewport-mode .composer-btn.send,
+  html.watany-chat-viewport-mode .composer-btn.mic {
+    min-width: 44px !important;
+    min-height: 44px !important;
+    width: 44px !important;
+    height: 44px !important;
+  }
+
+  html.watany-chat-viewport-mode .composer-input {
+    min-height: 34px !important;
+    max-height: 74px !important;
+  }
+
+  html.watany-chat-viewport-mode .chat-messages,
+  html.watany-chat-viewport-mode .messages-list,
+  html.watany-chat-viewport-mode .message-list,
+  html.watany-chat-viewport-mode .conversation-messages,
+  html.watany-chat-viewport-mode .conversation-feed,
+  html.watany-chat-viewport-mode .chat-feed,
+  html.watany-chat-viewport-mode .thread-messages,
+  html.watany-chat-viewport-mode [data-chat-messages],
+  html.watany-chat-viewport-mode [class*="messages"],
+  html.watany-chat-viewport-mode [class*="Messages"] {
+    padding-bottom: calc(var(--watany-chat-composer-min-height) + var(--watany-chat-safe-bottom) + 4px) !important;
+    scroll-padding-bottom: calc(var(--watany-chat-composer-min-height) + var(--watany-chat-safe-bottom) + 4px) !important;
+  }
+}
+
+/* Keep Mobile OS shell essentials visible even in chat routes. */
+html.watany-chat-viewport-mode .watany-mobile-shell__topbar,
+html.watany-chat-viewport-mode [data-wmo-shell-top-nav],
+html.watany-chat-viewport-mode .watany-mobile-shell__dock,
+html.watany-chat-viewport-mode [data-wmo-shell-dock],
+html.watany-chat-viewport-mode .watany-mobile-shell__assistant {
+  display: flex !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
+html.watany-chat-viewport-mode .watany-mobile-shell__ticker,
+html.watany-chat-viewport-mode [data-wmo-shell-ticker] {
+  display: block !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
+html.watany-chat-viewport-mode .watany-mobile-shell__main,
+html.watany-chat-viewport-mode .watany-mobile-shell__content {
+  overflow: hidden !important;
+}
+
+html.watany-chat-viewport-mode .watany-mobile-shell__route-content {
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  padding-bottom: calc(var(--wmo-dock-height, 78px) + env(safe-area-inset-bottom)) !important;
+}
+
+/* On desktop (≥769px), chat viewport mode must NOT expand the app to full width.
+   Re-assert the phone-frame shape so the app stays centred at phone size. */
+@media (min-width: 769px) {
+  html.watany-chat-viewport-mode .app-shell,
+  html.watany-chat-viewport-mode .app-shell--phone {
+    width: min(430px, calc(100vw - 28px)) !important;
+    max-width: min(430px, calc(100vw - 28px)) !important;
+    height: min(920px, calc(100vh - 24px)) !important;
+    min-height: unset !important;
+    max-height: min(920px, calc(100vh - 24px)) !important;
+    border-radius: 34px !important;
+    margin: 12px auto !important;
+  }
+}

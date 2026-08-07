@@ -1,0 +1,283 @@
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: #f3efe6;
+  color: #2d2923;
+  font-family: Cairo, Tahoma, Arial, system-ui, sans-serif;
+  overflow-x: hidden;
+}
+
+body.koudama-agent5-active {
+  background: #f3efe6;
+}
+
+.app-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-content {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.watany-mobile-shell {
+  position: relative;
+  width: 100%;
+}
+
+.watany-mobile-shell__viewport,
+.watany-mobile-shell__surface,
+.watany-mobile-shell__main,
+.watany-mobile-shell__content,
+.watany-mobile-shell__route-content {
+  min-height: 100%;
+}
+
+.watany-mobile-shell__route-content {
+  position: relative;
+}
+
+.watany-mobile-shell__drawer-handle {
+  position: fixed;
+  inset-inline-end: 8px;
+  inset-inline-start: auto;
+  top: 50%;
+  z-index: 160;
+  width: 30px;
+  height: 78px;
+  transform: translateY(-50%);
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.86);
+  box-shadow: 0 10px 22px rgba(18, 53, 91, 0.14);
+}
+
+.watany-mobile-shell__drawer-handle-dots,
+.watany-mobile-shell__drawer-handle-dots span {
+  display: block;
+}
+
+.watany-mobile-shell__drawer-handle-dots {
+  width: 100%;
+  text-align: center;
+}
+
+.watany-mobile-shell__drawer-handle-dots span {
+  width: 6px;
+  height: 6px;
+  margin: 6px auto;
+  border-radius: 50%;
+  background: #6a8fd8;
+}
+
+.watany-mobile-shell__history-nav {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0px) + var(--watany-top-header-height, 96px) + 4px);
+  inset-inline: 0;
+  z-index: 1090;
+  height: 0;
+  pointer-events: none;
+}
+
+.kw-agent5-root,
+.kw-agent5-root * {
+  box-sizing: border-box;
+}
+
+.kw-agent5-root {
+  width: 100%;
+  min-height: 100%;
+  padding: 0 0 92px;
+  color: #2d2923;
+}
+
+.kw-card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  align-items: stretch;
+  margin: 12px 0 16px;
+  padding: 0 14px;
+  grid-auto-rows: 172px;
+}
+
+.kw-main-card {
+  position: relative;
+  min-height: 0;
+  border: 1px solid rgba(92, 78, 55, 0.16);
+  border-radius: 16px;
+  display: grid;
+  grid-template-rows: auto auto;
+  justify-items: center;
+  align-content: center;
+  gap: 6px;
+  padding: 6px 6px 10px;
+  background: transparent;
+  color: #2d2923;
+  text-align: center;
+  box-shadow: 0 12px 28px rgba(16, 18, 21, 0.12);
+}
+
+.kw-card-badge {
+  position: absolute;
+  top: 6px;
+  right: 10px;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: currentColor;
+  color: #fff;
+  border: 2px solid #fff;
+  font-size: 11px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.kw-main-card .kw-service-menu-icon-source {
+  width: 128px;
+  height: 128px;
+  display: grid;
+  place-items: center;
+  border: 4px solid currentColor;
+  border-radius: 12px;
+  background: transparent;
+}
+
+.kw-main-card strong {
+  font-size: 22.5px;
+  line-height: 1.1;
+  font-weight: 900;
+}
+
+.tone-blue { color: #4988e8; }
+.tone-green { color: #6ea354; }
+.tone-teal { color: #3ba99a; }
+.tone-red { color: #e94b61; }
+.tone-gold { color: #dc8a25; }
+.tone-purple { color: #9256d4; }
+.tone-gray { color: #928a7f; }
+.tone-pink { color: #cf6f9f; }
+
+.kw-bottom-chat,
+.kw-bottom-chat--global {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: auto !important;
+  inset-block-start: auto !important;
+  inset-block-end: 0;
+  z-index: 150;
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr) 56px;
+  gap: 10px;
+  align-items: center;
+  min-height: 76px;
+  width: 100vw;
+  max-width: 100vw;
+  margin: 0;
+  padding: 10px 12px calc(12px + env(safe-area-inset-bottom, 0px));
+  background: rgba(255, 255, 255, 0.96);
+  border-top: 1px solid rgba(44, 43, 42, 0.12);
+  box-shadow: 0 -12px 32px rgba(15, 23, 42, 0.12);
+}
+
+.kw-agent5-root {
+  padding-bottom: max(96px, env(safe-area-inset-bottom));
+}
+
+.kw-bottom-chat input,
+.kw-bottom-chat--global input {
+  width: 100%;
+  height: 40px;
+  border: 1px solid rgba(44, 43, 42, 0.12);
+  border-radius: 999px;
+  padding: 0 14px;
+  background: rgba(255, 255, 255, 0.92);
+  color: #2c2b2a;
+  text-align: right;
+}
+
+.kw-bottom-chat button,
+.kw-bottom-chat--global button {
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: 14px;
+}
+
+@media (max-width: 360px) {
+  .kw-card-grid {
+    padding: 0 10px;
+    gap: 9px;
+  }
+}
+
+/* Keep the universal form viewer above the mobile shell and suppress underlying chrome. */
+body:has(#watany-form-viewer-root),
+body:has(.watany-form-viewer-root),
+html:has(#watany-form-viewer-root),
+html:has(.watany-form-viewer-root) {
+  overflow: hidden;
+}
+
+body:has(#watany-form-viewer-root) .app-shell,
+body:has(.watany-form-viewer-root) .app-shell,
+body:has(#watany-form-viewer-root) #watany-initial-fallback,
+body:has(.watany-form-viewer-root) #watany-initial-fallback,
+body:has(#watany-form-viewer-root) .watany-mobile-shell__drawer-handle,
+body:has(.watany-form-viewer-root) .watany-mobile-shell__drawer-handle,
+body:has(#watany-form-viewer-root) .watany-mobile-shell__history-nav,
+body:has(.watany-form-viewer-root) .watany-mobile-shell__history-nav,
+body:has(#watany-form-viewer-root) .bottom-tab-bar,
+body:has(.watany-form-viewer-root) .bottom-tab-bar,
+body:has(#watany-form-viewer-root) .tab-bar,
+body:has(.watany-form-viewer-root) .tab-bar,
+body:has(#watany-form-viewer-root) .watany-top-header,
+body:has(.watany-form-viewer-root) .watany-top-header,
+body:has(#watany-form-viewer-root) .global-feature-nav,
+body:has(.watany-form-viewer-root) .global-feature-nav {
+  visibility: hidden !important;
+}
+
+#watany-form-viewer-root,
+.watany-form-viewer-root,
+[data-watany-form-viewer-root] {
+  display: flex !important;
+  flex-direction: column !important;
+  position: fixed !important;
+  inset: auto !important;
+  top: var(--watany-form-viewer-top, 64px) !important;
+  bottom: var(--watany-form-viewer-bottom, 64px) !important;
+  left: 50% !important;
+  right: auto !important;
+  z-index: 2147483647 !important;
+  width: min(var(--wmo-phone-max-width, 430px), calc(100vw - 8px)) !important;
+  max-width: calc(100vw - 8px) !important;
+  height: auto !important;
+  max-height: calc(100dvh - var(--watany-form-viewer-top, 64px) - var(--watany-form-viewer-bottom, 64px)) !important;
+  margin: 0 !important;
+  padding-top: 0 !important;
+  transform: translateX(-50%) !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+}
+
+#watany-form-viewer-root > *,
+.watany-form-viewer-root > *,
+[data-watany-form-viewer-root] > * {
+  width: 100% !important;
+  min-height: calc(100dvh - var(--watany-form-viewer-top, 64px) - var(--watany-form-viewer-bottom, 64px)) !important;
+  max-height: calc(100dvh - var(--watany-form-viewer-top, 64px) - var(--watany-form-viewer-bottom, 64px)) !important;
+}

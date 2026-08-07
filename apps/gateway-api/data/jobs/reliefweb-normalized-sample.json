@@ -1,0 +1,54 @@
+{
+  "generated_at": "2026-05-31T13:44:53.315Z",
+  "source": {
+    "id": "reliefweb_lebanon_jobs",
+    "name": "ReliefWeb Lebanon Jobs",
+    "api_endpoint": "https://api.reliefweb.int/v2/jobs",
+    "appname_used": "watanybot-koudama-local-dev",
+    "sample_limit": 5,
+    "safety_policy": "api_only_metadata_and_link_preserve_original_source_url",
+    "probe_mode": "fallback_sample_due_to_api_access_restriction",
+    "fallback_reason": "reliefweb_appname_or_access_restricted"
+  },
+  "location_model": "mohafaza_caza_village_exact_address",
+  "count": 1,
+  "jobs": [
+    {
+      "source_name": "ReliefWeb Lebanon Jobs",
+      "source_id": "reliefweb_lebanon_jobs",
+      "source_url": "https://reliefweb.int/jobs?advanced-search=%28C137%29&list=Lebanon+Jobs",
+      "original_job_url": "https://reliefweb.int/jobs?advanced-search=%28C137%29&list=Lebanon+Jobs",
+      "reliefweb_api_url": "",
+      "reliefweb_id": "",
+      "title": "ReliefWeb API access pending appname approval",
+      "organization": "ReliefWeb",
+      "sector": "Humanitarian / NGO",
+      "job_type": "",
+      "work_mode": "",
+      "country": "Lebanon",
+      "mohafaza": "",
+      "caza": "",
+      "village": "",
+      "exact_address_optional": "",
+      "deadline": "",
+      "date_posted": "",
+      "date_seen": "2026-05-31T13:44:53.315Z",
+      "salary_range_optional": "",
+      "eligibility": "",
+      "veteran_friendly_flag": false,
+      "family_friendly_flag": false,
+      "verified_source_status": "manual_review_required",
+      "application_method": "apply_on_original_source",
+      "language": "en",
+      "full_text_policy": "metadata_and_link_only_respect_original_source_ip",
+      "raw_hash_for_deduplication": "5d37c4ad59233e4ed0e19ba5ae265fd712d5bb1e285af4677e88175ab629b77f",
+      "raw_reliefweb_fields_preview": {
+        "country": null,
+        "source": null,
+        "type": null,
+        "career_categories": null,
+        "experience": null
+      }
+    }
+  ]
+}

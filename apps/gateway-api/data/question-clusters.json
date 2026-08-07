@@ -1,0 +1,364 @@
+{
+  "clusters": [
+    {
+      "id": "qc-mpqr7ved-2pxho",
+      "normalizedKey": "man7a madrasiyye",
+      "count": 111,
+      "lastSeen": "2026-07-18T05:13:40.528Z",
+      "samples": [
+        "man7a madrasiyye"
+      ],
+      "unanswered": false
+    },
+    {
+      "id": "qc-mpqr7vgz-kusuz",
+      "normalizedKey": "tatwi3 bel jesh",
+      "count": 112,
+      "lastSeen": "2026-07-18T05:13:40.955Z",
+      "samples": [
+        "tatwi3 bel jesh"
+      ],
+      "unanswered": false
+    },
+    {
+      "id": "qc-mpqr7vi3-ti2fc",
+      "normalizedKey": "ra2em mostashfa",
+      "count": 112,
+      "lastSeen": "2026-07-18T05:13:40.979Z",
+      "samples": [
+        "ra2em mostashfa"
+      ],
+      "unanswered": false
+    },
+    {
+      "id": "qc-mpqr7vjs-bybph",
+      "normalizedKey": "مدارس",
+      "count": 224,
+      "lastSeen": "2026-07-18T05:13:41.005Z",
+      "samples": [
+        "مدارس"
+      ],
+      "unanswered": false
+    },
+    {
+      "id": "qc-mpqr7vk4-6qt3u",
+      "normalizedKey": "شيء آخر غير مذكور",
+      "count": 112,
+      "lastSeen": "2026-07-18T05:13:41.014Z",
+      "samples": [
+        "شيء آخر غير مذكور"
+      ],
+      "unanswered": false
+    },
+    {
+      "id": "qc-mpqr7vn2-f79pn",
+      "normalizedKey": "هل يوجد تطويع بالجيش؟",
+      "count": 221,
+      "lastSeen": "2026-07-18T05:13:40.892Z",
+      "samples": [
+        "هل يوجد تطويع بالجيش؟"
+      ],
+      "unanswered": false
+    },
+    {
+      "id": "qc-mpqr7vox-8xxis",
+      "normalizedKey": "wen taqdim",
+      "count": 111,
+      "lastSeen": "2026-07-18T05:13:40.916Z",
+      "samples": [
+        "wen taqdim"
+      ],
+      "unanswered": false
+    },
+    {
+      "id": "qc-mpqrhv0i-0qde4",
+      "normalizedKey": "مسا الخير",
+      "count": 113,
+      "lastSeen": "2026-07-18T05:13:28.699Z",
+      "samples": [
+        "مسا الخير"
+      ],
+      "unanswered": false
+    },
+    {
+      "id": "qc-mpqrhv7o-9yqt2",
+      "normalizedKey": "معاملات التقاعد والمعاش",
+      "count": 113,
+      "lastSeen": "2026-07-18T05:13:28.820Z",
+      "samples": [
+        "معاملات التقاعد والمعاش"
+      ],
+      "unanswered": false
+    },
+    {
+      "id": "qc-mpqrhv9g-kp5fn",
+      "normalizedKey": "معاش",
+      "count": 113,
+      "lastSeen": "2026-07-18T05:13:28.932Z",
+      "samples": [
+        "معاش"
+      ],
+      "unanswered": false
+    },
+    {
+      "id": "qc-mpqrhw4f-92mlz",
+      "normalizedKey": "2",
+      "count": 112,
+      "lastSeen": "2026-07-18T05:13:31.081Z",
+      "samples": [
+        "2"
+      ],
+      "unanswered": false
+    },
+    {
+      "id": "qc-mpqrhw5v-hjdlw",
+      "normalizedKey": "6",
+      "count": 110,
+      "lastSeen": "2026-07-17T06:43:49.290Z",
+      "samples": [
+        "6"
+      ],
+      "unanswered": false
+    },
+    {
+      "id": "qc-mpqri12u-ub7y4",
+      "normalizedKey": "الابنة على العاتق",
+      "count": 110,
+      "lastSeen": "2026-07-18T05:13:39.431Z",
+      "samples": [
+        "الابنة على العاتق"
+      ],
+      "unanswered": false
+    },
+    {
+      "id": "qc-mpqri13b-9sdcs",
+      "normalizedKey": "الوالدين على العاتق",
+      "count": 110,
+      "lastSeen": "2026-07-18T05:13:39.458Z",
+      "samples": [
+        "الوالدين على العاتق"
+      ],
+      "unanswered": false
+    },
+    {
+      "id": "qc-mpqri13o-lztjo",
+      "normalizedKey": "الزوجة على العاتق",
+      "count": 110,
+      "lastSeen": "2026-07-18T05:13:39.472Z",
+      "samples": [
+        "الزوجة على العاتق"
+      ],
+      "unanswered": false
+    },
+    {
+      "id": "qc-mpqri13z-idrua",
+      "normalizedKey": "مساعدة مدرسية",
+      "count": 110,
+      "lastSeen": "2026-07-18T05:13:39.501Z",
+      "samples": [
+        "مساعدة مدرسية"
+      ],
+      "unanswered": false
+    },
+    {
+      "id": "qc-mpqri14b-elym1",
+      "normalizedKey": "معاش الابنة",
+      "count": 110,
+      "lastSeen": "2026-07-18T05:13:39.629Z",
+      "samples": [
+        "معاش الابنة"
+      ],
+      "unanswered": false
+    },
+    {
+      "id": "qc-mpqri14k-5lyxn",
+      "normalizedKey": "معاش الابن",
+      "count": 110,
+      "lastSeen": "2026-07-18T05:13:39.642Z",
+      "samples": [
+        "معاش الابن"
+      ],
+      "unanswered": false
+    },
+    {
+      "id": "qc-mpqri14u-v2uuv",
+      "normalizedKey": "معاش الوالدين",
+      "count": 110,
+      "lastSeen": "2026-07-18T05:13:39.660Z",
+      "samples": [
+        "معاش الوالدين"
+      ],
+      "unanswered": false
+    },
+    {
+      "id": "qc-mpqri159-6lzoe",
+      "normalizedKey": "الابنة الأرملة على العاتق",
+      "count": 110,
+      "lastSeen": "2026-07-18T05:13:39.682Z",
+      "samples": [
+        "الابنة الأرملة على العاتق"
+      ],
+      "unanswered": false
+    },
+    {
+      "id": "qc-mpqri15f-ri5zi",
+      "normalizedKey": "نعم",
+      "count": 110,
+      "lastSeen": "2026-07-18T05:13:39.701Z",
+      "samples": [
+        "نعم"
+      ],
+      "unanswered": false
+    },
+    {
+      "id": "qc-mpqri15p-wida9",
+      "normalizedKey": "ابن معوق",
+      "count": 110,
+      "lastSeen": "2026-07-18T05:13:39.781Z",
+      "samples": [
+        "ابن معوق"
+      ],
+      "unanswered": false
+    },
+    {
+      "id": "qc-mpqri15y-962k5",
+      "normalizedKey": "الوالدين على العاتق للمتقاعد",
+      "count": 110,
+      "lastSeen": "2026-07-18T05:13:39.794Z",
+      "samples": [
+        "الوالدين على العاتق للمتقاعد"
+      ],
+      "unanswered": false
+    },
+    {
+      "id": "qc-mpqri168-b92u1",
+      "normalizedKey": "مساعدة مدرسية للمتقاعدين",
+      "count": 110,
+      "lastSeen": "2026-07-18T05:13:39.803Z",
+      "samples": [
+        "مساعدة مدرسية للمتقاعدين"
+      ],
+      "unanswered": false
+    },
+    {
+      "id": "qc-mpqri16g-cazmy",
+      "normalizedKey": "اضافة الابنة المطلقة على العاتق",
+      "count": 110,
+      "lastSeen": "2026-07-18T05:13:39.817Z",
+      "samples": [
+        "اضافة الابنة المطلقة على العاتق"
+      ],
+      "unanswered": false
+    },
+    {
+      "id": "qc-mpqri16s-dlhve",
+      "normalizedKey": "معاش الابنة الأرملة",
+      "count": 110,
+      "lastSeen": "2026-07-18T05:13:39.831Z",
+      "samples": [
+        "معاش الابنة الأرملة"
+      ],
+      "unanswered": false
+    },
+    {
+      "id": "qc-mpqri170-ok4gl",
+      "normalizedKey": "معاش الابن الذي يتابع الدراسة",
+      "count": 110,
+      "lastSeen": "2026-07-18T05:13:39.843Z",
+      "samples": [
+        "معاش الابن الذي يتابع الدراسة"
+      ],
+      "unanswered": false
+    },
+    {
+      "id": "qc-mpqri179-zscxc",
+      "normalizedKey": "معاش الوالدة",
+      "count": 110,
+      "lastSeen": "2026-07-18T05:13:39.888Z",
+      "samples": [
+        "معاش الوالدة"
+      ],
+      "unanswered": false
+    },
+    {
+      "id": "qc-mpqri17m-hh41s",
+      "normalizedKey": "بدي احسب معاشي",
+      "count": 111,
+      "lastSeen": "2026-07-18T05:13:40.005Z",
+      "samples": [
+        "بدي احسب معاشي"
+      ],
+      "unanswered": false
+    },
+    {
+      "id": "qc-mpqri17x-vuha7",
+      "normalizedKey": "مرحبا بدي افهم بشكل مختصر كيف بتم احتساب المعاش التقاعدي وشو أهم المراجعات",
+      "count": 110,
+      "lastSeen": "2026-07-18T05:13:40.269Z",
+      "samples": [
+        "مرحبا بدي افهم بشكل مختصر كيف بتم احتساب المعاش التقاعدي وشو أهم المراجعات"
+      ],
+      "unanswered": false
+    },
+    {
+      "id": "qc-mpqri18a-4xisv",
+      "normalizedKey": "bde a7seb ma3ashe",
+      "count": 110,
+      "lastSeen": "2026-07-18T05:13:40.454Z",
+      "samples": [
+        "bde a7seb ma3ashe"
+      ],
+      "unanswered": false
+    },
+    {
+      "id": "qc-mpqri18l-tzgjm",
+      "normalizedKey": "ma3ash ta2aod",
+      "count": 110,
+      "lastSeen": "2026-07-18T05:13:40.488Z",
+      "samples": [
+        "ma3ash ta2aod"
+      ],
+      "unanswered": false
+    },
+    {
+      "id": "qc-mpqri18y-0i9rp",
+      "normalizedKey": "أحتاج إفادة راتب رسمية",
+      "count": 110,
+      "lastSeen": "2026-07-18T05:13:40.507Z",
+      "samples": [
+        "أحتاج إفادة راتب رسمية"
+      ],
+      "unanswered": false
+    },
+    {
+      "id": "qc-mpqri1bs-5nw6b",
+      "normalizedKey": "وما هي ؟",
+      "count": 110,
+      "lastSeen": "2026-07-18T05:13:40.867Z",
+      "samples": [
+        "وما هي ؟"
+      ],
+      "unanswered": false
+    },
+    {
+      "id": "qc-mpvr5inn-9wnz8",
+      "normalizedKey": "مرحبا",
+      "count": 1,
+      "lastSeen": "2026-06-01T22:00:27.053Z",
+      "samples": [
+        "مرحبا"
+      ],
+      "unanswered": false
+    },
+    {
+      "id": "qc-mq2y74h7-c6it6",
+      "normalizedKey": "ùƒùšù ùùšù†ùš ø§ø¹ø±ù ù…ø¹ø§ù…ù„øªùš",
+      "count": 23,
+      "lastSeen": "2026-07-01T05:35:37.264Z",
+      "samples": [
+        "ÙƒÙŠÙ ÙÙŠÙ†ÙŠ Ø§Ø¹Ø±Ù Ù…Ø¹Ø§Ù…Ù„ØªÙŠ"
+      ],
+      "unanswered": false
+    }
+  ]
+}

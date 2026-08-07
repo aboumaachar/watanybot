@@ -1,0 +1,84 @@
+import type { FastifyPluginAsync } from "fastify";
+
+function forwardHeaders(headers: Record<string, unknown>) {
+  const next: Record<string, string> = {};
+  for (const [key, value] of Object.entries(headers || {})) {
+    if (typeof value === "string") {
+      next[key] = value;
+    }
+  }
+  return next;
+}
+
+export const v2CompatRoutes: FastifyPluginAsync = async (app) => {
+  app.post("/api/v2/auth/login", async (request, reply) => {
+    const upstream = await app.inject({
+      method: "POST",
+      url: "/api/auth/login",
+      headers: forwardHeaders(request.headers as Record<string, unknown>),
+      payload: request.body,
+    });
+
+    reply.code(upstream.statusCode);
+    const setCookie = upstream.headers["set-cookie"];
+    if (setCookie) {
+      reply.header("set-cookie", setCookie as string | string[]);
+    }
+
+    const body = upstream.body || "";
+    const contentType = String(upstream.headers["content-type"] || "application/json");
+    if (!contentType.includes("application/json")) {
+      return reply.type(contentType).send(body);
+    }
+
+    try {
+      const parsed = JSON.parse(body) as Record<string, unknown>;
+      if (typeof parsed.accessToken === "string" && typeof parsed.token !== "string") {
+        parsed.token = parsed.accessToken;
+      }
+      return reply.send(parsed);
+    } catch {
+      return reply.type("application/json; charset=utf-8").send(body);
+    }
+  });
+
+  app.get("/api/v2/admin/ai/config", async (request, reply) => {
+    const upstream = await app.inject({
+      method: "GET",
+      url: "/api/admin/ai/config",
+      headers: forwardHeaders(request.headers as Record<string, unknown>),
+    });
+    if (upstream.statusCode === 404) {
+      return reply.code(200).send({
+        ok: true,
+        provider: "local",
+        model: "gpt-4o-mini",
+        rag: true,
+      });
+    }
+    reply.code(upstream.statusCode);
+    return reply.type(String(upstream.headers["content-type"] || "application/json; charset=utf-8")).send(upstream.body);
+  });
+
+  app.get("/api/v2/admin/kb/chunks", async (request, reply) => {
+    const query = request.url.includes("?") ? request.url.slice(request.url.indexOf("?")) : "";
+    const upstream = await app.inject({
+      method: "GET",
+      url: `/api/admin/kb/chunks${query}`,
+      headers: forwardHeaders(request.headers as Record<string, unknown>),
+    });
+    reply.code(upstream.statusCode);
+    return reply.type(String(upstream.headers["content-type"] || "application/json; charset=utf-8")).send(upstream.body);
+  });
+
+  app.get("/api/v2/admin/kb/versions", async (request, reply) => {
+    const query = request.url.includes("?") ? request.url.slice(request.url.indexOf("?")) : "";
+    const upstream = await app.inject({
+      method: "GET",
+      url: `/api/admin/kb/versions${query}`,
+      headers: forwardHeaders(request.headers as Record<string, unknown>),
+    });
+    reply.code(upstream.statusCode);
+    return reply.type(String(upstream.headers["content-type"] || "application/json; charset=utf-8")).send(upstream.body);
+  });
+};

@@ -1,0 +1,2 @@
+import { createHybridChatHostRegistration } from '../../../../../packages/features/hybrid-chat/src';
+export function createWatanyHybridChatApiAdapter() { const registration = createHybridChatHostRegistration(); return { ...registration, watanyApiContext: { preservesExistingRoutes: true, liveSearchCompatible: true, externalAiOptional: true } }; }

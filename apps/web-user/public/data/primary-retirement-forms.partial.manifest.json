@@ -1,0 +1,111 @@
+﻿{
+    "finalStatus":  "PARTIAL_VERIFIED_PUBLIC_BINDINGS_ONLY",
+    "sourceOfTruth":  "mof.html",
+    "generatedAt":  "2026-06-15T09:16:56.4624985+03:00",
+    "verifiedPublicBindings":  [
+                                   {
+                                       "formKey":  "T6",
+                                       "formCode":  "ت 6",
+                                       "title":  "طلب إيقاف معاش تقاعدي",
+                                       "previewUrl":  "/mof/%D8%B7%D9%84%D8%A8%20%D8%A7%D9%8A%D9%82%D8%A7%D9%81%20%D9%85%D8%B9%D8%A7%D8%B4%20%D8%AA%D9%82%D8%A7%D8%B9%D8%AF%D9%8A.pdf",
+                                       "downloadUrl":  "/mof/%D8%B7%D9%84%D8%A8%20%D8%A7%D9%8A%D9%82%D8%A7%D9%81%20%D9%85%D8%B9%D8%A7%D8%B4%20%D8%AA%D9%82%D8%A7%D8%B9%D8%AF%D9%8A.pdf",
+                                       "shareUrl":  "/mof/%D8%B7%D9%84%D8%A8%20%D8%A7%D9%8A%D9%82%D8%A7%D9%81%20%D9%85%D8%B9%D8%A7%D8%B4%20%D8%AA%D9%82%D8%A7%D8%B9%D8%AF%D9%8A.pdf",
+                                       "openUrl":  "/mof/%D8%B7%D9%84%D8%A8%20%D8%A7%D9%8A%D9%82%D8%A7%D9%81%20%D9%85%D8%B9%D8%A7%D8%B4%20%D8%AA%D9%82%D8%A7%D8%B9%D8%AF%D9%8A.pdf",
+                                       "source":  "mof.html",
+                                       "linkText":  "طلب ايقاف معاش تقاعدي",
+                                       "resolvedFile":  "C:\\xampp\\htdocs\\projectx\\watanybot\\watany_kb\\docs\\03_procedures\\02_mof\\طلب ايقاف معاش تقاعدي.pdf",
+                                       "status":  "verified_public_200"
+                                   },
+                                   {
+                                       "formKey":  "T5",
+                                       "formCode":  "ت 5",
+                                       "title":  "طلب معاينة من اللجنة الطبية الدائمة في وزارة الصحة العامة",
+                                       "previewUrl":  "/mof/%D8%B7%D9%84%D8%A8%20%D9%85%D8%B9%D8%A7%D9%8A%D9%86%D8%A9%20%D9%85%D9%86%20%D8%A7%D9%84%D9%84%D8%AC%D9%86%D8%A9%20%D8%A7%D9%84%D8%B7%D8%A8%D9%8A%D8%A9%20%D8%A7%D9%84%D8%AF%D8%A7%D8%A6%D9%85%D8%A9%20%D9%81%D9%8A%20%D9%88%D8%B2%D8%A7%D8%B1%D8%A9%20%D8%A7%D9%84%D8%B5%D8%AD%D8%A9%20%D8%A7%D9%84%D8%B9%D8%A7%D9%85%D8%A9.pdf",
+                                       "downloadUrl":  "/mof/%D8%B7%D9%84%D8%A8%20%D9%85%D8%B9%D8%A7%D9%8A%D9%86%D8%A9%20%D9%85%D9%86%20%D8%A7%D9%84%D9%84%D8%AC%D9%86%D8%A9%20%D8%A7%D9%84%D8%B7%D8%A8%D9%8A%D8%A9%20%D8%A7%D9%84%D8%AF%D8%A7%D8%A6%D9%85%D8%A9%20%D9%81%D9%8A%20%D9%88%D8%B2%D8%A7%D8%B1%D8%A9%20%D8%A7%D9%84%D8%B5%D8%AD%D8%A9%20%D8%A7%D9%84%D8%B9%D8%A7%D9%85%D8%A9.pdf",
+                                       "shareUrl":  "/mof/%D8%B7%D9%84%D8%A8%20%D9%85%D8%B9%D8%A7%D9%8A%D9%86%D8%A9%20%D9%85%D9%86%20%D8%A7%D9%84%D9%84%D8%AC%D9%86%D8%A9%20%D8%A7%D9%84%D8%B7%D8%A8%D9%8A%D8%A9%20%D8%A7%D9%84%D8%AF%D8%A7%D8%A6%D9%85%D8%A9%20%D9%81%D9%8A%20%D9%88%D8%B2%D8%A7%D8%B1%D8%A9%20%D8%A7%D9%84%D8%B5%D8%AD%D8%A9%20%D8%A7%D9%84%D8%B9%D8%A7%D9%85%D8%A9.pdf",
+                                       "openUrl":  "/mof/%D8%B7%D9%84%D8%A8%20%D9%85%D8%B9%D8%A7%D9%8A%D9%86%D8%A9%20%D9%85%D9%86%20%D8%A7%D9%84%D9%84%D8%AC%D9%86%D8%A9%20%D8%A7%D9%84%D8%B7%D8%A8%D9%8A%D8%A9%20%D8%A7%D9%84%D8%AF%D8%A7%D8%A6%D9%85%D8%A9%20%D9%81%D9%8A%20%D9%88%D8%B2%D8%A7%D8%B1%D8%A9%20%D8%A7%D9%84%D8%B5%D8%AD%D8%A9%20%D8%A7%D9%84%D8%B9%D8%A7%D9%85%D8%A9.pdf",
+                                       "source":  "mof.html",
+                                       "linkText":  "طلب معاينة من اللجنة الطبية الدائمة في وزارة الصحة العامة",
+                                       "resolvedFile":  "C:\\xampp\\htdocs\\projectx\\watanybot\\watany_kb\\docs\\03_procedures\\02_mof\\طلب معاينة من اللجنة الطبية الدائمة في وزارة الصحة العامة.pdf",
+                                       "status":  "verified_public_200"
+                                   }
+                               ],
+    "pendingCanonicalForms":  [
+                                  {
+                                      "FormKey":  "T1",
+                                      "FormCode":  "ت 1",
+                                      "FormTitle":  "طلب دفتر تقاعد",
+                                      "Status":  "VARIANT_ONLY_NOT_CANONICAL",
+                                      "Reason":  "Variant found only: طلب دفتر تقاعد - بدل عن ضائع"
+                                  },
+                                  {
+                                      "FormKey":  "T2",
+                                      "FormCode":  "ت 2",
+                                      "FormTitle":  "طلب تعديل وضع عائلي",
+                                      "Status":  "MISSING_EXACT_MOF_HTML_MATCH",
+                                      "Reason":  "No verified canonical mof.html anchor"
+                                  },
+                                  {
+                                      "FormKey":  "T3",
+                                      "FormCode":  "ت 3",
+                                      "FormTitle":  "طلب صرف تعويض عائلي و/أو معاش تقاعدي لأولاد المتقاعد الذكور بين سن 18 و25",
+                                      "Status":  "MISSING_EXACT_MOF_HTML_MATCH",
+                                      "Reason":  "No verified canonical mof.html anchor"
+                                  },
+                                  {
+                                      "FormKey":  "T4",
+                                      "FormCode":  "ت 4",
+                                      "FormTitle":  "طلب صرف تعويض عائلي و/أو معاش تقاعدي لإبنة المتقاعد المطلقة أو الأرملة",
+                                      "Status":  "MISSING_EXACT_MOF_HTML_MATCH",
+                                      "Reason":  "Only subcase/variant found, not canonical"
+                                  },
+                                  {
+                                      "FormKey":  "T7",
+                                      "FormCode":  "ت 7",
+                                      "FormTitle":  "طلب إعادة تخصيص معاش تقاعدي",
+                                      "Status":  "MISSING_EXACT_MOF_HTML_MATCH",
+                                      "Reason":  "No verified canonical mof.html anchor"
+                                  },
+                                  {
+                                      "FormKey":  "T8",
+                                      "FormCode":  "ت 8",
+                                      "FormTitle":  "إقرار من مستفيد",
+                                      "Status":  "MISSING_EXACT_MOF_HTML_MATCH",
+                                      "Reason":  "No verified canonical mof.html anchor"
+                                  },
+                                  {
+                                      "FormKey":  "T9",
+                                      "FormCode":  "ت 9",
+                                      "FormTitle":  "شهادة",
+                                      "Status":  "MISSING_EXACT_MOF_HTML_MATCH",
+                                      "Reason":  "No verified canonical mof.html anchor"
+                                  },
+                                  {
+                                      "FormKey":  "T10",
+                                      "FormCode":  "ت 10",
+                                      "FormTitle":  "طلب توطين/تحويل معاش تقاعد",
+                                      "Status":  "MISSING_EXACT_MOF_HTML_MATCH",
+                                      "Reason":  "No verified canonical mof.html anchor"
+                                  },
+                                  {
+                                      "FormKey":  "T11",
+                                      "FormCode":  "ت 11",
+                                      "FormTitle":  "إقرار وتعهد",
+                                      "Status":  "MISSING_EXACT_MOF_HTML_MATCH",
+                                      "Reason":  "No verified canonical mof.html anchor"
+                                  },
+                                  {
+                                      "FormKey":  "T12",
+                                      "FormCode":  "ت 12",
+                                      "FormTitle":  "إقرار من متقاعد",
+                                      "Status":  "MISSING_EXACT_MOF_HTML_MATCH",
+                                      "Reason":  "No verified canonical mof.html anchor"
+                                  }
+                              ],
+    "governance":  [
+                       "Do not claim full T1-T12 completion.",
+                       "Do not duplicate PDFs.",
+                       "Use existing /mof/ public URLs for T5 and T6.",
+                       "Continue mapping missing forms using mof.html link text, href, and resolved file path."
+                   ]
+}

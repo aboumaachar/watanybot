@@ -1,0 +1,71 @@
+:root {
+  --watany-icon-shell-size: 64px;
+  --watany-icon-shell-radius: 20px;
+  --watany-icon-shell-border: 3px;
+  --watany-icon-glyph-size: 52px;
+  --watany-icon-shell-padding: max(5px, calc(var(--watany-icon-shell-size) * 0.08));
+  --watany-icon-shell-shadow:
+    0 14px 28px color-mix(in srgb, currentColor 16%, transparent),
+    0 6px 14px rgba(35, 31, 25, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    inset 0 -8px 16px rgba(15, 23, 42, 0.02);
+}
+
+.watany-icon-shell,
+.utility-action-card__icon,
+.popup-header__icon {
+  width: var(--watany-icon-shell-size);
+  height: var(--watany-icon-shell-size);
+  min-width: var(--watany-icon-shell-size);
+  min-height: var(--watany-icon-shell-size);
+  aspect-ratio: 1 / 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--watany-icon-shell-padding);
+  border-radius: var(--watany-icon-shell-radius);
+  border: var(--watany-icon-shell-border) solid color-mix(in srgb, currentColor 76%, white 24%);
+  background: transparent;
+  color: var(--watany-icon-color, currentColor);
+  overflow: hidden;
+  box-shadow: var(--watany-icon-shell-shadow);
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+.watany-icon-shell svg,
+.utility-action-card__icon svg,
+.popup-header__icon svg,
+.watany-icon-shell > .koudama-feature-icon,
+.utility-action-card__icon > .koudama-feature-icon,
+.popup-header__icon > .koudama-feature-icon {
+  width: var(--watany-icon-glyph-size);
+  height: var(--watany-icon-glyph-size);
+  max-width: 100%;
+  max-height: 100%;
+  display: block;
+}
+
+.utility-action-card__icon {
+  --watany-icon-color: var(--utility-color, var(--primary));
+  font-size: 1.35rem;
+}
+
+.utility-action-card__icon svg {
+  filter:
+    drop-shadow(0 6px 9px color-mix(in srgb, var(--utility-color, var(--primary)) 24%, transparent))
+    drop-shadow(0 1px 0 rgba(255, 255, 255, 0.75));
+}
+
+.utility-action-card__icon > .koudama-feature-icon {
+  --kfi-size: var(--watany-icon-glyph-size);
+}
+
+.popup-header__icon {
+  --watany-icon-shell-size: 52px;
+  --watany-icon-shell-radius: 18px;
+  --watany-icon-shell-border: 3px;
+  --watany-icon-glyph-size: 40px;
+  font-size: 1.5rem;
+  color: #0f172a;
+}

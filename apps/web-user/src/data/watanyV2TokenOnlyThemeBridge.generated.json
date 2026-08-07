@@ -1,0 +1,18 @@
+{
+    "version":  "v1.1-zero-forbidden-terms",
+    "tokens":  [
+                   "--watany-v2-safe-bg",
+                   "--watany-v2-safe-surface",
+                   "--watany-v2-safe-surface-soft",
+                   "--watany-v2-safe-text",
+                   "--watany-v2-safe-muted",
+                   "--watany-v2-safe-accent",
+                   "--watany-v2-safe-border",
+                   "--watany-v2-safe-radius",
+                   "--watany-v2-safe-shadow"
+               ],
+    "generatedAt":  "2026-06-13T09:52:17.3161955+03:00",
+    "cssPath":  "C:\\xampp\\htdocs\\projectx\\watanybot\\apps\\web-user\\src\\styles\\watany-v2-token-only-theme.scoped.generated.css",
+    "bridge":  "watany-v2-token-only-theme-scoped-safe",
+    "rule":  "Curated token CSS only; V1 routes, feature logic, launcher, and page shells untouched."
+}

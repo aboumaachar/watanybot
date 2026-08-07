@@ -1,0 +1,398 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Watany — Veterans Knowledge Assistant API",
+    "description": "API for the Watany (موطني) chatbot — a knowledge-base assistant serving Lebanese military veterans and their families. Covers pension salaries, medical benefits, administrative procedures, legal articles, and family allowances.",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Watany Support",
+      "email": "support@koudama.com",
+      "url": "https://koudama.com/mcp/"
+    },
+    "license": {
+      "name": "Proprietary"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://koudama.com/mcp",
+      "description": "Production server"
+    }
+  ],
+  "paths": {
+    "/api/chat": {
+      "post": {
+        "operationId": "askWatany",
+        "summary": "Ask a question to the Watany knowledge base",
+        "description": "Send a message in Arabic to query the Lebanese military veterans knowledge base. Returns a structured answer covering salaries, medical benefits, procedures, legal articles, and more.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChatRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response with answer from the knowledge base",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChatResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request — message field is required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "message required"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/chat/stream": {
+      "post": {
+        "operationId": "askWatanyStream",
+        "summary": "Ask a question with streaming response (SSE)",
+        "description": "Same as /api/chat but returns the answer as a Server-Sent Events stream for real-time display.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChatRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "SSE event stream with chunked answer",
+            "content": {
+              "text/event-stream": {
+                "schema": {
+                  "type": "string",
+                  "description": "Server-Sent Events stream. Events: 'chunk' (partial text), 'done' (final response), 'error' (failure)."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "operationId": "getHealth",
+        "summary": "Health check",
+        "description": "Returns the operational status of the Watany gateway including knowledge base and AI provider state.",
+        "responses": {
+          "200": {
+            "description": "Health status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/salary": {
+      "get": {
+        "operationId": "getSalaryTable",
+        "summary": "Get military pension salary table",
+        "description": "Returns the full salary table for Lebanese military retirees. Supports filtering by rank and category.",
+        "parameters": [
+          {
+            "name": "rank",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" },
+            "description": "Filter by military rank (e.g., عقيد, عميد, رائد)"
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" },
+            "description": "Filter by category"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Salary data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": { "type": "boolean" },
+                    "data": {
+                      "type": "array",
+                      "items": { "type": "object" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/salary/calc": {
+      "post": {
+        "operationId": "calculateSalary",
+        "summary": "Calculate military pension salary",
+        "description": "Calculate the estimated pension salary for a Lebanese military retiree based on rank, years of service, and other parameters.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "rank": {
+                    "type": "string",
+                    "description": "Military rank in Arabic (e.g., جندي, عريف, رقيب, رائد, عقيد, عميد, لواء)"
+                  },
+                  "degree": {
+                    "type": "integer",
+                    "description": "Salary degree/step within the rank (1-15, default: 1)",
+                    "default": 1
+                  },
+                  "married": {
+                    "type": "boolean",
+                    "description": "Whether the veteran is married (affects spouse allowance)",
+                    "default": false
+                  },
+                  "kidsCount": {
+                    "type": "integer",
+                    "description": "Number of children (affects child allowance)",
+                    "default": 0
+                  }
+                },
+                "required": ["rank"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Calculated salary details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/kb-nodes/search": {
+      "get": {
+        "operationId": "searchKnowledgeBase",
+        "summary": "Full-text search across the knowledge base",
+        "description": "Search the Watany knowledge base using Arabic full-text search. Returns matching laws, procedures, FAQs, and rules.",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "Search query in Arabic"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "default": 10 },
+            "description": "Maximum results to return"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Search results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KbSearchResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/kb-nodes/stats": {
+      "get": {
+        "operationId": "getKnowledgeBaseStats",
+        "summary": "Get knowledge base statistics",
+        "description": "Returns statistics about the loaded knowledge base including counts by node type.",
+        "responses": {
+          "200": {
+            "description": "KB statistics",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ready": { "type": "boolean" },
+                    "stats": {
+                      "type": "object",
+                      "properties": {
+                        "faq": { "type": "integer" },
+                        "law": { "type": "integer" },
+                        "procedure": { "type": "integer" },
+                        "rule": { "type": "integer" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ChatRequest": {
+        "type": "object",
+        "required": ["message"],
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "The user's question in Arabic",
+            "example": "ما هو راتب عقيد متقاعد؟"
+          },
+          "lang": {
+            "type": "string",
+            "default": "ar",
+            "description": "Response language (ar = Arabic)",
+            "example": "ar"
+          },
+          "channel": {
+            "type": "string",
+            "default": "web",
+            "description": "Client channel identifier",
+            "enum": ["web", "whatsapp", "api"],
+            "example": "api"
+          },
+          "userId": {
+            "type": "string",
+            "description": "Optional user identifier for conversation tracking"
+          },
+          "sessionId": {
+            "type": "string",
+            "description": "Optional session identifier for conversation continuity"
+          }
+        }
+      },
+      "ChatResponse": {
+        "type": "object",
+        "properties": {
+          "reply": {
+            "type": "string",
+            "description": "The answer text in Arabic from the knowledge base"
+          },
+          "intents": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": { "type": "string" }
+              }
+            },
+            "description": "Detected action intents from the query"
+          },
+          "debug": {
+            "type": "object",
+            "description": "Debug information (development only)"
+          }
+        }
+      },
+      "HealthResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": ["ok", "degraded"],
+            "description": "Overall system health"
+          },
+          "uptime": {
+            "type": "integer",
+            "description": "Server uptime in seconds"
+          },
+          "kb": {
+            "type": "object",
+            "properties": {
+              "sqlite": { "type": "boolean", "description": "SQLite KB loaded" },
+              "ragChunks": { "type": "integer", "description": "Number of RAG chunks in memory" },
+              "nodes": {
+                "type": "object",
+                "description": "FTS5 knowledge node counts by type",
+                "properties": {
+                  "faq": { "type": "integer" },
+                  "law": { "type": "integer" },
+                  "procedure": { "type": "integer" },
+                  "rule": { "type": "integer" }
+                }
+              }
+            }
+          },
+          "ai": {
+            "type": "object",
+            "properties": {
+              "enabled": { "type": "boolean" },
+              "provider": { "type": "string", "nullable": true },
+              "model": { "type": "string", "nullable": true }
+            }
+          }
+        }
+      },
+      "KbSearchResponse": {
+        "type": "object",
+        "properties": {
+          "ok": { "type": "boolean" },
+          "query": { "type": "string" },
+          "total": { "type": "integer" },
+          "confidence": { "type": "string" },
+          "intent": { "type": "string" },
+          "nodes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": { "type": "string" },
+                "type": { "type": "string" },
+                "title": { "type": "string" },
+                "summary_lb": { "type": "string" },
+                "score": { "type": "number" }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

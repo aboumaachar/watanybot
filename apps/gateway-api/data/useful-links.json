@@ -1,0 +1,134 @@
+[
+  {
+    "id": "lebarmy",
+    "label": "الجيش اللبناني",
+    "url": "https://www.lebarmy.gov.lb/",
+    "category": "military_security",
+    "official": true,
+    "verified": true,
+    "needs_review": false,
+    "status": "active",
+    "lastCheckedAt": "2026-05-16T13:25:29Z"
+  },
+  {
+    "id": "isf",
+    "label": "قوى الأمن الداخلي",
+    "url": "https://isf.gov.lb/",
+    "category": "military_security",
+    "official": true,
+    "verified": true,
+    "needs_review": false,
+    "status": "active",
+    "lastCheckedAt": "2026-05-16T13:25:29Z"
+  },
+  {
+    "id": "general_security",
+    "label": "الأمن العام",
+    "url": "https://www.general-security.gov.lb/",
+    "category": "military_security",
+    "official": true,
+    "verified": true,
+    "needs_review": false,
+    "status": "active",
+    "lastCheckedAt": "2026-05-16T13:25:29Z"
+  },
+  {
+    "id": "state_security",
+    "label": "أمن الدولة",
+    "url": "https://www.state-security.gov.lb/",
+    "category": "military_security",
+    "official": true,
+    "verified": true,
+    "needs_review": false,
+    "status": "active",
+    "lastCheckedAt": "2026-05-16T13:25:29Z"
+  },
+  {
+    "id": "civil_defense",
+    "label": "الدفاع المدني",
+    "url": "https://www.civildefense.gov.lb/",
+    "category": "military_security",
+    "official": true,
+    "verified": true,
+    "needs_review": true,
+    "status": "needs_review",
+    "lastCheckedAt": "2026-05-16T13:25:29Z"
+  },
+  {
+    "id": "customs",
+    "label": "الجمارك اللبنانية",
+    "url": "https://www.customs.gov.lb/",
+    "category": "military_security",
+    "official": true,
+    "verified": true,
+    "needs_review": true,
+    "status": "needs_review",
+    "lastCheckedAt": "2026-05-16T13:25:29Z"
+  },
+  {
+    "id": "mod",
+    "label": "وزارة الدفاع الوطني",
+    "url": "https://www.lebarmy.gov.lb/",
+    "category": "ministries",
+    "official": true,
+    "verified": true,
+    "needs_review": false,
+    "status": "active",
+    "lastCheckedAt": "2026-05-16T13:25:29Z"
+  },
+  {
+    "id": "moi",
+    "label": "وزارة الداخلية والبلديات",
+    "url": "https://www.moim.gov.lb/",
+    "category": "ministries",
+    "official": true,
+    "verified": true,
+    "needs_review": true,
+    "status": "needs_review",
+    "lastCheckedAt": "2026-05-16T13:25:29Z"
+  },
+  {
+    "id": "moph",
+    "label": "وزارة الصحة العامة",
+    "url": "https://www.moph.gov.lb/",
+    "category": "health",
+    "official": true,
+    "verified": true,
+    "needs_review": false,
+    "status": "active",
+    "lastCheckedAt": "2026-05-16T13:25:29Z"
+  },
+  {
+    "id": "finance",
+    "label": "وزارة المالية",
+    "url": "https://www.finance.gov.lb/",
+    "category": "pension_finance",
+    "official": true,
+    "verified": true,
+    "needs_review": true,
+    "status": "needs_review",
+    "lastCheckedAt": "2026-05-16T13:25:29Z"
+  },
+  {
+    "id": "pension_attestation",
+    "label": "إفادة الراتب",
+    "url": "https://eservices.finance.gov.lb/RetiredInfo.aspx",
+    "category": "pension_finance",
+    "official": true,
+    "verified": true,
+    "needs_review": false,
+    "status": "active",
+    "lastCheckedAt": "2026-05-24T00:00:00Z"
+  },
+  {
+    "id": "cnss",
+    "label": "الصندوق الوطني للضمان الاجتماعي",
+    "url": "https://www.cnss.gov.lb/",
+    "category": "funds",
+    "official": true,
+    "verified": true,
+    "needs_review": true,
+    "status": "needs_review",
+    "lastCheckedAt": "2026-05-16T13:25:29Z"
+  }
+]

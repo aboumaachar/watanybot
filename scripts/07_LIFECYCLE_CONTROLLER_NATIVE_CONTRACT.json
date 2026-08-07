@@ -1,0 +1,13 @@
+﻿{
+    "UsesSystemDiagnosticsProcess":  true,
+    "UseShellExecuteFalse":  true,
+    "CreateNoWindowTrue":  true,
+    "RedirectStandardOutputTrue":  true,
+    "RedirectStandardErrorTrue":  true,
+    "ProcessExitCodeUsed":  true,
+    "StartupTimeoutImplemented":  true,
+    "ReadinessTimeoutImplemented":  true,
+    "ProcessTreeTerminationImplemented":  true,
+    "WorkingDirectoryExplicit":  true,
+    "GatePass":  true
+}

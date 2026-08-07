@@ -1,0 +1,74 @@
+﻿/* APEX WatanyBot Mobile OS Phase 3B: deep route rebuilder helpers */
+
+.wmo-rebuilt-route {
+  min-height: 100%;
+}
+
+.wmo-rebuilt-route .legacy-header,
+.wmo-rebuilt-route .page-header,
+.wmo-rebuilt-route .section-header {
+  border-radius: var(--watany-radius-lg, 28px);
+}
+
+.wmo-rebuilt-stack {
+  display: grid;
+  gap: 14px;
+}
+
+.wmo-action-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.wmo-action-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  color: var(--watany-text, #172033);
+  text-decoration: none;
+  font-weight: 800;
+  background: rgba(255,255,255,.82);
+  border: 1px solid var(--watany-border, rgba(18,53,91,.1));
+  box-shadow: 0 8px 18px rgba(18,53,91,.08);
+}
+
+.wmo-rebuilt-route table {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.wmo-rebuilt-route form,
+.wmo-rebuilt-route .form,
+.wmo-rebuilt-route .search-box,
+.wmo-rebuilt-route .filter-bar {
+  border-radius: var(--watany-radius-lg, 28px);
+}
+
+.wmo-rebuilt-route input,
+.wmo-rebuilt-route select,
+.wmo-rebuilt-route textarea {
+  min-height: 44px;
+}
+
+.wmo-rebuilt-route button,
+.wmo-rebuilt-route .btn,
+.wmo-rebuilt-route a[role='button'] {
+  min-height: 44px;
+}
+
+@media (max-width: 520px) {
+  .wmo-action-row {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .wmo-action-chip {
+    width: 100%;
+  }
+}

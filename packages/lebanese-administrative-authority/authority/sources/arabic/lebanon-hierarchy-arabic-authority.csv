@@ -1,0 +1,35 @@
+﻿record_type,runtime_name_en,name_ar,aliases_en,aliases_ar,parent_governorate_en,source_id,source_record_id,source_url,authority_classification
+governorate,Akkar,عكار,Akkar,,,IDAL-REGIONS,Akkar governorate,https://investinlebanon.gov.lb/ar/lebanon_at_a_glance/invest_in_regions,PRIMARY_OFFICIAL
+governorate,Baalbek-El Hermel,بعلبك الهرمل,Baalbek-Hermel|Baalbek El-Hermel|Baalbek El Hermel,بعلبك-الهرمل|بعلبك – الهرمل,,IDAL-REGIONS,Baalbek-Hermel governorate,https://investinlebanon.gov.lb/ar/lebanon_at_a_glance/invest_in_regions,PRIMARY_OFFICIAL
+governorate,Beirut,بيروت,Beirut,,,IDAL-REGIONS,Beirut governorate,https://investinlebanon.gov.lb/ar/lebanon_at_a_glance/invest_in_regions,PRIMARY_OFFICIAL
+governorate,Bekaa,البقاع,Bekaa|Beqaa,,,IDAL-REGIONS,Bekaa governorate,https://investinlebanon.gov.lb/ar/lebanon_at_a_glance/invest_in_regions,PRIMARY_OFFICIAL
+governorate,Mount Lebanon,جبل لبنان,Mount Lebanon|Mont-Liban,,,IDAL-REGIONS,Mount Lebanon governorate,https://investinlebanon.gov.lb/ar/lebanon_at_a_glance/invest_in_regions,PRIMARY_OFFICIAL
+governorate,North,الشمال,North|North Lebanon|El North,,,IDAL-REGIONS,North governorate,https://investinlebanon.gov.lb/ar/lebanon_at_a_glance/invest_in_regions,PRIMARY_OFFICIAL
+governorate,El Nabatieh,النبطية,Nabatieh|El Nabatieh|Nabatiyeh,,,IDAL-REGIONS,Nabatieh governorate,https://investinlebanon.gov.lb/ar/lebanon_at_a_glance/invest_in_regions,PRIMARY_OFFICIAL
+governorate,South,الجنوب,South|South Lebanon|El South,,,IDAL-REGIONS,South governorate,https://investinlebanon.gov.lb/ar/lebanon_at_a_glance/invest_in_regions,PRIMARY_OFFICIAL
+district,Akkar,عكار,Akkar,,Akkar,DGCS-STATISTICS-MAP,Akkar district,https://www.dgcs.gov.lb/arabic/statistics-map,PRIMARY_OFFICIAL
+district,Baalbek,بعلبك,Baalbek|Baalbeck,,Baalbek-El Hermel,DGCS-STATISTICS-MAP,Baalbek district,https://www.dgcs.gov.lb/arabic/statistics-map,PRIMARY_OFFICIAL
+district,Hermel,الهرمل,Hermel|El Hermel,,Baalbek-El Hermel,DGCS-STATISTICS-MAP,Hermel district,https://www.dgcs.gov.lb/arabic/statistics-map,PRIMARY_OFFICIAL
+district,Zahle,زحلة,Zahle|Zahlé,,Bekaa,DGCS-STATISTICS-MAP,Zahle district,https://www.dgcs.gov.lb/arabic/statistics-map,PRIMARY_OFFICIAL
+district,West Bekaa,البقاع الغربي,West Bekaa|Western Bekaa|Bekaa El Gharbi,,Bekaa,DGCS-STATISTICS-MAP,West Bekaa district,https://www.dgcs.gov.lb/arabic/statistics-map,PRIMARY_OFFICIAL
+district,Rachaya,راشيا,Rachaya|Rashaya,,Bekaa,DGCS-STATISTICS-MAP,Rachaya district,https://www.dgcs.gov.lb/arabic/statistics-map,PRIMARY_OFFICIAL
+district,Baabda,بعبدا,Baabda,,Mount Lebanon,DGCS-STATISTICS-MAP,Baabda district,https://www.dgcs.gov.lb/arabic/statistics-map,PRIMARY_OFFICIAL
+district,Aley,عاليه,Aley|Aleyh,,Mount Lebanon,DGCS-STATISTICS-MAP,Aley district,https://www.dgcs.gov.lb/arabic/statistics-map,PRIMARY_OFFICIAL
+district,Chouf,الشوف,Chouf|Shouf,,Mount Lebanon,DGCS-STATISTICS-MAP,Chouf district,https://www.dgcs.gov.lb/arabic/statistics-map,PRIMARY_OFFICIAL
+district,El Metn,المتن,El Metn|Metn|Matn,المتن الشمالي,Mount Lebanon,DGCS-STATISTICS-MAP,North Metn district,https://www.dgcs.gov.lb/arabic/statistics-map,PRIMARY_OFFICIAL
+district,Kesrouan,كسروان,Kesrouan|Keserwan|Kesserwan,,Mount Lebanon,DGCS-STATISTICS-MAP,Kesrouan district,https://www.dgcs.gov.lb/arabic/statistics-map,PRIMARY_OFFICIAL
+district,Jbeil,جبيل,Jbeil|Byblos,,Mount Lebanon,DGCS-STATISTICS-MAP,Jbeil district,https://www.dgcs.gov.lb/arabic/statistics-map,PRIMARY_OFFICIAL
+district,Tripoli,طرابلس,Tripoli|Trablous,,North,DGCS-STATISTICS-MAP,Tripoli district,https://www.dgcs.gov.lb/arabic/statistics-map,PRIMARY_OFFICIAL
+district,Zgharta,زغرتا,Zgharta|Zghorta,,North,DGCS-STATISTICS-MAP,Zgharta district,https://www.dgcs.gov.lb/arabic/statistics-map,PRIMARY_OFFICIAL
+district,Bcharre,بشري,Bcharre|Bsharri|Bcharreh,,North,DGCS-STATISTICS-MAP,Bcharre district,https://www.dgcs.gov.lb/arabic/statistics-map,PRIMARY_OFFICIAL
+district,Batroun,البترون,Batroun|El Batroun,,North,DGCS-STATISTICS-MAP,Batroun district,https://www.dgcs.gov.lb/arabic/statistics-map,PRIMARY_OFFICIAL
+district,Koura,الكورة,Koura|El Koura,الكوره,North,DGCS-STATISTICS-MAP,Koura district,https://www.dgcs.gov.lb/arabic/statistics-map,PRIMARY_OFFICIAL
+district,Miniyeh-Danniyeh,المنية-الضنية,Miniyeh-Danniyeh|Minieh-Danniyeh|El Minieh-Dennie,المنية - الضنية,North,DGCS-STATISTICS-MAP,Miniyeh-Danniyeh district,https://www.dgcs.gov.lb/arabic/statistics-map,PRIMARY_OFFICIAL
+district,Saida,صيدا,Saida|Sidon,,South,DGCS-STATISTICS-MAP,Saida district,https://www.dgcs.gov.lb/arabic/statistics-map,PRIMARY_OFFICIAL
+district,Sour,صور,Sour|Tyre,,South,DGCS-STATISTICS-MAP,Sour district,https://www.dgcs.gov.lb/arabic/statistics-map,PRIMARY_OFFICIAL
+district,Jezzine,جزين,Jezzine|Jezzin,,South,DGCS-STATISTICS-MAP,Jezzine district,https://www.dgcs.gov.lb/arabic/statistics-map,PRIMARY_OFFICIAL
+district,Nabatieh,النبطية,Nabatieh|Nabatiyeh|El Nabatieh,,El Nabatieh,DGCS-STATISTICS-MAP,Nabatieh district,https://www.dgcs.gov.lb/arabic/statistics-map,PRIMARY_OFFICIAL
+district,Bent Jbeil,بنت جبيل,Bent Jbeil|Bint Jbeil,,El Nabatieh,DGCS-STATISTICS-MAP,Bent Jbeil district,https://www.dgcs.gov.lb/arabic/statistics-map,PRIMARY_OFFICIAL
+district,Marjaayoun,مرجعيون,Marjaayoun|Marjayoun|Marjeyoun,,El Nabatieh,DGCS-STATISTICS-MAP,Marjaayoun district,https://www.dgcs.gov.lb/arabic/statistics-map,PRIMARY_OFFICIAL
+district,Hasbaya,حاصبيا,Hasbaya|Hasbayya,,El Nabatieh,DGCS-STATISTICS-MAP,Hasbaya district,https://www.dgcs.gov.lb/arabic/statistics-map,PRIMARY_OFFICIAL
+district_equivalent,Beirut,بيروت,Beirut,,Beirut,IDAL-REGIONS,Beirut governorate has no district subdivision; UI equivalent only,https://investinlebanon.gov.lb/ar/lebanon_at_a_glance/invest_in_regions,PRIMARY_OFFICIAL

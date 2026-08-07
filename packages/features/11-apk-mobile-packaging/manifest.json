@@ -1,0 +1,10 @@
+﻿{
+    "featureKey":  "11-apk-mobile-packaging",
+    "featureName":  "APK/Mobile Packaging",
+    "doctrine":  "near-zero-recode-v1",
+    "portable":  true,
+    "replaceable":  true,
+    "status":  "BOUNDARY_DECLARED_REQUIRES_VALIDATION",
+    "passRule":  "No PASS without validation and smoke evidence.",
+    "generatedAt":  "2026-06-10T16:46:43.3292173+03:00"
+}

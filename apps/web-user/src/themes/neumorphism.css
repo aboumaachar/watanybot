@@ -1,0 +1,216 @@
+/* ═══════════════════════════════════════════════════════════
+   THEME: Neumorphism
+   Soft shadows, embossed elements, muted palette, tactile
+   ═══════════════════════════════════════════════════════════ */
+
+.theme-neumorphism {
+  /* ── Palette ── */
+  --ink: #2d3748;
+  --ink-secondary: #4a5568;
+  --muted: #718096;
+  --paper: #e2e8f0;
+  --surface: #e2e8f0;
+  --surface-hover: #edf2f7;
+  --surface-solid: #e2e8f0;
+  --accent: #38a89d;
+  --accent-hover: #2d9187;
+  --accent-soft: rgba(56, 168, 157, 0.12);
+  --accent-2: #ed8936;
+  --accent-3: #667eea;
+  --danger: #e53e3e;
+  --success: #38a169;
+  --warning: #d69e2e;
+  --stroke: transparent;
+  --stroke-strong: rgba(0, 0, 0, 0.06);
+
+  /* ── Neumorphic ── */
+  --glass-bg: #e2e8f0;
+  --glass-blur: 0px;
+  --glass-border: none;
+  --glass-shadow: 6px 6px 12px rgba(163, 177, 198, 0.6),
+                  -6px -6px 12px rgba(255, 255, 255, 0.8);
+  --glass-shadow-lg: 8px 8px 16px rgba(163, 177, 198, 0.7),
+                     -8px -8px 16px rgba(255, 255, 255, 0.9);
+
+  /* ── Neumorphic pressed ── */
+  --neu-inset: inset 4px 4px 8px rgba(163, 177, 198, 0.5),
+               inset -4px -4px 8px rgba(255, 255, 255, 0.7);
+
+  /* ── Shape ── */
+  --radius-xs: 8px;
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-full: 999px;
+
+  /* ── Spacing ── */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 20px;
+  --sp-6: 24px;
+  --sp-8: 32px;
+  --sp-10: 40px;
+  --sp-12: 48px;
+
+  /* ── Motion ── */
+  --ease-spring: cubic-bezier(0.34, 1.2, 0.64, 1);
+  --ease-out: ease-out;
+  --ease-smooth: ease;
+  --duration-fast: 150ms;
+  --duration-normal: 250ms;
+  --duration-slow: 400ms;
+  --duration-panel: 400ms;
+
+  /* ── Typography ── */
+  --font-body: "Cairo", "Nunito", "Space Grotesk", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+  --text-xs: 0.75rem;
+  --text-sm: 0.8125rem;
+  --text-base: 0.9375rem;
+  --text-md: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 2rem;
+
+  /* ── Elevation ── */
+  --shadow-sm: 3px 3px 6px rgba(163, 177, 198, 0.4),
+               -3px -3px 6px rgba(255, 255, 255, 0.6);
+  --shadow-md: var(--glass-shadow);
+  --shadow-lg: var(--glass-shadow-lg);
+  --shadow-xl: 12px 12px 24px rgba(163, 177, 198, 0.7),
+               -12px -12px 24px rgba(255, 255, 255, 0.9);
+
+  /* ── Chat Bubbles ── */
+  --bubble-user-bg: var(--accent);
+  --bubble-user-border: none;
+  --bubble-bot-bg: #e2e8f0;
+  --bubble-bot-border: none;
+
+  /* ── Background ── */
+  background: #e2e8f0;
+}
+
+/* Cards */
+.theme-neumorphism .ds-card {
+  background: var(--surface);
+  border: none;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--glass-shadow);
+  transition: box-shadow var(--duration-normal) var(--ease-out);
+}
+
+.theme-neumorphism .ds-card:hover {
+  box-shadow: var(--glass-shadow-lg);
+  transform: none;
+}
+
+.theme-neumorphism .ds-card:active {
+  box-shadow: var(--neu-inset);
+}
+
+/* Buttons */
+.theme-neumorphism .ds-btn-primary {
+  background: var(--surface);
+  color: var(--accent);
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: var(--sp-3) var(--sp-6);
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--duration-fast);
+}
+
+.theme-neumorphism .ds-btn-primary:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.theme-neumorphism .ds-btn-primary:active {
+  box-shadow: var(--neu-inset);
+}
+
+.theme-neumorphism .ds-btn-ghost {
+  background: var(--surface);
+  color: var(--ink);
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: var(--sp-2) var(--sp-4);
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--duration-fast);
+}
+
+.theme-neumorphism .ds-btn-ghost:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.theme-neumorphism .ds-btn-ghost:active {
+  box-shadow: var(--neu-inset);
+}
+
+/* FAB */
+.theme-neumorphism .ds-fab {
+  background: var(--surface);
+  color: var(--accent);
+  border: none;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow: var(--shadow-md);
+  transition: box-shadow var(--duration-normal);
+}
+
+.theme-neumorphism .ds-fab:hover {
+  box-shadow: var(--shadow-lg);
+}
+
+.theme-neumorphism .ds-fab:active {
+  box-shadow: var(--neu-inset);
+}
+
+/* Panel animation */
+.theme-neumorphism .ds-panel-enter {
+  animation: neuFadeUp var(--duration-panel) var(--ease-spring) forwards;
+}
+
+@keyframes neuFadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Inputs */
+.theme-neumorphism .ds-input {
+  background: var(--surface);
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: var(--sp-3) var(--sp-4);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  box-shadow: var(--neu-inset);
+  transition: box-shadow var(--duration-fast);
+}
+
+.theme-neumorphism .ds-input:focus {
+  outline: none;
+  box-shadow: inset 4px 4px 8px rgba(56, 168, 157, 0.2),
+              inset -4px -4px 8px rgba(255, 255, 255, 0.7);
+}
+
+/* Badge */
+.theme-neumorphism .ds-badge {
+  background: var(--surface);
+  color: var(--accent);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  padding: 3px 12px;
+  border-radius: var(--radius-full);
+  box-shadow: 2px 2px 4px rgba(163, 177, 198, 0.4),
+              -2px -2px 4px rgba(255, 255, 255, 0.6);
+}

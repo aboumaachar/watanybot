@@ -1,0 +1,110 @@
+﻿:root {
+  --watany-mobile-safe-inline: clamp(12px, 4vw, 20px);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.watany-mobile-shell,
+.watany-page,
+.watany-card,
+.watany-panel,
+.watany-modal,
+.watany-sheet,
+.watany-list,
+.watany-list-item,
+.watany-option,
+.watany-choice,
+.watany-service-card,
+.watany-form-card,
+.watany-medal-option,
+[role="button"],
+button {
+  max-width: 100%;
+  min-width: 0;
+}
+
+.watany-medal-option,
+.watany-option,
+.watany-choice,
+.watany-list-item,
+.watany-service-card {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  overflow: hidden;
+}
+
+.watany-medal-option *,
+.watany-option *,
+.watany-choice *,
+.watany-list-item *,
+.watany-service-card * {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.watany-medal-option,
+.watany-medal-option span,
+.watany-medal-option p,
+.watany-option span,
+.watany-option p,
+.watany-choice span,
+.watany-choice p,
+.watany-list-item span,
+.watany-list-item p {
+  white-space: normal !important;
+  overflow-wrap: anywhere;
+  word-break: normal;
+  line-height: 1.45;
+  text-overflow: clip;
+}
+
+.watany-medal-option {
+  min-height: 58px;
+  height: auto !important;
+  padding-block: 10px;
+}
+
+.watany-medal-option .radio,
+.watany-option .radio,
+.watany-choice .radio,
+input[type="radio"],
+input[type="checkbox"] {
+  flex: 0 0 auto;
+}
+
+@media (max-width: 480px) {
+  :root {
+    --watany-mobile-safe-inline: 0px;
+  }
+
+  .watany-mobile-shell,
+  .watany-page,
+  .watany-modal,
+  .watany-sheet {
+    width: 100%;
+    max-width: 100vw;
+    padding-inline: 0;
+  }
+
+  .watany-medal-option,
+  .watany-option,
+  .watany-choice,
+  .watany-list-item {
+    font-size: clamp(14px, 4vw, 17px);
+    border-radius: 16px;
+  }
+}

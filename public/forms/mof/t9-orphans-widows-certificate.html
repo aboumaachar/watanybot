@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ت9 - شهادة أيتام وأرامل</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: white;
+            direction: rtl;
+            text-align: right;
+            padding: 20px;
+        }
+        
+        .form-header {
+            text-align: center;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+            margin-bottom: 30px;
+        }
+        
+        .form-header h1 {
+            font-size: 1.8em;
+            color: #333;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        
+        .form-header p {
+            font-size: 1em;
+            color: #666;
+        }
+        
+        .form-code {
+            background: #f0f4ff;
+            color: #667eea;
+            padding: 10px 15px;
+            border-radius: 4px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 20px;
+            font-size: 0.95em;
+        }
+        
+        .no-print {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 6px;
+            align-items: center;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.95em;
+            transition: all 0.2s;
+            font-weight: 500;
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+        }
+        
+        .form-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            page-break-inside: avoid;
+        }
+        
+        .section-title {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-group label {
+            font-weight: 500;
+            margin-bottom: 5px;
+            color: #333;
+            font-size: 0.95em;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 0.95em;
+            font-family: inherit;
+            line-height: 1.5;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .form-group textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+        
+        .table-section {
+            margin-top: 15px;
+            overflow-x: auto;
+        }
+        
+        .table-section table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+        }
+        
+        .table-section th {
+            background: #f0f4ff;
+            color: #333;
+            padding: 10px;
+            text-align: right;
+            border: 1px solid #ddd;
+        }
+        
+        .table-section td {
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .checkbox-item input {
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+        }
+        
+        .checkbox-item label {
+            margin: 0;
+            cursor: pointer;
+            font-weight: normal;
+        }
+        
+        .signature-block {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+        }
+        
+        .signature-item {
+            text-align: center;
+        }
+        
+        .signature-line {
+            border-bottom: 1px solid #333;
+            height: 60px;
+            margin-bottom: 10px;
+        }
+        
+        .signature-label {
+            font-size: 0.9em;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .date-line {
+            font-size: 0.9em;
+            color: #333;
+            margin-top: 10px;
+        }
+        
+        .form-info-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        
+        .form-info-box p {
+            margin-bottom: 10px;
+            color: #856404;
+        }
+        
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            
+            body {
+                font-size: 12pt;
+                line-height: 1.5;
+                padding: 0;
+            }
+            
+            .form-header {
+                page-break-after: avoid;
+            }
+            
+            .form-section {
+                border: none;
+                padding: 10px 0;
+            }
+            
+            input[type="text"],
+            input[type="date"],
+            select,
+            textarea {
+                border: none;
+                border-bottom: 1px solid #000;
+                background: transparent;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                font-size: 14px;
+                padding: 10px;
+            }
+            
+            .form-header h1 {
+                font-size: 1.4em;
+            }
+            
+            .no-print {
+                flex-wrap: wrap;
+            }
+            
+            .signature-block {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-group input,
+            .form-group select,
+            .form-group textarea {
+                font-size: 16px;
+            }
+            
+            .table-section {
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="form-header">
+        <h1>شهادة أيتام وأرامل</h1>
+        <p>وزارة المالية - إدارة المعاشات</p>
+    </div>
+    
+    <div class="form-code">النموذج: ت9</div>
+    
+    <div class="no-print">
+        <button class="btn" onclick="window.print()">🖨️ طباعة</button>
+        <button class="btn" onclick="downloadForm()">⬇️ تحميل</button>
+        <button class="btn" onclick="shareForm()">📤 مشاركة</button>
+    </div>
+    
+    <!-- Section 1: Applicant Information -->
+    <div class="form-section">
+        <div class="section-title">١. معلومات المتقدم</div>
+        
+        <div class="form-group">
+            <label for="fullName">الاسم الكامل</label>
+            <input type="text" id="fullName" placeholder="أدخل الاسم الكامل">
+        </div>
+        
+        <div class="form-group">
+            <label for="idNumber">رقم الهوية</label>
+            <input type="text" id="idNumber" placeholder="أدخل رقم الهوية">
+        </div>
+        
+        <div class="form-group">
+            <label for="relationship">صفتك</label>
+            <select id="relationship">
+                <option value="">اختر...</option>
+                <option value="widow">أرملة (زوجة المتوفى)</option>
+                <option value="guardian">ولي أمر الأيتام</option>
+                <option value="agent">وكيل قانوني</option>
+                <option value="other">أخرى</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="phone">رقم الهاتف</label>
+            <input type="tel" id="phone" placeholder="أدخل رقم الهاتف">
+        </div>
+    </div>
+    
+    <!-- Section 2: Deceased Information -->
+    <div class="form-section">
+        <div class="section-title">٢. معلومات المتوفى</div>
+        
+        <div class="form-group">
+            <label for="deceasedName">الاسم الكامل للمتوفى</label>
+            <input type="text" id="deceasedName" placeholder="أدخل اسم المتوفى">
+        </div>
+        
+        <div class="form-group">
+            <label for="deceasedId">رقم هوية المتوفى</label>
+            <input type="text" id="deceasedId" placeholder="أدخل رقم الهوية">
+        </div>
+        
+        <div class="form-group">
+            <label for="deathDate">تاريخ الوفاة</label>
+            <input type="date" id="deathDate">
+        </div>
+        
+        <div class="form-group">
+            <label for="deceasedStatus">حالة المتوفى</label>
+            <select id="deceasedStatus">
+                <option value="">اختر...</option>
+                <option value="pensioner">متقاعد مدني</option>
+                <option value="military">عسكري</option>
+                <option value="employee">موظف حكومي</option>
+                <option value="other">أخرى</option>
+            </select>
+        </div>
+    </div>
+    
+    <!-- Section 3: Beneficiaries Details -->
+    <div class="form-section">
+        <div class="section-title">٣. تفاصيل الأيتام والأرامل</div>
+        
+        <div class="form-group">
+            <label>عدد الأيتام</label>
+            <input type="number" id="orphansCount" placeholder="أدخل العدد" min="0">
+        </div>
+        
+        <div class="form-group">
+            <label>عدد الأرامل</label>
+            <input type="number" id="widowsCount" placeholder="أدخل العدد" min="0">
+        </div>
+        
+        <div class="table-section">
+            <table>
+                <thead>
+                    <tr>
+                        <th>الرقم</th>
+                        <th>الاسم الكامل</th>
+                        <th>السن</th>
+                        <th>الحالة</th>
+                        <th>الدراسة</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td><input type="text" style="width: 100%; border: none; padding: 2px;"></td>
+                        <td><input type="number" style="width: 60px; border: none; padding: 2px;"></td>
+                        <td><select style="width: 100%; border: none; padding: 2px;"><option>يتيم/ة</option><option>أرملة</option></select></td>
+                        <td><select style="width: 100%; border: none; padding: 2px;"><option>---</option><option>ابتدائي</option><option>إعدادي</option><option>ثانوي</option><option>جامعي</option></select></td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td><input type="text" style="width: 100%; border: none; padding: 2px;"></td>
+                        <td><input type="number" style="width: 60px; border: none; padding: 2px;"></td>
+                        <td><select style="width: 100%; border: none; padding: 2px;"><option>يتيم/ة</option><option>أرملة</option></select></td>
+                        <td><select style="width: 100%; border: none; padding: 2px;"><option>---</option><option>ابتدائي</option><option>إعدادي</option><option>ثانوي</option><option>جامعي</option></select></td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td><input type="text" style="width: 100%; border: none; padding: 2px;"></td>
+                        <td><input type="number" style="width: 60px; border: none; padding: 2px;"></td>
+                        <td><select style="width: 100%; border: none; padding: 2px;"><option>يتيم/ة</option><option>أرملة</option></select></td>
+                        <td><select style="width: 100%; border: none; padding: 2px;"><option>---</option><option>ابتدائي</option><option>إعدادي</option><option>ثانوي</option><option>جامعي</option></select></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Section 4: Verification Documents -->
+    <div class="form-section">
+        <div class="section-title">٤. المستندات والتحقق</div>
+        
+        <div class="form-group">
+            <label>المستندات المرفقة:</label>
+            <div class="checkbox-group">
+                <div class="checkbox-item">
+                    <input id="doc1" type="checkbox">
+                    <label for="doc1">شهادة الوفاة الرسمية</label>
+                </div>
+                <div class="checkbox-item">
+                    <input id="doc2" type="checkbox">
+                    <label for="doc2">شهادات الميلاد للأيتام</label>
+                </div>
+                <div class="checkbox-item">
+                    <input id="doc3" type="checkbox">
+                    <label for="doc3">شهادة الزواج (للأرملة)</label>
+                </div>
+                <div class="checkbox-item">
+                    <input id="doc4" type="checkbox">
+                    <label for="doc4">قرار القضاء (إن وجد)</label>
+                </div>
+                <div class="checkbox-item">
+                    <input id="doc5" type="checkbox">
+                    <label for="doc5">توثيق الولاية القانونية</label>
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="notes">ملاحظات إضافية</label>
+            <textarea id="notes" placeholder="أي معلومات أخرى مهمة"></textarea>
+        </div>
+    </div>
+    
+    <!-- Section 5: Applicant Declaration -->
+    <div class="form-section">
+        <div class="section-title">٥. تصريح من المتقدم</div>
+        
+        <div class="form-group">
+            <label>أقر بموجب هذا أن:</label>
+            <div class="checkbox-group">
+                <div class="checkbox-item">
+                    <input id="decl1" type="checkbox">
+                    <label for="decl1">المعلومات المقدمة صحيحة وكاملة</label>
+                </div>
+                <div class="checkbox-item">
+                    <input id="decl2" type="checkbox">
+                    <label for="decl2">الأشخاص المذكورين هم فعلاً أيتام/أرامل</label>
+                </div>
+                <div class="checkbox-item">
+                    <input id="decl3" type="checkbox">
+                    <label for="decl3">أملك الصلاحية القانونية للتقدم بهذا الطلب</label>
+                </div>
+                <div class="checkbox-item">
+                    <input id="decl4" type="checkbox">
+                    <label for="decl4">أوافق على نشر وتحديث بيانات المستفيدين</label>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Signature Block -->
+    <div class="signature-block">
+        <div class="signature-item">
+            <div class="signature-line"></div>
+            <div class="signature-label">توقيع المتقدم</div>
+            <div class="date-line">التاريخ: ________________</div>
+        </div>
+        
+        <div class="signature-item">
+            <div class="signature-line"></div>
+            <div class="signature-label">موظف الجهة المختصة</div>
+            <div class="date-line">التاريخ: ________________</div>
+        </div>
+    </div>
+    
+    <div class="form-info-box">
+        <p><strong>معلومات هامة:</strong></p>
+        <ul>
+            <li>يجب تقديم أصول المستندات أو صور موثقة</li>
+            <li>ستكون مدة البحث والتحقق من البيانات حوالي ٢-٣ أسابيع</li>
+            <li>المعاش يستمر للأيتام حتى سن ١٨ سنة</li>
+            <li>الأرملة تفقد المعاش عند الزواج</li>
+        </ul>
+    </div>
+    
+    <script>
+        function downloadForm() {
+            const filename = 'شهادة_أيتام_وأرامل_ت9.html';
+            const html = document.documentElement.outerHTML;
+            const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            link.click();
+        }
+        
+        function shareForm() {
+            const title = 'نموذج شهادة الأيتام والأرامل';
+            const url = window.location.href;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: 'نموذج WatanyBot',
+                    text: title,
+                    url: url
+                });
+            } else {
+                navigator.clipboard.writeText(url);
+                alert('تم نسخ الرابط إلى الحافظة');
+            }
+        }
+    </script>
+</body>
+</html>

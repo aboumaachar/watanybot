@@ -1,0 +1,27 @@
+{
+  "$schema": "./SMOKE_CONFIG_SCHEMA.json",
+  "suiteName": "Death benefit smoke",
+  "defaultTargetEnv": "DEATH_BENEFIT_SMOKE_TARGET",
+  "defaultTargetFallback": "public",
+  "urlEnvName": "DEATH_BENEFIT_SMOKE_URL",
+  "domainTerms": ["وفاة", "مأتم", "ورثة", "وريث", "مساعدة", "تصريح"],
+  "additionalKnownBadReplies": ["معليش ما قدرت أفهم. حاول اسأل سؤال محدد — مثلاً عن الراتب التقاعدي أو معاملة معينة."],
+  "queryCases": [
+    {
+      "canonical": "تعويض الوفاة",
+      "variants": ["تعويض الوفاة", "منحة الوفاة", "بدي اعرف عن تعويض الوفاة"]
+    },
+    {
+      "canonical": "معاملة وفاة",
+      "variants": ["معاملة وفاة", "طلب معاملة وفاة", "شو أوراق معاملة الوفاة"]
+    },
+    {
+      "canonical": "الورثة",
+      "variants": ["الورثة", "مين الورثة", "تحديد الورثة"]
+    },
+    {
+      "canonical": "مساعدة وفاة",
+      "variants": ["مساعدة وفاة", "تصريح مساعدة وفاة", "طلب تصريح مساعدة وفاة"]
+    }
+  ]
+}

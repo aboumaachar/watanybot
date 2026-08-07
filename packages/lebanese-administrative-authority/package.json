@@ -1,0 +1,28 @@
+{
+  "name": "@watanybot/lebanese-administrative-authority",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": { ".": "./src/index.ts" },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run --config vitest.config.ts",
+    "authority:inventory": "node pipeline/authority-build.mjs inventory",
+    "authority:inventory-arabic": "node pipeline/authority-build.mjs inventory-arabic",
+    "authority:import": "node pipeline/authority-build.mjs import",
+    "authority:import-arabic": "node pipeline/authority-build.mjs import-arabic",
+    "authority:normalize": "node pipeline/authority-build.mjs normalize",
+    "authority:crosswalk-arabic": "node pipeline/authority-build.mjs crosswalk-arabic",
+    "authority:validate": "node pipeline/authority-build.mjs validate",
+    "authority:validate-arabic": "node pipeline/authority-build.mjs validate-arabic",
+    "authority:release": "node pipeline/authority-build.mjs release",
+    "authority:build-release": "node pipeline/authority-build.mjs build-release",
+    "authority:build": "node pipeline/authority-build.mjs build",
+    "authority:verify-release": "node pipeline/authority-build.mjs verify-release",
+    "authority:ul3a": "node pipeline/ul3a-repair.mjs",
+    "authority:test": "pnpm test"
+  },
+  "devDependencies": { "typescript": "^5.6.3", "vitest": "^1.0.0" }
+}

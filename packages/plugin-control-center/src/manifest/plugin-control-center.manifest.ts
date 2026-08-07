@@ -1,0 +1,1 @@
+﻿export const pluginControlCenterManifest = { pluginKey: 'plugin-control-center', displayName: 'Plugin Control Center', version: '0.1.0', purpose: 'Admin control center for Watany V2 modular plugins', adminConfigurable: true, exportable: true, replaceable: true } as const;

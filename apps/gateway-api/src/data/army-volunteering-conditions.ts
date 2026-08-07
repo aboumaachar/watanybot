@@ -1,0 +1,1 @@
+﻿export { armyVolunteeringCategories, armyVolunteeringSource, getArmyVolunteeringCategory } from "../../../web-user/src/features/army-volunteering/armyVolunteering.data";

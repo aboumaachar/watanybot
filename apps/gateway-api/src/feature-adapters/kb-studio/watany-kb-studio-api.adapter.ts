@@ -1,0 +1,1 @@
+export const watanyKbStudioApiAdapter = { pluginKey: 'kb-studio', hostApp: 'watanybot-gateway-api', preservesExistingApi: true, replacementMode: 'disabled-until-api-proof', notes: 'Watany-specific KB Studio API adapter boundary. Existing API behavior is not replaced by this modular closure.' } as const;

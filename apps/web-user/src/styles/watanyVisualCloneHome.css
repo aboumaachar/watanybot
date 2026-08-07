@@ -1,0 +1,309 @@
+html,
+body,
+#root {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  min-height: 100% !important;
+  overflow-x: hidden !important;
+  background: radial-gradient(circle at top, #fffdf7 0, #f8efd9 60%, #eadcc1 100%) !important;
+}
+
+#root {
+  display: block !important;
+}
+
+#watany-visual-root-v103,
+#watany-visual-root-v103 * {
+  box-sizing: border-box !important;
+}
+
+#watany-visual-root-v103 {
+  --green: #06351f;
+  --green2: #0d5737;
+  --gold: #d6a72a;
+  --gold2: #f4d36e;
+  --paper: #fffdf7;
+  --cream: #fff8e6;
+  --red: #971a32;
+  --brown: #754311;
+  direction: rtl !important;
+  width: 100% !important;
+  min-height: 100vh !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 0 156px !important;
+  overflow-x: hidden !important;
+  color: var(--green) !important;
+  font-family: Tahoma, Arial, sans-serif !important;
+  background: radial-gradient(circle at top, #fffdf7 0, #fff9eb 70%, #f0e1c5 100%) !important;
+}
+
+#watany-visual-root-v103 button {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  border: 0 !important;
+  margin: 0 !important;
+  font-family: inherit !important;
+  cursor: pointer !important;
+}
+
+.wvc-topbar {
+  direction: ltr !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 20 !important;
+  width: 100% !important;
+  min-height: 106px !important;
+  display: grid !important;
+  grid-template-columns: 88px minmax(0, 1fr) 72px !important;
+  gap: 18px !important;
+  align-items: center !important;
+  padding: 10px 18px !important;
+  background: rgba(255, 253, 247, 0.98) !important;
+  border: 1px solid rgba(214, 167, 42, 0.78) !important;
+  border-radius: 0 0 18px 18px !important;
+  box-shadow: 0 10px 24px rgba(42, 30, 9, 0.12) !important;
+}
+
+.wvc-logo {
+  width: 84px !important;
+  height: 84px !important;
+  display: grid !important;
+  place-items: center !important;
+  background: transparent !important;
+  padding: 0 !important;
+}
+
+.wvc-logo img {
+  display: block !important;
+  width: 82px !important;
+  height: 82px !important;
+  object-fit: contain !important;
+  filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.14)) !important;
+}
+
+.wvc-menu {
+  width: 68px !important;
+  height: 68px !important;
+  display: grid !important;
+  place-items: center !important;
+  gap: 7px !important;
+  padding: 14px !important;
+  border: 1px solid rgba(214, 167, 42, 0.75) !important;
+  border-radius: 16px !important;
+  background: linear-gradient(180deg, #fffdf7, #f6e9c8) !important;
+  box-shadow: inset 0 1px 0 #fff, 0 8px 18px rgba(42, 30, 9, 0.11) !important;
+}
+
+.wvc-menu span {
+  display: block !important;
+  width: 34px !important;
+  height: 5px !important;
+  border-radius: 99px !important;
+  background: var(--green) !important;
+  box-shadow: 0 1px 0 var(--gold) !important;
+}
+
+.wvc-ticker {
+  direction: rtl !important;
+  min-width: 0 !important;
+  height: 60px !important;
+  padding: 0 18px !important;
+  display: flex !important;
+  gap: 18px !important;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow: hidden !important;
+  white-space: nowrap !important;
+  border: 1px solid rgba(214, 167, 42, 0.72) !important;
+  border-radius: 18px !important;
+  background: linear-gradient(180deg, #fffdf8, #fff7e8) !important;
+  color: #2f281c !important;
+  font-size: clamp(13px, 2.8vw, 18px) !important;
+  font-weight: 700 !important;
+  box-shadow: inset 0 1px 0 #fff, 0 8px 18px rgba(42, 30, 9, 0.08) !important;
+}
+
+.wvc-ticker strong {
+  flex: 0 0 auto !important;
+  padding: 6px 12px !important;
+  border-radius: 8px !important;
+  background: linear-gradient(180deg, #d92639, #9b1028) !important;
+  color: #fff !important;
+  font-weight: 900 !important;
+}
+
+.wvc-ticker i {
+  flex: 0 0 7px !important;
+  width: 7px !important;
+  height: 7px !important;
+  border-radius: 99px !important;
+  background: var(--gold) !important;
+}
+
+.wvc-grid {
+  width: min(100%, 980px) !important;
+  margin: 0 auto !important;
+  padding: clamp(24px, 4vw, 36px) clamp(12px, 3vw, 34px) 28px !important;
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: clamp(18px, 4vw, 34px) clamp(10px, 3vw, 28px) !important;
+  direction: rtl !important;
+}
+
+.wvc-tile {
+  min-width: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  display: grid !important;
+  place-items: center !important;
+  gap: 8px !important;
+}
+
+.wvc-card {
+  width: clamp(96px, 25vw, 150px) !important;
+  height: clamp(96px, 25vw, 150px) !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 18px !important;
+  border: 5px solid rgba(214, 167, 42, 0.92) !important;
+  background:
+    radial-gradient(circle at 50% 84%, rgba(244, 211, 110, 0.72), transparent 19%),
+    linear-gradient(180deg, #fffdf7 0%, #fff8e8 58%, #efe4cf 100%) !important;
+  box-shadow:
+    inset 0 0 0 3px rgba(255,255,255,.97),
+    inset 0 -8px 22px rgba(30,62,75,.12),
+    0 0 0 1px rgba(255,255,255,.75),
+    0 13px 26px rgba(42,30,9,.15),
+    0 0 22px rgba(214,167,42,.44) !important;
+  overflow: hidden !important;
+}
+
+.wvc-card img {
+  display: block !important;
+  width: 79% !important;
+  height: 79% !important;
+  object-fit: contain !important;
+  filter: drop-shadow(0 7px 5px rgba(0,0,0,.22)) !important;
+}
+
+.wvc-label {
+  display: block !important;
+  font-size: clamp(16px, 4vw, 28px) !important;
+  line-height: 1.08 !important;
+  font-weight: 900 !important;
+  color: var(--green) !important;
+  text-align: center !important;
+  text-shadow: 0 1px 0 #fff !important;
+}
+
+.wvc-tone-red .wvc-label { color: var(--red) !important; }
+.wvc-tone-brown .wvc-label { color: var(--brown) !important; }
+
+.wvc-dock {
+  position: fixed !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  z-index: 100 !important;
+  width: 100% !important;
+  background: rgba(255, 253, 247, 0.98) !important;
+  box-shadow: 0 -10px 22px rgba(42, 30, 9, 0.11) !important;
+}
+
+.wvc-chat {
+  display: grid !important;
+  grid-template-columns: 58px minmax(0,1fr) 58px !important;
+  gap: 10px !important;
+  align-items: center !important;
+  width: 100% !important;
+  padding: 8px 10px !important;
+  border-top: 1px solid rgba(214,167,42,.75) !important;
+  border-bottom: 1px solid rgba(214,167,42,.75) !important;
+  background: rgba(255,253,247,.98) !important;
+}
+
+.wvc-chat input {
+  display: block !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  height: 48px !important;
+  border: 1px solid rgba(214,167,42,.70) !important;
+  border-radius: 8px !important;
+  background: #fffdf9 !important;
+  padding: 0 16px !important;
+  color: var(--green) !important;
+  font: 700 18px Tahoma, Arial, sans-serif !important;
+  text-align: right !important;
+}
+
+.wvc-chat-send,
+.wvc-chat-mic {
+  display: grid !important;
+  place-items: center !important;
+  width: 48px !important;
+  height: 48px !important;
+  border: 1px solid rgba(6,53,31,.46) !important;
+  border-radius: 12px !important;
+  background: linear-gradient(180deg,#0f603c,#06351f) !important;
+  color: #fff !important;
+  font: 900 24px Tahoma, Arial, sans-serif !important;
+}
+
+.wvc-chat-mic {
+  background: linear-gradient(180deg,#fffdf7,#f1e8d6) !important;
+  color: var(--green) !important;
+}
+
+.wvc-bottom {
+  min-height: 68px !important;
+  display: grid !important;
+  grid-template-columns: repeat(5,1fr) !important;
+  align-items: center !important;
+  padding: 4px 8px !important;
+  border-top: 1px solid rgba(214,167,42,.72) !important;
+  background: rgba(255,253,247,.98) !important;
+}
+
+.wvc-bottom button {
+  display: grid !important;
+  place-items: center !important;
+  gap: 2px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  color: var(--green) !important;
+  font-weight: 900 !important;
+}
+
+.wvc-bottom img {
+  display: block !important;
+  width: 31px !important;
+  height: 31px !important;
+  object-fit: contain !important;
+  filter: drop-shadow(0 3px 3px rgba(0,0,0,.13)) !important;
+}
+
+.wvc-bottom span {
+  display: block !important;
+  font: 900 12px/1.1 Tahoma, Arial, sans-serif !important;
+}
+
+@media (max-width: 520px) {
+  .wvc-topbar {
+    grid-template-columns: 64px minmax(0,1fr) 58px !important;
+    min-height: 84px !important;
+    gap: 8px !important;
+    padding: 8px 10px !important;
+  }
+  .wvc-logo { width: 58px !important; height: 58px !important; }
+  .wvc-logo img { width: 54px !important; height: 54px !important; }
+  .wvc-menu { width: 54px !important; height: 54px !important; padding: 10px !important; }
+  .wvc-ticker { height: 50px !important; justify-content: flex-start !important; }
+  .wvc-grid { gap: 18px 8px !important; padding-left: 8px !important; padding-right: 8px !important; }
+  .wvc-card { width: 106px !important; height: 106px !important; border-width: 5px !important; }
+}

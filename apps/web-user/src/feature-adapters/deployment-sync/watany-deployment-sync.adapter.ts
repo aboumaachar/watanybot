@@ -1,0 +1,1 @@
+export const watanyDeploymentSyncAdapter = { pluginKey: 'deployment-sync', host: 'web-user', preservesExistingBehavior: true, note: 'Safe modular boundary only. Production deployment UI is not replaced.' } as const;

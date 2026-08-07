@@ -1,0 +1,91 @@
+html.watany-platform-v3 [data-watany-service-card] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.8rem;
+  align-items: center;
+  min-block-size: 88px;
+  margin-block: 0.6rem;
+  padding: 0.9rem;
+  border: 1px solid rgb(208 162 70 / 0.18);
+  border-radius: 20px;
+  background:
+    linear-gradient(
+      145deg,
+      var(--watany-warm-white),
+      #f8f1e2
+    );
+  color: var(--watany-ink);
+  box-shadow: var(--watany-shadow-soft);
+}
+
+html.watany-platform-v3
+  [data-watany-service-card]
+  :where(h2, h3, h4, strong) {
+  color: var(--watany-forest-950);
+}
+
+html.watany-platform-v3
+  [data-watany-service-card]
+  :where(p, small, [class*="description" i]) {
+  color: var(--watany-muted);
+}
+
+html.watany-platform-v3
+  :where(
+    button,
+    a[role="button"],
+    input[type="submit"],
+    input[type="button"]
+  ) {
+  min-block-size: var(--watany-touch-min);
+}
+
+html.watany-platform-v3
+  :where(
+    [data-watany-primary-action],
+    .watany-primary-action
+  ) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-inline-size: var(--watany-touch-min);
+  min-block-size: 48px;
+  padding-inline: 1rem;
+  border: 1px solid var(--watany-forest-950);
+  border-radius: 16px;
+  background:
+    linear-gradient(
+      145deg,
+      var(--watany-forest-950),
+      var(--watany-forest-800)
+    );
+  color: #fff8e8;
+  font-weight: 900;
+  text-decoration: none;
+  box-shadow: 0 12px 26px rgb(11 42 34 / 0.20);
+}
+
+html.watany-platform-v3
+  :where(
+    [data-watany-secondary-action],
+    .watany-secondary-action
+  ) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-block-size: 48px;
+  padding-inline: 1rem;
+  border: 1px solid var(--watany-forest-800);
+  border-radius: 16px;
+  background: var(--watany-warm-white);
+  color: var(--watany-forest-950);
+  font-weight: 900;
+}
+
+html.watany-platform-v3
+  :where(
+    [class*="badge" i],
+    [data-watany-badge]
+  ) {
+  border-radius: 999px;
+}

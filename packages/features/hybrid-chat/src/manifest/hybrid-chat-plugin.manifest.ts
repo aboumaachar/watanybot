@@ -1,0 +1,2 @@
+import type { HybridChatManifest } from '../contracts/hybrid-chat-plugin-contract';
+export const hybridChatPluginManifest: HybridChatManifest = { pluginKey: 'hybrid-chat', displayName: 'Hybrid Chat / KB Grounded Assistant', exportable: true, replaceable: true, adminConfigurable: true, routes: ['/chat', '/assistant'], apiRoutes: ['/api/kb/live-search', '/api/chat'] };

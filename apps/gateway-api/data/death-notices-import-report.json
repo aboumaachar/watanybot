@@ -1,0 +1,21 @@
+{
+  "generatedAt": "2026-05-16T13:25:29",
+  "status": "scaffolded",
+  "note": "Official death sources mapped. Public publishing requires official source import plus admin approval, or admin-only record creation and approval.",
+  "sources": [
+    {
+      "key": "army_deceased",
+      "url": "https://www.lebarmy.gov.lb/ar/deceased",
+      "mode": "daily_import"
+    },
+    {
+      "key": "isf_deaths",
+      "url": "https://isf.gov.lb/ar/deaths/",
+      "mode": "daily_import"
+    },
+    {
+      "key": "admin_death_notice",
+      "mode": "admin_input"
+    }
+  ]
+}

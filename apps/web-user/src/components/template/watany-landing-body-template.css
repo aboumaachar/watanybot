@@ -1,0 +1,20 @@
+.watany-landing-body-template {
+  min-height: 100%;
+  padding: 0 0.65rem max(6.5rem, calc(env(safe-area-inset-bottom, 0px) + 5.5rem));
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--koudama-accent, #b08b57) 12%, transparent), transparent 32rem),
+    linear-gradient(180deg, color-mix(in srgb, var(--koudama-page-bg, #f6f4ef) 92%, #ffffff 8%), color-mix(in srgb, var(--koudama-page-bg, #f6f4ef) 84%, #ffffff 16%));
+  color: var(--koudama-text, #2d2923);
+}
+
+.watany-landing-body-template__inner {
+  width: min(1120px, 100%);
+  margin-inline: auto;
+}
+
+@media (max-width: 720px) {
+  .watany-landing-body-template {
+    padding-inline: 0.5rem;
+    padding-top: 0;
+  }
+}

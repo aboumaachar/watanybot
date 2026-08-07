@@ -1,0 +1,69 @@
+﻿/* APEX WatanyBot Mobile OS Phase 3E: support/info route layer */
+
+.wmo-support-route {
+  min-height: 100%;
+}
+
+.wmo-support-route .faq-card,
+.wmo-support-route .link-card,
+.wmo-support-route .job-card,
+.wmo-support-route .legal-card,
+.wmo-support-route .support-card,
+.wmo-support-route .info-card,
+.wmo-support-route .card,
+.wmo-support-route .panel {
+  border-radius: var(--watany-radius-lg, 28px);
+  border: 1px solid var(--watany-border, rgba(18,53,91,.1));
+  box-shadow: 0 12px 28px rgba(18,53,91,.10);
+  background: var(--watany-surface, rgba(255,255,255,.88));
+}
+
+.wmo-support-route .page-header,
+.wmo-support-route .section-header,
+.wmo-support-route .faq-header,
+.wmo-support-route .legal-header {
+  border-radius: var(--watany-radius-xl, 34px);
+  background:
+    radial-gradient(circle at top right, rgba(18,53,91,.14), transparent 22rem),
+    var(--watany-surface, rgba(255,255,255,.88));
+  border: 1px solid var(--watany-border, rgba(18,53,91,.1));
+  box-shadow: 0 16px 34px rgba(18,53,91,.12);
+}
+
+.wmo-support-route details,
+.wmo-support-route .accordion,
+.wmo-support-route .faq-item {
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.wmo-support-route input,
+.wmo-support-route select,
+.wmo-support-route textarea {
+  min-height: 44px;
+  border-radius: 16px;
+}
+
+.wmo-support-route button,
+.wmo-support-route .btn,
+.wmo-support-route a[role='button'] {
+  min-height: 44px;
+  touch-action: manipulation;
+}
+
+.wmo-support-route .list,
+.wmo-support-route .links-list,
+.wmo-support-route .jobs-list,
+.wmo-support-route .faq-list {
+  display: grid;
+  gap: 12px;
+}
+
+@media (max-width: 520px) {
+  .wmo-support-route .page-header,
+  .wmo-support-route .section-header,
+  .wmo-support-route .faq-header,
+  .wmo-support-route .legal-header {
+    border-radius: 24px;
+  }
+}

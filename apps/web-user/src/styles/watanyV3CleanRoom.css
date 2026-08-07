@@ -1,0 +1,124 @@
+html,
+html.watany-platform-v3,
+body,
+#root {
+  display: block !important;
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 0 !important;
+  overflow-x: hidden !important;
+}
+
+body {
+  margin: 0;
+  background: #eaf0f8;
+}
+
+body:has(.wv3-root) .wr-dock,
+body:has(.wv3-root) .wr-safe-dock,
+body:has(.wv3-root) .watany-v1-snapped-popup-overlay,
+body:has(.wv3-root) .watany-v1-header-snap-closeout,
+body:has(.wv3-root) .watany-v1-body-portal-snap-closeout,
+body:has(.wv3-root) .watany-force-clone-host,
+body:has(.wv3-root) iframe.watany-force-clone-frame,
+body:has(.wv3-root) [class*="guided-help" i],
+body:has(.wv3-root) [data-guided-help] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+.wv3-root button {
+  font-family: inherit;
+  color: #073f2a;
+  border-radius: 14px;
+  border: 1px solid rgba(214,167,42,.35);
+  background: #fff8e6;
+  font-weight: 900;
+}
+
+.wv3-chat input,
+.wv3-chat button {
+  height: 52px;
+  min-width: 0;
+  border-radius: 14px;
+  border: 1px solid rgba(214,167,42,.35);
+  background: #fff;
+  color: #073f2a;
+  font-weight: 900;
+  box-sizing: border-box;
+}
+
+.wv3-chat input {
+  text-align: right;
+  padding: 0 14px;
+  font-size: 18px;
+}
+
+.wv3-bottom button {
+  border: 0;
+  background: transparent;
+  font-size: 12px;
+}
+
+.wv3-welcome h1 {
+  font-size: 32px;
+  margin: 42px 0 18px;
+}
+
+.wv3-welcome p {
+  font-size: 20px;
+  line-height: 1.5;
+}
+
+.wv3-menu button,
+.wv3-welcome button,
+.wv3-card button {
+  min-height: 48px;
+  margin: 5px;
+  padding: 0 14px;
+}
+
+/* APEX WV3 final fixed-shell display authority v1.0.14 */
+body:has(.wv3-root) .wv3-topbar {
+  display: grid !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: min(100vw, 430px) !important;
+  height: 82px !important;
+  min-height: 82px !important;
+  max-height: 82px !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  z-index: 10000 !important;
+}
+
+body:has(.wv3-root) .wv3-chat {
+  display: grid !important;
+  position: fixed !important;
+  left: 50% !important;
+  bottom: 64px !important;
+  transform: translateX(-50%) !important;
+  width: min(100vw, 430px) !important;
+  min-height: 68px !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  z-index: 10000 !important;
+}
+
+body:has(.wv3-root) .wv3-bottom {
+  display: grid !important;
+  position: fixed !important;
+  left: 50% !important;
+  bottom: 0 !important;
+  transform: translateX(-50%) !important;
+  width: min(100vw, 430px) !important;
+  height: 64px !important;
+  min-height: 64px !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  z-index: 10000 !important;
+}

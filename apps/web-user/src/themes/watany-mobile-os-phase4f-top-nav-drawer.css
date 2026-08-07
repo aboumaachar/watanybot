@@ -1,0 +1,98 @@
+/* APEX WatanyBot Mobile OS Phase 4F: top-nav and drawer ownership */
+
+.watany-mobile-shell__route-content [data-wmo-duplicate-top-nav="true"] {
+  display: none !important;
+}
+
+.watany-mobile-shell__leading {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+}
+
+.watany-mobile-shell__nav-btn {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border: 0;
+  border-radius: 15px;
+  background: rgba(255, 255, 255, 0.72);
+  color: var(--watany-text, #172033);
+  box-shadow: 0 8px 18px rgba(18, 53, 91, 0.08);
+}
+
+.watany-mobile-shell__nav-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--wmo-focus-ring);
+}
+
+.watany-mobile-shell__nav-btn i {
+  font-size: 1.2rem;
+}
+
+.watany-mobile-shell__drawer-handle {
+  position: fixed;
+  inset-block-start: 50%;
+  inset-inline-end: 8px;
+  z-index: calc(var(--z-modal, 100) - 2);
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 78px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.86);
+  box-shadow: 0 10px 22px rgba(18, 53, 91, 0.14);
+  transform: translateY(-50%);
+  color: var(--watany-text, #172033);
+}
+
+.watany-mobile-shell__drawer-handle:focus-visible {
+  outline: none;
+  box-shadow: var(--wmo-focus-ring);
+}
+
+.watany-mobile-shell__drawer-handle-dots {
+  display: grid;
+  gap: 7px;
+}
+
+.watany-mobile-shell__drawer-handle-dots span {
+  display: block;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: currentColor;
+}
+
+.launcher-drawer__backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: calc(var(--z-modal, 100) - 1);
+  border: 0;
+  background: rgba(17, 19, 21, 0.36);
+  backdrop-filter: blur(2px);
+}
+
+.launcher-drawer {
+  overscroll-behavior: contain;
+}
+
+html.wmo-drawer-open,
+body.wmo-drawer-open {
+  overflow: hidden;
+}
+
+@media (max-width: 520px) {
+  .watany-mobile-shell__topbar {
+    padding-block-start: calc(10px + env(safe-area-inset-top, 0px));
+  }
+
+  .watany-mobile-shell__drawer-handle {
+    inset-inline-end: 6px;
+    width: 28px;
+    height: 70px;
+  }
+}

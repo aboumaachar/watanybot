@@ -1,0 +1,341 @@
+﻿:root {
+  --wsa-bg-0: #07111f;
+  --wsa-bg-1: #0b1f35;
+  --wsa-bg-2: #123454;
+  --wsa-glass: rgba(255,255,255,0.09);
+  --wsa-glass-strong: rgba(255,255,255,0.15);
+  --wsa-line: rgba(255,255,255,0.18);
+  --wsa-text: #eef7ff;
+  --wsa-muted: #a9bbcb;
+  --wsa-blue: #52b6ff;
+  --wsa-gold: #ffd06b;
+  --wsa-green: #87e8b0;
+  --wsa-red: #ff8e8e;
+  --wsa-radius-xl: 30px;
+  --wsa-radius-lg: 22px;
+  --wsa-shadow: 0 28px 80px rgba(0,0,0,0.42);
+}
+
+.wsa-shell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 310px minmax(0, 1fr);
+  gap: 24px;
+  padding: 24px;
+  color: var(--wsa-text);
+  background:
+    radial-gradient(circle at top left, rgba(82,182,255,0.27), transparent 34%),
+    radial-gradient(circle at top right, rgba(255,208,107,0.16), transparent 32%),
+    linear-gradient(145deg, var(--wsa-bg-0), var(--wsa-bg-1) 52%, #06101d);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.wsa-shell * { box-sizing: border-box; }
+
+.wsa-sidebar,
+.wsa-topbar,
+.wsa-hero-card,
+.wsa-card,
+.wsa-module-card,
+.wsa-roadmap,
+.wsa-evidence {
+  border: 1px solid var(--wsa-line);
+  background: linear-gradient(150deg, var(--wsa-glass-strong), rgba(255,255,255,0.055));
+  box-shadow: var(--wsa-shadow);
+  backdrop-filter: blur(18px);
+}
+
+.wsa-sidebar {
+  position: sticky;
+  top: 24px;
+  height: calc(100vh - 48px);
+  border-radius: var(--wsa-radius-xl);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.wsa-brand-mark {
+  width: 64px;
+  height: 64px;
+  display: grid;
+  place-items: center;
+  border-radius: 22px;
+  color: #07111f;
+  font-weight: 900;
+  font-size: 28px;
+  background: linear-gradient(145deg, #fff7d8, var(--wsa-gold));
+  box-shadow: 0 18px 36px rgba(255,208,107,0.27);
+}
+
+.wsa-eyebrow {
+  margin: 0 0 6px;
+  color: var(--wsa-gold);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.wsa-sidebar h1,
+.wsa-topbar h2,
+.wsa-section h2,
+.wsa-evidence h2 {
+  margin: 0;
+  letter-spacing: -0.04em;
+}
+
+.wsa-muted { color: var(--wsa-muted); }
+
+.wsa-nav {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.wsa-nav a {
+  color: var(--wsa-text);
+  text-decoration: none;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid transparent;
+}
+
+.wsa-nav a:hover { border-color: var(--wsa-line); background: rgba(82,182,255,0.14); }
+
+.wsa-lock-box {
+  margin-top: auto;
+  display: grid;
+  gap: 8px;
+  padding: 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(255,208,107,0.28);
+  background: rgba(255,208,107,0.1);
+  color: #fff3c7;
+}
+
+.wsa-lock-box span { color: var(--wsa-muted); font-size: 13px; line-height: 1.5; }
+
+.wsa-content { min-width: 0; display: grid; gap: 20px; }
+
+.wsa-topbar {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: center;
+  border-radius: var(--wsa-radius-xl);
+  padding: 24px;
+}
+
+.wsa-top-actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
+
+.wsa-action-rail {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.wsa-action-rail__btn,
+.wsa-module-action {
+  appearance: none;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.08);
+  color: var(--wsa-text);
+  border-radius: 14px;
+  padding: 11px 14px;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+}
+
+.wsa-action-rail__btn:hover,
+.wsa-module-action:hover {
+  transform: translateY(-1px);
+  border-color: rgba(82,182,255,0.32);
+  background: rgba(82,182,255,0.14);
+}
+
+.wsa-module-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.wsa-module-action--ghost {
+  background: transparent;
+}
+
+.wsa-inline-panel {
+  overflow: hidden;
+  border-radius: var(--wsa-radius-xl);
+  border: 1px solid var(--wsa-line);
+  background: rgba(255,255,255,0.05);
+  box-shadow: var(--wsa-shadow);
+}
+
+.wsa-pill,
+.wsa-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 7px 11px;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.wsa-pill-review,
+.wsa-status-review { color: #fff3c7; background: rgba(255,208,107,0.15); border: 1px solid rgba(255,208,107,0.32); }
+.wsa-pill-locked,
+.wsa-status-disabled { color: #d9e5f0; background: rgba(255,255,255,0.08); border: 1px solid var(--wsa-line); }
+.wsa-status-pass { color: #ccffe0; background: rgba(135,232,176,0.14); border: 1px solid rgba(135,232,176,0.34); }
+.wsa-status-blocked { color: #ffd9d9; background: rgba(255,142,142,0.14); border: 1px solid rgba(255,142,142,0.34); }
+
+.wsa-hero-grid,
+.wsa-card-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.wsa-card-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+.wsa-hero-card,
+.wsa-card,
+.wsa-roadmap,
+.wsa-evidence { border-radius: var(--wsa-radius-xl); padding: 22px; }
+
+.wsa-accent-card { background: linear-gradient(145deg, rgba(82,182,255,0.18), rgba(255,208,107,0.12)); }
+
+.wsa-card-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.wsa-card h3, .wsa-hero-card h3 { margin: 16px 0 8px; font-size: 28px; }
+.wsa-card p, .wsa-hero-card p, .wsa-module-card p { color: var(--wsa-muted); line-height: 1.6; margin: 0; }
+
+.wsa-section { display: grid; gap: 14px; }
+.wsa-section-head { display: flex; justify-content: space-between; align-items: end; }
+
+.wsa-module-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.wsa-module-card { border-radius: var(--wsa-radius-lg); padding: 18px; display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 14px; }
+.wsa-module-icon { width: 44px; height: 44px; border-radius: 16px; display: grid; place-items: center; background: rgba(82,182,255,0.16); color: var(--wsa-blue); font-weight: 900; }
+.wsa-module-title-row { display: flex; justify-content: space-between; gap: 10px; align-items: start; }
+.wsa-module-title-row h3 { margin: 0 0 8px; font-size: 17px; }
+
+.wsa-roadmap ol { margin: 0; padding-left: 22px; display: grid; gap: 10px; color: var(--wsa-muted); }
+.wsa-roadmap li::marker { color: var(--wsa-gold); font-weight: 900; }
+
+.wsa-evidence { display: flex; justify-content: space-between; gap: 20px; align-items: center; }
+.wsa-evidence-grid { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; }
+.wsa-evidence-grid span { padding: 10px 12px; border-radius: 14px; background: rgba(255,255,255,0.08); color: var(--wsa-muted); }
+
+@media (max-width: 1100px) {
+  .wsa-shell { grid-template-columns: 1fr; }
+  .wsa-sidebar { position: relative; top: 0; height: auto; }
+  .wsa-card-grid, .wsa-module-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 720px) {
+  .wsa-shell { padding: 14px; }
+  .wsa-topbar, .wsa-evidence { flex-direction: column; align-items: stretch; }
+  .wsa-hero-grid, .wsa-card-grid, .wsa-module-grid { grid-template-columns: 1fr; }
+}
+/* APEX_WSA_RESPONSIVE_DESKTOP_DEFAULT_V2_9_START */
+/* Purpose: keep the Superadmin CRM as a desktop command center by default, while still adapting cleanly on tablet and phone widths. */
+.wsa-shell.wsa-desktop-default {
+  --wsa-desktop-sidebar-width: clamp(280px, 22vw, 340px);
+  --wsa-desktop-content-min: 0;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  grid-template-columns: var(--wsa-desktop-sidebar-width) minmax(var(--wsa-desktop-content-min), 1fr);
+  align-items: start;
+}
+
+.wsa-shell.wsa-desktop-default .wsa-content { min-width: 0; width: 100%; }
+.wsa-shell.wsa-desktop-default .wsa-sidebar { min-width: 0; }
+.wsa-shell.wsa-desktop-default .wsa-topbar { min-width: 0; }
+.wsa-shell.wsa-desktop-default .wsa-module-card { min-width: 0; }
+.wsa-shell.wsa-desktop-default .wsa-card { min-width: 0; }
+
+@media (min-width: 1280px) {
+  .wsa-shell.wsa-desktop-default .wsa-card-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .wsa-shell.wsa-desktop-default .wsa-module-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .wsa-shell.wsa-desktop-default .wsa-hero-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (min-width: 901px) and (max-width: 1279px) {
+  .wsa-shell.wsa-desktop-default {
+    padding: 18px;
+    gap: 18px;
+    grid-template-columns: minmax(260px, 300px) minmax(0, 1fr) !important;
+  }
+  .wsa-shell.wsa-desktop-default .wsa-sidebar {
+    position: sticky !important;
+    top: 18px !important;
+    height: calc(100vh - 36px) !important;
+  }
+  .wsa-shell.wsa-desktop-default .wsa-card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  .wsa-shell.wsa-desktop-default .wsa-module-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  .wsa-shell.wsa-desktop-default .wsa-hero-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  .wsa-shell.wsa-desktop-default .wsa-card h3,
+  .wsa-shell.wsa-desktop-default .wsa-hero-card h3 { font-size: clamp(22px, 2.4vw, 28px); }
+}
+
+@media (min-width: 901px) {
+  .wsa-shell.wsa-desktop-default {
+    grid-template-columns: var(--wsa-desktop-sidebar-width) minmax(0, 1fr) !important;
+  }
+  .wsa-shell.wsa-desktop-default .wsa-sidebar {
+    position: sticky !important;
+    top: 24px;
+    height: calc(100vh - 48px);
+  }
+}
+
+@media (max-width: 900px) {
+  .wsa-shell.wsa-desktop-default {
+    grid-template-columns: 1fr !important;
+    padding: 16px;
+    gap: 16px;
+  }
+  .wsa-shell.wsa-desktop-default .wsa-sidebar {
+    position: relative !important;
+    top: 0 !important;
+    height: auto !important;
+  }
+  .wsa-shell.wsa-desktop-default .wsa-nav {
+    display: flex;
+    overflow-x: auto;
+    gap: 8px;
+    padding-bottom: 4px;
+  }
+  .wsa-shell.wsa-desktop-default .wsa-nav a {
+    white-space: nowrap;
+    flex: 0 0 auto;
+  }
+  .wsa-shell.wsa-desktop-default .wsa-hero-grid,
+  .wsa-shell.wsa-desktop-default .wsa-card-grid,
+  .wsa-shell.wsa-desktop-default .wsa-module-grid { grid-template-columns: 1fr !important; }
+  .wsa-shell.wsa-desktop-default .wsa-topbar,
+  .wsa-shell.wsa-desktop-default .wsa-evidence { flex-direction: column; align-items: stretch; }
+}
+
+@media (max-width: 520px) {
+  .wsa-shell.wsa-desktop-default { padding: 12px; }
+  .wsa-shell.wsa-desktop-default .wsa-sidebar,
+  .wsa-shell.wsa-desktop-default .wsa-topbar,
+  .wsa-shell.wsa-desktop-default .wsa-hero-card,
+  .wsa-shell.wsa-desktop-default .wsa-card,
+  .wsa-shell.wsa-desktop-default .wsa-roadmap,
+  .wsa-shell.wsa-desktop-default .wsa-evidence { border-radius: 22px; padding: 16px; }
+  .wsa-shell.wsa-desktop-default .wsa-module-card { grid-template-columns: 38px minmax(0, 1fr); padding: 14px; }
+  .wsa-shell.wsa-desktop-default .wsa-module-icon { width: 38px; height: 38px; border-radius: 14px; }
+  .wsa-shell.wsa-desktop-default h1 { font-size: 24px; }
+  .wsa-shell.wsa-desktop-default h2 { font-size: 22px; }
+}
+/* APEX_WSA_RESPONSIVE_DESKTOP_DEFAULT_V2_9_END */

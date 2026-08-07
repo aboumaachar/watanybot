@@ -1,0 +1,12 @@
+﻿{
+    "NonAsciiByteCount":  0,
+    "UnsupportedBom":  false,
+    "DelayedExpansionDisabled":  true,
+    "ExtensionsEnabled":  true,
+    "ExitCodePreserved":  true,
+    "StdoutRedirected":  true,
+    "StderrRedirected":  true,
+    "FinalMarkerImplemented":  true,
+    "AbsolutePathsRequired":  true,
+    "GatePass":  true
+}

@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://watanybot.local/schemas/SMOKE_CONFIG_SCHEMA.json",
+  "title": "Watany Gateway Smoke Suite Config",
+  "type": "object",
+  "required": [
+    "suiteName",
+    "defaultTargetEnv",
+    "urlEnvName",
+    "queryCases"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "suiteName": {
+      "type": "string",
+      "minLength": 1
+    },
+    "defaultTargetEnv": {
+      "type": "string",
+      "minLength": 1
+    },
+    "defaultTargetFallback": {
+      "type": "string",
+      "enum": ["public", "direct"]
+    },
+    "urlEnvName": {
+      "type": "string",
+      "minLength": 1
+    },
+    "domainTerms": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "default": []
+    },
+    "additionalKnownBadReplies": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "requiredReplyTermsAll": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "forbiddenReplyTerms": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "queryCases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["canonical", "variants"],
+        "properties": {
+          "canonical": {
+            "type": "string",
+            "minLength": 1
+          },
+          "variants": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

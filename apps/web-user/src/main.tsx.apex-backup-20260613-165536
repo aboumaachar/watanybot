@@ -1,0 +1,86 @@
+﻿import "./styles/watany-v2-token-only-theme.scoped.generated.css";
+import "./styles/watany-v2-icon-visuals.scoped.generated.css";
+import "./features/watany-standard/watany-home-grid-order";
+import "./features/watany-standard/watany-home-grid-order.css";
+import "./features/watany-standard/watany-mobile-landing-safe-fix";
+import "./features/watany-standard/watany-mobile-landing-safe-fix.css";
+import "./styles/chat-ux-smart-popups.css";
+import "./styles/icon-shell.css";
+import "./themes/watany-mobile-os-phase4g-pwa-retired-info-bank-directory.css";
+import './styles/watany-mobile-containment.css';
+import "./themes/watany-mobile-os-phase4f-top-nav-drawer.css";
+import "./themes/watany-mobile-os-phase4e-nav-dedup.css";
+import "./themes/watany-mobile-os-phase4d-targeted-surgery.css";
+import "./themes/watany-mobile-os-phase4c-architecture.css";
+import "./themes/watany-mobile-os-phase4b-true-shell.css";
+import "./themes/watany-mobile-os-phase4-harmonizer.css";
+import "./themes/watany-mobile-os-phase3e-support.css";
+import "./themes/watany-mobile-os-phase3d-utility.css";
+import "./themes/watany-mobile-os-phase3c-services.css";
+import "./themes/watany-mobile-os-phase3b.css";
+import "./themes/watany-mobile-os-phase3.css";
+import "./themes/watany-mobile-os-phase2b.css";
+import "./themes/watany-mobile-os-phase2.css";
+import "./themes/watany-mobile-os-theme.css";
+import { registerWatanyServiceWorker } from "./pwa/registerServiceWorker";
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App";
+import "./styles.css";
+import "./styles/koudama-global-theme.css";
+import "./themes/watany-unified-smartphone-tokens.css";
+import "./themes/watany-ui-light-contrast-chat.css";
+import { NotificationBadgeDomBridge, NotificationBadgeProvider } from "./features/notification-badges";
+import "./features/notification-badges/notification-badges.css";
+import './styles/watany-v1-stabilizer.css';
+
+
+import { installWatanyChatViewportMode } from "./utils/chatViewportMode";
+import { installMobileOverflowDebug } from "./utils/mobileOverflowDebug";
+import { installTabCycleHint } from "./utils/tabCycleHint";
+import "./styles/watany-chat-viewport-fix.css";
+import "./styles/landing-hash-scroll.css";
+
+import { installWatanyTopHeaderRuntime } from "./features/top-header/watanyTopHeaderRuntime";
+import "./features/top-header/watanyTopHeader.css";
+import { installSnapToTop } from "./utils/snapToTopOnOpen";
+import "./components/chat/WatanyDefaultHybridChatBootstrap";
+import "./components/chat/hybrid-kb-chat.css";
+import "./styles/superadmin-critical-dashboard.css";
+import "./styles/watany-universal-theme.css";
+import { WorldCupDeepLinkCanonicalizer } from './components/worldcup/WorldCupDeepLinkCanonicalizer';
+import { applyKoudamaTheme, applyThemeModeAttributes, readStoredKoudamaTheme } from "./lib/koudama-theme";
+// â”€â”€ Restore saved preferences on startup â”€â”€
+const savedFont = localStorage.getItem("watany_fontsize");
+if (savedFont) {
+  document.documentElement.dataset.font = savedFont;
+}
+
+const savedThemeMode = (localStorage.getItem("watany_theme_mode") as "system" | "light" | "dark" | null) || "system";
+applyKoudamaTheme(readStoredKoudamaTheme(), false);
+applyThemeModeAttributes(savedThemeMode);
+document.documentElement.dataset.contrast = localStorage.getItem("watany_contrast_mode") || "normal";
+
+installWatanyChatViewportMode();
+installMobileOverflowDebug();
+installTabCycleHint();
+
+installWatanyTopHeaderRuntime();
+installSnapToTop();
+
+ReactDOM.createRoot(document.getElementById("root")!).render(
+  <React.StrictMode>
+    <><WorldCupDeepLinkCanonicalizer /><NotificationBadgeProvider>
+      <NotificationBadgeDomBridge />
+      <App />
+    </NotificationBadgeProvider></>
+  </React.StrictMode>
+);
+
+
+
+registerWatanyServiceWorker();
+
+// APEX THE NETWORK WEB ROUTE REVIEW HOOK
+// The Network route is registered in AppShell and exposed in the app navigation specs.
+// Marker: APEX_THE_NETWORK_WEB_ROUTE_REGISTRATION_REQUIRED

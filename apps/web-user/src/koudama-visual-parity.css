@@ -1,0 +1,853 @@
+
+/*
+  Koudama / WatanyBot Visual Parity Patch
+  Source visual direction: approved theme + emblem logo demo.
+  Scope: frontend visual parity only. No World Cup, backend, DB, or deployment changes.
+*/
+
+:root,
+html[data-theme="watani"] {
+  --koudama-bg-page: var(--bg-page, #FAF7F0);
+  --koudama-bg-surface: var(--bg-surface, #FFFFFF);
+  --koudama-text-primary: var(--text-primary, #2C2B2A);
+  --koudama-text-secondary: var(--text-secondary, #5F5D59);
+  --koudama-accent: var(--accent, #C7A55A);
+  --koudama-status-online: var(--status-online, #2E7D32);
+  --koudama-status-offline: var(--status-offline, #8E8E8E);
+  --koudama-badge-alert: var(--badge-alert, #D32F2F);
+  --koudama-ticker-track: var(--ticker-track, #F0EDE8);
+  --koudama-border-tactile: var(--border-tactile, rgba(44,43,42,.14));
+  --koudama-shadow-soft: var(--shadow-soft, rgba(0,0,0,.08));
+  --koudama-icon-blue: var(--icon-blue, #1478d7);
+  --koudama-icon-red: var(--icon-red, #df3559);
+  --koudama-icon-teal: var(--icon-teal, #00a8a7);
+  --koudama-icon-purple: var(--icon-purple, #874bd8);
+  --koudama-icon-orange: var(--icon-orange, #f58513);
+  --koudama-icon-green: var(--icon-green, #28a745);
+  --koudama-icon-gray: var(--icon-gray, #7c8794);
+  --koudama-icon-lift-shadow:
+    0 30px 50px color-mix(in srgb, currentColor 22%, transparent),
+    0 18px 30px rgba(25,35,45,.22),
+    0 7px 12px rgba(25,35,45,.18),
+    inset 0 1px 0 rgba(255,255,255,.82),
+    inset 0 -18px 28px color-mix(in srgb, currentColor 18%, transparent);
+  --koudama-icon-contact-shadow:
+    radial-gradient(ellipse at center, rgba(25,35,45,.28) 0%, rgba(25,35,45,.12) 38%, transparent 72%);
+}
+
+html[data-theme="wadih"] {
+  --koudama-bg-page: #111722;
+  --koudama-bg-surface: #171f2d;
+  --koudama-text-primary: #f4f7fb;
+  --koudama-text-secondary: #b7c3d7;
+  --koudama-accent: #4f8cff;
+  --koudama-status-online: #5dd39e;
+  --koudama-status-offline: #9aa7bb;
+  --koudama-border-tactile: rgba(148, 163, 184, .22);
+  --koudama-shadow-soft: rgba(0, 0, 0, .34);
+  --koudama-icon-blue: #7fb0ff;
+  --koudama-icon-red: #ff6b8f;
+  --koudama-icon-teal: #46d3d8;
+  --koudama-icon-purple: #b48cff;
+  --koudama-icon-orange: #ffb56b;
+  --koudama-icon-green: #67d89c;
+  --koudama-icon-gray: #9aa7bb;
+}
+
+html[data-theme="layli"] {
+  --koudama-bg-page: #0e1626;
+  --koudama-bg-surface: #16213b;
+  --koudama-text-primary: #edf2ff;
+  --koudama-text-secondary: #b8c4e2;
+  --koudama-accent: #7aa9ff;
+  --koudama-status-online: #6ee7c8;
+  --koudama-status-offline: #9aa7bb;
+  --koudama-border-tactile: rgba(125, 156, 214, .22);
+  --koudama-shadow-soft: rgba(0, 0, 0, .32);
+  --koudama-icon-blue: #8ec5ff;
+  --koudama-icon-red: #ff88a8;
+  --koudama-icon-teal: #68d9e8;
+  --koudama-icon-purple: #c0a0ff;
+  --koudama-icon-orange: #ffc57b;
+  --koudama-icon-green: #8ae0a8;
+  --koudama-icon-gray: #a6b3c8;
+}
+
+html[data-theme="nahasi"] {
+  --koudama-bg-page: #f5efe6;
+  --koudama-bg-surface: #fffaf4;
+  --koudama-text-primary: #33271d;
+  --koudama-text-secondary: #6a5947;
+  --koudama-accent: #c47a3c;
+  --koudama-status-online: #2f855a;
+  --koudama-status-offline: #8d7a65;
+  --koudama-border-tactile: rgba(123, 90, 57, .15);
+  --koudama-shadow-soft: rgba(123, 90, 57, .12);
+}
+
+html[data-theme="askari"] {
+  --koudama-bg-page: #eef0e7;
+  --koudama-bg-surface: #fbfcf7;
+  --koudama-text-primary: #25311f;
+  --koudama-text-secondary: #5f6a55;
+  --koudama-accent: #5d7d43;
+  --koudama-status-online: #4d8b57;
+  --koudama-status-offline: #7a8a6f;
+  --koudama-border-tactile: rgba(74, 99, 59, .14);
+  --koudama-shadow-soft: rgba(74, 99, 59, .11);
+}
+
+html[data-theme="arzi"] {
+  --koudama-bg-page: #eef5ec;
+  --koudama-bg-surface: #ffffff;
+  --koudama-text-primary: #213427;
+  --koudama-text-secondary: #5e7364;
+  --koudama-accent: #4d8b68;
+  --koudama-status-online: #2f855a;
+  --koudama-status-offline: #7c8a80;
+  --koudama-border-tactile: rgba(77, 139, 104, .16);
+  --koudama-shadow-soft: rgba(77, 139, 104, .11);
+}
+
+html[data-theme="azraq"] {
+  --koudama-bg-page: #edf4fb;
+  --koudama-bg-surface: #ffffff;
+  --koudama-text-primary: #1f3043;
+  --koudama-text-secondary: #5b6c7f;
+  --koudama-accent: #3f81d1;
+  --koudama-status-online: #2f6fb2;
+  --koudama-status-offline: #7a8aa1;
+  --koudama-border-tactile: rgba(63, 129, 209, .15);
+  --koudama-shadow-soft: rgba(63, 129, 209, .10);
+}
+
+html[data-theme="ramli"] {
+  --koudama-bg-page: #f5efe2;
+  --koudama-bg-surface: #fffaf2;
+  --koudama-text-primary: #342a1d;
+  --koudama-text-secondary: #6e5c44;
+  --koudama-accent: #aa7a37;
+  --koudama-status-online: #3f7d57;
+  --koudama-status-offline: #8a7c66;
+  --koudama-border-tactile: rgba(170, 122, 55, .15);
+  --koudama-shadow-soft: rgba(170, 122, 55, .11);
+}
+
+html[data-theme="wadih"],
+html[data-theme="layli"] {
+  --koudama-icon-lift-shadow:
+    0 30px 52px color-mix(in srgb, currentColor 28%, transparent),
+    0 18px 30px rgba(0,0,0,.58),
+    0 7px 14px rgba(0,0,0,.52),
+    inset 0 1px 0 rgba(255,255,255,.22),
+    inset 0 -18px 28px color-mix(in srgb, currentColor 14%, transparent);
+  --koudama-icon-contact-shadow:
+    radial-gradient(ellipse at center, rgba(0,0,0,.52) 0%, rgba(0,0,0,.25) 38%, transparent 72%);
+}
+
+html {
+  font-size: clamp(16px, 2.2vw + 11px, 22px);
+}
+
+body {
+  direction: rtl;
+  line-height: 1.75;
+  color: var(--koudama-text-primary);
+  background:
+    radial-gradient(circle at 12% 6%, color-mix(in srgb, var(--koudama-accent) 12%, transparent), transparent 24%),
+    radial-gradient(circle at 90% 8%, color-mix(in srgb, var(--koudama-icon-teal) 10%, transparent), transparent 24%),
+    var(--koudama-bg-page);
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button {
+  min-width: 52px;
+  min-height: 52px;
+  touch-action: manipulation;
+}
+
+h1,
+h2,
+h3,
+p,
+span,
+strong,
+small,
+button {
+  text-overflow: unset !important;
+  white-space: normal !important;
+  overflow-wrap: break-word !important;
+}
+
+/* Mobile app shell / page container */
+.koudama-app-shell,
+.koudama-home-shell,
+.koudama-mobile-shell,
+.watany-app-shell,
+.watany-home-shell,
+.app-shell,
+.home-shell,
+main[dir="rtl"],
+[data-koudama-shell] {
+  --koudama-side-pad: 16px;
+  width: min(560px, 100%);
+  min-height: 100vh;
+  margin-inline: auto;
+  padding-inline: var(--koudama-side-pad);
+  padding-bottom: max(118px, env(safe-area-inset-bottom, 0px) + 96px);
+  position: relative;
+}
+
+/* Sticky header: demo-style full mobile-container width */
+.koudama-header,
+.koudama-header-shell,
+.watany-header,
+.watany-header-shell,
+.header-shell,
+[data-koudama-header] {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  width: calc(100% + (var(--koudama-side-pad, 16px) * 2));
+  margin-inline: calc(var(--koudama-side-pad, 16px) * -1);
+  padding: 14px 14px 11px;
+  background: color-mix(in srgb, var(--koudama-bg-surface) 95%, transparent);
+  border-bottom: 1px solid var(--koudama-border-tactile);
+  border-radius: 0 0 22px 22px;
+  box-shadow:
+    0 12px 32px var(--koudama-shadow-soft),
+    inset 0 1px 0 rgba(255,255,255,.62);
+  backdrop-filter: blur(18px);
+}
+
+.koudama-header-top,
+.watany-header-top,
+.header-top,
+[data-koudama-header-top] {
+  display: grid;
+  grid-template-columns: 88px 1fr;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+/* Logo: actual emblem image in glossy shell */
+.koudama-logo,
+.koudama-logo-box,
+.watany-logo,
+.watany-logo-box,
+.logo-box,
+[data-koudama-logo] {
+  width: 88px;
+  height: 82px;
+  border-radius: 18px;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  padding: 6px;
+  background:
+    linear-gradient(180deg, var(--koudama-bg-surface), color-mix(in srgb, var(--koudama-bg-surface) 90%, var(--koudama-bg-page) 10%));
+  box-shadow:
+    0 14px 28px var(--koudama-shadow-soft),
+    inset 0 1px 0 rgba(255,255,255,.48);
+  position: relative;
+  justify-self: end;
+}
+
+.koudama-logo img,
+.koudama-logo-box img,
+.watany-logo img,
+.watany-logo-box img,
+.logo-box img,
+[data-koudama-logo] img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  filter:
+    drop-shadow(0 12px 20px rgba(25,35,45,.16))
+    drop-shadow(0 4px 6px rgba(25,35,45,.10));
+}
+
+/* Header toolbar icon buttons */
+.koudama-toolbar,
+.koudama-header-actions,
+.watany-toolbar,
+.watany-header-actions,
+.toolbar,
+.icon-toolbar,
+[data-koudama-toolbar] {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  align-items: center;
+}
+
+.koudama-toolbar button,
+.koudama-header-actions button,
+.watany-toolbar button,
+.watany-header-actions button,
+.toolbar button,
+.icon-toolbar button,
+.toolbar-btn,
+[data-koudama-toolbar] button {
+  position: relative;
+  width: 58px;
+  height: 58px;
+  min-width: 52px;
+  min-height: 52px;
+  margin: 0 auto;
+  border: 0;
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 35% 20%, rgba(255,255,255,.96), transparent 34%),
+    linear-gradient(180deg, var(--koudama-bg-surface), color-mix(in srgb, var(--koudama-bg-surface) 88%, currentColor 12%));
+  color: var(--koudama-icon-blue);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  box-shadow:
+    0 24px 42px color-mix(in srgb, currentColor 24%, transparent),
+    0 13px 22px rgba(25,35,45,.18),
+    inset 0 1px 0 rgba(255,255,255,.82),
+    inset 0 -15px 24px color-mix(in srgb, currentColor 14%, transparent);
+  isolation: isolate;
+  transform: translateY(-2px);
+}
+
+.koudama-toolbar button::after,
+.koudama-header-actions button::after,
+.watany-toolbar button::after,
+.watany-header-actions button::after,
+.toolbar button::after,
+.icon-toolbar button::after,
+.toolbar-btn::after,
+[data-koudama-toolbar] button::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 18px;
+  border: 3px solid currentColor;
+  opacity: .95;
+  pointer-events: none;
+}
+
+.koudama-toolbar button::before,
+.koudama-header-actions button::before,
+.watany-toolbar button::before,
+.watany-header-actions button::before,
+.toolbar button::before,
+.icon-toolbar button::before,
+.toolbar-btn::before,
+[data-koudama-toolbar] button::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: 8%;
+  right: 8%;
+  bottom: -16px;
+  height: 22px;
+  background: var(--koudama-icon-contact-shadow);
+  filter: blur(7px);
+  opacity: .88;
+  pointer-events: none;
+}
+
+.profile-online,
+.is-logged-in,
+[data-profile-state="online"] {
+  color: var(--koudama-status-online) !important;
+}
+
+.profile-offline,
+.is-logged-out,
+[data-profile-state="offline"] {
+  color: var(--koudama-status-offline) !important;
+}
+
+/* Badges */
+.koudama-badge,
+.notification-badge,
+.toolbar-badge,
+.badge,
+[data-koudama-badge] {
+  position: absolute;
+  z-index: 2;
+  top: -10px;
+  left: -10px;
+  min-width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  padding: 0 8px;
+  background: var(--koudama-badge-alert);
+  color: #fff;
+  border: 3px solid var(--koudama-bg-surface);
+  font-weight: 900;
+  font-size: .8rem;
+  line-height: 1;
+  box-shadow: 0 10px 18px color-mix(in srgb, var(--koudama-badge-alert) 30%, transparent);
+  animation: none !important;
+}
+
+/* Ticker directly under header */
+.koudama-ticker,
+.koudama-news-ticker,
+.watany-ticker,
+.watany-news-ticker,
+.ticker,
+.header-running-ticker,
+[data-koudama-ticker] {
+  min-height: 48px;
+  border-radius: 999px;
+  background: var(--koudama-ticker-track);
+  border: 1px solid var(--koudama-border-tactile);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.55),
+    0 6px 18px var(--koudama-shadow-soft);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  color: var(--koudama-text-primary);
+  position: relative;
+  margin-top: 10px;
+}
+
+.koudama-ticker-track,
+.koudama-news-ticker-track,
+.ticker-track,
+[data-koudama-ticker-track] {
+  display: inline-flex;
+  align-items: center;
+  gap: 18px;
+  min-width: max-content;
+  padding-inline: 18px;
+  animation: koudamaTickerMove 30s linear infinite;
+  font-size: .86rem;
+  font-weight: 900;
+}
+
+@keyframes koudamaTickerMove {
+  from { transform: translateX(-8%); }
+  to { transform: translateX(40%); }
+}
+
+/* Theme selector */
+.koudama-theme-panel,
+.koudama-theme-selector,
+.watany-theme-panel,
+.watany-theme-selector,
+.theme-panel,
+[data-koudama-theme-selector] {
+  background:
+    linear-gradient(180deg, var(--koudama-bg-surface), color-mix(in srgb, var(--koudama-bg-surface) 92%, var(--koudama-bg-page) 8%));
+  color: var(--koudama-text-primary);
+  border: 1px solid var(--koudama-border-tactile);
+  border-radius: 26px;
+  box-shadow:
+    0 16px 38px var(--koudama-shadow-soft),
+    inset 0 1px 0 rgba(255,255,255,.58);
+  padding: 14px;
+}
+
+/* Main card grid: max 3 columns */
+.koudama-main-grid,
+.koudama-cards,
+.watany-main-grid,
+.watany-cards,
+.cards,
+.home-cards,
+[data-koudama-cards] {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 12px 0 18px;
+}
+
+/* Glossy cards */
+.koudama-main-card,
+.koudama-card,
+.watany-main-card,
+.watany-card,
+.main-card,
+.home-card,
+[data-koudama-main-card] {
+  min-height: 156px;
+  border: 1px solid var(--koudama-border-tactile);
+  border-radius: 26px;
+  background:
+    linear-gradient(180deg, var(--koudama-bg-surface), color-mix(in srgb, var(--koudama-bg-surface) 90%, var(--koudama-bg-page) 10%));
+  box-shadow:
+    0 20px 42px var(--koudama-shadow-soft),
+    0 8px 18px rgba(25,35,45,.08),
+    inset 0 1px 0 rgba(255,255,255,.62),
+    inset 0 -14px 26px color-mix(in srgb, var(--koudama-accent) 5%, transparent);
+  display: grid;
+  place-items: center;
+  gap: 10px;
+  padding: 14px 6px;
+  color: var(--koudama-text-primary);
+  text-align: center;
+  cursor: pointer;
+  overflow: visible;
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+
+.koudama-main-card:active,
+.koudama-card:active,
+.watany-main-card:active,
+.watany-card:active,
+.main-card:active,
+.home-card:active,
+[data-koudama-main-card]:active {
+  transform: scale(.985);
+}
+
+/* Floating / hovering 3D icons */
+.koudama-icon,
+.koudama-main-icon,
+.watany-icon,
+.watany-main-icon,
+.main-icon,
+.card-icon,
+[data-koudama-icon] {
+  position: relative;
+  width: 72px;
+  height: 62px;
+  border-radius: 22px;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(circle at 35% 20%, rgba(255,255,255,.96), transparent 34%),
+    linear-gradient(180deg, var(--koudama-bg-surface), color-mix(in srgb, var(--koudama-bg-surface) 82%, currentColor 18%));
+  color: currentColor;
+  box-shadow: var(--koudama-icon-lift-shadow);
+  transform: translateY(-4px);
+  isolation: isolate;
+}
+
+.koudama-icon::before,
+.koudama-main-icon::before,
+.watany-icon::before,
+.watany-main-icon::before,
+.main-icon::before,
+.card-icon::before,
+[data-koudama-icon]::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: 8%;
+  right: 8%;
+  bottom: -18px;
+  height: 24px;
+  background: var(--koudama-icon-contact-shadow);
+  filter: blur(7px);
+  opacity: .92;
+  pointer-events: none;
+}
+
+.koudama-icon::after,
+.koudama-main-icon::after,
+.watany-icon::after,
+.watany-main-icon::after,
+.main-icon::after,
+.card-icon::after,
+[data-koudama-icon]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 22px;
+  border: 3px solid currentColor;
+  opacity: .94;
+  pointer-events: none;
+}
+
+.koudama-icon svg,
+.koudama-main-icon svg,
+.watany-icon svg,
+.watany-main-icon svg,
+.main-icon svg,
+.card-icon svg,
+[data-koudama-icon] svg {
+  position: relative;
+  z-index: 1;
+  width: 34px;
+  height: 34px;
+  fill: currentColor;
+  stroke: currentColor;
+  filter:
+    drop-shadow(0 12px 12px color-mix(in srgb, currentColor 32%, transparent))
+    drop-shadow(0 3px 2px rgba(0,0,0,.18));
+}
+
+/* Color helper aliases */
+.c-blue,
+.color-blue,
+[data-koudama-color="blue"] { color: var(--koudama-icon-blue) !important; }
+
+.c-red,
+.color-red,
+[data-koudama-color="red"] { color: var(--koudama-icon-red) !important; }
+
+.c-teal,
+.color-teal,
+[data-koudama-color="teal"] { color: var(--koudama-icon-teal) !important; }
+
+.c-purple,
+.color-purple,
+[data-koudama-color="purple"] { color: var(--koudama-icon-purple) !important; }
+
+.c-orange,
+.color-orange,
+[data-koudama-color="orange"] { color: var(--koudama-icon-orange) !important; }
+
+.c-green,
+.color-green,
+[data-koudama-color="green"] { color: var(--koudama-icon-green) !important; }
+
+.c-gray,
+.color-gray,
+[data-koudama-color="gray"] { color: var(--koudama-icon-gray) !important; }
+
+/* Child card modal / drawer */
+.koudama-child-modal,
+.koudama-child-card,
+.watany-child-modal,
+.watany-child-card,
+.child-card,
+[data-koudama-child-card] {
+  width: min(560px, 100%);
+  max-height: calc(100vh - 210px);
+  overflow: auto;
+  border-radius: 34px;
+  background: var(--koudama-bg-surface);
+  border: 1px solid var(--koudama-border-tactile);
+  box-shadow:
+    0 28px 80px rgba(0,0,0,.24),
+    inset 0 1px 0 rgba(255,255,255,.55);
+  padding: 18px;
+}
+
+.koudama-child-grid,
+.watany-child-grid,
+.child-grid,
+[data-koudama-child-grid] {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+/* Sticky bottom hybrid chat */
+.koudama-bottom-chat,
+.koudama-sticky-chat,
+.watany-bottom-chat,
+.watany-sticky-chat,
+.sticky-chat,
+.sticky-chat-section,
+.chatbar,
+[data-koudama-bottom-chat] {
+  position: fixed;
+  z-index: 60;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: min(560px, 100vw);
+  background: color-mix(in srgb, var(--koudama-bg-surface) 96%, transparent);
+  border-top: 1px solid var(--koudama-border-tactile);
+  border-radius: 24px 24px 0 0;
+  box-shadow:
+    0 -10px 34px var(--koudama-shadow-soft),
+    inset 0 1px 0 rgba(255,255,255,.55);
+  backdrop-filter: blur(18px);
+  overflow: hidden;
+}
+
+.koudama-chatbox,
+.watany-chatbox,
+.chatbox,
+.chatbar form,
+[data-koudama-chatbox] {
+  display: grid;
+  grid-template-columns: 60px 1fr 60px;
+  gap: 10px;
+  min-height: 76px;
+  padding: 10px 12px 12px;
+  background: transparent;
+}
+
+.koudama-chatbox button,
+.watany-chatbox button,
+.chatbox button,
+.chatbar button,
+[data-koudama-chatbox] button {
+  min-width: 52px;
+  min-height: 52px;
+  border: 0;
+  border-radius: 20px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  box-shadow:
+    0 14px 24px var(--koudama-shadow-soft),
+    inset 0 1px 0 rgba(255,255,255,.62);
+}
+
+.koudama-chatbox input,
+.watany-chatbox input,
+.chatbox input,
+.chat-input,
+.chatbar input,
+[data-koudama-chatbox] input {
+  width: 100%;
+  border: 1px solid var(--koudama-border-tactile);
+  border-radius: 22px;
+  background: var(--koudama-bg-surface);
+  color: var(--koudama-text-primary);
+  padding: 0 18px;
+  font-size: 1rem;
+  font-weight: 800;
+  outline: none;
+  box-shadow: inset 0 2px 10px var(--koudama-shadow-soft);
+  text-align: right;
+  line-height: 1.75;
+}
+
+/* Accessibility + responsive tuning */
+@media (max-width: 460px) {
+  .koudama-app-shell,
+  .koudama-home-shell,
+  .koudama-mobile-shell,
+  .watany-app-shell,
+  .watany-home-shell,
+  .app-shell,
+  .home-shell,
+  main[dir="rtl"],
+  [data-koudama-shell] {
+    --koudama-side-pad: 10px;
+    padding-bottom: max(110px, env(safe-area-inset-bottom, 0px) + 94px);
+  }
+
+  .koudama-header,
+  .koudama-header-shell,
+  .watany-header,
+  .watany-header-shell,
+  .header-shell,
+  [data-koudama-header] {
+    padding: 10px;
+    border-radius: 0 0 18px 18px;
+  }
+
+  .koudama-header-top,
+  .watany-header-top,
+  .header-top,
+  [data-koudama-header-top] {
+    grid-template-columns: 76px 1fr;
+    gap: 10px;
+  }
+
+  .koudama-logo,
+  .koudama-logo-box,
+  .watany-logo,
+  .watany-logo-box,
+  .logo-box,
+  [data-koudama-logo] {
+    width: 76px;
+    height: 70px;
+    border-radius: 16px;
+  }
+
+  .koudama-toolbar,
+  .koudama-header-actions,
+  .watany-toolbar,
+  .watany-header-actions,
+  .toolbar,
+  .icon-toolbar,
+  [data-koudama-toolbar] {
+    gap: 8px;
+  }
+
+  .koudama-toolbar button,
+  .koudama-header-actions button,
+  .watany-toolbar button,
+  .watany-header-actions button,
+  .toolbar button,
+  .icon-toolbar button,
+  .toolbar-btn,
+  [data-koudama-toolbar] button {
+    width: 50px;
+    height: 50px;
+    border-radius: 16px;
+  }
+
+  .koudama-main-grid,
+  .koudama-cards,
+  .watany-main-grid,
+  .watany-cards,
+  .cards,
+  .home-cards,
+  [data-koudama-cards] {
+    gap: 10px;
+  }
+
+  .koudama-main-card,
+  .koudama-card,
+  .watany-main-card,
+  .watany-card,
+  .main-card,
+  .home-card,
+  [data-koudama-main-card] {
+    min-height: 146px;
+    border-radius: 22px;
+  }
+
+  .koudama-icon,
+  .koudama-main-icon,
+  .watany-icon,
+  .watany-main-icon,
+  .main-icon,
+  .card-icon,
+  [data-koudama-icon] {
+    width: 66px;
+    height: 56px;
+    border-radius: 20px;
+  }
+
+  .koudama-chatbox,
+  .watany-chatbox,
+  .chatbox,
+  .chatbar form,
+  [data-koudama-chatbox] {
+    grid-template-columns: 56px 1fr 56px;
+    min-height: 72px;
+    padding: 9px 10px 12px;
+  }
+
+  .koudama-child-grid,
+  .watany-child-grid,
+  .child-grid,
+  [data-koudama-child-grid] {
+    gap: 9px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+
+  .koudama-ticker-track,
+  .koudama-news-ticker-track,
+  .ticker-track,
+  [data-koudama-ticker-track] {
+    transform: none !important;
+  }
+}

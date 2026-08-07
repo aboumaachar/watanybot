@@ -1,0 +1,64 @@
+/* Authority CSS for homepage icon units (approved PNGs)
+   Files: public/watany-assets/after-reference-icons/*.png
+   This stylesheet forces the image unit to be used as-is — no additional
+   HTML labels, no SVG overlays, no CSS card composition.
+*/
+
+.wr-grid.after-reference-icons {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 24px 8px !important;
+  padding: 18px 8px 240px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.wr-tile.after-reference-icons {
+  background: transparent !important;
+  border: 0 !important;
+  padding: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  cursor: pointer !important;
+  pointer-events: auto !important;
+  width: 100% !important;
+  min-height: 0 !important;
+}
+
+.wr-grid.after-reference-icons .wr-icon-unit.after-reference-icons {
+  width: 128px !important;
+  height: 128px !important;
+  object-fit: contain !important;
+  display: block !important;
+  -webkit-user-drag: none !important;
+  user-drag: none !important;
+}
+
+/* Hide any previously-rendered label elements when using the approved PNG units */
+.wr-grid.after-reference-icons .wr-label { display: none !important; }
+.wr-grid.after-reference-icons .wr-icon-cadre, .wr-grid.after-reference-icons .wr-cadre, .wr-grid.after-reference-icons .wr-symbol { display: none !important; }
+
+/* Visually-hidden text for accessibility */
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0 0 0 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* Ensure the homepage icon units are not overlapped by fixed chrome */
+.wr-grid.after-reference-icons { z-index: 2 !important; }
+.wr-safe-chat, .wr-safe-bottom { z-index: 10 !important; }
+
+/* Small responsive tweak for very narrow screens */
+@media (max-width: 360px) {
+  .wr-grid.after-reference-icons { grid-template-columns: repeat(3, 1fr) !important; gap: 16px !important; }
+  .wr-grid.after-reference-icons .wr-icon-unit.after-reference-icons { width: 110px !important; height: 110px !important; }
+}

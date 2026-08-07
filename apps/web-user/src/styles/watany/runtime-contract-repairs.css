@@ -1,0 +1,67 @@
+﻿/* APEX_WATANY_TOTAL_REBUILD_GENERATED_RUNTIME_REPAIRS_V2 */
+/* Recreated from the complete current browser evidence. Historical V2/V3/V4/V5 sections are forbidden. */
+
+@media (hover: none), (pointer: coarse), (any-pointer: coarse) {
+  button,
+  [role="button"],
+  input[type="button"],
+  input[type="submit"],
+  select,
+  textarea,
+  a[href][role="button"],
+  nav a[href],
+  [role="navigation"] a[href],
+  a[href][aria-label],
+  a[href][data-action],
+  a[href][data-testid],
+  a[href][data-test-id],
+  a[href][data-feature],
+  a[href][data-component],
+  a[href][class*="btn" i],
+  a[href][class*="button" i],
+  a[href][class*="icon" i],
+  a[href][class*="menu" i],
+  a[href][class*="nav" i],
+  a[href][class*="tab" i],
+  a[href][class*="chip" i],
+  a[href][class*="action" i],
+  a[href][class*="cta" i] {
+    min-inline-size: 44px;
+    min-block-size: 44px;
+    min-width: 44px;
+    min-height: 44px;
+    box-sizing: border-box;
+  }
+
+  a[href][role="button"],
+  nav a[href],
+  [role="navigation"] a[href],
+  a[href][aria-label],
+  a[href][data-action],
+  a[href][data-testid],
+  a[href][data-test-id],
+  a[href][data-feature],
+  a[href][data-component],
+  a[href][class*="btn" i],
+  a[href][class*="button" i],
+  a[href][class*="icon" i],
+  a[href][class*="menu" i],
+  a[href][class*="nav" i],
+  a[href][class*="tab" i],
+  a[href][class*="chip" i],
+  a[href][class*="action" i],
+  a[href][class*="cta" i] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  div.market-commerce-actions > button {
+    min-inline-size: 45px;
+    min-block-size: 44px;
+    min-width: 45px;
+    min-height: 44px;
+    box-sizing: border-box;
+  }
+
+}

@@ -1,0 +1,16 @@
+:root {
+  --watany-landing-hash-scroll-margin: 108px;
+}
+
+/* Keep hash anchors visible below sticky landing headers. Scoped to landing
+   pages only so Home and Salary calculator flows are unaffected. */
+:where(.school-grants-page, .unified-pillar, .mj-mobile-landing, .wc-page) [id],
+:where(.school-grants-page, .unified-pillar, .mj-mobile-landing, .wc-page) :target {
+  scroll-margin-top: var(--watany-landing-hash-scroll-margin);
+}
+
+@media (max-width: 640px) {
+  :root {
+    --watany-landing-hash-scroll-margin: 112px;
+  }
+}

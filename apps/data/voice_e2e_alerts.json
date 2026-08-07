@@ -1,0 +1,148 @@
+[
+  {
+    "ts": "2026-03-08T12:22:08.883Z",
+    "level": "critical",
+    "message": "fastify-plugin: @fastify/compress - expected '4.x' fastify version, '5.8.2' is installed",
+    "payload": {
+      "ts": "2026-03-08T12:22:08.883Z",
+      "ok": false,
+      "sampleText": "اختبار موطني E2E",
+      "error": "fastify-plugin: @fastify/compress - expected '4.x' fastify version, '5.8.2' is installed",
+      "durationMs": 389
+    }
+  },
+  {
+    "ts": "2026-03-08T11:47:49.888Z",
+    "level": "critical",
+    "message": "fastify-plugin: @fastify/cors - expected '4.x' fastify version, '5.8.2' is installed",
+    "payload": {
+      "ts": "2026-03-08T11:47:49.888Z",
+      "ok": false,
+      "sampleText": "اختبار موطني E2E",
+      "error": "fastify-plugin: @fastify/cors - expected '4.x' fastify version, '5.8.2' is installed",
+      "durationMs": 2721
+    }
+  },
+  {
+    "ts": "2026-03-06T20:30:54.244Z",
+    "level": "critical",
+    "message": "fastify-plugin: @fastify/cors - expected '4.x' fastify version, '5.8.1' is installed",
+    "payload": {
+      "ts": "2026-03-06T20:30:54.244Z",
+      "ok": false,
+      "sampleText": "اختبار موطني E2E",
+      "error": "fastify-plugin: @fastify/cors - expected '4.x' fastify version, '5.8.1' is installed",
+      "durationMs": 473
+    }
+  },
+  {
+    "ts": "2026-03-03T00:01:12.423Z",
+    "level": "critical",
+    "message": "stt failed: 500",
+    "payload": {
+      "ts": "2026-03-03T00:01:12.423Z",
+      "ok": false,
+      "sampleText": "اختبار موطني E2E",
+      "error": "stt failed: 500"
+    }
+  },
+  {
+    "ts": "2026-03-02T21:55:13.108Z",
+    "level": "critical",
+    "message": "stt failed: 500",
+    "payload": {
+      "ts": "2026-03-02T21:55:13.108Z",
+      "ok": false,
+      "sampleText": "اختبار موطني E2E",
+      "error": "stt failed: 500"
+    }
+  },
+  {
+    "ts": "2026-02-27T21:16:02.187Z",
+    "level": "critical",
+    "message": "fastify-plugin: @fastify/rate-limit - expected '5.x' fastify version, '4.29.1' is installed",
+    "payload": {
+      "ts": "2026-02-27T21:16:02.187Z",
+      "ok": false,
+      "sampleText": "اختبار موطني E2E",
+      "error": "fastify-plugin: @fastify/rate-limit - expected '5.x' fastify version, '4.29.1' is installed",
+      "durationMs": 114
+    }
+  },
+  {
+    "ts": "2026-02-27T20:11:20.060Z",
+    "level": "critical",
+    "message": "fastify-plugin: @fastify/rate-limit - expected '5.x' fastify version, '4.29.1' is installed",
+    "payload": {
+      "ts": "2026-02-27T20:11:20.060Z",
+      "ok": false,
+      "sampleText": "اختبار موطني E2E",
+      "error": "fastify-plugin: @fastify/rate-limit - expected '5.x' fastify version, '4.29.1' is installed",
+      "durationMs": 209
+    }
+  },
+  {
+    "ts": "2026-02-27T12:38:04.533Z",
+    "level": "critical",
+    "message": "stt failed: 500",
+    "payload": {
+      "ts": "2026-02-27T12:38:04.533Z",
+      "ok": false,
+      "sampleText": "اختبار موطني E2E",
+      "error": "stt failed: 500"
+    }
+  },
+  {
+    "ts": "2026-02-26T19:35:17.759Z",
+    "level": "critical",
+    "message": "fastify-plugin: @fastify/compress - expected '5.x' fastify version, '4.29.1' is installed",
+    "payload": {
+      "ts": "2026-02-26T19:35:17.759Z",
+      "ok": false,
+      "sampleText": "اختبار موطني E2E",
+      "error": "fastify-plugin: @fastify/compress - expected '5.x' fastify version, '4.29.1' is installed",
+      "durationMs": 990
+    }
+  },
+  {
+    "ts": "2026-02-25T06:20:01.968Z",
+    "level": "critical",
+    "message": "stt failed: 500",
+    "payload": {
+      "ts": "2026-02-25T06:20:01.968Z",
+      "ok": false,
+      "sampleText": "اختبار موطني E2E",
+      "error": "stt failed: 500"
+    }
+  },
+  {
+    "ts": "2026-02-18T19:16:32.304Z",
+    "level": "critical",
+    "message": "tts failed: 500",
+    "payload": {
+      "ts": "2026-02-18T19:16:32.304Z",
+      "ok": false,
+      "sampleText": "اختبار موطني E2E",
+      "error": "tts failed: 500"
+    }
+  },
+  {
+    "ts": "2026-02-17T16:46:49.054Z",
+    "level": "critical",
+    "message": "tts failed: 500",
+    "payload": {
+      "ts": "2026-02-17T16:46:49.054Z",
+      "ok": false,
+      "sampleText": "اختبار موطني E2E",
+      "error": "tts failed: 500"
+    }
+  },
+  {
+    "ts": "2026-02-17T06:42:51.988Z",
+    "level": "info",
+    "message": "manual test alert",
+    "payload": {
+      "test": true
+    }
+  }
+]

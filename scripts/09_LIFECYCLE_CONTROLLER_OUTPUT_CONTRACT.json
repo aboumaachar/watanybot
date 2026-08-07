@@ -1,0 +1,8 @@
+﻿{
+    "RedirectStandardOutputTrue":  true,
+    "RedirectStandardErrorTrue":  true,
+    "ProcessExitCodeUsed":  true,
+    "SummaryWrittenInFinally":  true,
+    "EveryExitPathProducesSummary":  true,
+    "GatePass":  true
+}

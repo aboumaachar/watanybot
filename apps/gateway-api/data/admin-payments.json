@@ -1,0 +1,26 @@
+{
+  "questions": [
+    {
+      "id": "0cb497b3-5131-41c6-ae52-653679c6b5e6",
+      "text": "متى دفع المساعدات المدرسية؟",
+      "tags": [
+        "مساعدات مدارس منح  مدرسية"
+      ],
+      "createdAt": "2026-05-13T05:14:52.724Z",
+      "updatedAt": "2026-05-13T05:19:06.207Z"
+    }
+  ],
+  "answers": [
+    {
+      "id": "299ce068-d21e-4f2a-a821-b92acfd6b441",
+      "questionId": "0cb497b3-5131-41c6-ae52-653679c6b5e6",
+      "value": "تمت مراجعة الدفعة، وسيتم نشر الموعد الرسمي فور اعتماد الصرف النهائي.",
+      "isActive": true,
+      "activateAt": null,
+      "expiresAt": null,
+      "createdAt": "2026-05-20T20:49:44.630Z",
+      "createdBy": "8f8b98c3-2e07-4329-9f59-8aab9f2d63c6"
+    }
+  ],
+  "announcements": []
+}

@@ -1,0 +1,65 @@
+﻿
+/* WatanyBot App-Wide Mobile OS Design Layer */
+:root {
+  --watany-primary: #12355b;
+  --watany-secondary: #2e7d5b;
+  --watany-accent: #b23a48;
+  --watany-bg: #f5f7fa;
+  --watany-surface: rgba(255, 255, 255, 0.86);
+  --watany-text: #172033;
+  --watany-muted: #475569;
+  --watany-subtitle-ink: #243041;
+  --watany-radius-xl: 28px;
+  --watany-shadow-soft: 0 18px 42px rgba(18, 53, 91, 0.14);
+}
+
+html, body, #root {
+  min-height: 100%;
+}
+
+body {
+  background:
+    radial-gradient(circle at top inline-start, rgba(46, 125, 91, 0.16), transparent 32rem),
+    linear-gradient(180deg, #f7fafc, #eef3f7);
+  color: var(--watany-text);
+  font-family: "Cairo", "Tajawal", Inter, system-ui, sans-serif;
+}
+
+.watany-app-shell {
+  min-height: 100dvh;
+  background:
+    radial-gradient(circle at top inline-start, rgba(46, 125, 91, 0.12), transparent 30rem),
+    linear-gradient(180deg, #f7fafc, #eef3f7);
+  color: var(--watany-text);
+}
+
+.watany-app-main {
+  width: min(100%, 1080px);
+  margin-inline: auto;
+  padding: 16px;
+  padding-block-end: max(96px, env(safe-area-inset-bottom));
+}
+
+.watany-mobile-surface,
+.watany-app-shell main > section,
+.watany-app-shell main > article {
+  border-radius: var(--watany-radius-xl);
+}
+
+.watany-os-card {
+  background: var(--watany-surface);
+  border: 1px solid rgba(18, 53, 91, 0.08);
+  border-radius: var(--watany-radius-xl);
+  box-shadow: var(--watany-shadow-soft);
+}
+
+.watany-os-bottom-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+@media (max-width: 640px) {
+  .watany-app-main {
+    padding: 12px;
+    padding-block-end: max(96px, env(safe-area-inset-bottom));
+  }
+}

@@ -1,0 +1,436 @@
+:root {
+  --royal-gold-primary: var(--watany-icon-frame-gold);
+  --royal-gold-highlight: var(--watany-icon-frame-gold-bright);
+  --royal-gold-deep: var(--watany-icon-frame-gold-dark);
+  --royal-gold-shadow: var(--watany-icon-frame-gold-dark);
+  --royal-gold-glow: var(--watany-icon-frame-glow);
+  --royal-green-dark: #0c3d2c;
+  --royal-green-primary: #145c46;
+  --royal-green-accent: #1c7a5d;
+  --royal-frame-size: var(--watany-icon-frame-size-mobile);
+  --royal-frame-radius: var(--watany-icon-frame-radius-mobile);
+  --royal-frame-depth: var(--watany-icon-frame-depth);
+}
+
+@media (min-width: 361px) { :root { --royal-frame-size: var(--watany-icon-frame-size-tablet); } }
+@media (min-width: 768px) { :root { --royal-frame-size: var(--watany-icon-frame-size-desktop); --royal-frame-radius: var(--watany-icon-frame-radius-desktop); } }
+
+.watany-v4-launcher-card {
+  grid-template-rows: var(--royal-frame-size) auto !important;
+  gap: 12px !important;
+}
+
+.watany-v4-launcher-card__frame {
+  width: var(--royal-frame-size) !important;
+  height: var(--royal-frame-size) !important;
+  min-width: var(--royal-frame-size) !important;
+  min-height: var(--royal-frame-size) !important;
+}
+
+.watany-recovery-bottom .watany-v4-icon,
+.watany-recovery-menu-panel .watany-v4-icon,
+.watany-recovery-topbar .watany-v4-icon {
+  width: 24px !important;
+  height: 24px !important;
+  min-width: 24px !important;
+  min-height: 24px !important;
+  max-width: 24px !important;
+  max-height: 24px !important;
+  box-shadow: none !important;
+}
+
+.watany-recovery-menu-panel {
+  background: linear-gradient(180deg, var(--watany-ivory-50), var(--watany-ivory-100)) !important;
+  color: var(--watany-forest-950);
+  transform: translateX(0);
+  transition: transform 220ms ease;
+}
+
+.watany-recovery-menu-panel nav {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+}
+
+.watany-recovery-menu-home-link,
+.watany-recovery-menu-group-toggle {
+  width: 100%;
+  min-height: 46px;
+  padding: 11px 13px;
+  border: 1px solid rgba(7, 57, 46, 0.12);
+  border-radius: 12px;
+  background: rgba(255, 255, 252, 0.74);
+  color: var(--watany-forest-950);
+  font: inherit;
+  font-weight: 900;
+  text-align: start;
+  text-decoration: none;
+}
+
+.watany-recovery-menu-home-link.active,
+.watany-recovery-menu-group-toggle[aria-expanded="true"] {
+  border-color: rgba(214, 167, 42, 0.7);
+  background: #f4e8b8;
+}
+
+.watany-recovery-menu-group {
+  display: grid;
+  gap: 5px;
+}
+
+.watany-recovery-menu-group-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.watany-recovery-menu-group-toggle .watany-v4-icon {
+  flex: 0 0 auto;
+  margin-inline-end: 0.45rem;
+  border-radius: 8px;
+  background: rgba(11, 96, 72, 0.1);
+  padding: 3px;
+}
+
+.watany-recovery-menu-group-chevron {
+  color: #8a650d;
+  margin-inline-start: auto;
+  font-size: 1.25rem;
+  line-height: 1;
+  transition: transform 220ms ease;
+}
+
+.watany-recovery-menu-group-chevron.is-expanded {
+  transform: rotate(180deg);
+}
+
+.watany-recovery-menu-submenu {
+  display: grid;
+  gap: 4px;
+  padding: 2px 8px 4px;
+}
+
+.watany-recovery-menu-submenu a,
+.watany-recovery-menu-submenu .watany-recovery-disabled-link {
+  min-height: 40px;
+  padding: 8px 11px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: #244d3e;
+  font: inherit;
+  font-size: 0.92rem;
+  font-weight: 700;
+  text-align: start;
+  text-decoration: none;
+}
+
+.watany-recovery-menu-submenu a:hover,
+.watany-recovery-menu-submenu a:focus-visible,
+.watany-recovery-menu-submenu a.active {
+  background: rgba(11, 96, 72, 0.11);
+  color: #0b6048;
+}
+
+.watany-recovery-menu-submenu .watany-recovery-disabled-link {
+  color: #718078;
+  cursor: not-allowed;
+}
+
+/* Keep the drawer above every fixed, sticky, or transformed app surface. */
+html body .watany-recovery-shell[data-watany-recovery-shell="true"] > .watany-recovery-menu-layer {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 2147483000 !important;
+  display: flex !important;
+  align-items: stretch !important;
+  pointer-events: auto !important;
+}
+
+html body .watany-recovery-shell[data-watany-recovery-shell="true"] > .watany-recovery-menu-layer > .watany-recovery-menu-backdrop {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 0 !important;
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  pointer-events: auto !important;
+}
+
+html body .watany-recovery-shell[data-watany-recovery-shell="true"] > .watany-recovery-menu-layer > .watany-recovery-menu-panel {
+  position: relative !important;
+  z-index: 1 !important;
+  pointer-events: auto !important;
+}
+
+html body .watany-recovery-shell[data-watany-recovery-shell="true"] > .watany-recovery-topbar {
+  grid-template-columns: 62px minmax(0, 1fr) 62px !important;
+  gap: 6px !important;
+  min-height: 70px !important;
+  height: 70px !important;
+  padding: 7px 6px !important;
+}
+
+html body .watany-recovery-shell[data-watany-recovery-shell="true"] > .watany-recovery-topbar .watany-recovery-logo-link,
+html body .watany-recovery-shell[data-watany-recovery-shell="true"] > .watany-recovery-topbar .watany-recovery-logo {
+    width: 56px !important;
+    height: 56px !important;
+    max-width: 56px !important;
+}
+
+html body .watany-recovery-shell[data-watany-recovery-shell="true"] > .watany-recovery-topbar .watany-recovery-menu-button {
+  width: 56px !important;
+  height: 56px !important;
+  padding: 0 !important;
+  display: grid !important;
+  place-items: center !important;
+}
+
+@media (min-width: 1024px) {
+  html body .watany-recovery-shell[data-watany-recovery-shell="true"] > .watany-recovery-topbar {
+    grid-template-columns: 64px minmax(0, 1fr) 64px !important;
+    min-height: 78px !important;
+    height: 78px !important;
+    padding: 7px 8px !important;
+  }
+
+  html body .watany-recovery-shell[data-watany-recovery-shell="true"] > .watany-recovery-topbar .watany-recovery-logo-link,
+  html body .watany-recovery-shell[data-watany-recovery-shell="true"] > .watany-recovery-topbar .watany-recovery-logo,
+  html body .watany-recovery-shell[data-watany-recovery-shell="true"] > .watany-recovery-topbar .watany-recovery-menu-button {
+    width: 64px !important;
+    height: 64px !important;
+    max-width: 64px !important;
+  }
+}
+
+.royal-gold-frame,
+.watany-app-icon__tile,
+.watany-v4-icon-card,
+.feature-icon,
+.service-icon,
+.icon-cadre,
+[data-watany-icon-card] {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  place-items: center;
+  width: var(--royal-frame-size);
+  height: var(--royal-frame-size);
+  min-width: var(--royal-frame-size);
+  min-height: var(--royal-frame-size);
+  padding: 11px;
+  overflow: visible;
+  border: 0 !important;
+  border-radius: var(--royal-frame-radius);
+  background: transparent;
+  box-shadow: none;
+  transform: translateZ(0);
+}
+
+.royal-gold-frame::before,
+.watany-app-icon__tile::before,
+.watany-v4-icon-card::before,
+.feature-icon::before,
+.service-icon::before,
+.icon-cadre::before,
+[data-watany-icon-card]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  border: 2px solid var(--royal-gold-highlight);
+  border-radius: inherit;
+  background: transparent;
+  box-shadow: none !important;
+}
+
+.royal-gold-frame::after,
+.watany-app-icon__tile::after,
+.watany-v4-icon-card::after,
+.feature-icon::after,
+.service-icon::after,
+.icon-cadre::after,
+[data-watany-icon-card]::after {
+  content: "";
+  position: absolute;
+  inset: -5px;
+  z-index: -3;
+  border-radius: calc(var(--royal-frame-radius) + 5px);
+  background: conic-gradient(
+    from 210deg,
+    transparent 0 18%,
+    rgba(255, 244, 184, .72) 24%,
+    transparent 31% 54%,
+    rgba(255, 210, 83, .58) 60%,
+    transparent 67%
+  );
+  filter: blur(6px);
+  opacity: .45;
+  pointer-events: none;
+}
+
+.royal-gold-frame__highlight {
+  position: absolute;
+  inset: 7px 12px auto;
+  z-index: 1;
+  height: 38%;
+  border-radius: calc(var(--royal-frame-radius) - 9px);
+  background: linear-gradient(180deg, var(--watany-icon-frame-highlight), transparent 100%);
+  pointer-events: none;
+}
+
+.royal-gold-frame__plate {
+  position: relative;
+  z-index: 0;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  border-radius: calc(var(--royal-frame-radius) - 8px);
+  background: transparent;
+  box-shadow: none;
+}
+
+.royal-gold-frame img,
+.royal-gold-frame .watany-v4-icon,
+.watany-app-icon__tile img,
+.watany-v4-icon-card img,
+.feature-icon img,
+.service-icon img,
+.icon-cadre img,
+[data-watany-icon-card] img {
+  position: relative !important;
+  z-index: 2 !important;
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  filter: none !important;
+  object-fit: contain !important;
+}
+
+.royal-gold-frame:hover,
+.watany-app-icon__tile:hover,
+.watany-v4-icon-card:hover,
+.feature-icon:hover,
+.service-icon:hover,
+.icon-cadre:hover,
+[data-watany-icon-card]:hover {
+  transform: translateY(-2px) translateZ(0);
+}
+
+.royal-gold-frame:focus-visible,
+.watany-app-icon__tile:focus-visible,
+.watany-v4-icon-card:focus-visible,
+.feature-icon:focus-visible,
+.service-icon:focus-visible,
+.icon-cadre:focus-visible,
+[data-watany-icon-card]:focus-visible {
+  outline: 3px solid rgba(216, 161, 28, .72);
+  outline-offset: 4px;
+}
+
+.royal-gold-frame--compact,
+.watany-app-icon__tile--compact {
+  --royal-frame-size: 64px;
+  --royal-frame-radius: 18px;
+  padding: 8px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .royal-gold-frame,
+  .watany-app-icon__tile,
+  .watany-v4-icon-card,
+  .feature-icon,
+  .service-icon,
+  .icon-cadre,
+  [data-watany-icon-card] {
+    transition: none !important;
+  }
+}
+
+.watany-v4-launcher-card__frame > .royal-gold-frame__plate > .watany-v4-icon {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+  box-shadow: none !important;
+}
+
+html body .watany-recovery-shell[data-watany-recovery-shell="true"] > .watany-recovery-topbar .watany-recovery-menu-glyph {
+  display: grid !important;
+  grid-template-rows: repeat(3, 3px) !important;
+  gap: 5px !important;
+  width: 28px !important;
+  height: 19px !important;
+  min-width: 28px !important;
+  min-height: 19px !important;
+  justify-self: center !important;
+  align-self: center !important;
+}
+
+html body .watany-recovery-shell[data-watany-recovery-shell="true"] > .watany-recovery-topbar .watany-recovery-menu-glyph > span {
+  display: block !important;
+  width: 28px !important;
+  height: 3px !important;
+  min-width: 28px !important;
+  min-height: 3px !important;
+  background: currentColor !important;
+  border-radius: 999px !important;
+  opacity: 1 !important;
+}
+
+html body .wv4-fixed-topbar .wv4-burger {
+  display: grid !important;
+  place-items: center !important;
+  align-content: center !important;
+  gap: 4px !important;
+  width: 48px !important;
+  height: 48px !important;
+  padding: 0 !important;
+  color: #fff !important;
+  background: var(--royal-green-dark) !important;
+  border: 1px solid var(--royal-gold-highlight) !important;
+  border-radius: 12px !important;
+}
+
+html body .wv4-fixed-topbar .wv4-burger > span {
+  display: block !important;
+  width: 24px !important;
+  height: 2px !important;
+  min-width: 24px !important;
+  min-height: 2px !important;
+  background: currentColor !important;
+  border-radius: 999px !important;
+  opacity: 1 !important;
+}
+
+@media (min-width: 1024px) {
+  html body .wv4-fixed-topbar .wv4-burger {
+    width: 56px !important;
+    height: 56px !important;
+  }
+}
+
+.watany-recovery-menu-home-link:focus-visible,
+.watany-recovery-menu-group-toggle:focus-visible,
+.watany-recovery-menu-submenu a:focus-visible,
+.watany-recovery-menu-title button:focus-visible {
+  outline: 3px solid rgba(214, 167, 42, 0.75);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .watany-recovery-menu-panel,
+  .watany-recovery-menu-group-chevron {
+    transition: none;
+  }
+}

@@ -1,0 +1,20 @@
+﻿{
+    "NonAsciiByteCount":  0,
+    "UnsupportedBom":  false,
+    "DelayedExpansionDisabled":  true,
+    "ExtensionsEnabled":  true,
+    "ExitCodePreserved":  true,
+    "StdoutRedirected":  true,
+    "StderrRedirected":  true,
+    "FinalMarkerImplemented":  true,
+    "AbsolutePathsRequired":  true,
+    "RawNewlineRejected":  true,
+    "CarriageReturnRejected":  false,
+    "NulRejected":  true,
+    "UnexpectedAmpersandRejected":  true,
+    "UnexpectedPipeRejected":  true,
+    "UnexpectedRedirectionRejected":  true,
+    "UnexpectedPercentExpansionRejected":  true,
+    "UnexpectedExclamationExpansionRejected":  true,
+    "GatePass":  true
+}

@@ -1,0 +1,36 @@
+{
+  "version": "taxi-trusted-mobility-default-settings-v1",
+  "simulationOnly": true,
+  "featureFlags": {
+    "taxiEnabled": true,
+    "driverApplyEnabled": true,
+    "reservationEnabled": true,
+    "callButtonEnabled": true,
+    "whatsappButtonEnabled": true,
+    "adminReviewRequired": true,
+    "communityChatUnchanged": true
+  },
+  "matchingDefaults": {
+    "minimumVisibleCharacters": 3,
+    "defaultSearchLimit": 5,
+    "preferAvailableDrivers": true,
+    "areaPriority": ["exactVillage", "sameCaza", "sameMuhafaza", "trustedDemo", "recentAvailability"]
+  },
+  "safetyDefaults": {
+    "showOnlyPartialPlate": true,
+    "requireAdminApprovalBeforePublicListing": true,
+    "requirePhoneVerificationBeforeProduction": true,
+    "priceAgreementDisclaimer": "الرجاء الاتفاق على السعر بوضوح مع السائق قبل الانطلاق.",
+    "productionDisclaimer": "هذه بيانات تجريبية وليست تحققاً رسمياً من أي سائق."
+  },
+  "productionHardeningRequired": [
+    "Prisma database persistence",
+    "Auth and admin approval gates",
+    "OTP verification",
+    "Audit logs",
+    "Encrypted plate and document storage",
+    "Document upload and review workflow",
+    "Rate limits and abuse controls",
+    "Production environment secrets"
+  ]
+}

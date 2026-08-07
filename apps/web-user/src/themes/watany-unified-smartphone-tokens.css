@@ -1,0 +1,208 @@
+:root {
+  color-scheme: light;
+  --watany-navy: #0f2447;
+  --watany-blue: #1147c7;
+  --watany-cyan: #4db5ff;
+  --watany-success: #0f8a4c;
+  --watany-warning: #a15c00;
+  --watany-danger: #c81e1e;
+  --watany-glass: rgba(255, 255, 255, 0.82);
+  --watany-glass-strong: rgba(255, 255, 255, 0.94);
+  --watany-glass-dark: rgba(239, 246, 255, 0.96);
+  --watany-text: #0f172a;
+  --watany-text-muted: #475569;
+  --watany-border: rgba(15, 23, 42, 0.12);
+  --watany-border-strong: rgba(15, 23, 42, 0.16);
+  --watany-radius-sm: 12px;
+  --watany-radius-md: 20px;
+  --watany-radius-lg: 28px;
+  --watany-radius-xl: 34px;
+  --watany-shadow-soft: 0 18px 42px rgba(15, 23, 42, 0.10);
+  --watany-shadow-strong: 0 26px 70px rgba(15, 23, 42, 0.16);
+  --watany-bottom-dock-height: 78px;
+  --watany-safe-bottom: env(safe-area-inset-bottom);
+  --watany-font: "Noto Sans Arabic", "IBM Plex Sans Arabic", Inter, "Tajawal", "Cairo", system-ui, sans-serif;
+
+  --watany-primary: var(--watany-navy);
+  --watany-primary-2: #1d4fae;
+  --watany-secondary: var(--watany-blue);
+  --watany-secondary-2: #3778ff;
+  --watany-accent: var(--watany-cyan);
+  --watany-bg: #edf4ff;
+  --watany-bg-2: #ffffff;
+  --watany-surface: var(--watany-glass);
+  --watany-surface-solid: #ffffff;
+  --watany-muted: var(--watany-text-muted);
+
+  --ink: #0f172a;
+  --ink-secondary: #475569;
+  --muted: #475569;
+  --paper: #f7faff;
+  --surface: #ffffff;
+  --surface-hover: #f8fbff;
+  --surface-solid: #ffffff;
+  --accent: var(--watany-blue);
+  --accent-hover: #0d3da6;
+  --accent-soft: rgba(17, 71, 199, 0.10);
+  --accent-bg: #e7efff;
+  --accent-2: var(--watany-warning);
+  --accent-3: var(--watany-cyan);
+  --stroke: rgba(15, 23, 42, 0.12);
+  --shadow: 0 20px 44px rgba(15, 23, 42, 0.12);
+  --wmo-phone-max-width: 430px;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  font-family: var(--watany-font);
+  color: var(--watany-text);
+  background:
+    radial-gradient(circle at top right, rgba(77, 181, 255, 0.20), transparent 34%),
+    radial-gradient(circle at top left, rgba(17, 71, 199, 0.08), transparent 30%),
+    linear-gradient(180deg, var(--watany-bg), var(--watany-bg-2));
+}
+
+.watany-smartphone-root {
+  position: relative;
+  isolation: isolate;
+}
+
+.watany-smartphone-root .watany-mobile-shell__surface {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(242, 247, 255, 0.96)),
+    radial-gradient(circle at top right, rgba(77, 181, 255, 0.14), transparent 34%);
+  border: 1px solid var(--watany-border-strong);
+  box-shadow: var(--watany-shadow-strong);
+  backdrop-filter: blur(20px);
+}
+
+.watany-smartphone-root .watany-mobile-shell__chrome-top {
+  backdrop-filter: blur(18px);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(245, 250, 255, 0.94));
+  border-bottom: 1px solid var(--watany-border);
+}
+
+.watany-smartphone-root .watany-mobile-shell__chrome-bottom {
+  z-index: 92;
+  inset-inline: max(10px, calc((100vw - var(--wmo-phone-max-width)) / 2 + 10px));
+}
+
+.watany-smartphone-root .watany-mobile-shell__chatbar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.watany-smartphone-root .watany-mobile-shell__chatbar-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 56px;
+  border-radius: 22px;
+  border: 1px solid #0d3da6;
+  background-image: linear-gradient(135deg, #0f4ccf, #2a6cff);
+  color: #ffffff;
+  box-shadow: 0 16px 34px rgba(17, 71, 199, 0.24);
+  font-weight: 800;
+  font-size: 15px;
+}
+
+.watany-smartphone-root .watany-mobile-shell__chatbar-btn.is-active {
+  background-image: linear-gradient(135deg, #0a3d98, #1f5ce6);
+}
+
+.watany-smartphone-root .watany-mobile-shell__chatbar-icon {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.watany-smartphone-root .watany-mobile-shell__chatbar-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.watany-smartphone-root .watany-mobile-shell__chatbar ~ .watany-mobile-shell__dock,
+.watany-smartphone-root [data-wmo-shell-chatbar="true"] ~ .watany-mobile-shell__dock {
+  display: none !important;
+}
+
+.watany-smartphone-root .watany-mobile-shell__topbar,
+.watany-smartphone-root .watany-mobile-shell__action,
+.watany-smartphone-root .watany-mobile-shell__nav-btn,
+.watany-glass-card,
+.watany-glass-pill,
+.watany-smartphone-panel {
+  background: var(--watany-glass-strong);
+  border: 1px solid var(--watany-border);
+  box-shadow: var(--watany-shadow-soft);
+  backdrop-filter: blur(18px);
+}
+
+.watany-smartphone-root .watany-mobile-shell__dock {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(240, 247, 255, 0.94));
+  border: 1px solid var(--watany-border-strong);
+  box-shadow: var(--watany-shadow-strong);
+  backdrop-filter: blur(20px);
+}
+
+.watany-glass-card,
+.watany-smartphone-panel {
+  border-radius: var(--watany-radius-lg);
+}
+
+.watany-glass-pill {
+  border-radius: 999px;
+}
+
+.watany-smartphone-panel {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(239, 246, 255, 0.92));
+  color: var(--watany-text);
+}
+
+.watany-smartphone-root .watany-mobile-shell__topbar,
+.watany-smartphone-root .watany-mobile-shell__dock,
+.watany-smartphone-root .watany-mobile-shell__brand-title,
+.watany-smartphone-root .watany-mobile-shell__action,
+.watany-smartphone-root .watany-mobile-shell__nav-btn,
+.watany-smartphone-root .watany-mobile-shell__dock-link,
+.watany-smartphone-root .watany-mobile-shell__route-content {
+  color: var(--watany-text);
+}
+
+.watany-smartphone-root .watany-mobile-shell__brand-subtitle,
+.watany-smartphone-root .watany-mobile-shell__brand-route,
+.watany-smartphone-root .watany-mobile-shell__brand-separator,
+.watany-smartphone-root .watany-mobile-shell__dock-link small {
+  color: var(--watany-text-muted);
+}
+
+.watany-smartphone-root .watany-mobile-shell__dock-link.is-active,
+.watany-gloss-accent {
+  background-color: #0f4ccf;
+  background-image: linear-gradient(135deg, #0f4ccf, #2a6cff);
+  color: #ffffff;
+  border-color: #0d3da6;
+  box-shadow: 0 16px 34px rgba(17, 71, 199, 0.20);
+}
+
+.watany-smartphone-root .watany-mobile-shell__assistant {
+  background-color: #0f4ccf;
+  background-image: linear-gradient(135deg, #0f4ccf, #2a6cff);
+  color: #ffffff;
+  box-shadow: 0 18px 38px rgba(17, 71, 199, 0.24);
+}
+
+.watany-focus-ring:focus-visible {
+  outline: 3px solid rgba(17, 71, 199, 0.24);
+  outline-offset: 3px;
+}
+

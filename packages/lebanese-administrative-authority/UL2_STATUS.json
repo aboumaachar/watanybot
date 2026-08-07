@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "datasetApproval": "APPROVED",
+  "runtimeDeployment": "NOT_YET_INSTALLED",
+  "consumerMigration": "NOT_YET_EXECUTED",
+  "browserValidation": "UNVERIFIED",
+  "evidencePackage": "NOT_RELEASED",
+  "gitValidation": "PENDING",
+  "reason": "Owner approval registered for Release 1.1.0; UL3 runtime installation remains pending."
+}

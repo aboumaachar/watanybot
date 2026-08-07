@@ -1,0 +1,26 @@
+.watany-feature-template {
+  --watany-feature-accent: #0f766e;
+  --watany-feature-surface: rgba(255, 255, 255, 0.92);
+  --watany-feature-border: rgba(15, 118, 110, 0.18);
+  min-height: 100%;
+  padding: 0;
+  background: transparent;
+  color: #102a43;
+}
+.watany-feature-template--jobs { --watany-feature-accent: #7c3aed; }
+.watany-feature-template--market { --watany-feature-accent: #c2410c; }
+.watany-feature-template--legal { --watany-feature-accent: #1d4ed8; }
+.watany-feature-template--document { --watany-feature-accent: #047857; }
+.watany-feature-template--community { --watany-feature-accent: #be123c; }
+.watany-feature-template--chat { --watany-feature-accent: #2563eb; }
+.watany-feature-template--benefits { --watany-feature-accent: #b45309; }
+.watany-feature-template--admin { --watany-feature-accent: #334155; }
+.watany-feature-template--updates { --watany-feature-accent: #0891b2; }
+.watany-feature-template--form { --watany-feature-accent: #4f46e5; }
+.watany-feature-template__content, .watany-feature-template__footer { width: min(1120px, 100%); margin-inline: auto; }
+.watany-feature-template__content { margin-top: 0; }
+.watany-feature-template__footer { margin-top: 1.25rem; color: #64748b; font-size: 0.9rem; }
+@media (max-width: 720px) {
+  .watany-feature-template { padding: 0; }
+  .watany-feature-template__content { margin-top: 0; }
+}

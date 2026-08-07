@@ -1,0 +1,48 @@
+{
+  "schemaVersion": "1.0",
+  "themeId": "v1.18.0",
+  "status": "PROPOSED_UNVERIFIED",
+  "viewerAuthority": "viewer/WATANYBOT_V1_18_0_THEME_DEPLOYMENT_VIEWER.html",
+  "visualAuthority": [
+    "palette",
+    "typography",
+    "smartphone shell geometry",
+    "header and bottom surface geometry",
+    "cards and listing surfaces",
+    "buttons and fields",
+    "menus drawers popups",
+    "spacing radius elevation density"
+  ],
+  "iconAuthority": {
+    "source": "existing project icon registry",
+    "viewerIcons": "REFERENCE_ONLY",
+    "themeMayStyle": [
+      "frame size",
+      "frame border",
+      "frame radius",
+      "spacing",
+      "label"
+    ],
+    "themeMustNotStyle": [
+      "symbol identity",
+      "svg path",
+      "stroke",
+      "fill",
+      "internal colors",
+      "filter",
+      "mask"
+    ]
+  },
+  "activation": {
+    "rootAttribute": "data-watany-theme",
+    "rootValue": "v1.18.0",
+    "entryFunction": "activateWatanyV1180Theme"
+  },
+  "authorization": {
+    "implementationPackageGeneration": true,
+    "productMutation": false,
+    "buildOrTestExecution": false,
+    "browserExecution": false,
+    "deployment": false
+  }
+}

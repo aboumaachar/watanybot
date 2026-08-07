@@ -1,0 +1,1 @@
+const { computeMedalsOrdersRemuneration } = require("./medalsOrdersEngine");

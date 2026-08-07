@@ -1,0 +1,10 @@
+﻿{
+    "featureKey":  "04-payment-intelligence",
+    "featureName":  "Payment Intelligence",
+    "doctrine":  "near-zero-recode-v1",
+    "portable":  true,
+    "replaceable":  true,
+    "status":  "BOUNDARY_DECLARED_REQUIRES_VALIDATION",
+    "passRule":  "No PASS without validation and smoke evidence.",
+    "generatedAt":  "2026-06-10T16:40:28.6548410+03:00"
+}

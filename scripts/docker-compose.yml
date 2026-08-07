@@ -1,0 +1,129 @@
+version: '3.8'
+
+services:
+  # Ollama - LLM inference engine
+  ollama:
+    image: ollama/ollama:latest
+    container_name: watany-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-models:/root/.ollama
+    environment:
+      - OLLAMA_NUM_PARALLEL=4
+      - OLLAMA_NUM_THREAD=8
+      - OLLAMA_KEEP_ALIVE=5m
+      - OLLAMA_MAX_VRAM=0
+    command: serve
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '4'
+          memory: 24G
+        reservations:
+          cpus: '2'
+          memory: 16G
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - watany-network
+
+  # Deepseek - Optional alternative/complement to Ollama
+  deepseek:
+    image: vllm/vllm:latest
+    container_name: watany-deepseek
+    ports:
+      - "8000:8000"
+    volumes:
+      - deepseek-models:/root/.cache/huggingface
+    environment:
+      - MODEL_NAME=deepseek-ai/deepseek-coder-33b-instruct
+      - VLLM_DTYPE=float16
+      - VLLM_DEVICE=cuda
+      - MAX_MODEL_LEN=2048
+      - DTYPE=float16
+    command: >
+      python -m vllm.entrypoints.openai.api_server
+      --model deepseek-ai/deepseek-coder-33b-instruct
+      --dtype float16
+      --gpu-memory-utilization 0.9
+      --max-num-batched-tokens 8192
+      --max-num-seqs 256
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '4'
+          memory: 32G
+        reservations:
+          cpus: '2'
+          memory: 24G
+      placement:
+        constraints:
+          - node.labels.gpu == true
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/v1/models"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    networks:
+      - watany-network
+    depends_on:
+      - ollama
+
+  # Nginx reverse proxy
+  nginx-proxy:
+    image: nginx:latest-alpine
+    container_name: watany-nginx
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./conf.d/watany-ollama.conf:/etc/nginx/conf.d/watany-ollama.conf:ro
+    depends_on:
+      - ollama
+      - deepseek
+    restart: unless-stopped
+    networks:
+      - watany-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:9090/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Watany Chatbot API (if containerized)
+  # watany-api:
+  #   build:
+  #     context: /home/koudama/public_html/mcp/
+  #     dockerfile: Dockerfile
+  #   container_name: watany-api
+  #   ports:
+  #     - "4000:4000"
+  #   environment:
+  #     - OLLAMA_API_URL=http://ollama:11434
+  #     - DEEPSEEK_API_URL=http://deepseek:8000
+  #     - NGINX_PROXY_URL=http://nginx-proxy:9090
+  #   depends_on:
+  #     - ollama
+  #     - deepseek
+  #     - nginx-proxy
+  #   restart: unless-stopped
+  #   networks:
+  #     - watany-network
+
+volumes:
+  ollama-models:
+    driver: local
+  deepseek-models:
+    driver: local
+
+networks:
+  watany-network:
+    driver: bridge

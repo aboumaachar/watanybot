@@ -1,0 +1,8 @@
+﻿{
+    "ParentEnvironmentInherited":  true,
+    "ParentEnvironmentNotMutated":  true,
+    "ChildOverridesOnly":  true,
+    "NoLASTEXITCODE":  true,
+    "NoAutomaticVariableParameterCollision":  true,
+    "GatePass":  true
+}

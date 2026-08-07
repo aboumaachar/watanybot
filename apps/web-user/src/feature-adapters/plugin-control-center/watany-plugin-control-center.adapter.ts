@@ -1,0 +1,2 @@
+﻿export { createPluginControlCenterDefaultAdapter, provePluginControlCenterConsumption } from '../../../../../packages/plugin-control-center/src/index';
+export const watanyPluginControlCenterAdapterStatus = 'SAFE_BOUNDARY_ONLY_NO_PRODUCTION_REPLACEMENT';

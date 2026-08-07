@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-theme="agent5-services-icons">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>موطني — Services Icon Source Preview</title>
+    <style>
+      :root {
+        --kw-bg:#f4f1eb; --kw-surface:#fffdfa; --kw-text:#2d2923; --kw-muted:#6f685e;
+        --kw-border:rgba(61,55,45,.14); --kw-soft-shadow:0 10px 24px rgba(35,31,25,.10);
+        --kw-blue:#1976d2; --kw-green:#168754; --kw-teal:#0ea5a7; --kw-red:#df3559;
+        --kw-gold:#b99543; --kw-purple:#7c3df0; --kw-gray:#6b7280;
+        --kw-header-h:112px; --kw-chat-h:76px; --kw-mobile-w:min(393px,100vw);
+      }
+      *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+      html,body{margin:0;min-height:100%;background:#dde6ed;color:var(--kw-text);font-family:Tahoma,Arial,system-ui,sans-serif;line-height:1.65}
+      body{display:flex;justify-content:center;align-items:flex-start}
+      .kw-mobile-shell{width:var(--kw-mobile-w);min-height:100vh;background:var(--kw-bg);position:relative;overflow:hidden;box-shadow:0 0 0 1px rgba(0,0,0,.05),0 28px 90px rgba(0,0,0,.18)}
+      .kw-fixed-mobile-header{position:fixed;top:0;left:50%;transform:translateX(-50%);width:var(--kw-mobile-w);height:var(--kw-header-h);z-index:50;background:rgba(250,247,240,.96);backdrop-filter:blur(18px);border-bottom:1px solid var(--kw-border);box-shadow:0 12px 28px rgba(35,31,25,.12);display:flex;flex-direction:column;gap:8px;padding:8px 10px 9px}
+      .kw-header-row{height:54px;display:grid;grid-template-columns:48px 1fr 48px;align-items:center;gap:8px}
+      .kw-logo-button{width:44px;height:44px;border:1px solid var(--kw-border);border-radius:16px;background:#fff;display:grid;place-items:center;box-shadow:var(--kw-soft-shadow);overflow:hidden;justify-self:end}
+      .kw-logo-button img{width:34px;height:34px;object-fit:contain;filter:drop-shadow(0 5px 7px rgba(25,35,45,.18))}
+      .kw-header-actions{display:flex;justify-content:center;gap:9px;direction:ltr}
+      .kw-top-icon{width:42px;height:42px;border:1px solid rgba(30,118,210,.35);border-radius:14px;background:linear-gradient(180deg,#fff,#f6fbff);color:var(--kw-blue);display:grid;place-items:center;box-shadow:0 10px 20px rgba(25,118,210,.12),inset 0 1px 0 rgba(255,255,255,.9);position:relative}
+      .kw-top-icon svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+      .kw-top-icon[data-tone="green"]{color:var(--kw-green);border-color:rgba(22,135,84,.38);background:linear-gradient(180deg,#fff,#f3fff9)}
+      .kw-top-badge{position:absolute;top:-7px;right:-7px;min-width:18px;height:18px;border-radius:999px;background:#d7283f;color:white;font-size:10px;font-weight:900;display:grid;place-items:center;border:2px solid #fff}
+      .kw-ticker{height:38px;border-radius:999px;background:#e9dfd0;border:1px solid var(--kw-border);overflow:hidden;display:flex;align-items:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.72),0 8px 16px rgba(35,31,25,.08)}
+      .kw-ticker-track{display:inline-flex;gap:18px;align-items:center;min-width:max-content;padding-inline:18px;animation:koudamaTickerMove 29s linear infinite;font-size:12px;font-weight:900;color:#3a342b;white-space:nowrap}
+      .kw-ticker-dot{width:6px;height:6px;border-radius:50%;background:var(--kw-gold);display:inline-block}
+      @keyframes koudamaTickerMove{from{transform:translateX(-8%)}to{transform:translateX(44%)}}
+      .kw-body{padding:calc(var(--kw-header-h) + 12px) 14px calc(var(--kw-chat-h) + 22px);min-height:100vh;background:radial-gradient(circle at 25% 2%,rgba(185,149,67,.14),transparent 26%),var(--kw-bg)}
+      .kw-title{text-align:center;margin:0 0 12px}.kw-title h1{font-size:28px;line-height:1.05;margin:0;font-weight:900;letter-spacing:-.03em}.kw-title p{font-size:12px;font-weight:900;color:var(--kw-muted);margin:6px 0 0}
+      .kw-panel,.kw-rules,.kw-updates,.kw-service-icon-preview{background:var(--kw-surface);border:1px solid var(--kw-border);border-radius:20px;box-shadow:var(--kw-soft-shadow);padding:12px;margin:12px 0}
+      .kw-panel-title{margin:0 0 9px;font-size:15px;font-weight:900;text-align:right}.kw-panel-sub{font-size:11px;color:var(--kw-muted);font-weight:800;margin:-5px 0 10px;text-align:right}
+      .kw-theme-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.kw-theme-chip{height:48px;border:1px solid var(--kw-border);border-radius:13px;background:linear-gradient(180deg,#fff,#fbf8f3);display:flex;align-items:center;justify-content:center;gap:8px;font-size:12px;font-weight:900;box-shadow:inset 0 1px 0 rgba(255,255,255,.85)}.kw-theme-dot{width:14px;height:14px;border-radius:5px;background:linear-gradient(135deg,#7fa0b6,#24485a)}.kw-theme-dot.gold{background:linear-gradient(135deg,#d8c7a4,#9f8140)}.kw-theme-dot.dark{background:linear-gradient(135deg,#333,#777)}
+      .kw-card-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:12px 0 16px}.kw-main-card{min-height:104px;background:linear-gradient(180deg,#fff,#fbf9f4);border:1px solid var(--kw-border);border-radius:16px;box-shadow:var(--kw-soft-shadow);display:grid;place-items:center;text-align:center;padding:9px 4px 8px;gap:5px;position:relative}.kw-main-card strong{font-size:13px;font-weight:900;line-height:1.25}.kw-main-card small{font-size:10.5px;font-weight:800;color:var(--kw-muted);line-height:1.25}.kw-main-card .kw-badge{position:absolute;top:-8px;right:-6px;min-width:19px;height:19px;border-radius:999px;background:#d7283f;color:white;border:2px solid #fff;display:grid;place-items:center;font-size:10px;font-weight:900}
+      .kw-service-menu-icon-source{width:48px;height:48px;border-radius:16px;border:2px solid currentColor;background:linear-gradient(180deg,#fff,#f9fbfd);display:grid;place-items:center;box-shadow:0 9px 18px color-mix(in srgb,currentColor 15%,transparent),inset 0 1px 0 rgba(255,255,255,.94);color:var(--kw-blue)}
+      .kw-service-menu-icon-source svg{width:25px;height:25px;stroke:currentColor;fill:none;stroke-width:2.15;stroke-linecap:round;stroke-linejoin:round}
+      .tone-blue{color:var(--kw-blue)}.tone-green{color:var(--kw-green)}.tone-teal{color:var(--kw-teal)}.tone-red{color:var(--kw-red)}.tone-gold{color:var(--kw-gold)}.tone-purple{color:var(--kw-purple)}.tone-gray{color:var(--kw-gray)}
+      .kw-rules h2,.kw-updates h2{font-size:16px;margin:0 0 8px;text-align:right;font-weight:900}.kw-rules p,.kw-updates p{font-size:13px;font-weight:800;margin:0;color:#3d3830;line-height:1.7;text-align:right}.kw-update-row{margin-top:8px;min-height:34px;border:1px solid var(--kw-border);border-radius:10px;background:#f6f1e9;display:grid;grid-template-columns:34px 1fr;align-items:center;gap:8px;padding:4px 6px;font-size:12px;font-weight:900}.kw-update-num{width:28px;height:28px;border-radius:9px;background:var(--kw-gold);color:#fff;display:grid;place-items:center;font-weight:900}
+      .kw-section-title{font-size:13px;color:var(--kw-muted);font-weight:900;margin:10px 0 7px;text-align:right}.kw-service-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.kw-service-tile{min-height:82px;border:1px solid var(--kw-border);border-radius:14px;background:#fff;box-shadow:0 8px 16px rgba(35,31,25,.07);display:grid;place-items:center;gap:4px;padding:8px 4px}.kw-service-tile span{font-size:10.5px;font-weight:900;color:#39342e;text-align:center}
+      .kw-fixed-mobile-chat{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:var(--kw-mobile-w);height:var(--kw-chat-h);z-index:55;background:rgba(250,247,240,.97);border-top:1px solid var(--kw-border);border-radius:22px 22px 0 0;box-shadow:0 -12px 30px rgba(35,31,25,.16);display:grid;grid-template-columns:50px 1fr 50px;gap:8px;padding:10px 11px 12px;align-items:center}.kw-chat-btn{width:42px;height:42px;border:0;border-radius:14px;background:#fff;color:var(--kw-green);display:grid;place-items:center;box-shadow:var(--kw-soft-shadow)}.kw-chat-btn.send{background:#5b8792;color:white}.kw-chat-btn svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}.kw-chat-input{height:43px;border:1px solid var(--kw-border);border-radius:14px;background:white;color:var(--kw-text);padding:0 13px;text-align:right;font-size:13px;font-weight:900;box-shadow:inset 0 2px 8px rgba(35,31,25,.08)}
+      .kw-old-gradient-icon,.kw-agent5-gradient-icon{outline:5px solid red!important}
+    </style>
+  </head>
+  <body>
+    <div class="kw-mobile-shell">
+      <header class="kw-fixed-mobile-header" data-shell-part="fixed-full-width-header">
+        <div class="kw-header-row">
+          <div class="kw-logo-button"><img src="/koudama-assets/watany-emblem-logo.png" alt="موطني"></div>
+          <div class="kw-header-actions" aria-label="أيقونات علوية من مصدر أيقونات الخدمات">
+            <div class="kw-top-icon" title="الصفحة"><svg viewBox="0 0 24 24"><path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6h-4v6H5a1 1 0 0 1-1-1z"/></svg></div>
+            <div class="kw-top-icon"><span class="kw-top-badge">7</span><svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg></div>
+            <div class="kw-top-icon"><span class="kw-top-badge">4</span><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></div>
+            <div class="kw-top-icon" data-tone="green"><span class="kw-top-badge">3</span><svg viewBox="0 0 24 24"><path d="M20 21a8 8 0 0 0-16 0"/><circle cx="12" cy="7" r="4"/></svg></div>
+          </div><div></div>
+        </div>
+        <div class="kw-ticker"><div class="kw-ticker-track"><span>بيانات خاصة بالمستخدم تظهر هنا</span><i class="kw-ticker-dot"></i><span>وظائف وإعلانات جديدة</span><i class="kw-ticker-dot"></i><span>تحديثات وتنبيهات مرتبطة بالمستخدم</span><i class="kw-ticker-dot"></i></div></div>
+      </header>
+      <main class="kw-body">
+        <section class="kw-title"><h1>موطني</h1><p>معاينة Agent 5 — أيقونات الخدمات هي المصدر الرئيسي</p></section>
+        <section class="kw-panel"><h2 class="kw-panel-title">اختيار المظهر</h2><p class="kw-panel-sub">الهيدر والدردشة مستقلان وممدودان على عرض الهاتف</p><div class="kw-theme-row"><div class="kw-theme-chip"><i class="kw-theme-dot"></i>ليلي</div><div class="kw-theme-chip"><i class="kw-theme-dot dark"></i>غامق</div><div class="kw-theme-chip"><i class="kw-theme-dot gold"></i>العادي</div></div></section>
+        <section class="kw-card-grid" aria-label="الأيقونات الرئيسية من أيقونات الخدمات">
+          <div class="kw-main-card"><span class="kw-badge">7</span><i class="kw-service-menu-icon-source tone-green" data-service-icon="briefcase"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 12h18M10 12v2h4v-2"/></svg></i><strong>الشبكة</strong><small>سوق ووظائف</small></div>
+          <div class="kw-main-card"><span class="kw-badge">5</span><i class="kw-service-menu-icon-source tone-blue"><svg viewBox="0 0 24 24"><path d="M7 3h8l4 4v14H7z"/><path d="M15 3v5h4M9 12h6M9 16h6"/></svg></i><strong>التحديثات</strong><small>الأخبار والتعاميم</small></div>
+          <div class="kw-main-card"><span class="kw-badge">3</span><i class="kw-service-menu-icon-source tone-red"><svg viewBox="0 0 24 24"><path d="M20 21a8 8 0 0 0-16 0"/><circle cx="12" cy="7" r="4"/></svg></i><strong>الملف</strong><small>البيانات والرسائل</small></div>
+          <div class="kw-main-card"><span class="kw-badge">4</span><i class="kw-service-menu-icon-source tone-green"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-8 0v2"/><circle cx="12" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.8M2 21v-2a4 4 0 0 1 3-3.8"/></svg></i><strong>المجتمع</strong><small>النشاطات والصوت</small></div>
+          <div class="kw-main-card"><span class="kw-badge">6</span><i class="kw-service-menu-icon-source tone-gold"><svg viewBox="0 0 24 24"><path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6h-4v6H5a1 1 0 0 1-1-1z"/></svg></i><strong>خدمات</strong><small>الشبكة والمعاملات</small></div>
+          <div class="kw-main-card"><span class="kw-badge">3</span><i class="kw-service-menu-icon-source tone-purple"><svg viewBox="0 0 24 24"><path d="M12 3v18M5 6h14M6 6l-3 7h6zm12 0-3 7h6z"/><path d="M8 21h8"/></svg></i><strong>أدوات</strong><small>المعاش والنماذج</small></div>
+          <div class="kw-main-card" style="grid-column:2/3"><span class="kw-badge">28</span><i class="kw-service-menu-icon-source tone-gray"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/></svg></i><strong>الكل</strong><small>جميع الميزات</small></div>
+        </section>
+        <section class="kw-rules"><h2>قواعد الوصول</h2><p>الهيدر مستقل ومثبت بالأعلى، والدردشة مثبتة وممدودة بالأسفل، والجسم يتحرك بينهما فقط. الأيقونات الرئيسية مأخوذة من منطق قائمة الخدمات وليست مربعات التدرج السابقة.</p></section>
+        <section class="kw-updates"><h2>تحديثات</h2><p>ملخص آخر ما حدث في التطبيق من إشارات وتنبيهات مرتبطة بالمستخدم.</p><div class="kw-update-row"><span class="kw-update-num">1</span><span>تحديث جديد في خدمة المعاش.</span></div><div class="kw-update-row"><span class="kw-update-num">5</span><span>تعاميم وتنبيهات جديدة متاحة للقراءة.</span></div><div class="kw-update-row"><span class="kw-update-num">7</span><span>وظائف وإعلانات جديدة ضمن قسم الأعمال.</span></div></section>
+        <section class="kw-service-icon-preview" data-preview-purpose="use-icons-already-stored-in-services-menu">
+          <h2 class="kw-panel-title">مصدر الأيقونات: جميع الخدمات</h2><p class="kw-panel-sub">نفس شكل أيقونات قائمة الخدمات هو القانون البصري للتطبيق.</p>
+          <div class="kw-section-title">المساعد</div><div class="kw-service-grid">
+            <div class="kw-service-tile"><i class="kw-service-menu-icon-source tone-green"><svg viewBox="0 0 24 24"><rect x="7" y="3" width="10" height="18" rx="2"/><path d="M9 7h6M9 11h2M13 11h2M9 15h2M13 15h2"/></svg></i><span>حاسبة المعاش</span></div>
+            <div class="kw-service-tile"><i class="kw-service-menu-icon-source tone-green"><svg viewBox="0 0 24 24"><rect x="6" y="3" width="12" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></svg></i><span>إفادة بالراتب</span></div>
+            <div class="kw-service-tile"><i class="kw-service-menu-icon-source tone-teal"><svg viewBox="0 0 24 24"><path d="M8 19h8M7 16h10L14 5h-4z"/><path d="M9 12h6"/></svg></i><span>تاكسي</span></div>
+            <div class="kw-service-tile"><i class="kw-service-menu-icon-source tone-blue"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/></svg></i><span>روابط مفيدة</span></div>
+            <div class="kw-service-tile"><i class="kw-service-menu-icon-source tone-blue"><svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></i><span>المساعدات المدرسية</span></div>
+            <div class="kw-service-tile"><i class="kw-service-menu-icon-source tone-gray"><svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg></i><span>الوفيات</span></div>
+            <div class="kw-service-tile"><i class="kw-service-menu-icon-source tone-gold"><svg viewBox="0 0 24 24"><path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 0 1-10 0z"/><path d="M5 6H3a3 3 0 0 0 3 3M19 6h2a3 3 0 0 1-3 3"/></svg></i><span>كأس العالم</span></div>
+            <div class="kw-service-tile"><i class="kw-service-menu-icon-source tone-purple"><svg viewBox="0 0 24 24"><path d="M12 3v18M5 6h14M6 6l-3 7h6zm12 0-3 7h6z"/><path d="M8 21h8"/></svg></i><span>القوانين</span></div>
+          </div>
+          <div class="kw-section-title">الوظائف والتطويع</div><div class="kw-service-grid">
+            <div class="kw-service-tile"><i class="kw-service-menu-icon-source tone-blue"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 12h18"/></svg></i><span>بحث الوظائف</span></div>
+            <div class="kw-service-tile"><i class="kw-service-menu-icon-source tone-blue"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 12v2h4v-2"/></svg></i><span>فرص المحاربين</span></div>
+            <div class="kw-service-tile"><i class="kw-service-menu-icon-source tone-gold"><svg viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="16" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></svg></i><span>إعلانات التطويع</span></div>
+            <div class="kw-service-tile"><i class="kw-service-menu-icon-source tone-gold"><svg viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="16" rx="2"/><path d="M9 9h6M9 13h6"/></svg></i><span>شروط التطويع</span></div>
+          </div>
+        </section>
+      </main>
+      <footer class="kw-fixed-mobile-chat" data-shell-part="fixed-full-width-chat"><button class="kw-chat-btn send"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button><input class="kw-chat-input" value="اسأل موطني..." aria-label="اسأل موطني"><button class="kw-chat-btn"><svg viewBox="0 0 24 24"><path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v3"/></svg></button></footer>
+    </div>
+  </body>
+</html>

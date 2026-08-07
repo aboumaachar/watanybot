@@ -1,0 +1,53 @@
+{
+  "name": "web-user",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "main": "electron/main.cjs",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1 --port 5174 --strictPort",
+    "build": "vite build --config vite.apex-v119022.config.ts && node ./scripts/sync-htaccess.mjs",
+    "preview": "vite preview --host 127.0.0.1 --port 4173 --strictPort",
+    "electron": "electron .",
+    "electron:dev": "concurrently -n vite,electron -c blue,green \"vite --host 127.0.0.1 --port 5174 --strictPort\" \"wait-on http://127.0.0.1:5174 && electron .\"",
+    "lint": "eslint --config .eslintrc.cjs \"src/**/*.{ts,tsx,js,jsx}\" --ext .ts,.tsx --max-warnings=0",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:ci": "vitest run",
+    "test:watany-v1-runtime-chain": "node tests/watany-v1-runtime-chain-integrity.node.cjs",
+    "test:watch": "vitest --watch"
+  },
+  "dependencies": {
+    "@fluentui/react-icons": "^2.0.328",
+    "@watany/address-network": "workspace:*",
+    "@watany/i18n": "workspace:*",
+    "@watany/shared": "workspace:*",
+    "@watany/types": "workspace:*",
+    "dompurify": "^3.4.2",
+    "html2canvas": "^1.4.1",
+    "leaflet": "^1.9.4",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.30.3"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.10.0",
+    "@typescript-eslint/parser": "^6.10.0",
+    "eslint": "^8.57.1",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-sonarjs": "^0.16.0",
+    "@types/react": "~18.3.28",
+    "@types/react-dom": "~18.3.5",
+    "@vitejs/plugin-react": "^4.3.4",
+    "concurrently": "^8.2.2",
+    "electron": "28.3.3",
+    "jsdom": "^29.1.1",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.10",
+    "wait-on": "^7.0.1"
+  }
+}

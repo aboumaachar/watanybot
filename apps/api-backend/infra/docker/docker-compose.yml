@@ -1,0 +1,104 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: watanbot-postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-watanbot}
+      POSTGRES_USER: ${POSTGRES_USER:-watanbot}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "${POSTGRES_PORT:-5433}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-watanbot}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - watanbot-network
+
+  api:
+    build:
+      context: ../../apps/api
+      dockerfile: ../../infra/docker/Dockerfile.api
+    container_name: watanbot-api
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: ${POSTGRES_DB:-watanbot}
+      POSTGRES_USER: ${POSTGRES_USER:-watanbot}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
+      API_HOST: 0.0.0.0
+      API_PORT: ${API_PORT:-8000}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRES_MINUTES: ${JWT_EXPIRES_MINUTES:-120}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000,http://localhost:5173}
+      SUPERADMIN_EMAIL: ${SUPERADMIN_EMAIL:-admin@example.com}
+      SUPERADMIN_PASSWORD: ${SUPERADMIN_PASSWORD}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      LOG_JSON: ${LOG_JSON:-true}
+      RATE_LIMIT_PER_MINUTE: ${RATE_LIMIT_PER_MINUTE:-60}
+      KB_SQLITE_PATH: ${KB_SQLITE_PATH:-/data/kb.sqlite}
+      USE_SQLITE_V3_KB: ${USE_SQLITE_V3_KB:-true}
+      LEGACY_POSTGRES_KB_FALLBACK: ${LEGACY_POSTGRES_KB_FALLBACK:-false}
+    command: >
+      sh -c "
+        echo 'Waiting for database to be ready...' &&
+        for i in {1..30}; do
+          pg_isready -h postgres -U ${POSTGRES_USER:-watanbot} -d ${POSTGRES_DB:-watanbot} && break || sleep 2;
+        done &&
+        echo 'Running migrations...' &&
+        alembic upgrade head &&
+        echo 'Starting API server...' &&
+        uvicorn main:app --host 0.0.0.0 --port ${API_PORT:-8000}
+      "
+    ports:
+      - "${API_PORT_HOST:-8010}:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ../../apps/api:/app
+      - ${BACKUP_DIR:-./backups}:/app/backups
+      - ${KB_SQLITE_PATH_HOST:-../../data/kb.sqlite}:/data/kb.sqlite
+    networks:
+      - watanbot-network
+    restart: unless-stopped
+
+  worker:
+    build:
+      context: ../../apps/worker
+      dockerfile: ../../infra/docker/Dockerfile.worker
+    container_name: watanbot-worker
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: ${POSTGRES_DB:-watanbot}
+      POSTGRES_USER: ${POSTGRES_USER:-watanbot}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
+      RETENTION_DAYS_CHAT: ${RETENTION_DAYS_CHAT:-180}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      LOG_JSON: ${LOG_JSON:-true}
+      WORKER_SCHEDULE_MAINTENANCE: ${WORKER_SCHEDULE_MAINTENANCE:-0 2 * * *}
+      WORKER_SCHEDULE_METRICS: ${WORKER_SCHEDULE_METRICS:-0 * * * *}
+    ports:
+      - "8001:8001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ../../apps/worker:/app
+    networks:
+      - watanbot-network
+    restart: "no"
+    profiles:
+      - worker
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  watanbot-network:
+    driver: bridge

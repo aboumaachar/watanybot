@@ -1,0 +1,56 @@
+.watany-icon-badge-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  isolation: isolate;
+}
+
+.watany-icon-badge {
+  position: absolute;
+  inset-block-start: -6px;
+  inset-inline-end: -5px;
+  z-index: 5;
+  min-width: 22px;
+  height: 22px;
+  padding-inline: 6px;
+  border-radius: 999px;
+  background: #d32f2f;
+  color: #fff;
+  border: 2px solid #fff;
+  font-size: 12px;
+  font-weight: 900;
+  line-height: 1;
+  text-align: center;
+  box-shadow: 0 6px 14px rgba(211, 47, 47, 0.28);
+  pointer-events: none;
+  font-family: inherit;
+}
+
+/* APEX appwide icon notification badge DOM bridge */
+.watany-icon-notification-badge-anchor {
+  position: relative !important;
+}
+
+.watany-icon-notification-badge[data-watany-dom-badge="true"] {
+  position: absolute;
+  inset-block-start: -6px;
+  inset-inline-end: -5px;
+  z-index: 5;
+  min-width: 22px;
+  height: 22px;
+  padding-inline: 6px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 900;
+  line-height: 1;
+  color: #ffffff;
+  background: #d32f2f;
+  border: 2px solid #ffffff;
+  box-shadow: 0 6px 14px rgba(211, 47, 47, 0.28);
+  pointer-events: none;
+  font-family: inherit;
+}

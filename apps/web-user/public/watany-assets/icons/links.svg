@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-labelledby="title">
+  <title>روابط</title>
+  <g fill="none" stroke="#b77a13" stroke-linecap="round" stroke-linejoin="round" stroke-width="6">
+    <path d="M39 57 30 66a15 15 0 0 1-21-21l12-12a15 15 0 0 1 21 0"/>
+    <path d="m57 39 9-9a15 15 0 0 1 21 21L75 63a15 15 0 0 1-21 0"/>
+    <path d="m34 62 28-28"/>
+  </g>
+</svg>

@@ -1,0 +1,56 @@
+{
+  "datasetId": "lebanese-administrative-authority",
+  "datasetVersion": "1.0.0",
+  "schemaVersion": "1.0.0",
+  "approvalStatus": "validation-failed",
+  "generatedAt": "2026-08-05T22:45:16.541Z",
+  "approvedAt": null,
+  "approvedBy": [],
+  "approvalReference": null,
+  "sourceHashes": {
+    "SRC-VENDOR-LOCALITIES": "475fb9e3e9f80b4a35c6c23909545163cab49fed4a5b508b10bb4a07a1fd5871",
+    "SRC-STARTER-CSV": "62cceb6264d1dfb57f35bb163355d6b773b7441ba8714167b38c0f19f9ec1ddc",
+    "SRC-ADDRESS-NETWORK-GOV": "0222d407c467ba1c3c7b9ab9776dfa904b8187223b136326529430dfb92c4076",
+    "SRC-ADDRESS-NETWORK-CAZA": "335c321ac185e4a97c5317e87742672e3f1bc8b5251a45431ce095534cf2b985",
+    "SRC-ADDRESS-NETWORK-VILLAGES": "95164423315f1c7d8b6c31e4ee6e40268411544f2f219d54772b27d9835281a2",
+    "SRC-BOUNDARY-INDEX": "b4f574742eddf6e9e2c4834d382fa09dafbaf8ccdc3b967dddb5aafc08397f30",
+    "SRC-AUTHORITY-MANIFEST": "bfc22ba8950178a91d493d37ea66bafa4b6a9eda679ec65620fa5e26b664c88f"
+  },
+  "artifactHashes": {
+    "aliases.csv": "565a917f4de3ddf4f308e0fcb58a8cf5e902fd015b772db298c422c348f02ea9",
+    "coordinates.csv": "5b466310509eb1872b2d7a19b48bcabd86a95091c74f45d85decf8b85eb899ca",
+    "district-equivalents.csv": "f9340bf8d4b0b4716dd80a91a5a9720b4da846d8c2fe5305616d42f7cb4cc82b",
+    "districts.csv": "03ddeb3cd9ceb4c17bc6ce96cccb8e87c03d63b3803d59776711bed65b3aef03",
+    "governorates.csv": "6af83d7412e8380c68ae598aa5b1bd2be31540d737d887f758ef63d667467baf",
+    "localities.csv": "90b0db6fc3a549b74a6a9a4d9c2beeb1128a530868af827a14286992bc0fc11d",
+    "municipalities.csv": "7966ac970db2fbb5bd22867c464d7d2840623c3c27b21d837ed61209c8e97881",
+    "provenance.csv": "74807943af9a8e39e520f75b8cf221f8d4cee37168a33bcd86d9e1b43fe86caa",
+    "runtime.json": "857238d0d65cde117cf1ef5937598541707aa88b8e3715cb27bbb22c4be198a1"
+  },
+  "recordCounts": {
+    "governorates": 8,
+    "districts": 25,
+    "municipalities": 0,
+    "localities": 1586,
+    "aliases": 1586,
+    "localitiesWithCoordinates": 181,
+    "missingArabic": 1586,
+    "duplicateIds": 0,
+    "orphanRows": 0
+  },
+  "validationSummary": {
+    "status": "BLOCKED",
+    "missingArabic": 1586,
+    "litigeCount": 0,
+    "ambiguousAliasCount": 0
+  },
+  "knownLimitations": [
+    "Arabic authority crosswalk is incomplete in supplied source",
+    "Municipality coverage is not established",
+    "Coordinates are incomplete",
+    "Owner approval is pending"
+  ],
+  "minimumApplicationVersion": "UL2B",
+  "releaseImmutable": true,
+  "releaseDecision": "BLOCKED_TECHNICAL_VALIDATION"
+}

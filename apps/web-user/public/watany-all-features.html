@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>موطني - كل الخدمات</title>
+  <style>
+    :root { color-scheme: light; --bg:#f6f8fb; --card:#ffffff; --ink:#152033; --muted:#5b667a; --line:#dfe6ef; --brand:#0f766e; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Tahoma, Arial, sans-serif; background:var(--bg); color:var(--ink); }
+    .wrap { max-width: 980px; margin: 0 auto; padding: 18px; }
+    header { position: sticky; top: 0; z-index: 5; background: rgba(246,248,251,.94); backdrop-filter: blur(10px); border-bottom:1px solid var(--line); }
+    .head { display:flex; align-items:center; justify-content:space-between; gap:12px; max-width:980px; margin:0 auto; padding:12px 18px; }
+    h1 { margin:0; font-size: 1.35rem; }
+    .home { color: var(--brand); text-decoration:none; font-weight:700; }
+    .search { width:100%; margin:14px 0; padding:14px 16px; border:1px solid var(--line); border-radius:18px; font-size:1rem; }
+    .grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap:12px; }
+    .watany-feature-row { display:block; min-height:112px; background:var(--card); border:1px solid var(--line); border-radius:22px; padding:16px; text-decoration:none; color:inherit; box-shadow:0 10px 28px rgba(16,24,40,.08); }
+    .watany-feature-row:focus, .watany-feature-row:hover { outline:2px solid rgba(15,118,110,.28); transform: translateY(-1px); }
+    .top { display:flex; align-items:center; gap:10px; }
+    .icon { display:inline-flex; width:42px; height:42px; align-items:center; justify-content:center; border-radius:16px; background:linear-gradient(180deg,#ffffff,#e9f5f3); border:1px solid var(--line); font-weight:900; color:var(--brand); }
+    .label { font-weight:800; font-size:1.05rem; }
+    .meta { margin-top:10px; color:var(--muted); font-size:.92rem; line-height:1.45; }
+    .badge { display:inline-block; margin-top:10px; padding:4px 9px; border-radius:999px; background:#eef7f6; color:#0f766e; font-size:.78rem; font-weight:700; }
+  </style>
+</head>
+<body>
+  <header><div class="head"><h1>كل خدمات موطني</h1><a class="home" href="/">الرئيسية</a></div></header>
+  <main class="wrap">
+    <input id="q" class="search" type="search" placeholder="ابحث عن خدمة..." aria-label="ابحث عن خدمة" />
+    <div id="grid" class="grid" aria-live="polite"></div>
+  </main>
+  <script>
+    const grid = document.getElementById('grid');
+    const q = document.getElementById('q');
+    let features = [];
+    function row(f) {
+      const a = document.createElement('a');
+      a.className = 'watany-feature-row';
+      a.id = f.key;
+      a.href = f.route || ('/watany-all-features.html#' + f.key);
+      a.setAttribute('data-feature-key', f.key);
+      a.innerHTML = '<div class="top"><span class="icon">' + (f.icon || '?') + '</span><span class="label">' + (f.labelAr || f.labelEn || f.key) + '</span></div><div class="meta">' + (f.categoryAr || '') + '<br />' + (f.labelEn || '') + '</div><span class="badge">' + (f.status || 'catalog') + '</span>';
+      return a;
+    }
+    function render() {
+      const term = (q.value || '').trim().toLowerCase();
+      grid.innerHTML = '';
+      features.filter(f => !term || JSON.stringify(f).toLowerCase().includes(term)).forEach(f => grid.appendChild(row(f)));
+    }
+    fetch('/watany-feature-catalog.json', { cache: 'no-store' }).then(r => r.json()).then(data => { features = data.features || []; render(); });
+    q.addEventListener('input', render);
+  </script>
+<script defer src="/watany-v2-feature-route-activation-runtime.js" data-watany-route-activation-runtime="true"></script>
+</body>
+</html>

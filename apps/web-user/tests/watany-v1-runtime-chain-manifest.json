@@ -1,0 +1,109 @@
+{
+  "version": "v2.8.0",
+  "name": "watany-v1-runtime-chain-integrity",
+  "expectedScripts": [
+    {
+      "file": "watany-v1-tools-schools-public-access-v144.js",
+      "role": "tools-schools",
+      "required": true,
+      "marker": "openSchoolFormItem"
+    },
+    {
+      "file": "watany-v1-jobs-market-public-access-v150.js",
+      "role": "jobs-market",
+      "required": true,
+      "marker": ""
+    },
+    {
+      "file": "watany-v1-going-now-feed-v160.js",
+      "role": "going-now",
+      "required": true,
+      "marker": ""
+    },
+    {
+      "file": "watany-v1-world-cup-nine-icons-v170.js",
+      "role": "world-cup",
+      "required": true,
+      "marker": ""
+    },
+    {
+      "file": "watany-v1-universal-form-viewer-v182.js",
+      "role": "form-viewer",
+      "required": true,
+      "marker": "watanyUniversalFormViewer"
+    },
+    {
+      "file": "watany-v1-procedures-source-polish-v190.js",
+      "role": "procedures-source",
+      "required": true,
+      "marker": ""
+    },
+    {
+      "file": "watany-v1-school-forms-universal-viewer-bridge-v185.js",
+      "role": "school-bridge",
+      "required": true,
+      "marker": "watanyV1OpenSchoolAidFormUniversal"
+    },
+    {
+      "file": "watany-v1-clean-settings-single-template-v190.js",
+      "role": "settings-single",
+      "required": true,
+      "marker": "watanyV1CleanSettingsSingleTemplateReady"
+    },
+    {
+      "file": "watany-v1-procedures-title-source-grouping-polish-v200.js",
+      "role": "procedures-grouping",
+      "required": true,
+      "marker": "watanyV1ProceduresSourceGroupingPolishReady"
+    },
+    {
+      "file": "watany-v1-procedures-title-inline-size-closeout-v202.js",
+      "role": "procedures-title",
+      "required": true,
+      "marker": "watanyV1ProceduresTitleSizeCloseoutReady"
+    },
+    {
+      "file": "watany-v1-full-width-snapped-popup-consistency-v210.js",
+      "role": "popup-base",
+      "required": true,
+      "marker": "watanyV1SnappedPopupConsistencyReady",
+      "orderKey": "popup-base"
+    },
+    {
+      "file": "watany-v1-full-width-snapped-popup-header-snap-closeout-v211.js",
+      "role": "popup-header",
+      "required": true,
+      "marker": "watanyV1SnappedPopupHeaderSnapCloseoutReady",
+      "orderKey": "popup-header"
+    },
+    {
+      "file": "watany-v1-full-width-snapped-popup-body-portal-closeout-v212.js",
+      "role": "popup-portal",
+      "required": true,
+      "marker": "watanyV1SnappedPopupBodyPortalCloseoutReady",
+      "orderKey": "popup-portal"
+    },
+    {
+      "file": "watany-v1-home-height-published-icons-closeout-v220.js",
+      "role": "home-height",
+      "required": true,
+      "marker": "watanyV1HomeHeightPublishedIconsCloseoutReady"
+    }
+  ],
+  "orderedChains": [
+    {
+      "name": "popup-chain",
+      "files": [
+        "watany-v1-full-width-snapped-popup-consistency-v210.js",
+        "watany-v1-full-width-snapped-popup-header-snap-closeout-v211.js",
+        "watany-v1-full-width-snapped-popup-body-portal-closeout-v212.js"
+      ]
+    }
+  ],
+  "htmlFallbackNeedles": [
+    "<!doctype html",
+    "<html",
+    "<div id=\"root\"",
+    "<div id='root'"
+  ]
+}

@@ -1,0 +1,37 @@
+CREATE TABLE IF NOT EXISTS seasonal_apple_job_applications (
+  id TEXT PRIMARY KEY,
+  campaign_id TEXT NOT NULL,
+  name TEXT NOT NULL,
+  phone TEXT NOT NULL,
+  email TEXT,
+  age TEXT NOT NULL,
+  gender TEXT,
+  relation_type TEXT NOT NULL,
+  governorate TEXT NOT NULL,
+  governorate_ar TEXT,
+  caza TEXT NOT NULL,
+  caza_ar TEXT,
+  village TEXT NOT NULL,
+  village_ar TEXT,
+  village_id TEXT NOT NULL,
+  availability TEXT NOT NULL,
+  preferred_period TEXT,
+  weekend_work TEXT,
+  can_arrive_6am BOOLEAN NOT NULL DEFAULT FALSE,
+  has_agri_experience BOOLEAN NOT NULL DEFAULT FALSE,
+  experience_text TEXT,
+  can_stand_hours BOOLEAN NOT NULL DEFAULT FALSE,
+  health_note TEXT,
+  future_jobs_interest BOOLEAN NOT NULL DEFAULT FALSE,
+  interests JSONB NOT NULL DEFAULT '[]'::jsonb,
+  family_more TEXT,
+  weighted_score INTEGER NOT NULL DEFAULT 0,
+  status TEXT NOT NULL DEFAULT 'pending_review',
+  follow_up_status TEXT NOT NULL DEFAULT 'not_contacted',
+  admin_notes TEXT NOT NULL DEFAULT '',
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS idx_seasonal_apple_job_status
+  ON seasonal_apple_job_applications(status, created_at DESC);

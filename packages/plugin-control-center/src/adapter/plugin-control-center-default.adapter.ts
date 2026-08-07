@@ -1,0 +1,3 @@
+﻿import type { PluginControlCenterAdapter } from '../contracts/plugin-control-center-contract';
+import { createDefaultPluginControlRecords } from '../config/plugin-control-center.defaults';
+export function createPluginControlCenterDefaultAdapter(): PluginControlCenterAdapter { const records = createDefaultPluginControlRecords(); return { listPlugins: () => records, getPlugin: (pluginKey) => records.find((item) => item.pluginKey === pluginKey) }; }

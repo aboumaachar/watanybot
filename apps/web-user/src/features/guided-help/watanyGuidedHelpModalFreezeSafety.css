@@ -1,0 +1,34 @@
+/* APEX emergency guided-help control bridge. */
+.watany-prelanding-guide,
+.watany-prelanding-guide *,
+.watany-prelanding-guide__dialog,
+.watany-prelanding-guide__dialog *,
+.watany-prelanding-guide__actions,
+.watany-prelanding-guide__actions *,
+.watany-prelanding-guide button,
+.watany-prelanding-guide [role="button"] {
+  pointer-events: auto !important;
+  touch-action: manipulation !important;
+}
+
+.watany-prelanding-guide::before,
+.watany-prelanding-guide::after,
+.watany-prelanding-guide__dialog::before,
+.watany-prelanding-guide__dialog::after {
+  pointer-events: none !important;
+}
+
+.watany-prelanding-guide__dialog {
+  isolation: isolate !important;
+  position: relative !important;
+  z-index: 2147483600 !important;
+}
+
+.watany-prelanding-guide__actions,
+.watany-prelanding-guide button,
+.watany-prelanding-guide [role="button"] {
+  position: relative !important;
+  z-index: 2147483647 !important;
+  cursor: pointer !important;
+  user-select: none !important;
+}

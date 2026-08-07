@@ -1,0 +1,78 @@
+{
+  "status": 200,
+  "data": {
+    "status": "ok",
+    "timestamp": "2026-03-04T07:50:42.604Z",
+    "gateway": {
+      "status": "ok",
+      "uptime": 5505.1647098,
+      "host": "0.0.0.0",
+      "port": 4000
+    },
+    "legacy": {
+      "enabled": true,
+      "ok": false,
+      "error": ""
+    },
+    "ai": {
+      "enabled": true,
+      "ok": true,
+      "model": "tinyllama:latest",
+      "latencyMs": 405,
+      "ragChunks": 1504,
+      "aiFailures": {
+        "count": 0,
+        "lastError": null
+      }
+    },
+    "voice": {
+      "sttConfigured": true,
+      "ttsConfigured": true,
+      "alertsConfigured": false,
+      "lastE2e": {
+        "ts": "2026-03-04T07:49:36.465Z",
+        "ok": true,
+        "sampleText": "اختبار موطني E2E",
+        "transcript": "اختبار موطني E2E",
+        "confidence": 0.95,
+        "durationMs": 2821
+      },
+      "e2eHistoryCount": 200
+    },
+    "runtime": {
+      "nodeVersion": "v25.6.0",
+      "pid": 34280,
+      "memoryRss": 26480640
+    },
+    "kb": {
+      "tables": [
+        "answer_corrections",
+        "kb_rag_chunks",
+        "kb_rag_fts",
+        "kb_rag_fts_config",
+        "kb_rag_fts_data",
+        "kb_rag_fts_docsize",
+        "kb_rag_fts_idx",
+        "kb_review_queue",
+        "kb_transactions",
+        "knowledge_chunks",
+        "law_articles",
+        "law_fts",
+        "law_fts_config",
+        "law_fts_data",
+        "law_fts_docsize",
+        "law_fts_idx",
+        "law_sources",
+        "pinned_answers",
+        "salary_data",
+        "sqlite_sequence"
+      ],
+      "transactions": 121,
+      "ragChunks": 242,
+      "lawArticles": 582,
+      "salaryRecords": 303,
+      "knowledgeChunks": 743,
+      "dbSizeKb": 4872
+    }
+  }
+}

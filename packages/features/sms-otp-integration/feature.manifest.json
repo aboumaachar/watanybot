@@ -1,0 +1,10 @@
+{
+    "version":  "0.1.0-boundary",
+    "generatedBy":  "v6.0-ps51-safe-pma-second-feature-closure-engine",
+    "exportReady":  false,
+    "replaceReady":  false,
+    "doctrine":  "near-zero-recode",
+    "featureName":  "SMS/OTP Integration",
+    "featureKey":  "09-sms-otp-integration",
+    "generatedAt":  "2026-06-11T01:23:13"
+}

@@ -1,0 +1,18 @@
+﻿/* APEX_WATANY_WAVE1_GENERATED: FOUNDATIONS_V1 */
+/*
+  Wave 1 is intentionally variable-only.
+  No existing selectors are rewritten here.
+  Wave 2 will adopt these contracts into smartphone shell and safe-area rules
+  only after browser/runtime proof.
+*/
+
+:root {
+  --watany-foundation-body-font-size: var(--watany-font-size-body);
+  --watany-foundation-strong-font-size: var(--watany-font-size-strong);
+  --watany-foundation-touch-target-min: var(--watany-touch-target-min);
+
+  --watany-foundation-safe-top: var(--watany-safe-area-top);
+  --watany-foundation-safe-right: var(--watany-safe-area-right);
+  --watany-foundation-safe-bottom: var(--watany-safe-area-bottom);
+  --watany-foundation-safe-left: var(--watany-safe-area-left);
+}

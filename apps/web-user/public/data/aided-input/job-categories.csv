@@ -1,0 +1,11 @@
+job_category,arabic_label,active
+security,أمن,true
+driver,سائق,true
+maintenance,صيانة,true
+administration,إدارة,true
+logistics,لوجستيات,true
+sales,مبيعات,true
+customer_service,خدمة زبائن,true
+healthcare,رعاية صحية,true
+education,تعليم,true
+technology,تكنولوجيا,true

@@ -1,0 +1,50 @@
+/* APEX mobile route shell guard.
+   Purpose: prevent page-scoped sticky chat/menu bars from rendering at the top
+   when a stale/default route or legacy shell is reached on Android Chrome. */
+:root {
+  --apex-mobile-bottom-sticky-height: 96px;
+}
+
+@media (max-width: 768px) {
+  html,
+  body,
+  #root {
+    min-height: 100%;
+  }
+
+  body {
+    overflow-x: hidden;
+  }
+
+  .kw-bottom-chat,
+  .kw-bottom-chat-bar,
+  .watany-bottom-chat,
+  .watany-bottom-sticky,
+  .mobile-bottom-chat,
+  .mobile-bottom-sticky,
+  .bottom-sticky,
+  [data-watany-bottom-chat],
+  [data-watany-bottom-sticky],
+  [data-apex-mobile-bottom-sticky] {
+    position: fixed !important;
+    top: auto !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 2147483000 !important;
+    transform: none !important;
+  }
+
+  .watany-mobile-shell,
+  .kw-app-shell,
+  .app-shell,
+  .mobile-shell,
+  main,
+  [data-watany-page-content],
+  [data-apex-mobile-page-content] {
+    padding-bottom: max(
+      var(--apex-mobile-bottom-sticky-height),
+      calc(var(--apex-mobile-bottom-sticky-height) + env(safe-area-inset-bottom))
+    ) !important;
+  }
+}

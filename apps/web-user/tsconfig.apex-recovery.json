@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "skipLibCheck": true
+  },
+  "include": [
+    "src/main.tsx",
+    "src/App.tsx",
+    "src/components/AppShell.tsx",
+    "src/components/layouts/WatanyPublicShellV20.tsx",
+    "src/pages/WatanyRecoveryPages.tsx"
+  ],
+  "exclude": ["node_modules", "dist", "src/**/*.test.ts", "src/**/*.test.tsx"]
+}

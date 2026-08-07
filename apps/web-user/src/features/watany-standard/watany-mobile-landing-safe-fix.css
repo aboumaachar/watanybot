@@ -1,0 +1,272 @@
+:root {
+  --watany-safe-sticky-offset: 132px;
+  --watany-safe-ink: #1a1610;
+  --watany-safe-muted: #4a4136;
+  --watany-safe-gold: #a58d55;
+  --watany-safe-green: #2f8f54;
+  --watany-safe-blue: #2f80c9;
+  --watany-safe-purple: #8157c2;
+  --watany-safe-card: rgba(255, 253, 247, 0.97);
+  --watany-safe-border: rgba(111, 91, 44, 0.16);
+  --watany-safe-shadow: 0 12px 30px rgba(28, 26, 22, 0.12);
+}
+
+html.watany-safe-mobile-landing {
+  scroll-padding-top: var(--watany-safe-sticky-offset);
+}
+
+html.watany-safe-mobile-landing body {
+  color: var(--watany-safe-ink);
+  overflow-x: hidden;
+}
+
+/* Undo the previous bad broad badge styling */
+html.watany-safe-mobile-landing small,
+html.watany-safe-mobile-landing [class*="subtitle"],
+html.watany-safe-mobile-landing [class*="Subtitle"],
+html.watany-safe-mobile-landing [class*="description"],
+html.watany-safe-mobile-landing [class*="Description"] {
+  background: transparent !important;
+  color: var(--watany-safe-muted) !important;
+  border-radius: 0 !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  display: block !important;
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  line-height: 1.35 !important;
+  font-size: clamp(14px, 3.9vw, 18px) !important;
+}
+
+/* Keep numeric notification badges as badges */
+html.watany-safe-mobile-landing [data-badge],
+html.watany-safe-mobile-landing [class*="notification"][class*="badge"],
+html.watany-safe-mobile-landing [class*="Notification"][class*="Badge"] {
+  background: #c9283f !important;
+  color: #fff !important;
+  border-radius: 999px !important;
+  min-width: 26px !important;
+  min-height: 26px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-weight: 800 !important;
+}
+
+/* Elderly-readable tiles without turning labels into pills */
+html.watany-safe-mobile-landing [class*="card"],
+html.watany-safe-mobile-landing [class*="Card"],
+html.watany-safe-mobile-landing [class*="tile"],
+html.watany-safe-mobile-landing [class*="Tile"] {
+  color: var(--watany-safe-ink);
+  scroll-margin-top: calc(var(--watany-safe-sticky-offset) + 12px);
+}
+
+html.watany-safe-mobile-landing [class*="card"] svg,
+html.watany-safe-mobile-landing [class*="Card"] svg,
+html.watany-safe-mobile-landing [class*="tile"] svg,
+html.watany-safe-mobile-landing [class*="Tile"] svg {
+  min-width: 34px;
+  min-height: 34px;
+}
+
+/* Shared landing icon shell: canonical sizing and visual tokens
+   Applies to landing cards/tiles but explicitly scoped under
+   html.watany-safe-mobile-landing so header/topbar icons are excluded. */
+html.watany-safe-mobile-landing .kw-service-menu-icon-source,
+html.watany-safe-mobile-landing .koudama-icon-shell,
+html.watany-safe-mobile-landing .kw-service-tile .kw-service-menu-icon-source,
+html.watany-safe-mobile-landing .watany-safe-updates-card .kw-service-menu-icon-source,
+html.watany-safe-mobile-landing .kw-profile-menu__icon {
+  --watany-icon-shell-size: 72px;
+  --watany-icon-shell-radius: 22px;
+  --watany-icon-shell-border: 3px;
+  --watany-icon-glyph-size: 56px;
+  color: currentColor;
+  transform: translateZ(0);
+}
+
+html.watany-safe-mobile-landing .kw-main-card .kw-service-menu-icon-source {
+  --watany-icon-shell-size: 108px;
+  --watany-icon-shell-radius: 33px;
+  --watany-icon-shell-border: 4px;
+  --watany-icon-glyph-size: 90px;
+  color: currentColor;
+  transform: translateZ(0);
+}
+
+html.watany-safe-mobile-landing .kw-service-menu-icon-source svg,
+html.watany-safe-mobile-landing .koudama-icon-shell svg,
+html.watany-safe-mobile-landing .kw-profile-menu__icon svg {
+  width: var(--watany-icon-glyph-size);
+  height: var(--watany-icon-glyph-size);
+  stroke: currentColor;
+  fill: currentColor;
+  stroke-width: 2.25;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter:
+    drop-shadow(0 7px 12px color-mix(in srgb, currentColor 28%, transparent))
+    drop-shadow(0 1px 0 rgba(255,255,255,.82));
+}
+
+/* Ensure the shell is always square and SVGs scale to the content box. */
+html.watany-safe-mobile-landing .kw-service-menu-icon-source,
+html.watany-safe-mobile-landing .koudama-icon-shell,
+html.watany-safe-mobile-landing .kw-profile-menu__icon {
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  box-sizing: border-box;
+  padding: max(6px, calc(var(--watany-icon-shell-size, 88px) * 0.06));
+}
+
+html.watany-safe-mobile-landing .kw-service-menu-icon-source svg,
+html.watany-safe-mobile-landing .koudama-icon-shell svg,
+html.watany-safe-mobile-landing .kw-profile-menu__icon svg {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  width: calc(var(--watany-icon-glyph-size) * 0.9);
+  height: calc(var(--watany-icon-glyph-size) * 0.9);
+}
+
+/* Provide smaller variants for compact child cards */
+html.watany-safe-mobile-landing .kw-child-item .kw-service-menu-icon-source {
+  --watany-icon-shell-size: 64px;
+  --watany-icon-shell-radius: 20px;
+  --watany-icon-shell-border: 3px;
+  --watany-icon-glyph-size: 46px;
+}
+
+html.watany-safe-mobile-landing .kw-profile-menu__icon {
+  --watany-icon-shell-size: 52px;
+  --watany-icon-shell-radius: 18px;
+  --watany-icon-shell-border: 3px;
+  --watany-icon-glyph-size: 36px;
+}
+
+
+/* Header icons: not black, more like landing-page header */
+html.watany-safe-mobile-landing header svg,
+html.watany-safe-mobile-landing [class*="TopBar"] svg,
+html.watany-safe-mobile-landing [class*="TopMenu"] svg,
+html.watany-safe-mobile-landing [class*="top-bar"] svg,
+html.watany-safe-mobile-landing [class*="top-menu"] svg {
+  color: var(--watany-safe-gold);
+  stroke: currentColor;
+}
+
+html.watany-safe-mobile-landing header button:nth-of-type(1) svg,
+html.watany-safe-mobile-landing [class*="TopBar"] button:nth-of-type(1) svg {
+  color: var(--watany-safe-green);
+}
+
+html.watany-safe-mobile-landing header button:nth-of-type(2) svg,
+html.watany-safe-mobile-landing [class*="TopBar"] button:nth-of-type(2) svg {
+  color: var(--watany-safe-blue);
+}
+
+html.watany-safe-mobile-landing header button:nth-of-type(3) svg,
+html.watany-safe-mobile-landing [class*="TopBar"] button:nth-of-type(3) svg {
+  color: var(--watany-safe-purple);
+}
+
+/* Updates card: contain text and prevent white overflow */
+html.watany-safe-mobile-landing .watany-safe-updates-card {
+  color: var(--watany-safe-ink) !important;
+  overflow: hidden !important;
+  border-radius: 28px !important;
+}
+
+html.watany-safe-mobile-landing .watany-safe-updates-card * {
+  color: inherit;
+  text-shadow: none !important;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+html.watany-safe-mobile-landing .watany-safe-updates-card .kw-service-menu-icon-source,
+html.watany-safe-mobile-landing .watany-safe-updates-card .kw-service-menu-icon-source svg,
+html.watany-safe-mobile-landing .watany-safe-updates-card .kw-profile-menu__icon,
+html.watany-safe-mobile-landing .watany-safe-updates-card .kw-profile-menu__icon svg {
+  color: inherit;
+  text-shadow: none !important;
+}
+
+html.watany-safe-mobile-landing .watany-safe-updates-card .kw-service-menu-icon-source.tone-blue,
+html.watany-safe-mobile-landing .watany-safe-updates-card .kw-profile-menu__icon.tone-blue {
+  color: var(--kw-blue) !important;
+}
+
+html.watany-safe-mobile-landing .watany-safe-updates-card .kw-service-menu-icon-source.tone-green,
+html.watany-safe-mobile-landing .watany-safe-updates-card .kw-profile-menu__icon.tone-green {
+  color: var(--kw-green) !important;
+}
+
+html.watany-safe-mobile-landing .watany-safe-updates-card .kw-service-menu-icon-source.tone-teal,
+html.watany-safe-mobile-landing .watany-safe-updates-card .kw-profile-menu__icon.tone-teal {
+  color: var(--kw-teal) !important;
+}
+
+html.watany-safe-mobile-landing .watany-safe-updates-card .kw-service-menu-icon-source.tone-red,
+html.watany-safe-mobile-landing .watany-safe-updates-card .kw-profile-menu__icon.tone-red {
+  color: var(--kw-red) !important;
+}
+
+html.watany-safe-mobile-landing .watany-safe-updates-card .kw-service-menu-icon-source.tone-gold,
+html.watany-safe-mobile-landing .watany-safe-updates-card .kw-profile-menu__icon.tone-gold {
+  color: var(--kw-orange) !important;
+}
+
+html.watany-safe-mobile-landing .watany-safe-updates-card .kw-service-menu-icon-source.tone-purple,
+html.watany-safe-mobile-landing .watany-safe-updates-card .kw-profile-menu__icon.tone-purple {
+  color: var(--kw-purple) !important;
+}
+
+html.watany-safe-mobile-landing .watany-safe-updates-card .kw-service-menu-icon-source.tone-gray,
+html.watany-safe-mobile-landing .watany-safe-updates-card .kw-profile-menu__icon.tone-gray {
+  color: var(--kw-gray) !important;
+}
+
+html.watany-safe-mobile-landing .watany-safe-updates-card h1,
+html.watany-safe-mobile-landing .watany-safe-updates-card h2,
+html.watany-safe-mobile-landing .watany-safe-updates-card h3 {
+  font-size: clamp(22px, 6vw, 30px);
+  font-weight: 800;
+}
+
+/* Side menu must be drawer, not centered modal */
+html.watany-safe-mobile-landing .watany-safe-side-drawer {
+  position: fixed !important;
+  top: var(--watany-safe-sticky-offset) !important;
+  right: 0 !important;
+  left: auto !important;
+  transform: none !important;
+  width: min(86vw, 390px) !important;
+  height: calc(100dvh - var(--watany-safe-sticky-offset) - 84px) !important;
+  max-height: calc(100dvh - var(--watany-safe-sticky-offset) - 84px) !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  z-index: 1300 !important;
+  background: var(--watany-safe-card) !important;
+  border: 1px solid var(--watany-safe-border) !important;
+  border-radius: 26px 0 0 26px !important;
+  box-shadow: var(--watany-safe-shadow) !important;
+  padding: 16px !important;
+  margin: 0 !important;
+}
+
+html[dir="ltr"].watany-safe-mobile-landing .watany-safe-side-drawer {
+  left: 0 !important;
+  right: auto !important;
+  border-radius: 0 26px 26px 0 !important;
+}
+
+/* Expanded content should land below sticky header */
+html.watany-safe-mobile-landing [open],
+html.watany-safe-mobile-landing [aria-expanded="true"],
+html.watany-safe-mobile-landing [class*="expanded"],
+html.watany-safe-mobile-landing [class*="Expanded"] {
+  scroll-margin-top: calc(var(--watany-safe-sticky-offset) + 14px) !important;
+}

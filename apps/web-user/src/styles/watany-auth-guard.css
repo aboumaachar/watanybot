@@ -1,0 +1,95 @@
+/* Guard rules to hide legacy floating mobile dock / pill and floating chrome on specific routes
+   Target only small mobile viewports and only when the app signals an auth page or when
+   the mobile shell marks the current route (home). This avoids global hiding.
+*/
+
+@media (max-width: 430px) {
+  /* When we are on the modern auth page (AppShell marks documentElement), hide legacy docks */
+  html.watany-auth-page .koudama-mobile-dock,
+  html.watany-auth-page .watany-mobile-shell__dock,
+  html.watany-auth-page .watany-mobile-shell__dock-link {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    opacity: 0 !important;
+  }
+
+  /* Also hide the legacy floating pill on the canonical home route when present */
+  html[data-watany-current-route="/"] .koudama-mobile-dock,
+  html[data-watany-current-route="/"] .watany-mobile-shell__dock {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    opacity: 0 !important;
+  }
+
+  /* Prevent a floating white pill from becoming visible above content */
+  html .legacy-mobile-pill,
+  html .mobile-floating-pill {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+}
+
+/* Disable universal feature menu sticky toolbar on narrow mobile viewports to avoid floating pill overlay */
+@media (max-width: 430px) {
+  .watany-mobile-shell .watany-universal-feature-menu__toolbar,
+  .watany-universal-feature-menu__toolbar,
+  [data-watany-universal-feature-menu=true] .watany-universal-feature-menu__toolbar {
+    position: static !important;
+    top: auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    z-index: 1 !important;
+    box-shadow: none !important;
+  }
+
+  /* If toolbar must remain visible, keep it inline and non-overlapping */
+  .watany-universal-feature-menu__toolbar .watany-universal-feature-menu__trigger {
+    position: relative !important;
+  }
+}
+
+/* Permanently hide the universal feature menu toolbar on auth pages */
+html.watany-auth-page .watany-universal-feature-menu,
+html.watany-auth-page .watany-universal-feature-menu__toolbar,
+html.watany-auth-page section.watany-universal-feature-menu {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  opacity: 0 !important;
+}
+
+/* Hide top runtime/header chrome on auth landing routes. */
+html.watany-auth-page .watany-top-header,
+html.watany-auth-page [data-watany-top-header],
+html.watany-auth-page [aria-label="╪º┘ä╪┤╪▒┘è╪╖ ╪º┘ä╪╣┘ä┘ê┘è"] {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  opacity: 0 !important;
+}
+
+/* Disable the universal feature menu globally on all pages (override JS mounting and sticky toolbar) */
+.watany-universal-feature-menu,
+.watany-universal-feature-menu__toolbar,
+section.watany-universal-feature-menu,
+[data-watany-universal-feature-menu="true"] {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  opacity: 0 !important;
+}
+
+/* hide trigger and chip variants too */
+.watany-universal-feature-menu__trigger,
+.watany-universal-feature-menu__chip,
+.watany-universal-feature-menu__search,
+.watany-universal-feature-menu__panel {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  opacity: 0 !important;
+}
+

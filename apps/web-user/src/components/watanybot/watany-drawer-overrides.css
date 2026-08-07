@@ -1,0 +1,193 @@
+.watany-header__actions {
+  width: 100%;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px 10px;
+}
+
+.watany-header-action,
+button.watany-header-action {
+  border: 0;
+  background: none;
+  font: inherit;
+  cursor: pointer;
+  flex: 0 1 78px;
+}
+
+.watany-header-action--accent .watany-header-action__icon,
+.watany-header-action--device .watany-header-action__icon {
+  color: #fff;
+}
+
+.watany-header-action--accent .watany-header-action__icon {
+  background: linear-gradient(135deg, #0f766e, #16a34a);
+}
+
+.watany-header-action--device .watany-header-action__icon {
+  background: linear-gradient(135deg, #12355b, #2563eb);
+}
+
+.watany-header-action small {
+  color: #172033;
+}
+
+@media (max-width: 520px) {
+  .watany-header-action,
+  button.watany-header-action {
+    flex-basis: calc(20% - 10px);
+    min-width: 64px;
+  }
+
+  .watany-header-action small {
+    font-size: 13px;
+  }
+}
+
+/* ── Compact top action bar ──────────────────────────────── */
+.watany-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  padding: 4px 0;
+  min-height: 52px;
+}
+
+.watany-top-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 2px 10px rgba(18, 53, 91, 0.14);
+  color: #172033;
+  text-decoration: none;
+  cursor: pointer;
+  font: inherit;
+  font-size: 22px;
+  flex-shrink: 0;
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+
+.watany-top-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(18, 53, 91, 0.2);
+}
+
+.watany-top-btn:active {
+  transform: scale(0.95);
+}
+
+.watany-top-btn--install {
+  background: linear-gradient(135deg, #0f766e, #16a34a);
+  color: #fff;
+}
+
+/* icon + badge wrapper inside a compact button */
+.watany-top-btn__icon-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.watany-top-badge {
+  position: absolute;
+  inset-block-start: -5px;
+  inset-inline-end: -5px;
+  display: grid;
+  place-items: center;
+  min-width: 16px;
+  height: 16px;
+  padding-inline: 3px;
+  border-radius: 999px;
+  background: #b23a48;
+  color: #fff;
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 800;
+  border: 2px solid #fff;
+}
+
+@media (max-width: 360px) {
+  .watany-top-btn {
+    width: 38px;
+    height: 38px;
+    font-size: 19px;
+  }
+
+  .watany-top-bar {
+    gap: 4px;
+  }
+}
+
+/* Wh floating chat layout */
+.wh-floating-chat {
+  flex-direction: column !important;
+  align-items: stretch !important;
+  gap: 10px !important;
+}
+.wh-floating-chat__row {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  width: 100% !important;
+}
+.wh-floating-chat__submit-btn {
+  min-width: 40px !important;
+  min-height: 40px !important;
+  border-radius: 10px !important;
+  background: rgba(255, 255, 255, 0.16) !important;
+  border: 1px solid rgba(255, 255, 255, 0.28) !important;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.25) !important;
+}
+
+.wh-floating-chat__submit-btn:hover {
+  background: rgba(255, 255, 255, 0.24) !important;
+}
+
+/* Give service listings more visual weight */
+.watany-app-icon__tile {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.watany-app-icon:hover .watany-app-icon__tile {
+  box-shadow: none !important;
+}
+
+.watany-app-icon--navy .watany-app-icon__tile,
+.watany-app-icon--green .watany-app-icon__tile,
+.watany-app-icon--red .watany-app-icon__tile,
+.watany-app-icon--slate .watany-app-icon__tile {
+  background: transparent !important;
+}
+
+.watany-app-icon__glyph .koudama-feature-icon {
+  --kfi-size: clamp(50px, 14vw, 60px);
+}
+
+/* ensure icon sign colour reaches kfi-fill paths regardless of inherited color */
+.watany-app-icon__glyph .koudama-feature-icon .kfi-fill {
+  fill: var(--koudama-icon-sign) !important;
+}
+
+.watany-app-icon__glyph .koudama-feature-icon .kfi-detail {
+  stroke: rgba(255, 255, 255, 0.9) !important;
+}
+
+.watany-latest-updates__item,
+.watany-today-match {
+  box-shadow: 0 14px 24px rgba(15, 23, 42, 0.12), 0 3px 8px rgba(15, 23, 42, 0.08) !important;
+}
+
+.watany-latest-updates__item:hover,
+.watany-today-match:hover {
+  transform: translateY(-1px);
+  transition: transform 120ms ease, box-shadow 120ms ease;
+  box-shadow: 0 18px 30px rgba(15, 23, 42, 0.16), 0 6px 12px rgba(15, 23, 42, 0.1) !important;
+}

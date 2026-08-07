@@ -1,0 +1,3 @@
+import { createDeploymentSyncDefaultAdapter } from '../adapter/deployment-sync-default.adapter';
+import { deploymentSyncPluginManifest } from '../manifest/deployment-sync-plugin.manifest';
+export function createDeploymentSyncHostRegistration() { const adapter = createDeploymentSyncDefaultAdapter(); return { pluginKey: 'deployment-sync', manifest: deploymentSyncPluginManifest, adapter, status: 'safe-modular-boundary-ready' as const }; }

@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="ar" dir="rtl" class="watany-platform-v3">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <style id="watany-no-theme-transitions">.watany-no-theme-transitions *{transition:none!important;animation:none!important}</style>
+    <script>
+      (function () {
+        try {
+          // Prevent CSS transition flashes while theme is applied
+          try { document.documentElement.classList.add('watany-no-theme-transitions'); } catch {}
+          var validThemes = ["watani", "wadih", "layli", "askari", "arzi", "azraq", "ramli"];
+          var darkThemes = ["wadih", "layli"];
+          var savedTheme = localStorage.getItem("watany_theme_preference");
+          var theme = validThemes.includes(savedTheme) ? savedTheme : "watani";
+          var savedThemeMode = localStorage.getItem("watany_theme_mode") || "system";
+          var rootElement = document.documentElement;
+          var systemScheme = globalThis.matchMedia && globalThis.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+          var colorScheme = savedThemeMode === "light" || savedThemeMode === "dark" ? savedThemeMode : systemScheme;
+          rootElement.dataset.theme = theme;
+          rootElement.dataset.koudamaTheme = theme;
+          rootElement.dataset.themeMode = savedThemeMode;
+          rootElement.dataset.colorScheme = colorScheme;
+          rootElement.style.colorScheme = darkThemes.includes(theme) ? "dark" : "light";
+          // Remove the no-transition guard shortly after load to allow normal transitions
+          try {
+            globalThis.addEventListener('load', function () { setTimeout(function () { try { document.documentElement.classList.remove('watany-no-theme-transitions'); } catch {} }, 80); });
+          } catch {}
+        } catch {
+          document.documentElement.dataset.theme = "watani";
+          document.documentElement.dataset.koudamaTheme = "watani";
+          document.documentElement.dataset.themeMode = "system";
+          document.documentElement.dataset.colorScheme = "light";
+          document.documentElement.style.colorScheme = "light";
+          try { document.documentElement.classList.remove('watany-no-theme-transitions'); } catch {}
+        }
+      })();
+    </script>
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#faf7f0" />
+    <link rel="icon" type="image/png" href="/assets/watany-logo.png" />
+    <link rel="apple-touch-icon" href="/assets/watany-logo.png" />
+    <!-- Cairo Font - All Weights -->
+<!-- Phosphor Icons -->
+<title>موطني — مساعد المحاربين القدامى</title>
+    <link rel="manifest" href="/manifest.webmanifest" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="WatanyBot" />  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<!-- WATANY_V1_INTERIM_STABILIZER_BOOTSTRAP_START -->
+<script>
+(function () {
+  try {
+    document.documentElement.classList.add('watany-v1-boot');
+    var viewport = document.querySelector('meta[name="viewport"]');
+    if (!viewport) {
+      viewport = document.createElement('meta');
+      viewport.setAttribute('name', 'viewport');
+      document.head.appendChild(viewport);
+    }
+    viewport.setAttribute('content', 'width=device-width, initial-scale=1, viewport-fit=cover');
+  } catch {
+    return;
+  }
+})();
+</script>
+<!-- WATANY_V1_INTERIM_STABILIZER_BOOTSTRAP_END -->
+<script defer src="/watany-public-runtime-scope-v1.js" data-watany-public-runtime-scope="v1"></script>
+<!-- APEX:WATANY_V1_UNIVERSAL_FORM_VIEWER_TEMPLATE_BEGIN -->
+<script defer data-apex="watany-v1-universal-form-viewer-v182" src="/watany-v1-universal-form-viewer-v182.js"></script>
+<!-- APEX:WATANY_V1_UNIVERSAL_FORM_VIEWER_TEMPLATE_END -->
+<!-- APEX:WATANY_V1_FULL_WIDTH_SNAPPED_POPUP_CONSISTENCY_AUDIT_BEGIN -->
+<script defer data-apex="watany-v1-full-width-snapped-popup-consistency-v210" src="/watany-v1-full-width-snapped-popup-consistency-v210.js"></script>
+<!-- APEX:WATANY_V1_FULL_WIDTH_SNAPPED_POPUP_CONSISTENCY_AUDIT_END -->
+<!-- APEX:WATANY_V1_FULL_WIDTH_SNAPPED_POPUP_HEADER_SNAP_CLOSEOUT_BEGIN -->
+<script defer data-apex="watany-v1-full-width-snapped-popup-header-snap-closeout-v211" src="/watany-v1-full-width-snapped-popup-header-snap-closeout-v211.js"></script>
+<!-- APEX:WATANY_V1_FULL_WIDTH_SNAPPED_POPUP_HEADER_SNAP_CLOSEOUT_END -->
+<!-- APEX:WATANY_V1_FULL_WIDTH_SNAPPED_POPUP_BODY_PORTAL_CLOSEOUT_BEGIN -->
+<script defer data-apex="watany-v1-full-width-snapped-popup-body-portal-closeout-v212" src="/watany-v1-full-width-snapped-popup-body-portal-closeout-v212.js"></script>
+<!-- APEX:WATANY_V1_FULL_WIDTH_SNAPPED_POPUP_BODY_PORTAL_CLOSEOUT_END -->
+<!-- APEX:WATANY_V1_HOME_HEIGHT_PUBLISHED_ICONS_CLOSEOUT_BEGIN -->
+<script defer data-apex="watany-v1-home-height-published-icons-closeout-v220" src="/watany-v1-home-height-published-icons-closeout-v220.js"></script>
+<!-- APEX:WATANY_V1_HOME_HEIGHT_PUBLISHED_ICONS_CLOSEOUT_END -->
+<!-- WATANY_V1_LANDING_STABILITY_BOOT_V320 -->
+<style id="watany-v1-landing-stability-boot-style-v320">
+html.watany-v1-first-paint-stabilizing #root { visibility: hidden !important; }
+html.watany-no-theme-transitions *, html.watany-no-theme-transitions *::before, html.watany-no-theme-transitions *::after { transition: none !important; animation-duration: 0.001s !important; animation-delay: 0s !important; }
+</style>
+<script id="watany-v1-landing-stability-boot-script-v320">(function(){try{var h=document.documentElement;h.classList.add('watany-v1-first-paint-stabilizing');h.classList.add('watany-no-theme-transitions');h.classList.add('watany-v1-landing-stability-boot-v320');}catch(e){}})();</script>
+<!-- Runtime debug helper + localStorage toggle for Koudama menu (mobile only) -->
+<script>
+  (function () {
+    try {
+      var DEBUG_FLAG = 'watany_debug_log_overlays';
+      var HIDE_KOUDAMA_KEY = 'watany_hide_koudama_mobile';
+
+      function isSmallScreen() {
+        try { return Math.max(window.innerWidth || 0, document.documentElement.clientWidth || 0) <= 900; } catch { return false; }
+      }
+
+      // Apply hide if toggle is set
+      try {
+        var hide = localStorage.getItem(HIDE_KOUDAMA_KEY) === '1';
+        if (hide && isSmallScreen()) {
+          document.documentElement.classList.add('watany-hide-koudama-mobile');
+        }
+      } catch (e) {}
+
+      // Expose helper to toggle at runtime from console
+      window.watany = window.watany || {};
+      window.watany.toggleKoudamaMobile = function (on) {
+        try {
+          if (on === undefined) on = !(localStorage.getItem(HIDE_KOUDAMA_KEY) === '1');
+          localStorage.setItem(HIDE_KOUDAMA_KEY, on ? '1' : '0');
+          if (on && isSmallScreen()) document.documentElement.classList.add('watany-hide-koudama-mobile');
+          else document.documentElement.classList.remove('watany-hide-koudama-mobile');
+          console.info('[watany] Koudama mobile hide set to', on ? 'ON' : 'OFF');
+        } catch (e) { console.warn('[watany] toggleKoudamaMobile failed', e); }
+      };
+
+      // Debug: detect overlays overlapping the bottom dock and log details when asked
+      function logOverlappingElements() {
+        try {
+          var dock = document.querySelector('.watany-mobile-shell__dock, .koudama-mobile-dock');
+          if (!dock) { console.info('[watany-debug] No dock found on page'); return; }
+          var r = dock.getBoundingClientRect();
+          var found = [];
+          var all = Array.prototype.slice.call(document.querySelectorAll('body *'));
+          all.forEach(function (el) {
+            try {
+              if (el === dock) return;
+              var cr = el.getBoundingClientRect();
+              if (cr.width === 0 && cr.height === 0) return;
+              var intersects = !(cr.right < r.left || cr.left > r.right || cr.bottom < r.top || cr.top > r.bottom);
+              if (intersects) {
+                var style = window.getComputedStyle(el);
+                found.push({ tag: el.tagName.toLowerCase(), cls: el.className || '', z: style.zIndex || 'auto', pointerEvents: style.pointerEvents, visible: style.visibility, opacity: style.opacity, rect: cr });
+              }
+            } catch (e) {}
+          });
+          console.group('[watany-debug] Elements overlapping dock — count=' + found.length + '');
+          found.forEach(function (f) { console.log(f); });
+          console.groupEnd();
+        } catch (e) { console.warn('[watany-debug] logOverlappingElements failed', e); }
+      }
+
+      window.watany.logDockOverlaps = function () { logOverlappingElements(); };
+
+      // Auto-run debug if flag present in localStorage or URL
+      try {
+        var auto = localStorage.getItem(DEBUG_FLAG) === '1' || location.search.indexOf('watanyDebug=1') >= 0;
+        if (auto) setTimeout(logOverlappingElements, 900);
+      } catch (e) {}
+
+    } catch (e) {}
+  })();
+</script>
+  <meta name="watany-theme-contract" content="v2.3.5" />
+</head>
+<body data-watany-theme="canonical-v2">
+    <div id="root">
+      <div id="watany-initial-fallback" style="min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:24px;background:#f8fafc;color:#0f172a;font-family:Cairo,system-ui,sans-serif;">
+        <div style="max-width:500px;width:100%;background:#ffffff;border:1px solid #cbd5e1;border-radius:14px;padding:18px 16px;box-shadow:0 10px 28px rgba(15,23,42,.1)">
+          <h1 style="margin:0 0 8px;font-size:18px;font-weight:800;line-height:1.4">Loading Watany...</h1>
+          <p style="margin:0;font-size:14px;line-height:1.8;color:#334155">If loading takes too long, refresh the page once with Ctrl+F5.</p>
+        </div>
+      </div>
+    </div>
+    <script>
+      (function () {
+        var RECOVER_FLAG = "watany_dev_module_recover_once";
+        var hasRecovered = sessionStorage.getItem(RECOVER_FLAG) === "1";
+        var watchdogTimer = 0;
+        function logDiagnostic(eventType, message) {
+          if (!globalThis.location.search.includes("watanyDebug=1")) return;
+          console.debug("[watany-bootstrap]", eventType, message);
+        }
+
+        function showRecoveryMessage() {
+          if (document.getElementById("watany-dev-recovery")) return;
+          var root = document.getElementById("root");
+          if (!root) return;
+          logDiagnostic("recovery", "showRecoveryMessage invoked");
+          root.innerHTML = ""
+            + '<div id="watany-dev-recovery" style="min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:24px;background:#f8fafc;color:#0f172a;font-family:Cairo,system-ui,sans-serif;">'
+            + '  <div style="max-width:480px;width:100%;background:#ffffff;border:1px solid #cbd5e1;border-radius:14px;padding:18px 16px;box-shadow:0 10px 28px rgba(15,23,42,.1)">'
+            + '    <h1 style="margin:0 0 8px;font-size:18px;font-weight:800;line-height:1.4">App resources failed to load</h1>'
+            + '    <p style="margin:0 0 14px;font-size:14px;line-height:1.8;color:#334155">Recovery mode is active. Press reload to retry the page.</p>'
+            + '    <button id="watany-dev-recovery-btn" style="appearance:none;border:0;border-radius:10px;background:#0f766e;color:#ffffff;padding:10px 14px;font-size:14px;font-weight:700;cursor:pointer">Reload page</button>'
+            + '  </div>'
+            + '</div>';
+
+          var btn = document.getElementById("watany-dev-recovery-btn");
+          if (btn) {
+            btn.addEventListener("click", function () {
+              sessionStorage.removeItem(RECOVER_FLAG);
+              location.reload();
+            });
+          }
+        }
+
+        function recoverFromModuleFailure() {
+          logDiagnostic("recovery", "recoverFromModuleFailure triggered");
+          if (!hasRecovered) {
+            sessionStorage.setItem(RECOVER_FLAG, "1");
+            var url = new URL(location.href);
+            url.searchParams.set("dev-recover", String(Date.now()));
+            logDiagnostic("recovery", "one-time reload requested: " + url.toString());
+            location.replace(url.toString());
+            return;
+          }
+          showRecoveryMessage();
+        }
+
+        function isRootVisiblyMounted() {
+          var root = document.getElementById("root");
+          if (!root) return false;
+          if (root.childElementCount > 0) return true;
+          var text = (root.textContent || "").trim();
+          return text.length > 0;
+        }
+
+        function startBlankScreenWatchdog() {
+          logDiagnostic("watchdog", "blank-screen watchdog armed (5s)");
+          watchdogTimer = globalThis.setTimeout(function () {
+            if (!isRootVisiblyMounted()) {
+              logDiagnostic("watchdog", "root not mounted after timeout");
+              showRecoveryMessage();
+            }
+          }, 5000);
+
+          var root = document.getElementById("root");
+          if (!root) return;
+          var observer = new MutationObserver(function () {
+            if (!isRootVisiblyMounted()) return;
+            if (watchdogTimer) {
+              globalThis.clearTimeout(watchdogTimer);
+              watchdogTimer = 0;
+            }
+            logDiagnostic("watchdog", "root mounted, watchdog cleared");
+            observer.disconnect();
+          });
+
+          observer.observe(root, { childList: true, subtree: true, characterData: true });
+        }
+
+        globalThis.addEventListener("error", function (event) {
+          var target = event && event.target;
+          if (target && target instanceof HTMLElement && target.tagName) {
+            var srcAttr = target.getAttribute("src") || target.getAttribute("href") || "";
+            logDiagnostic("resource-error", target.tagName + " " + srcAttr);
+            if (target instanceof HTMLScriptElement && srcAttr.includes("/src/main.tsx")) {
+              recoverFromModuleFailure();
+            }
+            return;
+          }
+
+          var message = (event && event.message) || "Unknown runtime error";
+          var file = (event && event.filename) || "";
+          var lineNo = (event && event.lineno) || 0;
+          var colNo = (event && event.colno) || 0;
+          logDiagnostic("runtime-error", message + " @ " + file + ":" + lineNo + ":" + colNo);
+        }, true);
+
+        globalThis.addEventListener("unhandledrejection", function (event) {
+          var reason = event && event.reason;
+          var message = "";
+          if (typeof reason === "string") message = reason;
+          else if (reason && typeof reason.message === "string") message = reason.message;
+          logDiagnostic("promise-rejection", message || String(reason));
+          if (!/Failed to fetch dynamically imported module|Importing a module script failed|Load failed/i.test(message)) return;
+          recoverFromModuleFailure();
+        });
+
+        startBlankScreenWatchdog();
+      })();
+    </script>
+    <script type="module" src="/src/main.tsx"></script>
+  <script type="module" defer src="/watany-v1-landing-stability-console-closeout-v320.js"></script>
+    <!-- Opt-out flag: explicitly disable World Cup runtime for this build. -->
+    <script>
+      try { window.__WATANY_DISABLE_WORLD_CUP_RUNTIME__ = true; } catch (e) { /* ignore */ }
+    </script>
+    <script defer src="/watany-v1-world-cup-nine-icons-v170.js"></script>
+</body>
+</html>

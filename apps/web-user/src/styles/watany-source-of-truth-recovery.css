@@ -1,0 +1,587 @@
+:root {
+  font-family: "Noto Kufi Arabic", "Segoe UI", Tahoma, Arial, sans-serif;
+  color: #16241d;
+  background: #f5f2e9;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+* { box-sizing: border-box; }
+html { direction: rtl; background: #f5f2e9; }
+body { margin: 0; min-width: 320px; min-height: 100vh; background: radial-gradient(circle at 50% -10%, #fff9db 0, #f5f2e9 38%, #edf3ec 100%); }
+button, input { font: inherit; }
+a { color: inherit; text-decoration: none; }
+button { cursor: pointer; }
+
+.watany-recovery-shell {
+  min-height: 100vh;
+  height: 100dvh;
+  padding: 70px 0 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.watany-recovery-topbar, .watany-recovery-bottom {
+  position: fixed; left: 50%; width: min(100%, 430px); transform: translateX(-50%); z-index: 40;
+  background: linear-gradient(135deg, #123e2e, #0b2f24); color: #fff; box-shadow: 0 7px 24px rgb(9 43 32 / 24%);
+}
+.watany-recovery-topbar { top: 0; height: 62px; display: grid; grid-template-columns: 54px minmax(0, 1fr) 54px; align-items: center; gap: 6px; padding: 5px 6px; direction: ltr; }
+.watany-recovery-logo { width: 48px; height: 48px; object-fit: contain; border-radius: 12px; background: #fffdf5; box-shadow: 0 0 0 1px rgb(220 180 67 / 70%), 0 3px 12px rgb(0 0 0 / 22%); }
+.watany-recovery-ticker { min-width: 0; direction: rtl; overflow: hidden; white-space: nowrap; font-size: .78rem; text-align: center; color: #fff8d7; }
+.watany-recovery-ticker span { display: block; min-width: 0; max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+.watany-recovery-menu-button { width: 48px; height: 48px; border: 1px solid #e9c660; border-radius: 12px; color: #fff; background: #0b2f24; display: grid; place-items: center; }
+.watany-recovery-menu-glyph { display: grid; gap: 4px; width: 24px; }
+.watany-recovery-menu-glyph span { display: block; height: 2px; border-radius: 999px; background: currentColor; }
+.watany-recovery-house-glyph { position: relative; display: block; width: 20px; height: 20px; }
+.watany-recovery-house-glyph::before { content: ""; position: absolute; left: 3px; top: 6px; width: 14px; height: 11px; border-radius: 2px; background: currentColor; }
+.watany-recovery-house-glyph::after { content: ""; position: absolute; left: 2px; top: 2px; width: 13px; height: 13px; border-radius: 2px 0 0 0; background: currentColor; transform: rotate(45deg) scale(.72); }
+.watany-recovery-house-glyph span { position: absolute; z-index: 1; left: 9px; top: 11px; width: 4px; height: 6px; border-radius: 2px 2px 0 0; background: #123e2e; }
+.watany-recovery-main {
+  width: min(100%, 430px);
+  margin: 0 auto;
+  min-height: 0;
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding-bottom: var(
+    --apex-content-bottom-clearance,
+    calc(var(--apex-dock-height, 116px) + env(safe-area-inset-bottom) + 16px)
+  );
+}
+body.watany-recovery-menu-open .watany-recovery-main {
+  width: calc(100% - 80px);
+  max-width: calc(100% - 80px);
+  margin-inline: 0 auto;
+}
+.watany-page { padding: 18px 15px 28px; }
+.watany-page-heading { margin: 0 0 14px; }
+.watany-page-heading h1 { margin: 0 0 6px; font-size: 1.35rem; color: #123e2e; }
+.watany-page-heading p { margin: 0; line-height: 1.8; color: #53635b; font-size: .9rem; }
+.watany-home-intro { display: grid; grid-template-columns: 88px 1fr; align-items: center; gap: 14px; padding: 14px; border: 1px solid #dfd4aa; border-radius: 22px; background: rgb(255 253 245 / 88%); box-shadow: 0 12px 32px rgb(40 65 50 / 10%); }
+.watany-home-intro img { width: 82px; height: 82px; object-fit: contain; }
+.watany-home-intro h1 { margin: 2px 0 6px; color: #123e2e; font-size: 1.25rem; }
+.watany-home-intro p { margin: 0; line-height: 1.65; font-size: .83rem; color: #526159; }
+.watany-eyebrow { color: #9a6a08 !important; font-size: .72rem !important; font-weight: 800; }
+.watany-guided-card { margin: 13px 0; padding: 13px 14px; border-radius: 18px; border: 1px solid #d7c98f; background: linear-gradient(135deg, #fff9df, #f3ead0); }
+.watany-guided-card strong { color: #71500b; }
+.watany-guided-card p { margin: 5px 0 0; line-height: 1.65; font-size: .82rem; color: #625839; }
+.watany-service-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.watany-service-card { min-height: 132px; padding: 14px; border-radius: 20px; border: 1px solid #dfe5de; background: rgb(255 255 252 / 92%); box-shadow: 0 8px 22px rgb(30 58 44 / 8%); display: flex; flex-direction: column; align-items: flex-start; gap: 7px; }
+.watany-service-card > span { width: 38px; height: 38px; border-radius: 12px; display: grid; place-items: center; background: #123e2e; color: #f4d978; box-shadow: 0 5px 14px rgb(18 62 46 / 20%); }
+.watany-service-card strong { color: #123e2e; }
+.watany-service-card small { color: #617068; line-height: 1.55; }
+.watany-entry-list { display: grid; gap: 10px; }
+.watany-entry-card { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 10px; padding: 15px; border-radius: 18px; border: 1px solid #dfe5de; background: rgb(255 255 252 / 94%); box-shadow: 0 7px 18px rgb(30 58 44 / 7%); }
+.watany-entry-card h2 { margin: 0 0 5px; font-size: 1rem; color: #153f30; }
+.watany-entry-card p { margin: 0; color: #65736c; line-height: 1.7; font-size: .82rem; }
+.watany-entry-card > span { padding: 5px 8px; border-radius: 999px; background: #f4e8b8; color: #664a0a; font-size: .7rem; font-weight: 800; }
+.mj-category-grid { display: flex; flex-wrap: wrap; gap: 8px; max-width: 100%; overflow-x: hidden; }
+.mj-category-pill { min-width: 0; max-width: 100%; display: inline-flex; align-items: center; gap: 6px; padding: 8px 10px; border: 1px solid #dfe5de; border-radius: 999px; background: #fff; color: #173f31; font-weight: 800; white-space: nowrap; }
+.mj-category-pill span { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.watany-recovery-bottom {
+  position: fixed;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  min-height: 116px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  width: min(100%, 430px);
+  margin-inline: auto;
+  padding: 10px 8px calc(10px + env(safe-area-inset-bottom));
+  border-radius: 18px 18px 0 0;
+}
+
+.watany-recovery-bottom.watany-recovery-bottom--five { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.watany-recovery-bottom a, .watany-recovery-bottom button { border: 0; background: transparent; color: #e7eee9; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 2px; border-radius: 12px; min-width: 0; }
+.watany-recovery-bottom a.active, .watany-recovery-bottom button[aria-expanded="true"] { color: #102a20; background: #ffe486; }
+.watany-recovery-bottom span { font-weight: 900; font-size: 1rem; }
+.watany-recovery-bottom small { font-size: .64rem; }
+.watany-recovery-bottom__label { display: block; max-width: 100%; overflow: hidden; font-size: .64rem; line-height: 1.25; white-space: nowrap; text-overflow: ellipsis; }
+.watany-recovery-dock {
+  position: relative;
+  z-index: 35;
+  display: grid;
+  grid-template-rows: 48px 68px;
+  flex: 0 0 var(--apex-dock-height, 116px);
+  width: min(100%, 430px);
+  height: var(--apex-dock-height, 116px);
+  min-height: var(--apex-dock-height, 116px);
+  margin-inline: auto;
+  overflow: hidden;
+  background: #fffdf8;
+  border-top: 1px solid rgba(24, 67, 50, 0.18);
+  border-radius: 18px 18px 0 0;
+  box-shadow: 0 -5px 16px rgb(25 53 42 / 10%);
+}
+.watany-recovery-dock > .watany-recovery-ask {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: calc(100% - 20px);
+  height: 40px;
+  margin: 4px 10px;
+  padding: 0 16px;
+  color: #fff;
+  background: linear-gradient(135deg, #07513a, #0a6847);
+  border: 1px solid rgb(255 255 255 / 30%);
+  border-radius: 13px;
+  box-shadow: 0 4px 10px rgb(10 104 71 / 20%);
+  font-size: 14px;
+  font-weight: 700;
+}
+.watany-recovery-dock > .watany-recovery-bottom {
+  position: static;
+  inset: auto;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  width: 100%;
+  height: 68px;
+  padding: 4px 8px 7px;
+  overflow: hidden;
+  background: transparent;
+  border: 0;
+}
+.watany-recovery-dock > .watany-recovery-bottom a,
+.watany-recovery-dock > .watany-recovery-bottom button {
+  border: 0;
+  background: transparent;
+  color: #e7eee9;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 2px;
+  border-radius: 12px;
+  min-width: 0;
+}
+.watany-recovery-dock > .watany-recovery-bottom a.active,
+.watany-recovery-dock > .watany-recovery-bottom button[aria-expanded="true"] {
+  color: #102a20;
+  background: #ffe486;
+}
+.watany-recovery-dock > .watany-recovery-bottom [data-watany-menu-icon] {
+  display: grid;
+  place-items: center;
+  width: 25px;
+  height: 25px;
+}
+.watany-recovery-dock > .watany-recovery-bottom svg {
+  width: 24px;
+  height: 24px;
+}
+.watany-recovery-dock > .watany-recovery-bottom small {
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  font-size: 10px;
+  line-height: 1.35;
+  text-align: center;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+body:has(.watany-recovery-dock) .watany-recovery-main {
+  padding-bottom: 0;
+}
+body:has(.watany-recovery-dock) .watany-recovery-chat {
+  bottom: calc(var(--apex-dock-height, 116px) + 8px);
+}
+.watany-recovery-menu-layer { position: fixed; inset: 0; z-index: 10000; pointer-events: auto; }
+.watany-recovery-menu-open, body.watany-recovery-menu-open { overflow: hidden; }
+.watany-recovery-menu-layer { display: flex; justify-content: flex-end; align-items: stretch; }
+.watany-recovery-menu-backdrop { position: absolute; inset: 0; border: 0; width: 100%; background: rgb(8 24 18 / 48%); z-index: 0; pointer-events: auto; }
+.watany-recovery-menu-panel { position: relative; z-index: 1; width: min(88vw, 360px); height: 100%; max-height: 100%; padding: 16px 14px max(16px, env(safe-area-inset-bottom)); display: flex; flex-direction: column; overflow: hidden; background: #fffdf7; box-shadow: -10px 0 35px rgb(0 0 0 / 20%); pointer-events: auto; }
+.watany-recovery-menu-title { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-bottom: 12px; border-bottom: 1px solid #e4dfcf; color: #123e2e; }
+.watany-recovery-menu-title button { border: 0; background: #eee8d9; width: 34px; height: 34px; border-radius: 10px; }
+.watany-recovery-menu-panel nav { display: grid; gap: 7px; padding: 14px 0; flex: 1 1 auto; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; scrollbar-gutter: stable; }
+.watany-recovery-menu-panel nav a, .watany-recovery-disabled-link { display: flex; flex: 0 0 auto; gap: 10px; align-items: center; min-height: 48px; padding: 10px 12px; border-radius: 13px; background: #f2f5f1; color: #1d4738; text-align: start; text-decoration: none; }
+.watany-recovery-menu-panel nav a.active { background: #173f31; color: #fff; }
+.watany-recovery-disabled-link { border: 1px dashed #bdc8c0; opacity: .68; cursor: not-allowed; text-align: right; }
+.watany-recovery-login-link { display: block; flex: 0 0 auto; margin-top: 12px; padding: 12px; border-radius: 13px; text-align: center; background: #d8b64d; color: #1e2e25; font-weight: 800; }
+.watany-recovery-chat { position: fixed; z-index: 55; left: 50%; transform: translateX(-50%); bottom: 74px; width: min(calc(100% - 24px), 446px); padding: 14px; border: 1px solid #dacb92; border-radius: 18px; background: #fffdf5; box-shadow: 0 14px 40px rgb(0 0 0 / 20%); }
+.watany-recovery-chat-head { display: flex; justify-content: space-between; color: #123e2e; }
+.watany-recovery-chat-head button { border: 0; border-radius: 9px; width: 30px; height: 30px; background: #eee8d9; }
+.watany-recovery-chat p { line-height: 1.7; color: #5b665f; font-size: .82rem; }
+.watany-recovery-chat a { display: inline-block; padding: 9px 12px; border-radius: 11px; color: #fff; background: #123e2e; }
+.watany-listing-surface {
+  width: 100%;
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 18px 8px 30px;
+  color: #14231f;
+}
+.watany-listing-surface__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 14px;
+}
+.watany-listing-surface__title {
+  margin: 0;
+  color: #123e2e;
+  font-size: 1.25rem;
+  font-weight: 900;
+  line-height: 1.35;
+  text-wrap: balance;
+}
+.watany-listing-surface__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+}
+@media (max-width: 699px) {
+  .watany-recovery-main .watany-listing-surface__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.watany-listing-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  padding: 10px;
+  border: 2px solid #d8b64d;
+  border-radius: 14px;
+  background: #fffefb;
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 90%),
+    0 8px 20px rgb(30 58 44 / 16%),
+    0 2px 4px rgb(30 58 44 / 10%);
+}
+.watany-listing-card__top {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-column: 1;
+  grid-row: 1;
+  align-items: start;
+  min-width: 0;
+}
+.watany-listing-card__thumb {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid #d8b64d;
+  border-radius: 12px;
+  background: #fff4c9;
+  color: #73520b;
+  font-size: 1.1rem;
+  font-weight: 900;
+}
+.watany-listing-card__body { min-width: 0; }
+.watany-listing-card__title {
+  margin: 0;
+  color: #123e2e;
+  font-size: 1rem;
+  font-weight: 900;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+.watany-listing-card__summary {
+  margin: 6px 0 0;
+  color: #40554b;
+  font-size: .85rem;
+  line-height: 1.75;
+  overflow-wrap: anywhere;
+}
+.watany-listing-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-top: 9px;
+}
+.watany-listing-card__badge,
+.watany-listing-card__rank {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: #edf3ee;
+  color: #24513f;
+  font-size: .72rem;
+  font-weight: 800;
+  line-height: 1.3;
+}
+.watany-listing-card__badge--gold {
+  background: #fff1bd;
+  color: #73520b;
+}
+.watany-listing-card__rank {
+  background: #123e2e;
+  color: #fff;
+}
+.watany-listing-card__actions {
+  display: flex;
+  grid-column: 2;
+  grid-row: 1;
+  justify-content: center;
+  align-self: end;
+  direction: rtl;
+}
+.watany-listing-card__button {
+  min-height: 34px !important;
+  padding: 4px 9px;
+  border-radius: 10px;
+  font-size: .78rem;
+  font-weight: 800;
+  line-height: 1.2;
+  cursor: pointer;
+}
+.watany-listing-card__button--primary {
+  border: 1px solid #123e2e;
+  background: #123e2e;
+  color: #fff;
+}
+.watany-listing-card__button--secondary {
+  border: 1px solid #c7d2ca;
+  background: #f7faf6;
+  color: #214c3b;
+}
+.watany-listing-card__button:focus-visible {
+  outline: 3px solid #e5bd42;
+  outline-offset: 2px;
+}
+
+@media (min-width: 900px) {
+  .watany-listing-surface__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 360px) {
+  .watany-listing-card {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .watany-listing-card__actions {
+    grid-column: 1;
+    grid-row: 2;
+    justify-content: flex-start;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .watany-listing-card__button { transition: none; }
+}
+.fake-news-card__media,
+.fake-news-card__media img {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin-inline: 0;
+  transform: none;
+}
+.fake-news-card__media { overflow: hidden; }
+.fake-news-card__media img { height: auto; object-fit: cover; }
+.watany-auth-page { min-height: 100vh; padding: 22px 14px; display: grid; place-items: center; background: radial-gradient(circle at 50% 0, #fff7cf, #edf2eb 48%, #e2eae2); }
+.watany-auth-card { width: min(100%, 420px); padding: 24px 18px; border: 1px solid #ddcf99; border-radius: 26px; background: rgb(255 253 247 / 96%); box-shadow: 0 20px 55px rgb(25 55 41 / 17%); text-align: center; }
+.watany-auth-card > img { width: 112px; height: 112px; object-fit: contain; }
+.watany-auth-card h1 { margin: 4px 0 8px; color: #123e2e; }
+.watany-auth-card > p { color: #5b6962; line-height: 1.7; font-size: .86rem; }
+.watany-auth-actions, .watany-auth-form { display: grid; gap: 10px; margin-top: 16px; text-align: right; }
+.watany-auth-actions button, .watany-auth-form button { border: 0; border-radius: 13px; padding: 12px; color: #fff; background: #123e2e; font-weight: 800; }
+.watany-auth-actions button.secondary { color: #173f31; background: #efe4b7; border: 1px solid #d5c27c; }
+.watany-auth-form label { display: grid; gap: 5px; color: #324a40; font-size: .78rem; font-weight: 700; }
+.watany-auth-form input { width: 100%; padding: 11px; border: 1px solid #cad5cc; border-radius: 11px; background: #fff; color: #17251e; }
+.watany-auth-switch { margin-top: 14px; }
+.watany-auth-switch a, .watany-auth-home { color: #84600d; text-decoration: underline; }
+.watany-auth-home { display: inline-block; margin-top: 4px; font-size: .8rem; }
+.watany-unavailable > a { display: inline-block; padding: 11px 14px; border-radius: 12px; color: #fff; background: #123e2e; }
+
+@media (max-width: 360px) {
+  .watany-service-grid { grid-template-columns: 1fr; }
+  .watany-home-intro { grid-template-columns: 72px 1fr; }
+  .watany-home-intro img { width: 68px; height: 68px; }
+}
+
+@media (min-width: 1024px) {
+  .watany-recovery-shell {
+    width: min(100%, 430px);
+    margin-inline: auto;
+    padding: 76px 0 0;
+  }
+
+  .watany-recovery-topbar,
+  .watany-recovery-bottom,
+  .watany-recovery-main {
+    width: min(100%, 430px);
+  }
+
+  .watany-recovery-topbar {
+    height: 68px;
+    grid-template-columns: 64px 1fr 64px;
+    padding: 6px 8px;
+  }
+
+  .watany-recovery-logo {
+    width: 56px;
+    height: 56px;
+  }
+
+  .watany-recovery-main {
+    min-height: 0;
+    flex: 1 0 auto;
+    padding: 0 14px 0;
+  }
+
+  .watany-recovery-bottom {
+    min-height: 72px;
+    border-radius: 16px 16px 0 0;
+    padding: 8px 10px calc(8px + env(safe-area-inset-bottom));
+  }
+
+  .watany-recovery-bottom small {
+    font-size: 0.72rem;
+  }
+}
+
+/* Procedure sources are metadata controls, not generic text pills. */
+.watany-recovery-shell .procedures-browser--compact .procedures-browser__source-pill {
+  min-height: 50px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 7px 8px;
+  border: 1px solid #dfe5de;
+  border-radius: 12px;
+  background: #fffef8;
+  color: #173f31;
+  text-align: right;
+  line-height: 1.25;
+  transition: border-color 160ms ease, background-color 160ms ease, color 160ms ease;
+}
+
+.watany-recovery-shell .procedures-browser--compact .procedures-browser__source-pill:hover {
+  border-color: #c79a25;
+  background: #fff9e7;
+}
+
+.watany-recovery-shell .procedures-browser--compact .procedures-browser__source-pill:focus-visible {
+  outline: 3px solid rgb(217 162 27 / 32%);
+  outline-offset: 2px;
+}
+
+.watany-recovery-shell .procedures-browser--compact .procedures-browser__source-pill--active {
+  border-color: #d9a21b;
+  background: linear-gradient(135deg, #fff9df, #f4e6b7);
+  color: #123e2e;
+}
+
+.watany-recovery-shell .procedures-browser--compact .procedures-browser__source-pill-title {
+  min-width: 0;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  white-space: normal;
+  text-overflow: clip;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.watany-recovery-shell .procedures-browser--compact .procedures-browser__source-pill-count {
+  flex: 0 0 auto;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 6px;
+  border-radius: 8px;
+  background: #eef1ed;
+  color: #52635b;
+  font-size: 0.68rem;
+  font-weight: 800;
+}
+
+.watany-recovery-shell .procedures-browser--compact .procedures-browser__source-pill--active .procedures-browser__source-pill-count {
+  background: #d9a21b;
+  color: #fffdf5;
+}
+
+.watany-recovery-shell .watany-procedure-compact {
+  width: 100%;
+  max-width: none;
+  padding-inline: 0;
+}
+
+.watany-recovery-shell .watany-procedure-compact__list {
+  width: 100%;
+  gap: 12px;
+}
+
+.watany-recovery-shell .watany-procedure-card.watany-listing-card {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  padding: 10px;
+}
+
+.watany-recovery-shell .watany-procedure-card .watany-procedure-card__summary {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+  padding: 0;
+}
+
+.watany-recovery-shell .watany-procedure-card .watany-procedure-card__badges {
+  margin-top: 9px;
+  margin-bottom: 0;
+}
+
+.watany-recovery-shell .watany-procedure-card .watany-procedure-card__actions {
+  grid-column: 2;
+  grid-row: 1;
+  padding: 0;
+}
+
+.watany-recovery-shell .watany-procedure-card .watany-procedure-card__primary,
+.watany-recovery-shell .watany-procedure-card .watany-procedure-card__secondary {
+  min-height: 34px;
+  box-shadow: none;
+}
+
+.watany-recovery-shell .procedures-browser__section {
+  border: 2px solid #d8b64d;
+  border-radius: 14px;
+  background: #fffefb;
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 92%),
+    0 6px 12px rgb(30 58 44 / 12%),
+    0 2px 3px rgb(30 58 44 / 9%);
+}
+
+.watany-recovery-shell .procedures-browser__item {
+  border: 2px solid #d8b64d;
+  border-radius: 14px;
+  background:
+    linear-gradient(145deg, rgb(255 255 255 / 96%), rgb(255 252 239 / 94%)),
+    #fffefb;
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 92%),
+    0 6px 12px rgb(30 58 44 / 14%),
+    0 2px 3px rgb(30 58 44 / 10%);
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.watany-recovery-shell .procedures-browser__item:hover {
+  border-color: #c9962f;
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 96%),
+    0 8px 16px rgb(30 58 44 / 16%),
+    0 2px 4px rgb(30 58 44 / 12%);
+  transform: translateY(-1px);
+}
+
+.watany-recovery-shell .procedures-browser__item:focus-within,
+.watany-recovery-shell .procedures-browser__item--expanded {
+  border-color: #a87920;
+  box-shadow:
+    0 0 0 3px rgb(229 189 66 / 24%),
+    inset 0 0 0 1px rgb(255 255 255 / 96%),
+    0 6px 12px rgb(30 58 44 / 14%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .watany-recovery-shell .procedures-browser__item {
+    transition: none;
+  }
+}

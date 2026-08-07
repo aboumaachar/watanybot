@@ -1,0 +1,272 @@
+// APEX TAXI PRISMA FOUNDATION START
+// Feature: Taxi Trusted Mobility persistent storage.
+// This schema is created because WatanyBot had no active schema.prisma during PMA/APEX scan.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum TaxiDriverStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  SUSPENDED
+  OFFLINE
+}
+
+enum TaxiVerificationLevel {
+  BASIC
+  LICENSED
+  TRUSTED
+}
+
+enum TaxiDocumentStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  EXPIRED
+}
+
+enum TaxiAvailabilityStatus {
+  AVAILABLE
+  BUSY
+  OFFLINE
+}
+
+enum TaxiReservationStatus {
+  REQUESTED
+  ACCEPTED
+  DRIVER_CALLED
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}
+
+enum TaxiCallType {
+  DIRECT_PHONE
+  WHATSAPP
+  IN_APP_REQUEST
+}
+
+enum TaxiAuditAction {
+  DRIVER_APPLIED
+  DRIVER_APPROVED
+  DRIVER_REJECTED
+  DRIVER_SUSPENDED
+  AVAILABILITY_CHANGED
+  RESERVATION_CREATED
+  RESERVATION_ACCEPTED
+  RESERVATION_CANCELLED
+  DOCUMENT_SUBMITTED
+  DOCUMENT_REVIEWED
+  OTP_REQUESTED
+  OTP_VERIFIED
+}
+
+enum TaxiOtpStatus {
+  PENDING
+  VERIFIED
+  EXPIRED
+  CANCELLED
+}
+
+model TaxiDriverProfile {
+  id                   String                   @id @default(cuid())
+  userId               String?
+  fullName             String
+  phone                String
+  whatsappPhone        String?
+    profileImageUrl      String?
+  status               TaxiDriverStatus         @default(PENDING)
+  verificationLevel    TaxiVerificationLevel    @default(BASIC)
+  otpVerified          Boolean                  @default(false)
+  publicVisible        Boolean                  @default(false)
+  documentReviewStatus TaxiDocumentStatus        @default(PENDING)
+  notes                String?
+  createdAt            DateTime                 @default(now())
+  updatedAt            DateTime                 @updatedAt
+  vehicles             TaxiVehicle[]
+  serviceAreas         TaxiServiceArea[]
+  availabilityEvents   TaxiAvailability[]
+  reservations         TaxiReservation[]
+  documents            TaxiDriverDocument[]
+  callEvents           TaxiCallEvent[]
+  reviews              TaxiReviewOrComplaint[]
+  auditEvents          TaxiAuditEvent[]
+  otpChallenges        TaxiOtpChallenge[]
+
+  @@index([status, publicVisible])
+  @@index([phone])
+  @@index([userId])
+}
+
+model TaxiVehicle {
+  id                    String            @id @default(cuid())
+  driverId              String
+  make                  String?
+  model                 String?
+  year                  Int?
+  color                 String?
+  plateNumberEncrypted  String?
+  platePublicLastDigits String?
+    carType               String?
+  plateType             String?
+  seats                 Int?
+  hasInsurance          Boolean           @default(false)
+  hasInspection         Boolean           @default(false)
+  hasFireExtinguisher   Boolean           @default(false)
+  status                TaxiDocumentStatus @default(PENDING)
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime          @updatedAt
+  driver                TaxiDriverProfile @relation(fields: [driverId], references: [id], onDelete: Cascade)
+
+  @@index([driverId])
+  @@index([status])
+}
+
+model TaxiDriverDocument {
+  id                String             @id @default(cuid())
+  driverId          String
+  documentType      String
+  fileRef           String?
+  storageKey        String?
+  status            TaxiDocumentStatus @default(PENDING)
+  rejectionReason   String?
+  reviewedByAdminId String?
+  reviewedAt        DateTime?
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  driver            TaxiDriverProfile  @relation(fields: [driverId], references: [id], onDelete: Cascade)
+
+  @@index([driverId, status])
+  @@index([documentType])
+}
+
+model TaxiServiceArea {
+  id        String            @id @default(cuid())
+  driverId  String
+  muhafaza  String?
+  caza      String?
+  village   String?
+  label     String?
+  notes     String?
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+  driver    TaxiDriverProfile @relation(fields: [driverId], references: [id], onDelete: Cascade)
+
+  @@index([driverId])
+  @@index([muhafaza, caza, village])
+}
+
+model TaxiAvailability {
+  id            String                 @id @default(cuid())
+  driverId      String
+  status        TaxiAvailabilityStatus @default(OFFLINE)
+  locationLabel String?
+  latitude      Float?
+  longitude     Float?
+  availableUntil DateTime?
+  lastSeenAt    DateTime?
+  createdAt     DateTime              @default(now())
+  driver         TaxiDriverProfile     @relation(fields: [driverId], references: [id], onDelete: Cascade)
+
+  @@index([driverId, status])
+  @@index([lastSeenAt])
+}
+
+model TaxiReservation {
+  id                 String                @id @default(cuid())
+  riderUserId         String?
+  riderPhone          String?
+  driverId            String
+  pickupText          String
+  pickupLatitude      Float?
+  pickupLongitude     Float?
+  destinationText     String?
+  scheduledAt         DateTime?
+  status              TaxiReservationStatus @default(REQUESTED)
+  priceAgreementText  String?
+  notes               String?
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+  driver              TaxiDriverProfile     @relation(fields: [driverId], references: [id])
+  callEvents          TaxiCallEvent[]
+  reviews             TaxiReviewOrComplaint[]
+
+  @@index([driverId, status])
+  @@index([riderUserId])
+  @@index([scheduledAt])
+}
+
+model TaxiCallEvent {
+  id            String             @id @default(cuid())
+  riderUserId   String?
+  driverId      String?
+  reservationId String?
+  callType      TaxiCallType
+  createdAt     DateTime           @default(now())
+  driver        TaxiDriverProfile? @relation(fields: [driverId], references: [id])
+  reservation   TaxiReservation?   @relation(fields: [reservationId], references: [id])
+
+  @@index([driverId])
+  @@index([reservationId])
+  @@index([createdAt])
+}
+
+model TaxiReviewOrComplaint {
+  id            String            @id @default(cuid())
+  riderUserId   String?
+  driverId      String
+  reservationId String?
+  type          String
+  rating        Int?
+  text          String?
+  status        String            @default("OPEN")
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  driver        TaxiDriverProfile @relation(fields: [driverId], references: [id])
+  reservation   TaxiReservation?  @relation(fields: [reservationId], references: [id])
+
+  @@index([driverId, status])
+  @@index([reservationId])
+}
+
+model TaxiAuditEvent {
+  id          String            @id @default(cuid())
+  actorUserId String?
+  driverId    String?
+  action      TaxiAuditAction
+  detailJson  String?
+  ipAddress   String?
+  userAgent   String?
+  createdAt   DateTime          @default(now())
+  driver      TaxiDriverProfile? @relation(fields: [driverId], references: [id])
+
+  @@index([driverId])
+  @@index([action])
+  @@index([createdAt])
+}
+
+model TaxiOtpChallenge {
+  id             String            @id @default(cuid())
+  driverId       String?
+  phone          String
+  purpose        String
+  codeHash       String
+  status         TaxiOtpStatus     @default(PENDING)
+  expiresAt      DateTime
+  verifiedAt     DateTime?
+  attemptCount   Int               @default(0)
+  createdAt      DateTime          @default(now())
+  driver         TaxiDriverProfile? @relation(fields: [driverId], references: [id])
+
+  @@index([phone, purpose, status])
+  @@index([driverId])
+  @@index([expiresAt])
+}
+// APEX TAXI PRISMA FOUNDATION END

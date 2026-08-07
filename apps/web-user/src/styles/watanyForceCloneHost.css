@@ -1,0 +1,41 @@
+/*
+  Force-fixed host for approved Watany homepage iframe.
+  This isolates the approved self-contained HTML from old WR shell CSS.
+*/
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+.watany-force-clone-host {
+  width: 100%;
+  min-height: 100dvh;
+  height: 100dvh;
+  margin: 0;
+  padding: 0;
+  background: #fffdf6;
+  overflow: hidden;
+  display: block;
+}
+
+.watany-force-clone-frame {
+  display: block;
+  width: 100%;
+  height: 100dvh;
+  min-height: 100dvh;
+  border: 0;
+  margin: 0;
+  padding: 0;
+  background: #fffdf6;
+}
+
+/* kill known legacy WR overlay if old CSS leaks outside iframe */
+body:has(.watany-force-clone-host) .wr-dock,
+body:has(.watany-force-clone-host) .wr-safe-dock,
+body:has(.watany-force-clone-host) .watany-v1-snapped-popup-overlay,
+body:has(.watany-force-clone-host) .watany-v1-header-snap-closeout,
+body:has(.watany-force-clone-host) .watany-v1-body-portal-snap-closeout {
+  display: none !important;
+}

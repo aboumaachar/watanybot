@@ -1,0 +1,1 @@
+Recruitment announcement smoke file. Deadline 2026-07-01. Required documents include national ID and completed application form. WatanyBot KB import should create a reviewed draft.

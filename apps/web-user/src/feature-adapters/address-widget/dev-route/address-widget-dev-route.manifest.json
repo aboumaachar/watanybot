@@ -1,0 +1,8 @@
+{
+    "pluginKey":  "address-widget",
+    "route":  "/__apex/address-widget",
+    "mode":  "hidden-dev-proof",
+    "replacesProductionUi":  false,
+    "requiresBrowserSmoke":  true,
+    "createdBy":  "APEX_WATANY_V2_ADDRESS_WIDGET_DEV_ROUTE_MOUNT_v1_1_SAFE"
+}

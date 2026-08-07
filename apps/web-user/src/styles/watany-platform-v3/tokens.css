@@ -1,0 +1,45 @@
+:root {
+  --watany-forest-950: #0b2a22;
+  --watany-forest-900: #10382d;
+  --watany-forest-800: #173b2c;
+  --watany-forest-700: #2e5e3b;
+  --watany-military-600: #53654b;
+
+  --watany-gold-700: #9b6e18;
+  --watany-gold-600: #b88624;
+  --watany-gold-500: #d0a246;
+  --watany-gold-400: #e2bd69;
+  --watany-gold-300: #f0d996;
+
+  --watany-ivory-100: #f5f0e4;
+  --watany-ivory-50: #fbf8f0;
+  --watany-warm-white: #fffdf8;
+  --watany-ink: #1c211e;
+  --watany-muted: #6d706a;
+  --watany-danger: #9e2e2e;
+
+  --watany-border-gold: rgb(155 110 24 / 0.22);
+  --watany-border-soft: rgb(11 42 34 / 0.10);
+
+  --watany-radius-sm: 14px;
+  --watany-radius-md: 18px;
+  --watany-radius-lg: 22px;
+  --watany-radius-xl: 28px;
+  --watany-touch-min: 44px;
+
+  --watany-shadow-soft:
+    0 8px 20px rgb(42 35 17 / 0.09);
+
+  --watany-shadow-card:
+    0 16px 36px rgb(42 35 17 / 0.12);
+
+  --watany-shadow-deep:
+    0 22px 50px rgb(11 42 34 / 0.18);
+
+  --watany-gold-glow:
+    0 0 14px rgb(255 215 0 / 0.20),
+    0 0 28px rgb(208 162 70 / 0.14);
+
+  --watany-ease-out:
+    cubic-bezier(0.22, 1, 0.36, 1);
+}

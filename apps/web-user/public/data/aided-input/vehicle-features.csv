@@ -1,0 +1,11 @@
+feature_id,arabic_label,vehicle_type,active
+air_conditioning,مكيّف,all,true
+large_trunk,صندوق واسع,taxi,true
+wheelchair_access,مناسب للكرسي المتحرك,taxi,true
+child_seat,كرسي أطفال,taxi,true
+pet_friendly,يسمح بالحيوانات الأليفة,taxi,true
+airport_service,خدمة المطار,taxi,true
+tour_service,رحلات سياحية,taxi,true
+english_speaker,يتكلم الإنجليزية,taxi,true
+french_speaker,يتكلم الفرنسية,taxi,true
+whatsapp_contact,تواصل واتساب,all,true

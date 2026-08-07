@@ -1,0 +1,8 @@
+{
+  "scriptVersion": "v1.1-validation-safe-remove-broken-v2-theme-bridge-restore-v1-ascii-safe",
+  "status": "V2_THEME_BRIDGE_DISABLED_FOR_V1_LAYOUT_RESTORE",
+  "reason": "Raw V2 CSS bridge distorted WatanyBot V1 mobile launcher layout.",
+  "entryFile": "C:\\xampp\\htdocs\\projectx\\watanybot\\apps\\web-user\\src\\main.tsx",
+  "bridgeCssPath": "C:\\xampp\\htdocs\\projectx\\watanybot\\apps\\web-user\\src\\styles\\watany-v2-theme-bridge.generated.css",
+  "disabledAt": "2026-06-13T08:07:54.4999765+03:00"
+}

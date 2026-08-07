@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ع-2 - نموذج التقييم الطبي</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; direction: rtl; text-align: right; padding: 20px; }
+        .form-header { text-align: center; padding-bottom: 20px; border-bottom: 3px solid #667eea; margin-bottom: 30px; }
+        .form-header h1 { font-size: 1.8em; color: #333; margin-bottom: 10px; font-weight: bold; }
+        .form-header p { font-size: 1em; color: #666; }
+        .form-code { background: #f0f4ff; color: #667eea; padding: 10px 15px; border-radius: 4px; font-weight: bold; display: inline-block; margin-bottom: 20px; }
+        .no-print { display: flex; gap: 10px; margin-bottom: 20px; padding: 15px; background: #f5f5f5; border-radius: 6px; }
+        .btn { padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; background: #667eea; color: white; transition: 0.2s; }
+        .btn:hover { background: #5568d3; transform: translateY(-2px); box-shadow: 0 2px 8px rgba(102,126,234,0.3); }
+        .form-section { margin-bottom: 30px; padding: 20px; border: 1px solid #e0e0e0; border-radius: 6px; }
+        .section-title { font-size: 1.1em; font-weight: bold; color: #333; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #667eea; }
+        .form-group { margin-bottom: 15px; display: flex; flex-direction: column; }
+        .form-group label { font-weight: 500; margin-bottom: 5px; color: #333; }
+        .form-group input, .form-group select, .form-group textarea { padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-family: inherit; }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(102,126,234,0.1); }
+        .form-group textarea { min-height: 80px; resize: vertical; }
+        .signature-block { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 40px; padding-top: 20px; border-top: 1px solid #e0e0e0; }
+        .signature-item { text-align: center; }
+        .signature-line { border-bottom: 1px solid #333; height: 60px; margin-bottom: 10px; }
+        .signature-label { font-size: 0.9em; color: #333; }
+        .date-line { font-size: 0.9em; color: #333; margin-top: 10px; }
+        .form-info-box { background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0; border-radius: 4px; }
+        .form-info-box ul { list-style-position: inside; color: #856404; }
+        @media print { .no-print { display: none !important; } body { padding: 0; } input, select, textarea { border: none; border-bottom: 1px solid #000; background: transparent; } }
+        @media (max-width: 768px) { .form-header h1 { font-size: 1.4em; } .signature-block { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div class="form-header">
+        <h1>نموذج التقييم الطبي</h1>
+        <p>الجيش اللبناني - الخدمات الطبية</p>
+    </div>
+    
+    <div class="form-code">النموذج: ع-2</div>
+    
+    <div class="no-print">
+        <button class="btn" onclick="window.print()">🖨️ طباعة</button>
+        <button class="btn" onclick="downloadForm()">⬇️ تحميل</button>
+        <button class="btn" onclick="shareForm()">📤 مشاركة</button>
+    </div>
+    
+    <div class="form-section">
+        <div class="section-title">١. معلومات المريض</div>
+        <div class="form-group">
+            <label for="name">الاسم الكامل</label>
+            <input type="text" id="name" placeholder="أدخل الاسم">
+        </div>
+        <div class="form-group">
+            <label for="rank">الرتبة</label>
+            <input type="text" id="rank">
+        </div>
+        <div class="form-group">
+            <label for="age">السن</label>
+            <input type="number" id="age" placeholder="أدخل السن">
+        </div>
+        <div class="form-group">
+            <label for="visitDate">تاريخ الفحص</label>
+            <input type="date" id="visitDate">
+        </div>
+    </div>
+    
+    <div class="form-section">
+        <div class="section-title">٢. التاريخ الطبي</div>
+        <div class="form-group">
+            <label for="pastConditions">الأمراض السابقة</label>
+            <textarea id="pastConditions" placeholder="اذكر الأمراض والحالات السابقة"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="medications">الأدوية الحالية</label>
+            <textarea id="medications" placeholder="اذكر الأدوية المستخدمة حالياً"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="allergies">الحساسيات</label>
+            <input type="text" id="allergies" placeholder="اذكر أي حساسيات معروفة">
+        </div>
+    </div>
+    
+    <div class="form-section">
+        <div class="section-title">٣. الشكاوى الحالية</div>
+        <div class="form-group">
+            <label for="complaints">الشكاوى الرئيسية</label>
+            <textarea id="complaints" placeholder="اشرح الأعراض والشكاوى"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="duration">مدة الأعراض</label>
+            <input type="text" id="duration" placeholder="كم يوم/شهر/سنة">
+        </div>
+    </div>
+    
+    <div class="form-section">
+        <div class="section-title">٤. الفحص الجسدي</div>
+        <div class="form-group">
+            <label for="vitals">العلامات الحيوية</label>
+            <input type="text" id="vitals" placeholder="ضغط الدم، النبض، درجة الحرارة">
+        </div>
+        <div class="form-group">
+            <label for="examination">نتائج الفحص</label>
+            <textarea id="examination" placeholder="اكتب ملاحظات الفحص الجسدي"></textarea>
+        </div>
+    </div>
+    
+    <div class="form-section">
+        <div class="section-title">٥. التشخيص والتوصيات</div>
+        <div class="form-group">
+            <label for="diagnosis">التشخيص</label>
+            <textarea id="diagnosis" placeholder="اكتب التشخيص الطبي"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="recommendations">التوصيات الطبية</label>
+            <textarea id="recommendations" placeholder="اكتب التوصيات والعلاجات المقترحة"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="followup">المتابعة</label>
+            <select id="followup">
+                <option value="">اختر...</option>
+                <option value="weekly">أسبوعياً</option>
+                <option value="monthly">شهرياً</option>
+                <option value="quarterly">كل ثلاثة أشهر</option>
+                <option value="none">لا توجد متابعة</option>
+            </select>
+        </div>
+    </div>
+    
+    <div class="signature-block">
+        <div class="signature-item">
+            <div class="signature-line"></div>
+            <div class="signature-label">طبيب الفحص</div>
+            <div class="date-line">التاريخ: ________________</div>
+        </div>
+        <div class="signature-item">
+            <div class="signature-line"></div>
+            <div class="signature-label">المدير الطبي</div>
+            <div class="date-line">التاريخ: ________________</div>
+        </div>
+    </div>
+    
+    <div class="form-info-box">
+        <p><strong>ملاحظة:</strong></p>
+        <ul>
+            <li>يجب حفظ نسخة من هذا الفحص في الملف الطبي</li>
+            <li>أي اختبارات إضافية يتم إرسالها بشكل منفصل</li>
+        </ul>
+    </div>
+    
+    <script>
+        function downloadForm() {
+            const filename = 'التقييم_الطبي_ع2.html';
+            const html = document.documentElement.outerHTML;
+            const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            link.click();
+        }
+        function shareForm() {
+            const url = window.location.href;
+            if (navigator.share) {
+                navigator.share({ title: 'نموذج WatanyBot', text: 'التقييم الطبي', url: url });
+            } else {
+                navigator.clipboard.writeText(url);
+                alert('تم نسخ الرابط');
+            }
+        }
+    </script>
+</body>
+</html>

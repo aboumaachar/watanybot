@@ -1,0 +1,313 @@
+{
+  "contractVersion": "watany.v2.home.feature.catalog.v1",
+  "generatedBy": "APEX_WATANY_V2_HOME_FEATURE_ENDPOINT_CATALOG_REPAIR",
+  "features": [
+    {
+      "key": "profile",
+      "labelAr": "الملف الشخصي",
+      "labelEn": "Profile",
+      "categoryAr": "الحساب",
+      "route": "/profile",
+      "icon": "P",
+      "status": "implemented-or-planned"
+    },
+    {
+      "key": "all-features",
+      "labelAr": "كل الخدمات",
+      "labelEn": "All features",
+      "categoryAr": "الرئيسية",
+      "route": "/watany-all-features.html",
+      "icon": "A",
+      "status": "catalog"
+    },
+    {
+      "key": "hybrid-chat",
+      "labelAr": "المساعد الذكي",
+      "labelEn": "Hybrid Assistant",
+      "categoryAr": "الدردشة والمجتمع",
+      "route": "/chat",
+      "icon": "C",
+      "status": "implemented-or-planned"
+    },
+    {
+      "key": "voice-chat",
+      "labelAr": "الدردشة الصوتية",
+      "labelEn": "Voice chat",
+      "categoryAr": "الدردشة والمجتمع",
+      "route": "/voice-chat",
+      "icon": "V",
+      "status": "planned-or-existing"
+    },
+    {
+      "key": "announcements",
+      "labelAr": "التعاميم",
+      "labelEn": "Announcements",
+      "categoryAr": "الأخبار والتعاميم",
+      "route": "/announcements",
+      "icon": "N",
+      "status": "planned-or-existing"
+    },
+    {
+      "key": "news",
+      "labelAr": "الأخبار",
+      "labelEn": "News",
+      "categoryAr": "الأخبار والتعاميم",
+      "route": "/news",
+      "icon": "N",
+      "status": "planned-or-existing"
+    },
+    {
+      "key": "alerts",
+      "labelAr": "التنبيهات",
+      "labelEn": "Alerts",
+      "categoryAr": "الأخبار والتعاميم",
+      "route": "/alerts",
+      "icon": "!",
+      "status": "planned-or-existing"
+    },
+    {
+      "key": "death-notices",
+      "labelAr": "الوفيات",
+      "labelEn": "Death notices",
+      "categoryAr": "الأخبار والتعاميم",
+      "route": "/death-notices",
+      "icon": "D",
+      "status": "planned-or-existing"
+    },
+    {
+      "key": "procedures",
+      "labelAr": "المعاملات",
+      "labelEn": "Procedures",
+      "categoryAr": "معاملاتي ومراجعي",
+      "route": "/procedures",
+      "icon": "M",
+      "status": "planned-or-existing"
+    },
+    {
+      "key": "forms",
+      "labelAr": "النماذج",
+      "labelEn": "Forms",
+      "categoryAr": "معاملاتي ومراجعي",
+      "route": "/forms",
+      "icon": "F",
+      "status": "planned-or-existing"
+    },
+    {
+      "key": "laws",
+      "labelAr": "القوانين",
+      "labelEn": "Laws",
+      "categoryAr": "معاملاتي ومراجعي",
+      "route": "/laws",
+      "icon": "L",
+      "status": "planned-or-existing"
+    },
+    {
+      "key": "documents",
+      "labelAr": "الملفات والمستندات",
+      "labelEn": "Documents",
+      "categoryAr": "معاملاتي ومراجعي",
+      "route": "/documents",
+      "icon": "D",
+      "status": "planned-or-existing"
+    },
+    {
+      "key": "salary",
+      "labelAr": "حاسبة المعاش",
+      "labelEn": "Salary calculator",
+      "categoryAr": "حقوقي ومعاشي",
+      "route": "/salary",
+      "icon": "S",
+      "status": "planned-or-existing"
+    },
+    {
+      "key": "school-aid",
+      "labelAr": "المساعدات المدرسية",
+      "labelEn": "School aid",
+      "categoryAr": "حقوقي ومعاشي",
+      "route": "/school-aid",
+      "icon": "S",
+      "status": "planned-or-existing"
+    },
+    {
+      "key": "payments",
+      "labelAr": "حالة الدفعات",
+      "labelEn": "Payment status",
+      "categoryAr": "حقوقي ومعاشي",
+      "route": "/payments",
+      "icon": "P",
+      "status": "planned-or-existing"
+    },
+    {
+      "key": "jobs",
+      "labelAr": "الوظائف",
+      "labelEn": "Jobs",
+      "categoryAr": "الخدمات والفرص",
+      "route": "/jobs",
+      "icon": "J",
+      "status": "planned-or-existing"
+    },
+    {
+      "key": "recruitment",
+      "labelAr": "التطويع",
+      "labelEn": "Recruitment",
+      "categoryAr": "الخدمات والفرص",
+      "route": "/recruitment",
+      "icon": "R",
+      "status": "planned-or-existing"
+    },
+    {
+      "key": "market",
+      "labelAr": "السوق",
+      "labelEn": "Market",
+      "categoryAr": "الخدمات والفرص",
+      "route": "/market",
+      "icon": "M",
+      "status": "planned-or-existing"
+    },
+    {
+      "key": "taxi",
+      "labelAr": "تاكسي",
+      "labelEn": "Taxi",
+      "categoryAr": "الخدمات والفرص",
+      "route": "/taxi",
+      "icon": "T",
+      "status": "planned-or-existing"
+    },
+    {
+      "key": "tourism",
+      "labelAr": "المرشد السياحي",
+      "labelEn": "Tourism guide",
+      "categoryAr": "الخدمات والفرص",
+      "route": "/tourism",
+      "icon": "G",
+      "status": "planned-or-existing"
+    },
+    {
+      "key": "freelance",
+      "labelAr": "الخدمات الحرة",
+      "labelEn": "Freelance services",
+      "categoryAr": "الخدمات والفرص",
+      "route": "/freelance",
+      "icon": "F",
+      "status": "planned-or-existing"
+    },
+    {
+      "key": "providers",
+      "labelAr": "مزودو الخدمات",
+      "labelEn": "Service providers",
+      "categoryAr": "الخدمات والفرص",
+      "route": "/providers",
+      "icon": "S",
+      "status": "planned-or-existing"
+    },
+    {
+      "key": "address-network",
+      "labelAr": "أداة العنوان",
+      "labelEn": "Address network",
+      "categoryAr": "الخدمات والفرص",
+      "route": "/address-network",
+      "icon": "A",
+      "status": "planned-or-existing"
+    },
+    {
+      "key": "emergency",
+      "labelAr": "الدعم الطارئ",
+      "labelEn": "Emergency support",
+      "categoryAr": "الخدمات والفرص",
+      "route": "/emergency",
+      "icon": "E",
+      "status": "planned-or-existing"
+    },
+    {
+      "key": "community",
+      "labelAr": "المجتمع",
+      "labelEn": "Community",
+      "categoryAr": "الدردشة والمجتمع",
+      "route": "/community",
+      "icon": "C",
+      "status": "planned-or-existing"
+    },
+    {
+      "key": "messages",
+      "labelAr": "رسائلي",
+      "labelEn": "Messages",
+      "categoryAr": "الدردشة والمجتمع",
+      "route": "/messages",
+      "icon": "M",
+      "status": "planned-or-existing"
+    },
+    {
+      "key": "saved",
+      "labelAr": "المحفوظات",
+      "labelEn": "Saved",
+      "categoryAr": "الدردشة والمجتمع",
+      "route": "/saved",
+      "icon": "S",
+      "status": "planned-or-existing"
+    },
+    
+    {
+      "key": "voting",
+      "labelAr": "صوّت",
+      "labelEn": "Voting",
+      "categoryAr": "المشاركة والفعاليات",
+      "route": "/voting",
+      "icon": "V",
+      "status": "planned-or-existing"
+    },
+    {
+      "key": "polls",
+      "labelAr": "الاستطلاعات",
+      "labelEn": "Polls",
+      "categoryAr": "المشاركة والفعاليات",
+      "route": "/polls",
+      "icon": "P",
+      "status": "planned-or-existing"
+    },
+    {
+      "key": "events",
+      "labelAr": "الفعاليات",
+      "labelEn": "Events",
+      "categoryAr": "المشاركة والفعاليات",
+      "route": "/events",
+      "icon": "E",
+      "status": "planned-or-existing"
+    },
+    {
+      "key": "settings",
+      "labelAr": "الإعدادات",
+      "labelEn": "Settings",
+      "categoryAr": "الأدوات والحساب",
+      "route": "/settings",
+      "icon": "S",
+      "status": "planned-or-existing"
+    },
+    {
+      "key": "admin",
+      "labelAr": "أدوات الإدارة",
+      "labelEn": "Admin tools",
+      "categoryAr": "الأدوات والحساب",
+      "route": "/admin",
+      "icon": "A",
+      "status": "planned-or-existing"
+    },
+    {
+      "key": "kb-studio",
+      "labelAr": "KB Studio",
+      "labelEn": "KB Studio",
+      "categoryAr": "الأدوات والحساب",
+      "route": "/kb-studio",
+      "icon": "K",
+      "status": "planned-or-existing"
+    },
+    {
+      "key": "feature-flags",
+      "labelAr": "إدارة ظهور الميزات",
+      "labelEn": "Feature flags",
+      "categoryAr": "الأدوات والحساب",
+      "route": "/feature-flags",
+      "icon": "F",
+      "status": "planned-or-existing"
+    }
+  ]
+}

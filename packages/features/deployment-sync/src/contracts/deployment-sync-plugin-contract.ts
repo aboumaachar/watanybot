@@ -1,0 +1,4 @@
+export type DeploymentSyncMode = 'audit' | 'dry-run' | 'sync' | 'rollback' | 'handoff';
+export interface DeploymentSyncSettings { pluginKey: 'deployment-sync'; enabled: boolean; allowLiveSync: boolean; requireDryRunFirst: boolean; requireBackup: boolean; requireValidation: boolean; requireHandoff: boolean; serverTargetLabel?: string; }
+export interface DeploymentSyncManifest { pluginKey: 'deployment-sync'; displayName: string; version: string; modes: DeploymentSyncMode[]; exportable: boolean; replaceable: boolean; adminConfigurable: boolean; }
+export interface DeploymentSyncAdapter { getSettings(): DeploymentSyncSettings; getManifest(): DeploymentSyncManifest; }

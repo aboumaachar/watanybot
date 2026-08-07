@@ -1,0 +1,55 @@
+{
+  "version": "1.0.0",
+  "updated_at": "2026-02-24T11:29:22.172339Z",
+  "rules_lb": "الهدف: لما المستخدم يسأل 'مين مسؤول؟ مع مين بحكي؟' البوت يجاوب بجهة/دور/مكتب (وممكن اسم شخص إذا الإدارة عبّت هالمعلومة).",
+  "ownership": [
+    {
+      "id": "own_e7ad92332fc3d6df",
+      "domain": "payments",
+      "topic_tags": [
+        "tawteen",
+        "bank_issue",
+        "payment_delay"
+      ],
+      "responsible_entities": [
+        {
+          "type": "office",
+          "ref": "dir_retirement_dept_main",
+          "name_lb": "دائرة التقاعد/المتابعة"
+        },
+        {
+          "type": "bank",
+          "ref": null,
+          "name_lb": "البنك (فرع الحساب)"
+        }
+      ],
+      "handoff_lb": "إذا البنك قال المشكلة من الجهة الرسمية، بتفتح متابعة عند دائرة التقاعد ومعك إفادة البنك."
+    },
+    {
+      "id": "own_977bb6af2c639ce4",
+      "domain": "medical",
+      "topic_tags": [
+        "medical",
+        "hospital",
+        "approval"
+      ],
+      "responsible_entities": [
+        {
+          "type": "hospital",
+          "ref": "dir_military_hospital_main",
+          "name_lb": "المستشفى العسكري"
+        },
+        {
+          "type": "office",
+          "ref": null,
+          "name_lb": "مكتب الطبابة/اللجنة الطبية (حسب الجهاز)"
+        }
+      ],
+      "handoff_lb": "إذا بدك موافقة استشفاء، اسأل عن مسار الموافقات قبل الدخول."
+    }
+  ],
+  "ref_index_hints": {
+    "dir_military_hospital_main": "بدّل ref لأيدي entry الحقيقي من الدليل",
+    "dir_retirement_dept_main": "بدّل ref لأيدي entry الحقيقي من الدليل"
+  }
+}

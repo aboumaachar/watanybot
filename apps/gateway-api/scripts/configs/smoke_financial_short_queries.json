@@ -1,0 +1,27 @@
+{
+  "$schema": "./SMOKE_CONFIG_SCHEMA.json",
+  "suiteName": "Financial short-query smoke",
+  "defaultTargetEnv": "FINANCIAL_SHORT_QUERY_SMOKE_TARGET",
+  "defaultTargetFallback": "public",
+  "urlEnvName": "FINANCIAL_SHORT_QUERY_SMOKE_URL",
+  "domainTerms": ["تقاعد", "راتب", "انتقال", "مدرس", "تعويض", "مساعدة"],
+  "additionalKnownBadReplies": ["معليش ما قدرت أفهم. حاول اسأل سؤال محدد — مثلاً عن الراتب التقاعدي أو معاملة معينة."],
+  "queryCases": [
+    {
+      "canonical": "راتب التقاعد",
+      "variants": ["راتب التقاعد", "الراتب التقاعدي", "بدي اعرف عن راتب التقاعد"]
+    },
+    {
+      "canonical": "بدل انتقال",
+      "variants": ["بدل انتقال", "تعويض انتقال", "شو شروط بدل الانتقال"]
+    },
+    {
+      "canonical": "منحة مدرسية",
+      "variants": ["منحة مدرسية", "مساعدة مدرسية", "شو شروط المنحة المدرسية"]
+    },
+    {
+      "canonical": "حسم تقاعد",
+      "variants": ["حسم تقاعد", "حسم التقاعد", "بدي اعرف عن حسم التقاعد"]
+    }
+  ]
+}

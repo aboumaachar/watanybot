@@ -1,0 +1,27 @@
+{
+  "$schema": "./SMOKE_CONFIG_SCHEMA.json",
+  "suiteName": "Medical short-query smoke",
+  "defaultTargetEnv": "MEDICAL_SHORT_QUERY_SMOKE_TARGET",
+  "defaultTargetFallback": "public",
+  "urlEnvName": "MEDICAL_SHORT_QUERY_SMOKE_URL",
+  "domainTerms": ["طبابة", "معالجة", "استشفاء", "بطاقة", "صحية", "خدمات اجتماعية"],
+  "additionalKnownBadReplies": ["ما فهمت عليك منيح، فيك توضحلي أكتر شو قصدك؟ أنا بقدر ساعدك بمواضيع التقاعد والرواتب والطبابه والمعاملات."],
+  "queryCases": [
+    {
+      "canonical": "طبابة",
+      "variants": ["طبابة", "خدمات طبابة", "خدمات الطبابة العسكرية"]
+    },
+    {
+      "canonical": "بطاقة خدمات اجتماعية",
+      "variants": ["بطاقة صحية", "بطاقة خدمات اجتماعية", "بدي بطاقة خدمات اجتماعية"]
+    },
+    {
+      "canonical": "تصريح طبابة",
+      "variants": ["تصريح طبابة", "استفادة طبابة", "طلب تصريح طبابة"]
+    },
+    {
+      "canonical": "موافقة معالجة",
+      "variants": ["موافقة طبابة", "موافقة معالجة", "معاملة طبابة"]
+    }
+  ]
+}

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>و-1 - طلب معاش الأرملة والأيتام</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; direction: rtl; text-align: right; padding: 20px; }
+        .form-header { text-align: center; padding-bottom: 20px; border-bottom: 3px solid #667eea; margin-bottom: 30px; }
+        .form-header h1 { font-size: 1.8em; color: #333; margin-bottom: 10px; font-weight: bold; }
+        .form-header p { font-size: 1em; color: #666; }
+        .form-code { background: #f0f4ff; color: #667eea; padding: 10px 15px; border-radius: 4px; font-weight: bold; display: inline-block; margin-bottom: 20px; }
+        .no-print { display: flex; gap: 10px; margin-bottom: 20px; padding: 15px; background: #f5f5f5; border-radius: 6px; }
+        .btn { padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; background: #667eea; color: white; transition: 0.2s; }
+        .btn:hover { background: #5568d3; transform: translateY(-2px); box-shadow: 0 2px 8px rgba(102,126,234,0.3); }
+        .form-section { margin-bottom: 30px; padding: 20px; border: 1px solid #e0e0e0; border-radius: 6px; }
+        .section-title { font-size: 1.1em; font-weight: bold; color: #333; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #667eea; }
+        .form-group { margin-bottom: 15px; display: flex; flex-direction: column; }
+        .form-group label { font-weight: 500; margin-bottom: 5px; color: #333; }
+        .form-group input, .form-group select, .form-group textarea { padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-family: inherit; }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(102,126,234,0.1); }
+        .form-group textarea { min-height: 70px; resize: vertical; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .table-section { margin: 15px 0; overflow-x: auto; }
+        .table-section table { width: 100%; border-collapse: collapse; }
+        .table-section th { background: #f0f4ff; padding: 10px; text-align: right; border: 1px solid #ddd; }
+        .table-section td { padding: 10px; border: 1px solid #ddd; }
+        .signature-block { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 40px; padding-top: 20px; border-top: 1px solid #e0e0e0; }
+        .signature-item { text-align: center; }
+        .signature-line { border-bottom: 1px solid #333; height: 60px; margin-bottom: 10px; }
+        .signature-label { font-size: 0.9em; color: #333; }
+        .date-line { font-size: 0.9em; color: #333; margin-top: 10px; }
+        @media print { .no-print { display: none !important; } body { padding: 0; } input, select, textarea { border: none; border-bottom: 1px solid #000; background: transparent; } }
+        @media (max-width: 768px) { .form-header h1 { font-size: 1.4em; } .signature-block { grid-template-columns: 1fr; } .form-row { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div class="form-header">
+        <h1>طلب معاش الأرملة والأيتام</h1>
+        <p>الجيش اللبناني - إدارة المعاشات والمزايا</p>
+    </div>
+    
+    <div class="form-code">النموذج: و-1</div>
+    
+    <div class="no-print">
+        <button class="btn" onclick="window.print()">🖨️ طباعة</button>
+        <button class="btn" onclick="downloadForm()">⬇️ تحميل</button>
+        <button class="btn" onclick="shareForm()">📤 مشاركة</button>
+    </div>
+    
+    <div class="form-section">
+        <div class="section-title">١. معلومات المتوفى</div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="deceasedName">الاسم الكامل</label>
+                <input type="text" id="deceasedName">
+            </div>
+            <div class="form-group">
+                <label for="deceasedRank">الرتبة</label>
+                <input type="text" id="deceasedRank">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="deceasedId">رقم الملف</label>
+                <input type="text" id="deceasedId">
+            </div>
+            <div class="form-group">
+                <label for="deceasedUnit">الوحدة العسكرية</label>
+                <input type="text" id="deceasedUnit">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="deathDate">تاريخ الوفاة</label>
+                <input type="date" id="deathDate">
+            </div>
+            <div class="form-group">
+                <label for="deathCause">سبب الوفاة</label>
+                <input type="text" id="deathCause">
+            </div>
+        </div>
+    </div>
+    
+    <div class="form-section">
+        <div class="section-title">٢. معلومات الأرملة/الأيتام</div>
+        <div class="form-group">
+            <label for="widowName">اسم الأرملة</label>
+            <input type="text" id="widowName">
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="widowAge">السن</label>
+                <input type="number" id="widowAge">
+            </div>
+            <div class="form-group">
+                <label for="widowStatus">الحالة</label>
+                <select id="widowStatus">
+                    <option>اختر</option>
+                    <option>أرملة متزوجة من جندي</option>
+                    <option>أرملة غير متزوجة</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="table-section">
+            <label style="display: block; margin-bottom: 10px; font-weight: bold;">قائمة الأيتام</label>
+            <table>
+                <thead>
+                    <tr>
+                        <th>الرقم</th>
+                        <th>اسم الايتيم</th>
+                        <th>السن</th>
+                        <th>النسبة للوالد</th>
+                        <th>حالة التعليم</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td><input type="text" style="width: 100%; border: none; padding: 2px;"></td>
+                        <td><input type="number" style="width: 50px; border: none; padding: 2px;"></td>
+                        <td><select style="width: 100%; border: none; padding: 2px;"><option>---</option><option>ولد</option><option>بنت</option></select></td>
+                        <td><select style="width: 100%; border: none; padding: 2px;"><option>---</option><option>طالب</option><option>خريج</option><option>عاطل</option></select></td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td><input type="text" style="width: 100%; border: none; padding: 2px;"></td>
+                        <td><input type="number" style="width: 50px; border: none; padding: 2px;"></td>
+                        <td><select style="width: 100%; border: none; padding: 2px;"><option>---</option><option>ولد</option><option>بنت</option></select></td>
+                        <td><select style="width: 100%; border: none; padding: 2px;"><option>---</option><option>طالب</option><option>خريج</option><option>عاطل</option></select></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div class="form-section">
+        <div class="section-title">٣. المعاش المطلوب</div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="deceasedSalary">معاش المتوفى</label>
+                <input type="number" id="deceasedSalary" placeholder="أدخل المبلغ">
+            </div>
+            <div class="form-group">
+                <label for="requestedPension">المعاش المطلوب</label>
+                <input type="number" id="requestedPension" placeholder="أدخل المبلغ">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="justification">التبرير</label>
+            <textarea id="justification" placeholder="اشرح أسباب طلب هذا المعاش"></textarea>
+        </div>
+    </div>
+    
+    <div class="form-section">
+        <div class="section-title">٤. المستندات المرفقة</div>
+        <div class="form-group">
+            <label for="documents">قائمة المستندات</label>
+            <textarea id="documents" placeholder="مثلاً: شهادة الوفاة، شهادات الميلاد، إثبات الحالة الاجتماعية"></textarea>
+        </div>
+    </div>
+    
+    <div class="signature-block">
+        <div class="signature-item">
+            <div class="signature-line"></div>
+            <div class="signature-label">توقيع الأرملة/الوصي</div>
+            <div class="date-line">التاريخ: ________________</div>
+        </div>
+        <div class="signature-item">
+            <div class="signature-line"></div>
+            <div class="signature-label">موظف المعالجة</div>
+            <div class="date-line">التاريخ: ________________</div>
+        </div>
+    </div>
+    
+    <script>
+        function downloadForm() {
+            const blob = new Blob([document.documentElement.outerHTML], { type: 'text/html;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'طلب_معاش_الأرملة_والأيتام_و1.html';
+            link.click();
+        }
+        function shareForm() {
+            if (navigator.share) {
+                navigator.share({ title: 'نموذج WatanyBot', text: 'طلب معاش الأرملة والأيتام', url: window.location.href });
+            } else {
+                navigator.clipboard.writeText(window.location.href);
+                alert('تم نسخ الرابط');
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,214 @@
+:root {
+  --watany-sticky-offset: 132px;
+  --watany-elder-font: clamp(17px, 4.6vw, 22px);
+  --watany-elder-title: clamp(20px, 5.5vw, 28px);
+  --watany-elder-small: clamp(14px, 3.8vw, 18px);
+  --watany-touch: 62px;
+  --watany-icon: 42px;
+  --watany-ink: #211b12;
+  --watany-muted-ink: #4d4434;
+  --watany-gold: #a58d55;
+  --watany-green: #18864a;
+  --watany-blue: #2f80c9;
+  --watany-purple: #7e57c2;
+  --watany-card: rgba(255, 253, 247, 0.96);
+  --watany-border: rgba(91, 72, 32, 0.16);
+  --watany-shadow: 0 12px 28px rgba(26, 24, 20, 0.13);
+}
+
+html.watany-mobile-visual-fixes-enabled {
+  scroll-padding-top: var(--watany-sticky-offset);
+}
+
+html.watany-mobile-visual-fixes-enabled,
+html.watany-mobile-visual-fixes-enabled body {
+  font-size: var(--watany-elder-font);
+  color: var(--watany-ink);
+}
+
+html.watany-mobile-visual-fixes-enabled body {
+  overflow-x: hidden;
+}
+
+html.watany-mobile-visual-fixes-enabled button,
+html.watany-mobile-visual-fixes-enabled a,
+html.watany-mobile-visual-fixes-enabled input,
+html.watany-mobile-visual-fixes-enabled textarea {
+  font-size: max(16px, 1em);
+}
+
+html.watany-mobile-visual-fixes-enabled button,
+html.watany-mobile-visual-fixes-enabled [role="button"] {
+  min-height: 48px;
+  min-width: 48px;
+  touch-action: manipulation;
+}
+
+html.watany-mobile-visual-fixes-enabled .watany-top-header-visual-fix {
+  color: var(--watany-ink);
+  background: rgba(255, 253, 247, 0.94);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(165, 141, 85, 0.16);
+}
+
+html.watany-mobile-visual-fixes-enabled .watany-top-header-visual-fix svg,
+html.watany-mobile-visual-fixes-enabled .watany-top-header-visual-fix path,
+html.watany-mobile-visual-fixes-enabled .watany-top-header-visual-fix [class*="icon"],
+html.watany-mobile-visual-fixes-enabled .watany-top-header-visual-fix [class*="Icon"] {
+  color: var(--watany-gold);
+  fill: currentColor;
+  stroke: currentColor;
+}
+
+html.watany-mobile-visual-fixes-enabled .watany-top-header-visual-fix button:nth-of-type(1) svg,
+html.watany-mobile-visual-fixes-enabled .watany-top-header-visual-fix a:nth-of-type(1) svg {
+  color: var(--watany-green);
+}
+
+html.watany-mobile-visual-fixes-enabled .watany-top-header-visual-fix button:nth-of-type(2) svg,
+html.watany-mobile-visual-fixes-enabled .watany-top-header-visual-fix a:nth-of-type(2) svg {
+  color: var(--watany-blue);
+}
+
+html.watany-mobile-visual-fixes-enabled .watany-top-header-visual-fix button:nth-of-type(3) svg,
+html.watany-mobile-visual-fixes-enabled .watany-top-header-visual-fix a:nth-of-type(3) svg {
+  color: var(--watany-purple);
+}
+
+html.watany-mobile-visual-fixes-enabled [class*="Feature"],
+html.watany-mobile-visual-fixes-enabled [class*="feature"],
+html.watany-mobile-visual-fixes-enabled [class*="Tile"],
+html.watany-mobile-visual-fixes-enabled [class*="tile"],
+html.watany-mobile-visual-fixes-enabled [class*="Card"],
+html.watany-mobile-visual-fixes-enabled [class*="card"] {
+  scroll-margin-top: calc(var(--watany-sticky-offset) + 10px);
+}
+
+html.watany-mobile-visual-fixes-enabled .watany-expanded-card-panel {
+  position: relative;
+  margin-top: 10px;
+  scroll-margin-top: calc(var(--watany-sticky-offset) + 14px);
+  max-width: min(100%, 760px);
+  overflow: hidden;
+  border-radius: 26px;
+  color: var(--watany-ink);
+}
+
+html.watany-mobile-visual-fixes-enabled .watany-expanded-card-panel:target,
+html.watany-mobile-visual-fixes-enabled .watany-expanded-card-panel[open] {
+  scroll-margin-top: calc(var(--watany-sticky-offset) + 14px);
+}
+
+html.watany-mobile-visual-fixes-enabled .watany-updates-visual-fix {
+  color: var(--watany-ink);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+html.watany-mobile-visual-fixes-enabled .watany-updates-visual-fix * {
+  color: inherit;
+  text-shadow: none;
+  line-height: 1.55;
+}
+
+html.watany-mobile-visual-fixes-enabled .watany-updates-visual-fix h1,
+html.watany-mobile-visual-fixes-enabled .watany-updates-visual-fix h2,
+html.watany-mobile-visual-fixes-enabled .watany-updates-visual-fix h3 {
+  color: var(--watany-ink);
+  font-size: var(--watany-elder-title);
+  font-weight: 800;
+}
+
+html.watany-mobile-visual-fixes-enabled .watany-updates-visual-fix p,
+html.watany-mobile-visual-fixes-enabled .watany-updates-visual-fix span,
+html.watany-mobile-visual-fixes-enabled .watany-updates-visual-fix div {
+  word-break: normal;
+  overflow-wrap: anywhere;
+}
+
+html.watany-mobile-visual-fixes-enabled .watany-updates-visual-fix [class*="badge"],
+html.watany-mobile-visual-fixes-enabled .watany-updates-visual-fix [class*="Badge"],
+html.watany-mobile-visual-fixes-enabled .watany-updates-visual-fix [data-badge],
+html.watany-mobile-visual-fixes-enabled .watany-updates-visual-fix small {
+  color: #fff;
+  background: var(--watany-gold);
+  border-radius: 14px;
+  min-width: 38px;
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+}
+
+html.watany-mobile-visual-fixes-enabled .watany-force-side-drawer {
+  position: fixed !important;
+  inset-block-start: var(--watany-sticky-offset) !important;
+  inset-inline-end: 0 !important;
+  inset-inline-start: auto !important;
+  transform: none !important;
+  width: min(86vw, 380px) !important;
+  max-width: min(86vw, 380px) !important;
+  height: calc(100dvh - var(--watany-sticky-offset) - 86px) !important;
+  max-height: calc(100dvh - var(--watany-sticky-offset) - 86px) !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  z-index: 1200 !important;
+  border-radius: 24px 0 0 24px !important;
+  background: var(--watany-card) !important;
+  box-shadow: var(--watany-shadow) !important;
+  border: 1px solid var(--watany-border) !important;
+  padding: 16px !important;
+  margin: 0 !important;
+  color: var(--watany-ink) !important;
+}
+
+html[dir="ltr"].watany-mobile-visual-fixes-enabled .watany-force-side-drawer {
+  inset-inline-start: 0 !important;
+  inset-inline-end: auto !important;
+  border-radius: 0 24px 24px 0 !important;
+}
+
+html.watany-mobile-visual-fixes-enabled .watany-force-side-drawer * {
+  color: inherit;
+  line-height: 1.35;
+}
+
+html.watany-mobile-visual-fixes-enabled .watany-force-side-drawer button,
+html.watany-mobile-visual-fixes-enabled .watany-force-side-drawer a,
+html.watany-mobile-visual-fixes-enabled .watany-force-side-drawer [role="button"] {
+  min-height: var(--watany-touch);
+  border-radius: 20px;
+  font-size: var(--watany-elder-font);
+}
+
+html.watany-mobile-visual-fixes-enabled .watany-force-side-drawer svg,
+html.watany-mobile-visual-fixes-enabled .watany-force-side-drawer img {
+  width: var(--watany-icon);
+  height: var(--watany-icon);
+}
+
+html.watany-mobile-visual-fixes-enabled [class*="bottom"],
+html.watany-mobile-visual-fixes-enabled [class*="Bottom"] {
+  font-size: var(--watany-elder-small);
+}
+
+@media (max-width: 740px) {
+  html.watany-mobile-visual-fixes-enabled [class*="Home"],
+  html.watany-mobile-visual-fixes-enabled [class*="home"] {
+    font-size: var(--watany-elder-font);
+  }
+
+  html.watany-mobile-visual-fixes-enabled [class*="Home"] svg,
+  html.watany-mobile-visual-fixes-enabled [class*="home"] svg,
+  html.watany-mobile-visual-fixes-enabled [class*="Home"] img,
+  html.watany-mobile-visual-fixes-enabled [class*="home"] img {
+    min-width: 34px;
+    min-height: 34px;
+  }
+
+  html.watany-mobile-visual-fixes-enabled .watany-updates-visual-fix {
+    margin-inline: 10px;
+    border-radius: 28px;
+  }
+}

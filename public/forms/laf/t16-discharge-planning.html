@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ت-16 - خطة الإنهاء من الخدمة</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; direction: rtl; text-align: right; padding: 20px; }
+        .form-header { text-align: center; padding-bottom: 20px; border-bottom: 3px solid #667eea; margin-bottom: 30px; }
+        .form-header h1 { font-size: 1.8em; color: #333; margin-bottom: 10px; font-weight: bold; }
+        .form-header p { font-size: 1em; color: #666; }
+        .form-code { background: #f0f4ff; color: #667eea; padding: 10px 15px; border-radius: 4px; font-weight: bold; display: inline-block; margin-bottom: 20px; }
+        .no-print { display: flex; gap: 10px; margin-bottom: 20px; padding: 15px; background: #f5f5f5; border-radius: 6px; }
+        .btn { padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; background: #667eea; color: white; transition: 0.2s; }
+        .btn:hover { background: #5568d3; transform: translateY(-2px); box-shadow: 0 2px 8px rgba(102,126,234,0.3); }
+        .form-section { margin-bottom: 30px; padding: 20px; border: 1px solid #e0e0e0; border-radius: 6px; }
+        .section-title { font-size: 1.1em; font-weight: bold; color: #333; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #667eea; }
+        .form-group { margin-bottom: 15px; display: flex; flex-direction: column; }
+        .form-group label { font-weight: 500; margin-bottom: 5px; color: #333; }
+        .form-group input, .form-group select, .form-group textarea { padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-family: inherit; }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(102,126,234,0.1); }
+        .form-group textarea { min-height: 70px; resize: vertical; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .info-box { background: #d1ecf1; border-left: 4px solid #0c5460; padding: 15px; margin: 15px 0; border-radius: 4px; }
+        .info-box p { font-size: 0.95em; color: #0c5460; }
+        .signature-block { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 40px; padding-top: 20px; border-top: 1px solid #e0e0e0; }
+        .signature-item { text-align: center; }
+        .signature-line { border-bottom: 1px solid #333; height: 60px; margin-bottom: 10px; }
+        .signature-label { font-size: 0.9em; color: #333; }
+        .date-line { font-size: 0.9em; color: #333; margin-top: 10px; }
+        @media print { .no-print { display: none !important; } body { padding: 0; } input, select, textarea { border: none; border-bottom: 1px solid #000; background: transparent; } }
+        @media (max-width: 768px) { .form-header h1 { font-size: 1.4em; } .signature-block { grid-template-columns: 1fr; } .form-row { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div class="form-header">
+        <h1>خطة الإنهاء من الخدمة العسكرية</h1>
+        <p>الجيش اللبناني - إدارة الموارد البشرية</p>
+    </div>
+    
+    <div class="form-code">النموذج: ت-16</div>
+    
+    <div class="no-print">
+        <button class="btn" onclick="window.print()">🖨️ طباعة</button>
+        <button class="btn" onclick="downloadForm()">⬇️ تحميل</button>
+        <button class="btn" onclick="shareForm()">📤 مشاركة</button>
+    </div>
+    
+    <div class="info-box">
+        <p><strong>الهدف:</strong> تسهيل الانتقال السلس من الخدمة العسكرية إلى الحياة المدنية</p>
+    </div>
+    
+    <div class="form-section">
+        <div class="section-title">١. معلومات الجندي</div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="fullName">الاسم الكامل</label>
+                <input type="text" id="fullName">
+            </div>
+            <div class="form-group">
+                <label for="rank">الرتبة</label>
+                <input type="text" id="rank">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="serviceNumber">رقم الملف</label>
+                <input type="text" id="serviceNumber">
+            </div>
+            <div class="form-group">
+                <label for="unit">الوحدة العسكرية</label>
+                <input type="text" id="unit">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="serviceYears">سنوات الخدمة</label>
+                <input type="number" id="serviceYears">
+            </div>
+            <div class="form-group">
+                <label for="reason">سبب الإنهاء</label>
+                <select id="reason">
+                    <option>اختر</option>
+                    <option>بلوغ السن القانونية</option>
+                    <option>الاستقالة</option>
+                    <option>الفصل</option>
+                    <option>الإعاقة</option>
+                    <option>إنهاء العقد</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    
+    <div class="form-section">
+        <div class="section-title">٢. خطة ما بعد الخدمة</div>
+        <div class="form-group">
+            <label for="postServicePlan">ما هي خطتك بعد الإنهاء؟</label>
+            <textarea id="postServicePlan" placeholder="مثلاً: العمل في القطاع الخاص، متابعة التعليم، استثمار تجاري، إلخ"></textarea>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="targetField">المجال الوظيفي المستهدف</label>
+                <input type="text" id="targetField" placeholder="مثلاً: الهندسة، الإدارة، البيع، إلخ">
+            </div>
+            <div class="form-group">
+                <label for="targetSector">القطاع</label>
+                <select id="targetSector">
+                    <option>اختر</option>
+                    <option>حكومي</option>
+                    <option>خاص</option>
+                    <option>منظمات دولية</option>
+                    <option>عمل حر</option>
+                    <option>تعليم</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    
+    <div class="form-section">
+        <div class="section-title">٣. دعم المساعدة والتدريب</div>
+        <div class="form-group">
+            <label for="supportNeeds">ما هي أنواع الدعم التي تحتاجها؟</label>
+            <textarea id="supportNeeds" placeholder="مثلاً: تدريب مهني، مساعدة في البحث الوظيفي، استشارة نفسية، إلخ"></textarea>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>هل تحتاج إلى تدريب مهني؟</label>
+                <select>
+                    <option>اختر</option>
+                    <option>نعم</option>
+                    <option>لا</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="trainingField">مجال التدريب المفضل</label>
+                <input type="text" id="trainingField" placeholder="أدخل المجال">
+            </div>
+        </div>
+    </div>
+    
+    <div class="form-section">
+        <div class="section-title">٤. المزايا والاستحقاقات</div>
+        <div class="form-group">
+            <label for="benefits">الاستحقاقات المطلوبة</label>
+            <textarea id="benefits" placeholder="مثلاً: معاش، تعويضات، شهادات خبرة، إلخ"></textarea>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="pensionAmount">قيمة المعاش الشهري</label>
+                <input type="number" id="pensionAmount" placeholder="أدخل المبلغ">
+            </div>
+            <div class="form-group">
+                <label for="severancePay">تعويض الإنهاء</label>
+                <input type="number" id="severancePay" placeholder="أدخل المبلغ">
+            </div>
+        </div>
+    </div>
+    
+    <div class="form-section">
+        <div class="section-title">٥. تاريخ الإنهاء</div>
+        <div class="form-date">
+            <label for="dischargeDate">تاريخ الإنهاء المتوقع</label>
+            <input type="date" id="dischargeDate">
+        </div>
+    </div>
+    
+    <div class="signature-block">
+        <div class="signature-item">
+            <div class="signature-line"></div>
+            <div class="signature-label">توقيع الجندي</div>
+            <div class="date-line">التاريخ: ________________</div>
+        </div>
+        <div class="signature-item">
+            <div class="signature-line"></div>
+            <div class="signature-label">مدير الموارد البشرية</div>
+            <div class="date-line">التاريخ: ________________</div>
+        </div>
+    </div>
+    
+    <script>
+        function downloadForm() {
+            const blob = new Blob([document.documentElement.outerHTML], { type: 'text/html;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'خطة_الإنهاء_من_الخدمة_ت16.html';
+            link.click();
+        }
+        function shareForm() {
+            if (navigator.share) {
+                navigator.share({ title: 'نموذج WatanyBot', text: 'خطة الإنهاء من الخدمة العسكرية', url: window.location.href });
+            } else {
+                navigator.clipboard.writeText(window.location.href);
+                alert('تم نسخ الرابط');
+            }
+        }
+    </script>
+</body>
+</html>
