@@ -42,6 +42,13 @@ function getGoogleAccountsApi(): GoogleAccountsIdApi | undefined {
   return (globalThis as GoogleWindow).google?.accounts?.id;
 }
 
+function resolvePostLoginPath(rawNextPath: string | null) {
+  if (!rawNextPath) return "/home";
+  if (!rawNextPath.startsWith("/")) return "/home";
+  if (rawNextPath.startsWith("//") || rawNextPath.startsWith("/\\")) return "/home";
+  return rawNextPath;
+}
+
 // NOSONAR - this page intentionally keeps the full auth flow in one component.
 function LoginPageOriginal() {
   const { loginWithProfile, apiBaseUrl } = useApp();
@@ -56,10 +63,7 @@ function LoginPageOriginal() {
     console.info(`[google-auth] ${event}`, payload);
   }, [authDebugEnabled]);
   const rawNextPath = new URLSearchParams(location.search).get("next");
-  const nextPath = (() => {
-    if (!rawNextPath) return "/hybrid-kb-chat";
-    return rawNextPath.startsWith("/") ? rawNextPath : "/hybrid-kb-chat";
-  })();
+  const nextPath = resolvePostLoginPath(rawNextPath);
   const [tab, setTab] = useState<"email" | "phone">("email");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -193,8 +197,9 @@ function LoginPageOriginal() {
         hasId: Boolean(profile?.id),
       });
       loginWithProfile(profile);
-      authDebugLog("navigating", { next: nextPath });
-      navigate(nextPath);
+      const destination = profile.role === "superadmin" ? "/superadmin" : nextPath;
+      authDebugLog("navigating", { next: destination });
+      navigate(destination);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "";
       setError(
@@ -385,7 +390,7 @@ function LoginPageOriginal() {
     try {
       const profile = await api.verifyOtp(phone.trim(), otp, apiBaseUrl);
       loginWithProfile(profile);
-      navigate(nextPath);
+      navigate(profile.role === "superadmin" ? "/superadmin" : nextPath);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "";
       setError(
@@ -557,5 +562,3 @@ function LoginPageOriginal() {
 export default function LoginPage() {
   return <LoginPageOriginal />;
 }
-
-
