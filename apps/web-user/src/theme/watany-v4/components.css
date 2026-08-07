@@ -1,6 +1,6 @@
 .watany-v4-logo { display:block; width:auto; height:auto; object-fit:contain; filter:drop-shadow(0 10px 16px rgba(7,57,46,.14)); }
 :root {
-  --watany-home-icon-size: clamp(58px, 18vw, 92px);
+  --watany-home-icon-size: clamp(68px, 21vw, 104px);
   --watany-icon-tile-size: calc(var(--watany-home-icon-size) + 20px);
   --watany-icon-frame-radius: 20px;
   --watany-icon-frame-bg: linear-gradient(155deg,#fffef9 0%,#fff8e8 58%,#f5e5bd 100%);
@@ -14,10 +14,10 @@
 .watany-app-icon__glyph img,.watany-v4-icon,.viewer-v4-icon,.watany-approved-runtime-glyph img {
   position:relative!important; z-index:2!important; width:var(--watany-home-icon-size)!important; height:var(--watany-home-icon-size)!important; min-width:var(--watany-home-icon-size)!important; min-height:var(--watany-home-icon-size)!important; max-width:var(--watany-home-icon-size)!important; max-height:var(--watany-home-icon-size)!important; display:block!important; object-fit:contain!important; object-position:center!important; margin:0 auto!important; padding:0!important; background:transparent!important; border:0!important; border-radius:0!important; box-shadow:none!important; filter:none!important; transform:none!important; visibility:visible!important; opacity:1!important;
 }
-.service-grid,.feature-grid,.home-services-grid,[data-watany-service-grid] { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px 8px; align-items:start; }
+.service-grid,.feature-grid,.home-services-grid,.watany-service-grid,[data-watany-service-grid] { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px 8px; align-items:start; }
 .service-item,.feature-tile,[data-watany-service-item] { min-width:0; display:grid; justify-items:center; gap:9px; border:0; background:transparent; color:var(--watany-forest-900); text-align:center; }
 .service-item > span:last-child,.feature-tile > span:last-child,[data-watany-service-item] > span:last-child { font-weight:800; line-height:1.45; }
-@media (max-width:360px) { :root { --watany-home-icon-size:56px; --watany-icon-tile-size:74px; --watany-icon-frame-radius:17px; } }
+@media (max-width:360px) { :root { --watany-home-icon-size:64px; --watany-icon-tile-size:82px; --watany-icon-frame-radius:17px; } }
 .hero-card,.watany-hero-card,[data-watany-hero] { border:1px solid rgba(185,133,34,.36); border-radius:21px; color:#fff; background:linear-gradient(135deg,var(--watany-forest-900),var(--watany-forest-700)); box-shadow:0 13px 28px rgba(7,57,46,.17); }
 .card,.list-card,.feature-card,.form-card,.login-card,.popup-card { border:1px solid var(--watany-line); border-radius:18px; background:rgba(255,255,255,.96); box-shadow:0 10px 24px rgba(5,43,34,.08); }
 input,select,textarea { border:1px solid #d9cfbc; border-radius:13px; background:#fffefb; color:var(--watany-ink); }
@@ -45,14 +45,15 @@ button.primary,.primary-button,[data-variant="primary"] { border:1px solid var(-
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 20px 10px;
   align-items: start;
+  overflow-x: clip;
 }
 .watany-v4-launcher-card {
   display: grid;
-  grid-template-rows: 86px 20px;
+  grid-template-rows: minmax(92px, auto) auto;
   justify-items: center;
   align-items: start;
   min-width: 0;
-  gap: 8px;
+  gap: 4px;
   color: var(--watany-forest-950);
   text-align: center;
   text-decoration: none;
@@ -61,26 +62,27 @@ button.primary,.primary-button,[data-variant="primary"] { border:1px solid var(-
   display: block;
   width: 100%;
   min-width: 0;
-  overflow: hidden;
+  overflow: visible;
   color: var(--watany-forest-950);
   font-family: "Cairo", "Noto Kufi Arabic", Tahoma, sans-serif;
-  font-size: clamp(10px, 2.8vw, 13px);
+  font-size: 14px;
   font-weight: 800;
-  line-height: 20px;
+  line-height: 1.35;
   text-align: center;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+  white-space: normal;
 }
 .watany-v4-launcher-card:focus-visible { outline: 3px solid rgba(214, 167, 42, .72); outline-offset: 5px; border-radius: 8px; }
 @media (min-width: 431px) {
   .watany-v4-homepage { padding-inline: 18px; }
   .watany-v4-homepage__grid { column-gap: 14px; }
-  .watany-v4-launcher-card { grid-template-rows: 100px 22px; }
-  .watany-v4-launcher-card__frame { width: min(100%, 100px); border-radius: 20px; }
-  .watany-v4-launcher-card__label { font-size: 13px; line-height: 22px; }
+  .watany-v4-launcher-card { grid-template-rows: minmax(104px, auto) auto; }
+  .watany-v4-launcher-card__frame { width: min(100%, 104px); border-radius: 20px; }
+  .watany-v4-launcher-card__label { font-size: 14px; line-height: 1.4; }
 }
 :root {
-  --watany-approved-raster-tile-size: clamp(78px, 24vw, 96px);
+  --watany-approved-raster-tile-size: clamp(86px, 26vw, 104px);
 }
 [data-watany-approved-raster-tile="true"] {
   position:relative!important; isolation:isolate!important; width:var(--watany-approved-raster-tile-size)!important; height:var(--watany-approved-raster-tile-size)!important; min-width:var(--watany-approved-raster-tile-size)!important; min-height:var(--watany-approved-raster-tile-size)!important; max-width:var(--watany-approved-raster-tile-size)!important; max-height:var(--watany-approved-raster-tile-size)!important; display:grid!important; place-items:center!important; padding:0!important; overflow:visible!important; border:0!important; border-radius:0!important; background:transparent!important; box-shadow:none!important; filter:none!important;
@@ -92,7 +94,7 @@ button.primary,.primary-button,[data-variant="primary"] { border:1px solid var(-
 [data-watany-approved-raster-glyph="true"] { position:relative!important; width:100%!important; height:100%!important; display:block!important; padding:0!important; border:0!important; border-radius:0!important; background:transparent!important; box-shadow:none!important; overflow:visible!important; }
 [data-watany-approved-raster-glyph="true"] > :not(img.watany-v4-approved-raster-icon) { display:none!important; visibility:hidden!important; opacity:0!important; }
 img.watany-v4-approved-raster-icon { position:relative!important; z-index:4!important; width:100%!important; height:100%!important; min-width:100%!important; min-height:100%!important; max-width:100%!important; max-height:100%!important; display:block!important; object-fit:contain!important; object-position:center!important; margin:0!important; padding:0!important; border:0!important; border-radius:0!important; background:transparent!important; box-shadow:none!important; filter:none!important; transform:none!important; visibility:visible!important; opacity:1!important; }
-@media (max-width:360px) { :root { --watany-approved-raster-tile-size:78px; } }
+@media (max-width:360px) { :root { --watany-approved-raster-tile-size:82px; } }
 .watany-app-icon__glyph img.watany-v4-approved-raster-icon {
   width:100%!important;
   height:100%!important;
