@@ -4,6 +4,7 @@ import { api } from "../lib/api";
 import type { Mode } from "../store/app";
 import { useApp } from "../store/app";
 import type { CommunityGroup, LiveSession } from "../types/domain";
+import { WatanyListingCard } from "./listings/WatanyListingCard";
 
 type Props = Readonly<{
   onNavigate: (mode: Mode) => void;
@@ -124,23 +125,17 @@ export function CommunityScreen({ onNavigate }: Props) {
         <ul className="community-group-list">
           {previewGroups.map((group) => (
             <li key={group.id} className="community-group-list__item">
-              <button className="community-group-row" onClick={() => navigate(`/groups/${group.id}`) }>
-                <span className="community-group-row__content">
-                  <span className="community-group-row__topline">
-                    <span className="community-group-row__name" dir="auto">{group.name}</span>
-                    <span className="community-group-row__time" dir="auto">
-                      <span aria-hidden="true">·</span>
-                      <span>{formatGroupTime(group.lastMessageAt)}</span>
-                    </span>
-                  </span>
-                  <span className="community-group-row__meta">
-                    {group.isOfficial ? <span className="community-group-row__tag" dir="auto">رسمي</span> : null}
-                    {formatGroupCategory(group.category) ? <span className="community-group-row__tag" dir="auto">{formatGroupCategory(group.category)}</span> : null}
-                  </span>
-                  <span className="community-group-row__snippet">{group.lastMessagePreview || group.description || "افتح المجموعة لمتابعة آخر الرسائل."}</span>
-                </span>
-                {group.unreadCount ? <span className="community-group-row__badge">{group.unreadCount}</span> : null}
-              </button>
+              <WatanyListingCard
+                title={group.name}
+                summary={group.lastMessagePreview || group.description || "افتح المجموعة لمتابعة آخر الرسائل."}
+                badges={[
+                  ...(group.isOfficial ? [{ label: "رسمي", tone: "gold" as const }] : []),
+                  ...(formatGroupCategory(group.category) ? [{ label: formatGroupCategory(group.category)! }] : []),
+                  { label: `آخر نشاط ${formatGroupTime(group.lastMessageAt)}` },
+                ]}
+                rankLabel={group.unreadCount ? `${group.unreadCount} غير مقروء` : undefined}
+                primaryAction={{ label: "فتح المحادثة", onClick: () => navigate(`/groups/${group.id}`) }}
+              />
             </li>
           ))}
           {previewGroups.length === 0 ? (

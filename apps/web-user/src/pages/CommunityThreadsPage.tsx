@@ -7,6 +7,7 @@ import { api } from "../lib/api";
 import { getDefaultApiWebSocketUrl } from "../lib/api-base";
 import { getAccessToken, subscribeAuthStateChange } from "../lib/auth";
 import { useApp } from "../store/app";
+import { WatanyListingCard } from "../components/listings/WatanyListingCard";
 import type {
   Community,
   CommunityGroup,
@@ -123,7 +124,7 @@ type OverviewScreenProps = Readonly<{
   liveGroupIds: Set<string>;
   loadingOverview: boolean;
   isAuthed: boolean;
-  isAdmin: boolean;
+  canManageCommunity: boolean;
   newGroupName: string;
   newGroupDescription: string;
   newGroupCategory: CommunityGroup["category"];
@@ -897,54 +898,33 @@ function CommunityGroupListItem({
 
   return (
     <li>
-      <div className="community-group-row-wrap">
-        <button className="community-group-row" type="button" onClick={() => onOpen(group.id)} disabled={!canOpen}>
-          <span className="community-group-row__avatar">
-            {group.isOfficial ? <Megaphone24Regular aria-hidden /> : <People24Regular aria-hidden />}
-          </span>
-          <span className="community-group-row__content">
-            <span className="community-group-row__topline">
-              <span className="community-group-row__name" dir="auto">{group.name}</span>
-              <span className="community-group-row__time">{formatListTime(group.lastMessageAt)}</span>
-            </span>
-            <span className="community-group-row__meta">
-              {group.isOfficial ? <span className="community-group-row__tag">رسمي</span> : null}
-              {liveGroupIds.has(group.id) ? <span className="community-group-row__tag">مباشر</span> : null}
-              <span className="community-group-row__tag">{categoryLabel(group.category)}</span>
-              <span className="community-group-row__tag">{visibilityLabel(group.visibility)}</span>
-              {membershipStatus ? <span className="community-group-row__tag community-group-row__tag--membership">{membershipStatusLabel(membershipStatus)}</span> : null}
-            </span>
-            <span className="community-group-row__snippet" dir="auto">{group.lastMessagePreview || group.description || "افتح المجموعة لعرض آخر الرسائل."}</span>
-          </span>
-          {group.unreadCount ? <span className="community-group-row__badge">{group.unreadCount}</span> : null}
-        </button>
-
-        {canRequestMembership ? (
-          <button
-            type="button"
-            className="community-group-row__action"
-            onClick={() => onRequestMembership(group.id)}
-            disabled={membershipActionPending}
-          >
-            {membershipActionLabel}
-          </button>
-        ) : null}
-
-        {canAcceptInvitation ? (
-          <button
-            type="button"
-            className="community-group-row__action"
-            onClick={() => onAcceptInvitation(group.id)}
-            disabled={membershipActionPending}
-          >
-            {invitationActionLabel}
-          </button>
-        ) : null}
-
-        {!canRequestMembership && !canAcceptInvitation && !canOpen && group.visibility === "invite_only" ? (
-          <span className="community-group-row__note">هذه المجموعة تفتح عبر دعوة صالحة فقط.</span>
-        ) : null}
-      </div>
+      <WatanyListingCard
+        title={group.name}
+        summary={group.lastMessagePreview || group.description || "افتح المجموعة لعرض آخر الرسائل."}
+        badges={[
+          ...(group.isOfficial ? [{ label: "رسمي", tone: "gold" as const }] : []),
+          ...(liveGroupIds.has(group.id) ? [{ label: "مباشر", tone: "gold" as const }] : []),
+          { label: categoryLabel(group.category) },
+          { label: visibilityLabel(group.visibility) },
+          ...(membershipStatus ? [{ label: membershipStatusLabel(membershipStatus) }] : []),
+          { label: `آخر نشاط ${formatListTime(group.lastMessageAt)}` },
+        ]}
+        rankLabel={group.unreadCount ? `${group.unreadCount} غير مقروء` : undefined}
+        primaryAction={{
+          label: canOpen ? "فتح المحادثة" : "غير متاح",
+          onClick: () => { if (canOpen) onOpen(group.id); },
+          disabled: !canOpen,
+        }}
+        secondaryAction={canRequestMembership ? {
+          label: membershipActionLabel,
+          onClick: () => onRequestMembership(group.id),
+          disabled: membershipActionPending,
+        } : canAcceptInvitation ? {
+          label: invitationActionLabel,
+          onClick: () => onAcceptInvitation(group.id),
+          disabled: membershipActionPending,
+        } : undefined}
+      />
     </li>
   );
 }
@@ -1209,7 +1189,7 @@ function CommunityOverviewScreen({
   liveGroupIds,
   loadingOverview,
   isAuthed,
-  isAdmin,
+  canManageCommunity,
   newGroupName,
   newGroupDescription,
   newGroupCategory,
@@ -1305,7 +1285,7 @@ function CommunityOverviewScreen({
         </ul>
       </section>
 
-      {isAdmin ? (
+      {canManageCommunity ? (
         <details className="community-admin-disclosure">
           <summary>
             <div className="community-admin-disclosure__copy">
@@ -1909,6 +1889,7 @@ export default function CommunityThreadsPage() {
   const readSyncInFlightRef = useRef(false);
   const threadRef = useRef<ThreadDetail | null>(null);
   const isAdmin = hasRole(["admin", "superadmin"]);
+  const canManageCommunity = hasRole(["moderator", "admin", "superadmin"]);
   const listScrollYRef = useRef(initialPersistedListState?.scrollY ?? 0);
   const pendingListScrollRestoreRef = useRef(false);
   const shouldRestoreThreadAnchorRef = useRef(false);
@@ -3584,7 +3565,7 @@ export default function CommunityThreadsPage() {
   const handleCreateGroup = (event: SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault();
     void (async () => {
-      if (!isAdmin || !newGroupName.trim() || creatingGroup) return;
+      if (!canManageCommunity || !newGroupName.trim() || creatingGroup) return;
 
       setCreatingGroup(true);
       setError("");
@@ -3705,7 +3686,7 @@ export default function CommunityThreadsPage() {
           liveGroupIds={liveGroupIds}
           loadingOverview={loadingOverview}
           isAuthed={profile.isAuthed}
-          isAdmin={isAdmin}
+                canManageCommunity={canManageCommunity}
           newGroupName={newGroupName}
           newGroupDescription={newGroupDescription}
           newGroupCategory={newGroupCategory}

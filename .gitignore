@@ -1,0 +1,127 @@
+node_modules
+.venv
+__pycache__
+
+# Environment files (contain secrets — use .env.example as template)
+.env
+.env.local
+.env.*.local
+*/.env
+**/.env
+!.env.example
+!**/.env.example
+
+# Build artifacts
+dist
+
+# Runtime / auto-generated data artifacts (not source code)
+apps/gateway-api/data/kb_versions/
+apps/gateway-api/data/plugins.sqlite
+apps/gateway-api/data/plugins.sqlite-shm
+apps/gateway-api/data/plugins.sqlite-wal
+apps/gateway-api/data/unrecognized_inputs.jsonl
+apps/gateway-api/data/voice_e2e_alerts.json
+apps/gateway-api/data/voice_e2e_history.json
+apps/gateway-api/runtime_kb.json
+apps/gateway-api/data/kb/runtime_kb.json
+
+# Temporary archives / deployment tarballs
+_gateway_sync.tgz
+shared_pkg.tar.gz
+watanybot_rc_full.tar.gz
+.git-cleanup/
+apps/web-user/*.tar.gz
+apps/web-user/*.tar
+
+# RC restore drills / backup directories
+rc_backups/
+rc_restore_drill/
+
+# Local PMA / staging / generated artifact trees
+/.apex/
+/.apex-backups/
+/_apex_backups/
+/.deploy-staging/
+/.pma/
+/.snapshots/
+/apex-reports/
+/backups/
+/chat_logs/
+/logs/
+/test-results/
+
+# Local editor and scratch directories
+/.vscode/
+/temp_patch1/
+/temp_patch2/
+
+# Local captured images and ad hoc diagnostics
+/*WhatsApp Image*.jpeg
+/*prod_check.json*
+
+apps/api-backend/.env.source
+apps/api-backend/.env.source.local
+apps/web-admin/.env.production
+apps/web-user/.env.production
+scripts/.env.ollama-deepseek
+
+# Watany local/deploy artifacts
+*.zip
+*.bak
+*.bak-*
+data/*.sqlite-shm
+data/*.sqlite-wal
+_tmp_ignore.txt
+
+# Local runtime and generated publish outputs
+apps/gateway-api/runtime/community-attachments/
+apps/gateway-api/runtime/uploads/
+apps/mobile/android.incomplete-*/
+apps/mobile/android/app/google-services.json
+apps/mobile/www/
+
+# Archive for ad-hoc backups moved from repo root
+/archive/backups/
+
+# Governed artifact cleanup: external backups, mirrors, diagnostics, and generated runtime data
+/.git-backups/
+/.git-filter-repo-mirror/
+/_watany_diagnostics/
+data/external/lebanon_admin/*.geojson
+kb_studio/runtime/exports/watanybot/*.db
+
+# Common backup/temp file patterns
+*~
+*.orig
+*.old
+.DS_Store
+
+# Local tool caches and generated reports
+.tools/
+playwright-report/
+.tmp/
+.playwright-trace*/
+watany-theme-live-preview*/
+watany-theme-live-preview-v2-fixed-assets/
+.pma_create_evidence.js
+
+# Local development environment
+apps/web-user/.env.development
+
+# BEGIN APEX LOCAL PUBLICATION QUARANTINE
+.git-backups/
+.git-filter-repo-mirror/
+.tools/
+*.pma/
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.7z
+*.rar
+*.bundle
+*.pack
+*.exe
+*.msi
+*.iso
+# END APEX LOCAL PUBLICATION QUARANTINE

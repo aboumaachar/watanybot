@@ -1,0 +1,34 @@
+{
+  "validation": {
+    "statistics": {
+      "governorates": 8,
+      "districts": 25,
+      "municipalities": 0,
+      "localities": 1586,
+      "aliases": 1586,
+      "localitiesWithCoordinates": 181,
+      "missingArabic": 1586,
+      "duplicateIds": 0,
+      "orphanRows": 0
+    },
+    "litigeCount": 0,
+    "ambiguousAliasCount": 0,
+    "issues": [
+      "MISSING_ARABIC_NAMES"
+    ],
+    "ok": false,
+    "productionReady": false,
+    "status": "BLOCKED"
+  },
+  "arabicStatus": {
+    "acceptedArabic": 0,
+    "missingArabic": 1586,
+    "conflictedArabic": 0,
+    "unresolvedArabic": 1586,
+    "status": "BLOCKED",
+    "issues": [
+      "AUTHORITATIVE_ARABIC_SOURCE_MISSING",
+      "ARABIC_NAME_MISSING"
+    ]
+  }
+}
