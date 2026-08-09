@@ -78,6 +78,7 @@ body:has(.watany-recovery-shell) {
   direction: rtl !important;
   color: var(--apex-ink) !important;
   background: var(--apex-bg) !important;
+  padding: 0 !important;
   border: 1px solid var(--apex-border) !important;
   border-radius: 24px !important;
   box-shadow: 0 20px 55px rgba(19, 48, 36, 0.18) !important;
@@ -95,28 +96,6 @@ body:has(.watany-recovery-shell) {
   height: var(--apex-top-height) !important;
   min-height: var(--apex-top-height) !important;
   padding: 10px 12px !important;
- :is([data-watany-recovery-shell="true"], .watany-recovery-shell) > .watany-recovery-bottom > :last-child:is(button, a),
- :is([data-watany-recovery-shell="true"], .watany-recovery-shell) > .watany-recovery-bottom > :last-child :is(button, a) {
-   grid-column: 1 / -1 !important;
-   grid-row: 1 !important;
-   align-self: center !important;
-   justify-self: stretch !important;
-   display: flex !important;
-   align-items: center !important;
-   justify-content: center !important;
-   gap: 8px !important;
-   height: 40px !important;
-   min-height: 40px !important;
-   margin: 4px 10px 0 !important;
-   padding: 0 16px !important;
-   border-radius: 13px !important;
-   box-sizing: border-box !important;
-   font-size: 14px !important;
-   line-height: 1 !important;
-   white-space: nowrap !important;
-   overflow: hidden !important;
-   text-overflow: ellipsis !important;
- }
   background: linear-gradient(180deg, #fffdf7 0%, #f5eddb 100%) !important;
   border: 0 !important;
   border-bottom: 1px solid var(--apex-border) !important;
@@ -176,6 +155,23 @@ body:has(.watany-recovery-shell) {
   max-width: 100% !important;
   min-width: 0 !important;
   margin-inline: auto !important;
+}
+
+.watany-recovery-main {
+  padding: 0 0 var(--apex-content-bottom-clearance) !important;
+}
+
+.watany-v4-homepage .watany-v4-homepage__grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 20px 10px !important;
+  align-items: start !important;
+}
+
+.watany-v4-homepage .watany-v4-launcher-card__label {
+  margin-top: 4px !important;
+  font-size: 16px !important;
+  line-height: 22px !important;
 }
 
 .watany-recovery-dock {
@@ -759,7 +755,7 @@ body.watany-recovery-menu-open .watany-recovery-bottom {
   }
 
   .watany-recovery-main {
-    padding: 10px !important;
+    padding: 0 10px var(--apex-content-bottom-clearance) !important;
   }
 }
 

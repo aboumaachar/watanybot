@@ -42,7 +42,7 @@ function getGoogleAccountsApi(): GoogleAccountsIdApi | undefined {
   return (globalThis as GoogleWindow).google?.accounts?.id;
 }
 
-function resolvePostLoginPath(rawNextPath: string | null) {
+export function resolvePostLoginPath(rawNextPath: string | null) {
   if (!rawNextPath) return "/home";
   if (!rawNextPath.startsWith("/")) return "/home";
   if (rawNextPath.startsWith("//") || rawNextPath.startsWith("/\\")) return "/home";
@@ -169,8 +169,7 @@ function LoginPageOriginal() {
     try {
       const profile = await api.login(DEV_SUPERADMIN_EMAIL, DEV_SUPERADMIN_PASSWORD, apiBaseUrl, false);
       loginWithProfile(profile);
-      const fallbackPath = rawNextPath ? nextPath : "/superadmin";
-      navigate(profile.role === "superadmin" ? "/superadmin" : fallbackPath);
+      navigate(profile.role === "superadmin" ? "/superadmin" : nextPath);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "تعذر تنفيذ دخول التطوير");
     } finally {

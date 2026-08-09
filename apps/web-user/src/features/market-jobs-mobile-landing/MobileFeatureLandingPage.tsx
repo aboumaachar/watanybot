@@ -397,7 +397,7 @@ function MobileFeatureLandingPageImpl({ config }: { readonly config: LandingConf
   const visibleCategories = config.id === "market" ? config.categories.slice(0, 2) : config.categories;
   const visibleStatusCards = config.id === "market" ? config.statusCards.slice(0, 2) : config.statusCards;
   const visibleSections = config.id === "market" ? config.sections.slice(0, 1) : config.sections;
-  const visibleSectionItems = config.id === "market" ? 0 : undefined;
+  const visibleSectionItems = config.id === "market" ? 3 : undefined;
   const marketGridStyle: CSSProperties | undefined = config.id === "market" ? { gridAutoFlow: "row", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", overflowX: "visible" } : undefined;
   const marketNavStyle: CSSProperties | undefined = config.id === "market" ? { flexWrap: "wrap", gap: "0.5rem", justifyContent: "center", overflowX: "visible" } : undefined;
 
