@@ -108,7 +108,9 @@ export function Ticker({
       setTickerOffset((offset) => {
         const loopWidth = (trackRef.current?.scrollWidth || 0) / 2;
         if (loopWidth <= 0) return offset;
-        const nextOffset = offset + 2;
+        const ticksPerCycle = (40 * 1000) / 50;
+        const pixelsPerTick = loopWidth / ticksPerCycle;
+        const nextOffset = offset + pixelsPerTick;
         return nextOffset >= loopWidth ? 0 : nextOffset;
       });
     }, 50);
