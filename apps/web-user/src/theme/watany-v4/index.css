@@ -5,10 +5,12 @@
 @import url("../../styles/procedures-browser.css") layer(watany-v4-recovery);
 @import url("../../styles/forms.css") layer(watany-v4-recovery);
 @import url("../../styles/watany-v1-stabilizer.css") layer(watany-v4-recovery);
+@import url("../../features/legal-library/KoudamaLegalLibrarySearchPage.css") layer(watany-v4-recovery);
 @import url("./royalGoldFrame.css") layer(watany-v4);
 @import url("./royalGoldUpgrade.css") layer(watany-v4);
 @import url("../../styles/watany-v4-theme.css") layer(watany-v4-recovery);
 @import url("../../features/market-jobs-mobile-landing/market-jobs-mobile-landing.css");
+@import url("../../themes/watany-v1.19.0.22-final-cascade.css");
 
 /* Community overview: give the social surface a clear royal hierarchy and one scroll owner. */
 .community-screen {

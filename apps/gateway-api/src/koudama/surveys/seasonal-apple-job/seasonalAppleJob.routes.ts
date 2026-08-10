@@ -3,6 +3,7 @@ import {
   createSeasonalAppleJobApplication,
   exportSeasonalAppleJobApplicationsCsv,
   getSeasonalAppleJobApplication,
+  listAcceptedSeasonalAppleJobApplications,
   listSeasonalAppleJobApplications,
   updateSeasonalAppleJobApplication,
 } from './seasonalAppleJob.repository';
@@ -82,6 +83,14 @@ export async function seasonalAppleJobRouter(app: FastifyInstance): Promise<void
       }
     },
   );
+
+  app.get('/api/koudama/surveys/seasonal-apple-job/accepted', async (_request, reply) => {
+    const applications = await listAcceptedSeasonalAppleJobApplications();
+    return reply.send({
+      ok: true,
+      applications,
+    });
+  });
 
   app.get('/api/admin/koudama/surveys/seasonal-apple-job/applications', async (request, reply) => {
     if (!(await requireSeasonalSurveyAdmin(request, reply))) {

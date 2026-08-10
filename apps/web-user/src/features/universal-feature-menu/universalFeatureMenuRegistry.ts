@@ -12,6 +12,7 @@ export type UniversalFeatureMenuGroup = Readonly<{
   route: string;
   iconFeatureId: string;
   items: readonly UniversalFeatureMenuItem[];
+  drawerLevel?: "group" | "top-level";
 }>;
 
 export const DRAWER_MENU_GROUPS: readonly UniversalFeatureMenuGroup[] = [
@@ -28,6 +29,20 @@ export const DRAWER_MENU_GROUPS: readonly UniversalFeatureMenuGroup[] = [
     ],
   },
   {
+    id: "daily-services",
+    label: "الخدمات اليومية والفرص",
+    route: "/taxi",
+    iconFeatureId: "taxi",
+    drawerLevel: "top-level",
+    items: [
+      { id: "taxi", label: "تاكسي", route: "/taxi", iconFeatureId: "taxi" },
+      { id: "market", label: "السوق", route: "/marketplace", iconFeatureId: "marketplace" },
+      { id: "jobs", label: "وظائف", route: "/jobs", iconFeatureId: "jobs" },
+      { id: "network", label: "الشبكة", route: "/network", iconFeatureId: "network" },
+      { id: "tools", label: "أدوات", route: "/tools", iconFeatureId: "tools" },
+    ],
+  },
+  {
     id: "information",
     label: "المعلومات والمراجع",
     route: "/legal",
@@ -38,19 +53,6 @@ export const DRAWER_MENU_GROUPS: readonly UniversalFeatureMenuGroup[] = [
       { id: "links", label: "روابط", route: "/services/official", iconFeatureId: "links" },
       { id: "circulars", label: "التعاميم", route: "/circulars", iconFeatureId: "circulars" },
       { id: "deaths", label: "وفيات", route: "/deaths", iconFeatureId: "deaths" },
-    ],
-  },
-  {
-    id: "daily-services",
-    label: "الخدمات اليومية والفرص",
-    route: "/taxi",
-    iconFeatureId: "taxi",
-    items: [
-      { id: "taxi", label: "تاكسي", route: "/taxi", iconFeatureId: "taxi" },
-      { id: "market", label: "السوق", route: "/marketplace", iconFeatureId: "marketplace" },
-      { id: "jobs", label: "وظائف", route: "/jobs", iconFeatureId: "jobs" },
-      { id: "network", label: "الشبكة", route: "/network", iconFeatureId: "network" },
-      { id: "tools", label: "أدوات", route: "/tools", iconFeatureId: "tools" },
     ],
   },
   {

@@ -51,6 +51,18 @@ export interface SeasonalAppleJobApplication extends SeasonalAppleJobApplication
   updatedAt: string;
 }
 
+export interface SeasonalAppleJobAcceptedApplication {
+  id: string;
+  name: string;
+  relationType: string;
+  governorate: string;
+  caza: string;
+  village: string;
+  availability: string;
+  preferredPeriod?: string;
+  createdAt: string;
+}
+
 export interface SeasonalAppleJobAdminPatch {
   status?: SeasonalAppleJobApplicationStatus;
   followUpStatus?: SeasonalAppleJobFollowUpStatus;

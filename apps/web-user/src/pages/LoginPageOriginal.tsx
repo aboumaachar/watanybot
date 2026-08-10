@@ -42,10 +42,11 @@ function getGoogleAccountsApi(): GoogleAccountsIdApi | undefined {
   return (globalThis as GoogleWindow).google?.accounts?.id;
 }
 
-export function resolvePostLoginPath(rawNextPath: string | null) {
-  if (!rawNextPath) return "/home";
-  if (!rawNextPath.startsWith("/")) return "/home";
-  if (rawNextPath.startsWith("//") || rawNextPath.startsWith("/\\")) return "/home";
+export function resolvePostLoginPath(rawNextPath: string | null): string {
+  if (!rawNextPath || !rawNextPath.startsWith("/") || rawNextPath.startsWith("//")) {
+    return "/home";
+  }
+
   return rawNextPath;
 }
 
@@ -196,9 +197,8 @@ function LoginPageOriginal() {
         hasId: Boolean(profile?.id),
       });
       loginWithProfile(profile);
-      const destination = profile.role === "superadmin" ? "/superadmin" : nextPath;
-      authDebugLog("navigating", { next: destination });
-      navigate(destination);
+      authDebugLog("navigating", { next: nextPath });
+      navigate(nextPath);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "";
       setError(
@@ -389,7 +389,7 @@ function LoginPageOriginal() {
     try {
       const profile = await api.verifyOtp(phone.trim(), otp, apiBaseUrl);
       loginWithProfile(profile);
-      navigate(profile.role === "superadmin" ? "/superadmin" : nextPath);
+      navigate(nextPath);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "";
       setError(
@@ -561,3 +561,5 @@ function LoginPageOriginal() {
 export default function LoginPage() {
   return <LoginPageOriginal />;
 }
+
+

@@ -2,6 +2,7 @@ import { promises as fs } from 'fs';
 import path from 'path';
 import type {
   SeasonalAppleJobAdminPatch,
+  SeasonalAppleJobAcceptedApplication,
   SeasonalAppleJobApplication,
   SeasonalAppleJobApplicationInput,
 } from './seasonalAppleJob.types';
@@ -287,6 +288,24 @@ export async function listSeasonalAppleJobApplications(): Promise<SeasonalAppleJ
     if (b.weightedScore !== a.weightedScore) return b.weightedScore - a.weightedScore;
     return String(a.createdAt).localeCompare(String(b.createdAt));
   });
+}
+
+export async function listAcceptedSeasonalAppleJobApplications(): Promise<SeasonalAppleJobAcceptedApplication[]> {
+  const applications = await listSeasonalAppleJobApplications();
+
+  return applications
+    .filter((application) => application.status === 'accepted')
+    .map(({ id, name, relationType, governorate, caza, village, availability, preferredPeriod, createdAt }) => ({
+      id,
+      name,
+      relationType,
+      governorate,
+      caza,
+      village,
+      availability,
+      preferredPeriod,
+      createdAt,
+    }));
 }
 
 export async function getSeasonalAppleJobApplication(id: string): Promise<SeasonalAppleJobApplication | null> {

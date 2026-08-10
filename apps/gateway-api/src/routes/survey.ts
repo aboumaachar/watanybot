@@ -138,6 +138,7 @@ type BuiltinSurveySeedOption = {
   description: string | null;
   imageUrl: string | null;
   createdAt: string;
+  initialVotes?: number;
 };
 
 type BuiltinSurveySeed = {
@@ -165,143 +166,68 @@ type SurveyRequest = {
 
 const bootstrappedVotingStores = new WeakSet<PluginDb>();
 
-const BUILTIN_WORLD_CUP_CREATOR = "system:fifa-world-cup-2026";
+const BUILTIN_SURVEY_CREATOR = "system:watanybot-demo";
 
-const BUILTIN_WORLD_CUP_POLLS: BuiltinSurveySeed[] = [
+const BUILTIN_SURVEYS: BuiltinSurveySeed[] = [
   {
-    id: "fifa-wc-2026-upcoming-games",
-    title: "أي مباراة من مواجهات 23 يونيو ستتابع أولاً؟",
-    description: "بحسب جدول FIFA الرسمي ليوم 23 يونيو 2026، هذه هي أبرز مباريات اليوم القادمة في المجموعتين K وL.",
+    id: "watanybot-feature-usage-intent",
+    title: "هل ترغب في استخدام ميزات موطني بوت؟",
+    description: "ساعدنا في معرفة مدى استعدادك لاستخدام خدمات موطني بوت اليومية.",
     status: "active",
-    createdBy: BUILTIN_WORLD_CUP_CREATOR,
-    startDate: "2026-06-23T08:00:00.000Z",
-    endDate: "2026-06-24T04:00:00.000Z",
-    createdAt: "2026-06-23T10:00:00.000Z",
-    updatedAt: "2026-06-23T10:00:00.000Z",
+    createdBy: BUILTIN_SURVEY_CREATOR,
+    startDate: "2026-08-01T00:00:00.000Z",
+    endDate: "2026-12-31T23:59:59.000Z",
+    createdAt: "2026-08-09T10:00:00.000Z",
+    updatedAt: "2026-08-09T10:00:00.000Z",
     options: [
-      {
-        id: "fifa-wc-2026-upcoming-games-eng-gha",
-        name: "إنجلترا × غانا",
-        description: "المجموعة L | 23 يونيو | Boston Stadium",
-        imageUrl: null,
-        createdAt: "2026-06-23T10:00:01.000Z",
-      },
-      {
-        id: "fifa-wc-2026-upcoming-games-pan-cro",
-        name: "بنما × كرواتيا",
-        description: "المجموعة L | 23 يونيو | Toronto Stadium",
-        imageUrl: null,
-        createdAt: "2026-06-23T10:00:02.000Z",
-      },
-      {
-        id: "fifa-wc-2026-upcoming-games-por-uzb",
-        name: "البرتغال × أوزبكستان",
-        description: "المجموعة K | 23 يونيو | Houston Stadium",
-        imageUrl: null,
-        createdAt: "2026-06-23T10:00:03.000Z",
-      },
-      {
-        id: "fifa-wc-2026-upcoming-games-col-cod",
-        name: "كولومبيا × الكونغو الديمقراطية",
-        description: "المجموعة K | 23 يونيو | Guadalajara Stadium",
-        imageUrl: null,
-        createdAt: "2026-06-23T10:00:04.000Z",
-      },
+      { id: "watanybot-feature-usage-intent-yes", name: "نعم، بالتأكيد", description: "أرغب في تجربة الميزات المتاحة.", imageUrl: null, createdAt: "2026-08-09T10:00:01.000Z" },
+      { id: "watanybot-feature-usage-intent-maybe", name: "ربما بعد التعرف عليها", description: "أحتاج إلى معرفة المزيد قبل الاستخدام.", imageUrl: null, createdAt: "2026-08-09T10:00:02.000Z" },
+      { id: "watanybot-feature-usage-intent-no", name: "لا حالياً", description: "لا أحتاج إلى الميزات حالياً.", imageUrl: null, createdAt: "2026-08-09T10:00:03.000Z" },
     ],
   },
   {
-    id: "fifa-wc-2026-champion-team",
-    title: "من سيتوج بطلاً لكأس العالم 2026؟",
-    description: "اعتمادًا على تحديث FIFA للمتأهلين ونتائج 22 يونيو، هذه أبرز المنتخبات التي حسمت التأهل مبكرًا إلى دور الـ32.",
+    id: "watanybot-user-satisfaction",
+    title: "ما مدى رضاك عن تطبيق موطني بوت؟",
+    description: "نستخدم رأيك لتحسين تجربة المساعد والخدمات الرقمية داخل التطبيق.",
     status: "active",
-    createdBy: BUILTIN_WORLD_CUP_CREATOR,
-    startDate: "2026-06-23T08:00:00.000Z",
-    endDate: "2026-07-19T23:59:59.000Z",
-    createdAt: "2026-06-23T09:00:00.000Z",
-    updatedAt: "2026-06-23T09:00:00.000Z",
+    createdBy: BUILTIN_SURVEY_CREATOR,
+    startDate: "2026-08-01T00:00:00.000Z",
+    endDate: "2026-12-31T23:59:59.000Z",
+    createdAt: "2026-08-09T09:00:00.000Z",
+    updatedAt: "2026-08-09T09:00:00.000Z",
+    options: [
+      { id: "watanybot-user-satisfaction-very-satisfied", name: "راضٍ جداً", description: null, imageUrl: null, createdAt: "2026-08-09T09:00:01.000Z" },
+      { id: "watanybot-user-satisfaction-satisfied", name: "راضٍ", description: null, imageUrl: null, createdAt: "2026-08-09T09:00:02.000Z" },
+      { id: "watanybot-user-satisfaction-neutral", name: "محايد", description: null, imageUrl: null, createdAt: "2026-08-09T09:00:03.000Z" },
+      { id: "watanybot-user-satisfaction-unsatisfied", name: "غير راضٍ", description: null, imageUrl: null, createdAt: "2026-08-09T09:00:04.000Z" },
+    ],
+  },
+  {
+    id: "world-cup-2026-final-argentina-spain",
+    title: "نهائي كأس العالم: الأرجنتين × إسبانيا",
+    description: "تصويت الجمهور على المنتخب المتفوق في المباراة النهائية.",
+    status: "closed",
+    createdBy: BUILTIN_SURVEY_CREATOR,
+    startDate: "2026-07-19T18:00:00.000Z",
+    endDate: "2026-07-19T22:00:00.000Z",
+    createdAt: "2026-07-19T22:30:00.000Z",
+    updatedAt: "2026-07-19T22:30:00.000Z",
     options: [
       {
-        id: "fifa-wc-2026-champion-argentina",
+        id: "world-cup-2026-final-argentina-spain-argentina",
         name: "الأرجنتين",
-        description: "تصدرت المجموعة J بعد 3-0 على الجزائر و2-0 على النمسا.",
+        description: "خيار المنتخب الأرجنتيني في النهائي.",
         imageUrl: null,
-        createdAt: "2026-06-23T09:00:01.000Z",
+        createdAt: "2026-07-19T18:00:01.000Z",
+        initialVotes: 3,
       },
       {
-        id: "fifa-wc-2026-champion-france",
-        name: "فرنسا",
-        description: "حسمت التأهل من المجموعة I بعد 3-1 على السنغال و3-0 على العراق.",
+        id: "world-cup-2026-final-argentina-spain-spain",
+        name: "إسبانيا",
+        description: "خيار المنتخب الإسباني في النهائي.",
         imageUrl: null,
-        createdAt: "2026-06-23T09:00:02.000Z",
-      },
-      {
-        id: "fifa-wc-2026-champion-germany",
-        name: "ألمانيا",
-        description: "تأهلت من المجموعة E بعد 7-1 على كوراساو و2-1 على كوت ديفوار.",
-        imageUrl: null,
-        createdAt: "2026-06-23T09:00:03.000Z",
-      },
-      {
-        id: "fifa-wc-2026-champion-mexico",
-        name: "المكسيك",
-        description: "أول منتخب يضمن العبور بعد الفوز على جنوب أفريقيا وكوريا الجنوبية.",
-        imageUrl: null,
-        createdAt: "2026-06-23T09:00:04.000Z",
-      },
-      {
-        id: "fifa-wc-2026-champion-usa",
-        name: "الولايات المتحدة",
-        description: "تأهلت من المجموعة D بعد 4-1 على باراغواي و2-0 على أستراليا.",
-        imageUrl: null,
-        createdAt: "2026-06-23T09:00:05.000Z",
-      },
-      {
-        id: "fifa-wc-2026-champion-norway",
-        name: "النرويج",
-        description: "عادت بقوة وحسمت التأهل بعد 4-1 على العراق و3-2 على السنغال.",
-        imageUrl: null,
-        createdAt: "2026-06-23T09:00:06.000Z",
-      },
-    ],
-  },
-  {
-    id: "fifa-wc-2026-golden-boot",
-    title: "من سيحصد الحذاء الذهبي في كأس العالم 2026؟",
-    description: "استنادًا إلى تحديث FIFA بتاريخ 22 و23 يونيو: ميسي يقود السباق، ومبابي يلاحقه، وأونداف متألق، وهالاند حاضر بقوة.",
-    status: "active",
-    createdBy: BUILTIN_WORLD_CUP_CREATOR,
-    startDate: "2026-06-23T08:00:00.000Z",
-    endDate: "2026-07-19T23:59:59.000Z",
-    createdAt: "2026-06-23T08:00:00.000Z",
-    updatedAt: "2026-06-23T08:00:00.000Z",
-    options: [
-      {
-        id: "fifa-wc-2026-golden-boot-messi",
-        name: "ليونيل ميسي",
-        description: "5 أهداف مع الأرجنتين بعد ثلاثية الجزائر وثنائية النمسا.",
-        imageUrl: null,
-        createdAt: "2026-06-23T08:00:01.000Z",
-      },
-      {
-        id: "fifa-wc-2026-golden-boot-mbappe",
-        name: "كيليان مبابي",
-        description: "4 أهداف مع فرنسا بعد ثنائيتين أمام السنغال والعراق.",
-        imageUrl: null,
-        createdAt: "2026-06-23T08:00:02.000Z",
-      },
-      {
-        id: "fifa-wc-2026-golden-boot-undav",
-        name: "دينيز أونداف",
-        description: "3 أهداف وتمريرتان حاسمتان مع ألمانيا في أول مباراتين.",
-        imageUrl: null,
-        createdAt: "2026-06-23T08:00:03.000Z",
-      },
-      {
-        id: "fifa-wc-2026-golden-boot-haaland",
-        name: "إرلينغ هالاند",
-        description: "قاد النرويج للتأهل المبكر وساهم بقوة في الانتصارين على العراق والسنغال.",
-        imageUrl: null,
-        createdAt: "2026-06-23T08:00:04.000Z",
+        createdAt: "2026-07-19T18:00:02.000Z",
+        initialVotes: 7,
       },
     ],
   },
@@ -492,10 +418,10 @@ function removeVotingElection(pluginDb: PluginDb, electionId: string): void {
   pluginDb.prepare("DELETE FROM voting_elections WHERE id = ?").run(electionId);
 }
 
-function syncBuiltinWorldCupPolls(pluginDb: PluginDb): void {
+function syncBuiltinSurveys(pluginDb: PluginDb): void {
   const existingRows = readVotingElectionRows(pluginDb);
   const existingIds = new Set(existingRows.map((row) => row.id));
-  const hasBuiltinSet = BUILTIN_WORLD_CUP_POLLS.every((poll) => existingIds.has(poll.id));
+  const hasBuiltinSet = BUILTIN_SURVEYS.every((poll) => existingIds.has(poll.id));
 
   if (!hasBuiltinSet) {
     for (const row of existingRows) {
@@ -505,8 +431,9 @@ function syncBuiltinWorldCupPolls(pluginDb: PluginDb): void {
 
   const insertElection = pluginDb.prepare("INSERT OR REPLACE INTO voting_elections (id, title, description, status, created_by, start_date, end_date, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
   const insertCandidate = pluginDb.prepare("INSERT OR REPLACE INTO voting_candidates (id, election_id, name, description, image_url, created_at) VALUES (?, ?, ?, ?, ?, ?)");
+  const insertVote = pluginDb.prepare("INSERT OR IGNORE INTO voting_votes (id, election_id, candidate_id, voter_id, created_at) VALUES (?, ?, ?, ?, ?)");
 
-  for (const poll of BUILTIN_WORLD_CUP_POLLS) {
+  for (const poll of BUILTIN_SURVEYS) {
     insertElection.run(
       poll.id,
       poll.title,
@@ -528,6 +455,17 @@ function syncBuiltinWorldCupPolls(pluginDb: PluginDb): void {
         option.imageUrl,
         toTimestamp(option.createdAt),
       );
+
+      for (let index = 0; index < (option.initialVotes || 0); index += 1) {
+        const seedVoteId = `builtin-seed-${poll.id}-${option.id}-${index + 1}`;
+        insertVote.run(
+          seedVoteId,
+          poll.id,
+          option.id,
+          `builtin-seed-voter-${poll.id}-${option.id}-${index + 1}`,
+          toTimestamp(poll.updatedAt) + index,
+        );
+      }
     }
   }
 }
@@ -594,7 +532,7 @@ async function bootstrapVotingStore(pluginDb: PluginDb): Promise<void> {
 
   const config = getSurveyBridgeConfig();
   if (!config.ready) {
-    syncBuiltinWorldCupPolls(pluginDb);
+    syncBuiltinSurveys(pluginDb);
     bootstrappedVotingStores.add(pluginDb);
     return;
   }
@@ -738,7 +676,7 @@ export const surveyRoutes: FastifyPluginAsync<SurveyRoutesOptions> = async (app,
     }
   });
 
-  app.get("/api/voting/elections", async (req, reply) => {
+  app.get<{ Querystring: { status?: "active" | "closed" } }>("/api/voting/elections", async (req, reply) => {
     if (!requireSurveyAccess(req, pluginDb, reply, "public")) {
       return { error: getSurveyAccessError("accredited") } as const;
     }
@@ -747,8 +685,9 @@ export const surveyRoutes: FastifyPluginAsync<SurveyRoutesOptions> = async (app,
       await bootstrapVotingStore(pluginDb);
 
       const actorId = resolveSurveyActorId(req);
+      const requestedStatus = req.query?.status === "closed" ? "closed" : "active";
       const elections = readVotingElectionRows(pluginDb)
-        .filter((row) => row.status === "active")
+        .filter((row) => row.status === requestedStatus)
         .sort((left, right) => right.created_at - left.created_at);
       const candidates = readAllVotingCandidates(pluginDb);
       const votes = readAllVotingVotes(pluginDb);

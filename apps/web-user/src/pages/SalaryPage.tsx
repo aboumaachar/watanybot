@@ -202,7 +202,7 @@ function buildLocalSalaryResult(
 // searchSalary2019 removed — unused helper
 
 type SalaryStep = 'rank' | 'degree' | 'family' | 'kids' | 'medals';
-type SalaryResultScenario = 'current' | 'six' | 'half';
+type SalaryResultScenario = 'current' | 'six' | 'half' | 'installment';
 type SectionIndex = 0 | 1 | 2 | 3;
 type SalaryMetaStatus = 'ready' | 'partial_data_loaded' | 'metadata_missing' | 'server_unavailable';
 
@@ -323,6 +323,24 @@ function SalaryResultsContent({
       deduction: num(deduction15Pct),
       medals: currentMedals,
     };
+  } else if (resultScenario === 'installment') {
+    const familyAllowance = normalizeFamilyAllowance(result.raise.familyAfterRaise);
+    const sixIncrease = num(result.raise.sixSalary);
+    const nineIncrease = Math.round(sixIncrease * 9 / 6);
+    const pension = num(b.pension2026) + nineIncrease;
+    const totalAfterNineRaise = pension + familyAllowance.total + currentMedals.total;
+    scenario = {
+      sectionTitle: 'معاش تقسيط',
+      summary: totalAfterNineRaise,
+      summaryUsd: totalAfterNineRaise / (result.usdRate || 1),
+      pension,
+      pensionUsd: toUsd(pension, result.raise.pensionAfterSixRaiseUsd),
+      familyAllowance,
+      extraGrantLabel: 'الزيادة الإضافية وفق 9 أضعاف',
+      extraGrantValue: nineIncrease,
+      deduction: num(deduction15Pct),
+      medals: currentMedals,
+    };
   } else if (resultScenario === 'half') {
     const familyAllowance = normalizeFamilyAllowance(result.fiftyPctRaise.familyAfterRaise);
     const pension = num(result.fiftyPctRaise.pensionAfterFiftyPct, num(result.fiftyPctRaise.totalAfterFiftyPct) - familyAllowance.total - currentMedals.total);
@@ -345,7 +363,7 @@ function SalaryResultsContent({
   return (
     <div className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-results">
       <div className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-total-banner">
-        <span className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-total-banner__label">المعاش الشهري الإجمالي</span>
+        <span className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-total-banner__label">{resultScenario === 'installment' ? 'المعاش الشهري بعد 9 أضعاف' : 'المعاش الشهري الإجمالي'}</span>
         <span className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-total-banner__value">{fmt(scenario.summary)}</span>
         <span className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-total-banner__currency">ل.ل.</span>
         <span className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-total-banner__usd">≈ {scenario.summaryUsd.toFixed(2)} $</span>
@@ -524,20 +542,23 @@ function SalaryPageView({ // NOSONAR: rendering composition for multi-step wizar
       <div className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-card">
         <div className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-card__title-row">
           <div>
+            <span className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-card__eyebrow">تقدير سريع بخمس خطوات</span>
             <h3 className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-card__header">حاسبة المعاش</h3>
-            <p className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-card__subheader">نتيجة تقديرية سريعة للمعاش والمستحقات.</p>
+            <p className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-card__subheader sc-card__disclaimer">الاحتساب ادناه هو تقريبي والنتيجة ليست رسمية ولا تُعد مرجعاً معتمداً.</p>
           </div>
         </div>
       </div>
 
       <div className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-calc-launcher">
+        <p className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-calc-launcher__instruction">الخطوة الأولى: اضغط الزر للبدء</p>
         <button
           className="wmo-service-route wmo-rebuilt-route wmo-core-route btn sc-calc-btn wt-cta-glow wt-cta-processing wt-guided-action"
           onClick={startWizard}
           disabled={loading}
           aria-busy={loading}
         >
-          {calcButtonContent}
+          <span className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-calc-btn__label">{calcButtonContent}</span>
+          <span className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-calc-btn__hint">يستغرق أقل من دقيقة</span>
         </button>
       </div>
 
@@ -549,6 +570,7 @@ function SalaryPageView({ // NOSONAR: rendering composition for multi-step wizar
           <div className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-result-tabs" role="tablist" aria-label="سيناريوهات المعاش">
             <button type="button" role="tab" aria-selected={resultScenario === 'current'} className={resultScenario === 'current' ? 'active' : ''} onClick={() => setResultScenario('current')}>المعاش الحالي</button>
             <button type="button" role="tab" aria-selected={resultScenario === 'six'} className={resultScenario === 'six' ? 'active' : ''} onClick={() => setResultScenario('six')}>زائد 6 أضعاف</button>
+            <button type="button" role="tab" aria-selected={resultScenario === 'installment'} className={resultScenario === 'installment' ? 'active' : ''} onClick={() => setResultScenario('installment')}>معاش تقسيط</button>
             <button type="button" role="tab" aria-selected={resultScenario === 'half'} className={resultScenario === 'half' ? 'active' : ''} onClick={() => setResultScenario('half')}>زائد 50%</button>
           </div>
           {b ? <SalaryResultsContent result={result} resultScenario={resultScenario} openSection={openSection} setOpenSection={setOpenSection} /> : null}
@@ -562,6 +584,7 @@ function SalaryPageView({ // NOSONAR: rendering composition for multi-step wizar
         <div className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-result-tabs" role="tablist" aria-label="سيناريوهات المعاش">
           <button type="button" role="tab" aria-selected={resultScenario === 'current'} className={resultScenario === 'current' ? 'active' : ''} onClick={() => setResultScenario('current')}>المعاش الحالي</button>
           <button type="button" role="tab" aria-selected={resultScenario === 'six'} className={resultScenario === 'six' ? 'active' : ''} onClick={() => setResultScenario('six')}>زائد 6 أضعاف</button>
+          <button type="button" role="tab" aria-selected={resultScenario === 'installment'} className={resultScenario === 'installment' ? 'active' : ''} onClick={() => setResultScenario('installment')}>معاش تقسيط</button>
           <button type="button" role="tab" aria-selected={resultScenario === 'half'} className={resultScenario === 'half' ? 'active' : ''} onClick={() => setResultScenario('half')}>زائد 50%</button>
         </div>
         {b ? <SalaryResultsContent result={result} resultScenario={resultScenario} openSection={openSection} setOpenSection={setOpenSection} /> : null}

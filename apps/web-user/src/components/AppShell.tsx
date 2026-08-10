@@ -13,6 +13,7 @@ import BookmarksPage from "../pages/BookmarksPage";
 import ChatSessionsPage from "../pages/ChatSessionsPage";
 import JobsPage from "../pages/JobsPage";
 import AinElHafehJobsPage from "../pages/AinElHafehJobsPage";
+import AinElHafehAcceptedApplicationsPage from "../pages/AinElHafehAcceptedApplicationsPage";
 import MarketPage from "../pages/MarketPage";
 import SuperAdminPage from "../pages/SuperAdminPage";
 import WatanyV4Homepage from "./WatanyV4Homepage";
@@ -25,14 +26,13 @@ import NotificationsPage from "../pages/NotificationsPage";
 import NewsPage from "../pages/NewsPage";
 import FakeFactPage from "../pages/FakeNewsPage";
 import FormsPage from "../pages/FormsPage";
-import SurveyPage from "../pages/SurveyPage";
 import SurveyDetailPage from "../pages/SurveyDetailPage";
 import SurveyResultsPage from "../pages/SurveyResultsPage";
+import SurveyPage from "../pages/SurveyPage";
 import FaqPage from "../pages/FaqPage";
 import DeathsPage from "../pages/DeathsPage";
 import CommunityPage from "../pages/CommunityPage";
 import CommunityThreadsPage from "../pages/CommunityThreadsPage";
-import VoicePage from "../pages/VoicePage";
 import TaxiPage from "../pages/TaxiPage";
 import NetworkPage from "../pages/NetworkPage";
 import CircularsPage from "../pages/CircularsPage";
@@ -103,6 +103,7 @@ export function AppShell() {
         <Route path="procedures" element={<ProceduresPage />} />
         <Route path="school-grants" element={<SchoolGrantsPage />} />
         <Route path="jobs/ainelhafeh" element={<AinElHafehJobsPage />} />
+        <Route path="jobs/ainelhafeh/accepted" element={<AinElHafehAcceptedApplicationsPage />} />
         <Route path="jobs" element={<JobsPage />} />
         <Route path="marketplace" element={<MarketPage />} />
         <Route path="saved" element={<RequireAuthenticated><SavedChatsPage /></RequireAuthenticated>} />
@@ -118,7 +119,8 @@ export function AppShell() {
         <Route path="news" element={<div data-watany-feature-route="news"><NewsPage /></div>} />
         <Route path="fake-fact" element={<div data-watany-feature-route="fake-fact"><FakeFactPage /></div>} />
         <Route path="forms" element={<div data-watany-feature-route="forms"><FormsPage /></div>} />
-        <Route path="voting" element={<div data-watany-feature-route="voting"><SurveyPage /></div>} />
+        <Route path="vote" element={<SurveyPage />} />
+        <Route path="voting" element={<Navigate to="/vote" replace />} />
         <Route path="voting/:surveyId" element={<SurveyDetailPage />} />
         <Route path="voting/:surveyId/results" element={<SurveyResultsPage />} />
         <Route path="faq" element={<div data-watany-feature-route="faq"><FaqPage /></div>} />
@@ -126,7 +128,6 @@ export function AppShell() {
         <Route path="community" element={<CommunityPage />} />
         <Route path="groups" element={<CommunityThreadsPage />} />
         <Route path="groups/:groupId" element={<CommunityThreadsPage />} />
-        <Route path="voice" element={<VoicePage />} />
         <Route path="taxi" element={<TaxiPage />} />
         <Route path="network" element={<NetworkPage />} />
         <Route path="circulars" element={<CircularsPage />} />

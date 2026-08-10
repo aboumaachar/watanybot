@@ -1,7 +1,7 @@
 ﻿import React, { useEffect, useMemo, useState } from "react";
 import { api } from "../../lib/api";
 import type { AlWafiyatNotice } from "./alWafiyat.types";
-// APEX_CSS_FREEZE_DISABLED_IMPORT import "./AlWafiyatCompactListing.css";
+import "./AlWafiyatCompactListing.css";
 
 type ViewNotice = {
   id: string;

@@ -109,12 +109,12 @@ export const watanyV4BottomDockItems = watanyFeatureRegistryV4
   .map(toDrawerItem);
 
 const homepageFeatureOrder = [
-  "for-you", "latest", "popular", "schools", "procedures", "salary", "taxi", "marketplace", "jobs", "network",
-  "useful-links", "deaths", "community", "voice", "forms", "laws", "faq", "fake-fact", "news",
+  "for-you", "latest", "popular", "marketplace", "jobs", "schools", "procedures", "salary", "taxi", "network",
+  "forms", "useful-links", "deaths", "community", "voting", "news", "laws", "faq", "fake-fact", "profile", "settings",
 ] as const;
 
 const homepageLabels: Record<(typeof homepageFeatureOrder)[number], string> = {
-  "for-you": "يهمك", latest: "جديد", popular: "الأكثر طلباً", schools: "مدارس", procedures: "معاملات", salary: "المعاش", taxi: "تاكسي", marketplace: "السوق", jobs: "وظائف", network: "الشبكة", "useful-links": "روابط", deaths: "وفيات", community: "مجتمعي", voice: "صوت", forms: "نماذج", laws: "قوانين", faq: "أسئلة", "fake-fact": "زائف", news: "أخبار",
+  "for-you": "يهمك", latest: "جديد", popular: "الأكثر طلباً", schools: "مدارس", procedures: "معاملات", salary: "المعاش", taxi: "تاكسي", marketplace: "السوق", jobs: "وظائف", network: "الشبكة", "useful-links": "روابط", deaths: "وفيات", community: "مجتمعي", voting: "تصويت", forms: "نماذج", laws: "قوانين", faq: "أسئلة", "fake-fact": "زائف", news: "أخبار", profile: "الحساب", settings: "الإعدادات",
 };
 
 export const watanyV4HomepageItems = homepageFeatureOrder.map((id) => {
@@ -131,7 +131,6 @@ export const watanyV4MandatoryRoutePaths = [
   "/fake-fact",
   "/voting",
   "/community",
-  "/voice",
   "/taxi",
   "/network",
   "/forms",

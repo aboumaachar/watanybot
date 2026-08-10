@@ -13,6 +13,12 @@ export type TickerItem = {
 
 const OFFICIAL_DEATHS_TICKER_PREFIX = "تم تحديث الوفيات الرسمية";
 
+const DEFAULT_TICKER_ITEMS: TickerItem[] = [
+  { kind: "announce", title: "📢 آخر التحديثات والخدمات متاحة الآن عبر موطني" },
+  { kind: "tip", title: "💡 يمكنك حفظ أي رد لقراءته لاحقاً من المحفوظات" },
+  { kind: "tip", title: "💡 استخدم حاسبة المعاش لمعرفة تقدير معاشك" },
+];
+
 function withOfficialDeathsTicker(items: TickerItem[], total: number): TickerItem[] {
   if (!Number.isFinite(total) || total <= 0) return items;
 
@@ -73,9 +79,9 @@ export function Ticker({
         if (cancelled) return;
 
         const nextItems = withOfficialDeathsTicker(tickerRes.items || [], Number(deathsRes?.total || 0));
-        setItems(nextItems);
+        setItems(nextItems.length > 0 ? nextItems : DEFAULT_TICKER_ITEMS);
       } catch {
-        if (!cancelled) setItems([]);
+        if (!cancelled) setItems(DEFAULT_TICKER_ITEMS);
       }
     };
 

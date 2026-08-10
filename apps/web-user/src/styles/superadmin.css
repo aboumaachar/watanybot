@@ -1837,26 +1837,26 @@ html:has(.watany-superadmin-shell) body {
 
 html:has(.watany-superadmin-shell) #root {
   display: flex !important;
-  justify-content: center !important;
-  align-items: flex-start !important;
-  padding: 16px 0 !important;
+  justify-content: stretch !important;
+  align-items: stretch !important;
+  padding: 0 !important;
 }
 
 body:has(.sa-page) #root > .watany-superadmin-shell,
 #root > .watany-superadmin-shell[data-apex-shell="superadmin"] {
-  width: min(100%, 430px) !important;
-  max-width: 430px !important;
+  width: 100% !important;
+  max-width: none !important;
   min-width: 0 !important;
-  min-height: calc(100vh - 32px) !important;
+  min-height: 100vh !important;
   height: auto !important;
-  margin: 0 auto !important;
+  margin: 0 !important;
   display: flex !important;
   flex-direction: column !important;
-  overflow: hidden !important;
-  border: 1px solid rgba(15, 23, 42, 0.12) !important;
-  border-radius: 28px !important;
+  overflow: visible !important;
+  border: 0 !important;
+  border-radius: 0 !important;
   background: #f6f7fb !important;
-  box-shadow: 0 24px 64px rgba(15, 23, 42, 0.18) !important;
+  box-shadow: none !important;
   transform: none !important;
   box-sizing: border-box !important;
 }
@@ -1866,34 +1866,34 @@ body:has(.sa-page) #root > .watany-superadmin-shell .sa-page,
   width: 100% !important;
   max-width: 100% !important;
   min-width: 0 !important;
-  min-height: calc(100vh - 32px) !important;
+  min-height: 100vh !important;
   margin: 0 !important;
-  padding: 0 !important;
+  padding: 24px 32px 32px !important;
   overflow-x: clip !important;
   box-sizing: border-box !important;
 }
 
 #root > .watany-superadmin-shell .sa-topbar__inner {
-  grid-template-columns: 1fr !important;
-  align-items: stretch !important;
-  gap: 12px !important;
-  padding: 14px 16px !important;
+  grid-template-columns: auto minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  gap: 18px !important;
+  padding: 12px 24px !important;
 }
 
 #root > .watany-superadmin-shell .sa-topbar__brand,
 #root > .watany-superadmin-shell .sa-topbar__actions {
-  width: 100% !important;
+  width: auto !important;
 }
 
 #root > .watany-superadmin-shell .sa-topbar__stats {
-  display: grid !important;
-  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-  gap: 8px !important;
+  display: flex !important;
+  grid-template-columns: none !important;
+  gap: 10px !important;
 }
 
 #root > .watany-superadmin-shell .sa-topbar__actions {
-  display: grid !important;
-  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  display: flex !important;
+  grid-template-columns: none !important;
   gap: 8px !important;
 }
 
@@ -1916,9 +1916,66 @@ body:has(.sa-page) #root > .watany-superadmin-shell .sa-page,
 #root > .watany-superadmin-shell .sa-intelligence-panel,
 #root > .watany-superadmin-shell .hybrid-kb-index-admin-panel__header,
 #root > .watany-superadmin-shell .hybrid-kb-index-admin-panel__stats,
-#root > .watany-superadmin-shell .hybrid-kb-index-admin-panel__categories,
+#root > .watany-superadmin-shell .hybrid-kb-index-admin-panel__categories {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)) !important;
+}
+
 #root > .watany-superadmin-shell .hybrid-kb-index-admin-panel__results {
-  grid-template-columns: minmax(0, 1fr) !important;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)) !important;
+}
+
+@media (max-width: 900px) {
+  html:has(.watany-superadmin-shell) #root {
+    justify-content: flex-start !important;
+    align-items: stretch !important;
+  }
+
+  body:has(.sa-page) #root > .watany-superadmin-shell,
+  #root > .watany-superadmin-shell[data-apex-shell="superadmin"] {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 100vh !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+
+  body:has(.sa-page) #root > .watany-superadmin-shell .sa-page,
+  #root > .watany-superadmin-shell .sa-page {
+    padding: 0 16px 24px !important;
+  }
+
+  #root > .watany-superadmin-shell .sa-topbar__inner {
+    grid-template-columns: 1fr !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+    padding: 14px 16px !important;
+  }
+
+  #root > .watany-superadmin-shell .sa-topbar__brand,
+  #root > .watany-superadmin-shell .sa-topbar__actions {
+    width: 100% !important;
+  }
+
+  #root > .watany-superadmin-shell .sa-topbar__stats {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+  }
+
+  #root > .watany-superadmin-shell .sa-topbar__actions {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+  }
+
+  #root > .watany-superadmin-shell .sa-intelligence-panel,
+  #root > .watany-superadmin-shell .hybrid-kb-index-admin-panel__header,
+  #root > .watany-superadmin-shell .hybrid-kb-index-admin-panel__stats,
+  #root > .watany-superadmin-shell .hybrid-kb-index-admin-panel__categories,
+  #root > .watany-superadmin-shell .hybrid-kb-index-admin-panel__results {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
 }
 
 @media (max-width: 430px) {

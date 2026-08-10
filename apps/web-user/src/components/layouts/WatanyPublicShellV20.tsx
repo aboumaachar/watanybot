@@ -10,6 +10,8 @@ const menuGroups = DRAWER_MENU_GROUPS.map((group) => ({
   key: group.id,
   label: group.label,
   icon: group.iconFeatureId,
+  drawerLevel: group.drawerLevel ?? "group",
+  to: group.route,
   items: group.items.map((item) => ({ to: item.route, label: item.label })),
 }));
 
@@ -155,6 +157,15 @@ export function WatanyPublicShellV20() {
             <nav>
               <NavLink className="watany-recovery-menu-home-link" to="/home" end onClick={() => setMenuOpen(false)}>الرئيسية</NavLink>
               {menuGroups.map((group) => {
+                if (group.drawerLevel === "top-level") {
+                  return (
+                    <NavLink className="watany-recovery-menu-home-link watany-recovery-menu-top-link" key={group.key} to={group.to} onClick={() => setMenuOpen(false)}>
+                      <WatanyV4Icon name={group.icon as Parameters<typeof WatanyV4Icon>[0]["name"]} aria-hidden="true" width={20} height={20} />
+                      <span>{group.label}</span>
+                    </NavLink>
+                  );
+                }
+
                 const isExpanded = openMenuGroups[group.key] ?? false;
                 return (
                   <section className="watany-recovery-menu-group" key={group.key}>

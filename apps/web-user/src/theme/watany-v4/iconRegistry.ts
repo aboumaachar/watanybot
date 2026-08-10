@@ -9,6 +9,7 @@ export const WATANY_V4_ICONS = {
   "for-you": "/watany-v4/icons/for-you.png",
   "login": "/watany-assets/icons/login.svg",
   "profile": "/watany-v4/icons/profile.png",
+  "settings": "/watany-v4/icons/settings.svg",
   "install": "/watany-v4/icons/install.png",
   "documents": "/watany-v4/icons/documents.png",
   "notifications": "/watany-v4/icons/notifications.png",

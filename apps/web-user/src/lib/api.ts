@@ -2149,8 +2149,8 @@ export const api = {
     return (await res.json()) as SurveyBridgeStatus;
   },
 
-  async listSurveys(baseUrl = API_URL): Promise<SurveySummary[]> {
-    const res = await authFetch(`${baseUrl}/api/voting/elections`);
+  async listSurveys(baseUrl = API_URL, status: SurveyStatus = "active"): Promise<SurveySummary[]> {
+    const res = await authFetch(`${baseUrl}/api/voting/elections?status=${encodeURIComponent(status)}`);
     if (!res.ok) {
       throw new Error(await readApiError(res, "تعذر تحميل الاستطلاعات حالياً."));
     }

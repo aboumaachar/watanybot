@@ -43,6 +43,16 @@ export type LandingSection = {
   items: LandingSectionItem[];
 };
 
+export type MarketCategoryRail = {
+  id: string;
+  icon: string;
+  title: string;
+  description: string;
+  actionLabel: string;
+  actionHref: string;
+  items: LandingSectionItem[];
+};
+
 export type FeaturedJobListing = {
   title: string;
   company: string;
@@ -70,6 +80,7 @@ export type LandingConfig = {
   filters: LandingFilter[];
   statusCards: LandingShortcut[];
   sections: LandingSection[];
+  categoryRails?: MarketCategoryRail[];
   featuredListings?: FeaturedJobListing[];
 };
 
@@ -201,6 +212,8 @@ function MobileFeatureLandingPageImpl({ config }: { readonly config: LandingConf
   const [cvFileName, setCvFileName] = useState("");
   const [cvUpdatedAt, setCvUpdatedAt] = useState("");
   const [loginGateMessage, setLoginGateMessage] = useState<string | null>(null);
+  const [marketPopup, setMarketPopup] = useState<{ item: LandingSectionItem; rail: MarketCategoryRail } | null>(null);
+  const [marketActionNotice, setMarketActionNotice] = useState<string | null>(null);
 
   function promptRegistrationForAction() {
     setLoginGateMessage(LOGIN_REQUIRED_GATE_MESSAGE_AR);
@@ -398,6 +411,16 @@ function MobileFeatureLandingPageImpl({ config }: { readonly config: LandingConf
   const visibleStatusCards = config.id === "market" ? config.statusCards.slice(0, 2) : config.statusCards;
   const visibleSections = config.id === "market" ? config.sections.slice(0, 1) : config.sections;
   const visibleSectionItems = config.id === "market" ? 3 : undefined;
+  const visibleMarketRails = useMemo(() => {
+    if (config.id !== "market" || !config.categoryRails) return [];
+    const normalizedQuery = searchQuery.trim().toLocaleLowerCase("ar");
+    return config.categoryRails
+      .map((rail) => ({
+        ...rail,
+        items: rail.items.filter((item) => !normalizedQuery || [item.title, item.meta, item.badge].join(" ").toLocaleLowerCase("ar").includes(normalizedQuery)),
+      }))
+      .filter((rail) => rail.items.length > 0);
+  }, [config.categoryRails, config.id, searchQuery]);
   const marketGridStyle: CSSProperties | undefined = config.id === "market" ? { gridAutoFlow: "row", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", overflowX: "visible" } : undefined;
   const marketNavStyle: CSSProperties | undefined = config.id === "market" ? { flexWrap: "wrap", gap: "0.5rem", justifyContent: "center", overflowX: "visible" } : undefined;
 
@@ -414,8 +437,13 @@ function MobileFeatureLandingPageImpl({ config }: { readonly config: LandingConf
               title={item.label}
               aria-label={item.label}
             >
-              {config.id === "jobs" ? <span className="mj-sticky-icon-nav__label">{item.label}</span> : <span className="mj-sticky-icon-nav__icon" aria-hidden="true">{item.icon}</span>}
-              {config.id === "jobs" ? null : <span className="mj-sr-only">{item.label}</span>}
+              {config.id === "market" ? (
+                <>
+                  <span className="mj-sticky-icon-nav__icon" aria-hidden="true">{item.icon}</span>
+                  <span className="mj-sticky-icon-nav__label">{item.label}</span>
+                </>
+              ) : config.id === "jobs" ? <span className="mj-sticky-icon-nav__label">{item.label}</span> : <span className="mj-sticky-icon-nav__icon" aria-hidden="true">{item.icon}</span>}
+              {config.id === "market" || config.id === "jobs" ? null : <span className="mj-sr-only">{item.label}</span>}
             </a>
           ))}
           {isJobsPage ? (
@@ -433,6 +461,30 @@ function MobileFeatureLandingPageImpl({ config }: { readonly config: LandingConf
             </button>
           ) : null}
         </div>
+      ) : null}
+
+      {config.id === "market" ? (
+        <>
+          <section className="mj-market-hero" aria-labelledby="market-page-title">
+            <div className="mj-market-hero__copy">
+              <p className="mj-market-hero__eyebrow">{config.eyebrow}</p>
+              <h1 id="market-page-title">{config.title}</h1>
+              <p>{config.subtitle}</p>
+            </div>
+            <div className="mj-market-hero__actions">
+              <a className="mj-market-hero__primary" href={config.primaryActionHref}>إضافة إعلان</a>
+              <a className="mj-market-hero__secondary" href={config.secondaryActionHref}>إعلاناتي</a>
+            </div>
+          </section>
+          <section className="mj-market-search" aria-label={config.searchLabel}>
+            <label htmlFor="market-landing-search">{config.searchLabel}</label>
+            <div className="mj-market-search__control">
+              <input id="market-landing-search" type="search" value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} placeholder={config.searchPlaceholder} autoComplete="off" />
+              {searchQuery ? <button type="button" onClick={() => setSearchQuery("")} aria-label="مسح البحث">×</button> : null}
+            </div>
+          </section>
+          {marketActionNotice ? <p className="mj-market-action-notice" role="status">{marketActionNotice}</p> : null}
+        </>
       ) : null}
 
       {isJobsPage ? (
@@ -661,7 +713,92 @@ function MobileFeatureLandingPageImpl({ config }: { readonly config: LandingConf
         </section>
       ) : null}
 
-      {isJobsPage ? null : (
+      {config.id === "market" ? (
+        <>
+          <section className="mj-market-category-directory" aria-labelledby="market-category-title">
+            <div className="mj-market-section-heading">
+              <div>
+                <p>اختصر الطريق</p>
+                <h2 id="market-category-title">تصفح حسب الفئة</h2>
+              </div>
+              <span>{config.categories.length} فئات</span>
+            </div>
+            <div className="mj-market-category-grid">
+              {config.categories.map((marketCategory) => (
+                <a className="mj-market-category-card" href={resolveLandingHref(marketCategory.href)} key={`market-category-${marketCategory.label}`}>
+                  <span className="mj-market-category-card__icon" aria-hidden="true">{marketCategory.icon}</span>
+                  <strong>{marketCategory.label}</strong>
+                  <small>{marketCategory.description}</small>
+                </a>
+              ))}
+            </div>
+          </section>
+
+          <section className="mj-market-status" aria-label="متابعة السوق">
+            <div className="mj-market-section-heading">
+              <div>
+                <p>كل ما يخصك في مكان واحد</p>
+                <h2>المتابعة والثقة</h2>
+              </div>
+              <a href="/marketplace?section=my-listings">إعلاناتي</a>
+            </div>
+            <div className="mj-market-status__rail">
+              {config.statusCards.map((card) => (
+                <a className="mj-market-status-card" href={resolveLandingHref(card.href)} key={`market-status-${card.label}`}>
+                  <span aria-hidden="true">{card.icon}</span>
+                  <strong>{card.label}</strong>
+                  <small>{card.description}</small>
+                </a>
+              ))}
+            </div>
+          </section>
+
+          <section className="mj-market-rails" aria-label="إعلانات السوق حسب الفئة">
+            <div className="mj-market-section-heading mj-market-rails__heading">
+              <div>
+                <p>بيانات تجريبية للعرض</p>
+                <h2>إعلانات مختارة من السوق</h2>
+              </div>
+              <span>{visibleMarketRails.reduce((total, rail) => total + rail.items.length, 0)} إعلان</span>
+            </div>
+            {visibleMarketRails.length > 0 ? visibleMarketRails.map((rail) => (
+              <section className="mj-market-rail" aria-labelledby={`market-rail-${rail.id}`} key={`market-rail-${rail.id}`}>
+                <div className="mj-market-rail__heading">
+                  <div>
+                    <span aria-hidden="true">{rail.icon}</span>
+                    <div>
+                      <h3 id={`market-rail-${rail.id}`}>{rail.title}</h3>
+                      <p>{rail.description}</p>
+                    </div>
+                  </div>
+                  <a href={resolveLandingHref(rail.actionHref)}>{rail.actionLabel}</a>
+                </div>
+                <div className="mj-market-rail__track">
+                  {rail.items.map((item) => (
+                    <a
+                      className="mj-market-listing-card"
+                      href={resolveLandingHref(item.href || rail.actionHref)}
+                      aria-haspopup="dialog"
+                      onClick={(event) => {
+                        event.preventDefault();
+                        setMarketPopup({ item, rail });
+                      }}
+                      key={`${rail.id}-${item.title}`}
+                    >
+                      <span className="mj-market-listing-card__badge">{item.badge}</span>
+                      <strong>{item.title}</strong>
+                      <small>{item.meta}</small>
+                      <span className="mj-market-listing-card__link">التفاصيل ←</span>
+                    </a>
+                  ))}
+                </div>
+              </section>
+            )) : (
+              <div className="mj-empty-state">لا توجد إعلانات تطابق بحثك. جرّب كلمة أخرى.</div>
+            )}
+          </section>
+        </>
+      ) : (
         <>
           <section className="mj-category-block" aria-label="الفئات" data-category-grid="true">
             <div className="mj-section-heading">
@@ -678,14 +815,23 @@ function MobileFeatureLandingPageImpl({ config }: { readonly config: LandingConf
             </div>
           </section>
 
-          <section className="mj-status-strip" aria-label="الحالة والمتابعة" data-status-strip="true" style={marketGridStyle}>
-            {visibleStatusCards.map((card) => (
-              <a className="mj-status-card" href={resolveLandingHref(card.href)} key={`${config.id}-status-${card.label}`}>
-                <span aria-hidden="true">{card.icon}</span>
-                <strong>{card.label}</strong>
-                <small>{card.description}</small>
-              </a>
-            ))}
+          <section className="mj-jobs-status" aria-label="الحالة والمتابعة" data-status-strip="true">
+            <div className="mj-section-heading mj-jobs-status__heading">
+              <div>
+                <p>تابع خطواتك التالية</p>
+                <h2>الحالة والمتابعة</h2>
+              </div>
+              <span>{visibleStatusCards.length} مسارات</span>
+            </div>
+            <div className="mj-status-strip" style={marketGridStyle}>
+              {visibleStatusCards.map((card) => (
+                <a className="mj-status-card" href={resolveLandingHref(card.href)} key={`${config.id}-status-${card.label}`}>
+                  <span aria-hidden="true">{card.icon}</span>
+                  <strong>{card.label}</strong>
+                  <small>{card.description}</small>
+                </a>
+              ))}
+            </div>
           </section>
 
           <section className="mj-feed-sections" aria-label="أقسام مقترحة" data-feed-sections="true">
@@ -727,6 +873,32 @@ function MobileFeatureLandingPageImpl({ config }: { readonly config: LandingConf
           </section>
         </>
       )}
+
+      {marketPopup ? (
+        <div className="mj-market-dialog-backdrop" role="presentation" onClick={() => setMarketPopup(null)}>
+          <section
+            className="mj-market-dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="mj-market-dialog-title"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="mj-market-dialog__head">
+              <span className="mj-market-listing-card__badge">{marketPopup.item.badge}</span>
+              <button type="button" className="mj-market-dialog__close" onClick={() => setMarketPopup(null)} aria-label="إغلاق تفاصيل الإعلان">×</button>
+            </div>
+            <p className="mj-market-dialog__eyebrow">{marketPopup.rail.title}</p>
+            <h2 id="mj-market-dialog-title">{marketPopup.item.title}</h2>
+            <p className="mj-market-dialog__meta">{marketPopup.item.meta}</p>
+            <p className="mj-market-dialog__copy">يمكنك متابعة الإعلانات المشابهة أو التواصل معنا للعثور على العرض المناسب لك.</p>
+            <div className="mj-market-dialog__actions">
+              <a className="mj-market-dialog__primary" href={resolveLandingHref(marketPopup.item.href || marketPopup.rail.actionHref)}>عرض إعلانات الفئة</a>
+              <a className="mj-market-dialog__secondary" href={`/chat?draft=${encodeURIComponent(`أرغب بمعلومات عن الإعلان: ${marketPopup.item.title}`)}`}>تواصل للاستفسار</a>
+              <button type="button" className="mj-market-dialog__save" onClick={() => { setMarketActionNotice("تم حفظ الإعلان للمتابعة لاحقاً."); setMarketPopup(null); }}>حفظ للمتابعة</button>
+            </div>
+          </section>
+        </div>
+      ) : null}
       </main>
     </WatanyLandingBodyTemplate>
   );

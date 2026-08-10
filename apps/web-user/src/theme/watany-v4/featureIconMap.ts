@@ -10,7 +10,7 @@ const FEATURE_ICON_NAMES: Record<string, WatanyV4IconName> = {
   bookmarks: "profile",
   profile: "profile",
   "saved-chats": "messages",
-  settings: "profile",
+  settings: "settings",
   install: "install",
   documents: "documents",
   notifications: "notifications",
