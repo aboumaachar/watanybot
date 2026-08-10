@@ -15,6 +15,11 @@ const OFFICIAL_DEATHS_TICKER_PREFIX = "تم تحديث الوفيات الرسم
 
 const DEFAULT_TICKER_ITEMS: TickerItem[] = [
   { kind: "announce", title: "📢 آخر التحديثات والخدمات متاحة الآن عبر موطني" },
+  { kind: "announce", title: "🍎 فرصة عمل موسمية: قطاف التفاح في عين الحفة - تنورين", linkType: "route", linkId: "/jobs/ainelhafeh" },
+  { kind: "announce", title: "💼 تحقق من أحدث عروض العمل", linkType: "route", linkId: "/jobs" },
+  { kind: "announce", title: "🛒 تحقق من إعلانات السوق", linkType: "route", linkId: "/marketplace" },
+  { kind: "announce", title: "💰 تحقق من معاشك", linkType: "route", linkId: "/salary" },
+  { kind: "announce", title: "🎓 تحقق من المنح المدرسية", linkType: "route", linkId: "/school-grants" },
   { kind: "tip", title: "💡 يمكنك حفظ أي رد لقراءته لاحقاً من المحفوظات" },
   { kind: "tip", title: "💡 استخدم حاسبة المعاش لمعرفة تقدير معاشك" },
 ];

@@ -45,6 +45,8 @@ const homepageOnlyEntries: WatanyV4FeatureRegistryEntry[] = [
   { id: "useful-links", labelAr: "روابط", labelEn: "Useful Links", category: "information", route: "/services/official", actionType: "route", publicVisibility: "public", requiredRoles: [], iconAsset: "links", menuPlacement: "hidden", homepagePlacement: "grid", featureOwner: "apps/web-user/src/pages/OfficialServicesPage.tsx", apiDependencies: ["gateway-api"], primaryInteraction: "official-services-landing", status: "LIVE_PROVEN" },
   { id: "tools", labelAr: "أدوات", labelEn: "Tools", category: "support", route: "/tools", actionType: "route", publicVisibility: "public", requiredRoles: [], iconAsset: "tools", menuPlacement: "hidden", homepagePlacement: "grid", featureOwner: "apps/web-user/src/components/WatanyV4FeatureLanding.tsx", apiDependencies: [], primaryInteraction: "tools", status: "LIVE_PROVEN" },
   { id: "designs", labelAr: "التصاميم", labelEn: "Designs", category: "support", route: "/designs", actionType: "route", publicVisibility: "public", requiredRoles: [], iconAsset: "designs", menuPlacement: "hidden", homepagePlacement: "grid", featureOwner: "apps/web-user/src/components/WatanyV4FeatureLanding.tsx", apiDependencies: [], primaryInteraction: "designs", status: "DISABLED_NOT_IMPLEMENTED" },
+  { id: "children", labelAr: "الأبناء", labelEn: "Veterans' Children", category: "support", route: "/children", actionType: "route", publicVisibility: "public", requiredRoles: [], iconAsset: "users", menuPlacement: "hidden", homepagePlacement: "grid", featureOwner: "apps/web-user/src/pages/ChildrenHubPage.tsx", apiDependencies: [], primaryInteraction: "children-assistance-and-opportunities", status: "LIVE_PROVEN" },
+  { id: "sports", labelAr: "الرياضة", labelEn: "Sports Activities", category: "support", route: "/sports", actionType: "route", publicVisibility: "public", requiredRoles: [], iconAsset: "world-cup", menuPlacement: "hidden", homepagePlacement: "grid", featureOwner: "apps/web-user/src/components/WatanyV4FeatureLanding.tsx", apiDependencies: [], primaryInteraction: "sports-activities", status: "LIVE_PROVEN" },
 ];
 
 export const watanyFeatureRegistryV4 = [
@@ -109,12 +111,12 @@ export const watanyV4BottomDockItems = watanyFeatureRegistryV4
   .map(toDrawerItem);
 
 const homepageFeatureOrder = [
-  "for-you", "latest", "popular", "marketplace", "jobs", "schools", "procedures", "salary", "taxi", "network",
-  "forms", "useful-links", "deaths", "community", "voting", "news", "laws", "faq", "fake-fact", "profile", "settings",
+  "for-you", "latest", "popular", "marketplace", "jobs", "schools", "procedures", "salary", "taxi", "circulars", "network",
+  "forms", "useful-links", "deaths", "community", "voting", "news", "laws", "faq", "fake-fact", "profile", "settings", "children", "sports",
 ] as const;
 
 const homepageLabels: Record<(typeof homepageFeatureOrder)[number], string> = {
-  "for-you": "يهمك", latest: "جديد", popular: "الأكثر طلباً", schools: "مدارس", procedures: "معاملات", salary: "المعاش", taxi: "تاكسي", marketplace: "السوق", jobs: "وظائف", network: "الشبكة", "useful-links": "روابط", deaths: "وفيات", community: "مجتمعي", voting: "تصويت", forms: "نماذج", laws: "قوانين", faq: "أسئلة", "fake-fact": "زائف", news: "أخبار", profile: "الحساب", settings: "الإعدادات",
+  "for-you": "يهمك", latest: "جديد", popular: "الأكثر طلباً", schools: "مدارس", procedures: "معاملات", salary: "المعاش", taxi: "تاكسي", circulars: "التعاميم", marketplace: "السوق", jobs: "وظائف", network: "الشبكة", "useful-links": "روابط", deaths: "وفيات", community: "مجتمعي", voting: "تصويت", forms: "نماذج", laws: "قوانين", faq: "أسئلة", "fake-fact": "زائف", news: "أخبار", profile: "الحساب", settings: "الإعدادات", children: "الأبناء", sports: "الرياضة",
 };
 
 export const watanyV4HomepageItems = homepageFeatureOrder.map((id) => {

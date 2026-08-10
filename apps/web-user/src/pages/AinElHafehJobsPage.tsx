@@ -75,6 +75,27 @@ export default function AinElHafehJobsPage() {
     setInterests((current) => current.includes(value) ? current.filter((item) => item !== value) : [...current, value]);
   }
 
+  async function shareRegistrationLink() {
+    const url = globalThis.location.href;
+    const shareData = {
+      title: "فرصة عمل موسمية - قطاف التفاح",
+      text: "تسجيل فرصة عمل موسمية لقطاف التفاح في تنورين",
+      url,
+    };
+
+    if (globalThis.navigator.share) {
+      await globalThis.navigator.share(shareData).catch(() => undefined);
+      return;
+    }
+
+    if (globalThis.navigator.clipboard) {
+      await globalThis.navigator.clipboard.writeText(url);
+      return;
+    }
+
+    window.prompt("انسخ رابط التسجيل:", url);
+  }
+
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const formElement = event.currentTarget;
@@ -125,7 +146,7 @@ export default function AinElHafehJobsPage() {
         <div className="ainelhafeh-hero__content">
           <p className="ainelhafeh-kicker">فرصة عمل موسمية</p>
           <h1>قطاف التفاح في تنورين</h1>
-          <p className="ainelhafeh-hero__lead">التسجيل مفتوح للعسكريين المتقاعدين وأفراد عائلاتهم، الأبناء والبنات بعمر 18 سنة وما فوق.</p>
+          <p className="ainelhafeh-hero__lead">التسجيل مفتوح للعسكريين المتقاعدين وأفراد عائلاتهم، الأبناء والبنات بعمر 18 سنة وما فوق، للمشاركة في قطاف الموسم بدءاً من 3 أيلول ولمدة شهر تقريباً.</p>
           <div className="ainelhafeh-hero__actions">
             <a className="ainelhafeh-button ainelhafeh-button--primary" href="#application">سجّل في الفرصة</a>
             <a className="ainelhafeh-button ainelhafeh-button--quiet" href="#details">اطّلع على التفاصيل</a>
@@ -141,8 +162,9 @@ export default function AinElHafehJobsPage() {
 
       <section className="ainelhafeh-facts" aria-label="ملخص الفرصة">
         <div><strong>8 ساعات</strong><span>عمل + ساعة استراحة</span></div>
-        <div><strong>أسبوع إلى شهر</strong><span>مدة مرنة حسب التوفر</span></div>
-        <div><strong>جبيل</strong><span>نقطة التجمع والعودة الأسبوعية</span></div>
+        <div><strong>أسبوع إلى شهر</strong><span>أسبوع واحد كحد أدنى، حتى شهر تقريباً</span></div>
+        <div><strong>الاثنين - الجمعة</strong><span>إقامة على الأرض، وعودة أسبوعية إلى جبيل</span></div>
+        <div><strong>جبيل</strong><span>التجمع صباح الاثنين 6:00 والدفع نهاية كل أسبوع</span></div>
       </section>
 
       <section className="ainelhafeh-layout" id="details">
@@ -150,9 +172,12 @@ export default function AinElHafehJobsPage() {
           <p className="ainelhafeh-kicker">ما تحتاج إلى معرفته</p>
           <h2>عمل واضح، وسكن مؤمّن،<br />وتسجيل منظم</h2>
           <div className="ainelhafeh-detail-list">
-            <article><span>01</span><div><h3>الدوام والدفع</h3><p>من الاثنين إلى الجمعة، مع إمكانية البقاء في نهاية الأسبوع، والدفع في نهاية كل أسبوع عمل.</p></div></article>
-            <article><span>02</span><div><h3>السكن والاحتياجات</h3><p>خيم ومياه ومرافق صحية متوفرة. أحضر بطانية وأغراضك الشخصية، والقبعة إلزامية.</p></div></article>
-            <article><span>03</span><div><h3>الأولوية</h3><p>الأولوية للعسكريين المتقاعدين وعائلاتهم، وللمتقدمين من جبيل والبترون.</p></div></article>
+            <article><span>01</span><div><h3>الدوام والدفع</h3><p>من الاثنين إلى الجمعة، 8 ساعات عمل مع ساعة استراحة، والدفع في نهاية كل أسبوع عمل.</p></div></article>
+            <article><span>02</span><div><h3>التجمع والعودة</h3><p>التجمع في مفرق جبيل صباح الاثنين الساعة 6:00. العودة مساء الجمعة إلى جبيل لمن لا يعمل خلال عطلة نهاية الأسبوع.</p></div></article>
+            <article><span>03</span><div><h3>البقاء في نهاية الأسبوع</h3><p>العمل يومي السبت والأحد اختياري لمن يرغب بالبقاء في الأرض.</p></div></article>
+            <article><span>04</span><div><h3>السكن والطعام</h3><p>خيم متوفرة على الأرض، والمياه مؤمّنة بالكامل. يُختار شخص واحد من كل مجموعة ليكون الطبّاخ، والمزرعة تؤمّن المواد الأولية والصحون وقدر الطبخ.</p></div></article>
+            <article><span>05</span><div><h3>المرافق والاحتياجات</h3><p>مرحاض متنقل ومستلزمات نظافة شخصية متوفرة. أحضر بطانية وأغراضك الشخصية، وارتداء القبعة إلزامي.</p></div></article>
+            <article><span>06</span><div><h3>الأولوية</h3><p>الأولوية للعسكريين المتقاعدين وأفراد عائلاتهم، وللمتقدمين من جبيل والبترون، مع حد أدنى للعمر هو 18 سنة.</p></div></article>
           </div>
         </div>
         <aside className="ainelhafeh-note"><span>قبل الإرسال</span><strong>اختر عنوانك الإداري بدقة</strong><p>سنستخدم المحافظة والقضاء والبلدة للتحقق من التسجيل وتنظيم التواصل معك.</p></aside>
@@ -173,6 +198,7 @@ export default function AinElHafehJobsPage() {
             <label><span>رقم الهاتف *</span><input required inputMode="tel" value={form.phone} onChange={(event) => update("phone", event.target.value)} /></label>
             <label><span>البريد الإلكتروني</span><input type="email" value={form.email} onChange={(event) => update("email", event.target.value)} /></label>
             <label><span>العمر *</span><input required inputMode="numeric" min="18" value={form.age} onChange={(event) => update("age", event.target.value)} /></label>
+            <label><span>الجنس</span><select value={form.gender} onChange={(event) => update("gender", event.target.value)}><option value="">اختر</option><option>ذكر</option><option>أنثى</option></select></label>
           </div>
           <fieldset><legend>صفة المتقدم *</legend><div className="ainelhafeh-options">{relationOptions.map((option) => <label key={option}><input required type="radio" name="relationType" checked={form.relationType === option} onChange={() => update("relationType", option)} /><span>{option}</span></label>)}</div></fieldset>
           <LebanonAddressSelector required value={address} onChange={setAddress} exactAddressLabel="تفصيل إضافي للعنوان" />
@@ -195,8 +221,13 @@ export default function AinElHafehJobsPage() {
           <label><span>ملاحظة صحية اختيارية</span><textarea value={form.health} onChange={(event) => update("health", event.target.value)} /></label>
           <fieldset><legend>الأعمال التي تهمك مستقبلًا</legend><div className="ainelhafeh-options ainelhafeh-options--inline">{["زراعية", "صناعية", "لوجستية", "خدمات", "إدارية"].map((item) => <label key={item}><input type="checkbox" checked={interests.includes(item)} onChange={() => toggleInterest(item)} /><span>{item}</span></label>)}</div></fieldset>
           <div className="ainelhafeh-form-grid"><label><span>العمل في نهاية الأسبوع</span><select value={form.weekendWork} onChange={(event) => update("weekendWork", event.target.value)}><option>لا</option><option>نعم</option></select></label><label><span>فرص عمل مستقبلية</span><select value={form.future} onChange={(event) => update("future", event.target.value)}><option>نعم</option><option>لا</option></select></label></div>
+          <label><span>هل يوجد أفراد آخرون من العائلة مهتمون؟</span><select value={form.familyMore} onChange={(event) => update("familyMore", event.target.value)}><option>لا</option><option>نعم</option></select></label>
           <button className="ainelhafeh-button ainelhafeh-button--submit" disabled={status === "saving"} type="submit">{status === "saving" ? "جارٍ إرسال الطلب…" : "إرسال طلب التسجيل"}</button>
         </form>
+        <div className="ainelhafeh-share" aria-label="مشاركة التسجيل" style={{ textAlign: "center" }}>
+          <button className="ainelhafeh-button ainelhafeh-button--primary" style={{ marginInline: "auto" }} type="button" onClick={() => { void shareRegistrationLink(); }}>مشاركة رابط التسجيل</button>
+          <p>التسجيل مفتوح لأكبر عدد ممكن. سجّل باكرًا لتحديد الفترة التي تناسبك.</p>
+        </div>
       </section>
     </main>
   );

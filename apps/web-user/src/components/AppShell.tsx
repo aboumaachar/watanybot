@@ -36,6 +36,7 @@ import CommunityThreadsPage from "../pages/CommunityThreadsPage";
 import TaxiPage from "../pages/TaxiPage";
 import NetworkPage from "../pages/NetworkPage";
 import CircularsPage from "../pages/CircularsPage";
+import ChildrenHubPage from "../pages/ChildrenHubPage";
 import AdsPage from "../pages/AdsPage";
 import HealthPage from "../pages/HealthPage";
 import OfficialServicesPage from "../pages/OfficialServicesPage";
@@ -133,6 +134,8 @@ export function AppShell() {
         <Route path="taxi" element={<TaxiPage />} />
         <Route path="network" element={<NetworkPage />} />
         <Route path="circulars" element={<CircularsPage />} />
+        <Route path="children" element={<ChildrenHubPage />} />
+        <Route path="sports" element={<WatanyV4FeatureLanding />} />
         <Route path="ads" element={<AdsPage />} />
         <Route path="health" element={<HealthPage />} />
         <Route path="services/official" element={<OfficialServicesPage />} />

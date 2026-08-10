@@ -44,6 +44,8 @@ const FEATURE_ICON_NAMES: Record<string, WatanyV4IconName> = {
   health: "health",
   "ask-watany": "ask-watany",
   home: "most-requested",
+  children: "users",
+  sports: "world-cup",
 };
 
 export function getWatanyV4IconName(featureId: string): WatanyV4IconName {

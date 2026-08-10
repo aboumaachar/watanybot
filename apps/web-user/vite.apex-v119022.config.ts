@@ -3,6 +3,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { defineConfig, mergeConfig, type ConfigEnv, type Plugin, type ResolvedConfig, type UserConfig } from "vite";
 import baseConfig from "./vite.config";
+import { socialPreviewBuildPlugin } from "./scripts/social-preview-build";
 
 const FINAL_CASCADE_BEGIN = "APEX_V119022_FINAL_CASCADE_BEGIN";
 const FINAL_CASCADE_END = "APEX_V119022_FINAL_CASCADE_END";
@@ -158,7 +159,7 @@ function manualChunks(id: string): string | undefined {
 export default defineConfig(async (env: ConfigEnv) => {
   const source = typeof baseConfig === "function" ? await baseConfig(env) : await baseConfig;
   const splitConfig: UserConfig = {
-    plugins: [finalCascadePlugin()],
+    plugins: [finalCascadePlugin(), socialPreviewBuildPlugin()],
     build: {
       cssCodeSplit: false,
       rollupOptions: {

@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">إعلان عين الحفة - فرصة عمل موسمية</title>
+  <desc id="desc">فرصة عمل موسمية لقطاف التفاح في عين الحفة - تنورين عبر موطني</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#123b31"/>
+      <stop offset="0.58" stop-color="#2f7355"/>
+      <stop offset="1" stop-color="#b5c46d"/>
+    </linearGradient>
+    <linearGradient id="sun" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f3d98b" stop-opacity=".9"/>
+      <stop offset="1" stop-color="#e8c873" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#071f18" flood-opacity=".28"/>
+    </filter>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <circle cx="1050" cy="55" r="285" fill="url(#sun)"/>
+  <path d="M0 505C170 455 240 520 385 490s240-30 375 15 280 55 440-15v140H0Z" fill="#0c3027" opacity=".42"/>
+  <g fill="#e8c873" opacity=".82">
+    <circle cx="102" cy="108" r="10"/><circle cx="145" cy="78" r="6"/><circle cx="190" cy="124" r="8"/>
+  </g>
+  <g direction="rtl" text-anchor="end" fill="#fff" font-family="Cairo, Tahoma, Arial, sans-serif">
+    <text x="1060" y="154" font-size="28" font-weight="700" fill="#f3d98b">فرصة عمل موسمية</text>
+    <text x="1060" y="260" font-size="76" font-weight="900" filter="url(#shadow)">إعلان عين الحفة</text>
+    <text x="1060" y="326" font-size="38" font-weight="700">قطاف التفاح في تنورين</text>
+    <text x="1060" y="390" font-size="27" font-weight="500" fill="#eef6df">تفاصيل الإعلان وشروط التقديم والمواعيد</text>
+  </g>
+  <g transform="translate(140 438)" direction="rtl">
+    <rect width="350" height="72" rx="8" fill="#e8c873" filter="url(#shadow)"/>
+    <text x="175" y="46" text-anchor="middle" font-size="29" font-weight="900" fill="#173d31" font-family="Cairo, Tahoma, Arial, sans-serif">اطّلع على التفاصيل ←</text>
+  </g>
+  <text x="1060" y="553" text-anchor="end" font-size="25" font-weight="700" fill="#fff" font-family="Cairo, Tahoma, Arial, sans-serif">موطني | koudama.com</text>
+</svg>

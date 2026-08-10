@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import { NavLink, Outlet, useLocation } from "react-router-dom";
+import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { MainHybridChatSurface } from "../chat/MainHybridChatSurface";
-import { Ticker } from "../Ticker";
+import { Ticker, type TickerItem } from "../Ticker";
+import { resolveTickerTarget } from "../../lib/ticker-targets";
 import { WatanyV4Icon } from "../../theme/watany-v4/WatanyV4Icon";
 import { useApp } from "../../store/app";
 import { DRAWER_MENU_GROUPS } from "../../features/universal-feature-menu/universalFeatureMenuRegistry";
@@ -25,6 +26,7 @@ const bottomItems = [
 export function WatanyPublicShellV20() {
   const { apiBaseUrl } = useApp();
   const location = useLocation();
+  const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
   const [openMenuGroups, setOpenMenuGroups] = useState<Record<string, boolean>>({ procedures: true, "daily-services": true });
@@ -120,7 +122,14 @@ export function WatanyPublicShellV20() {
           <img className="watany-recovery-logo" src="/logo.png" alt="شعار موطني" />
         </NavLink>
         <div className="watany-recovery-ticker" aria-label="شريط المعلومات">
-          <Ticker apiBaseUrl={apiBaseUrl} />
+          <Ticker
+            apiBaseUrl={apiBaseUrl}
+            onItemClick={(item: TickerItem) => {
+              const target = resolveTickerTarget(item);
+              if (target?.type === "internal") navigate(target.href);
+              if (target?.type === "external") window.open(target.href, "_blank", "noopener,noreferrer");
+            }}
+          />
         </div>
         <button
           type="button"

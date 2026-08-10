@@ -57,7 +57,6 @@ export default function CircularsPage() {
         <header className="jobs-hero">
           <span className="jobs-eyebrow">التعاميم الرسمية</span>
           <h1>تعاميم التطويع والمباريات</h1>
-          <p>قائمة مباشرة من إعلانات التطويع الحالية مع مصدر الإعلان ورقم التعميم عند توفرهما.</p>
           <input type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="ابحث في التعاميم" aria-label="ابحث في التعاميم" />
         </header>
 
