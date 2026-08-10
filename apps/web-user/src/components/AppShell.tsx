@@ -61,6 +61,31 @@ function RequireAuthenticated({ children }: { children: ReactNode }) {
   return <>{children}</>;
 }
 
+function RequireAdmin({ children }: { children: ReactNode }) {
+  const { profile, hasRole } = useApp();
+  const location = useLocation();
+
+  if (!profile.isAuthed || !isLoggedIn()) {
+    const from = `${location.pathname}${location.search}${location.hash}`;
+    return <Navigate to="/login" replace state={{ from }} />;
+  }
+
+  if (!hasRole(["admin"])) {
+    return (
+      <main className="superadmin-access-gate" dir="rtl">
+        <section className="superadmin-access-gate__panel" aria-labelledby="superadmin-denied-title">
+          <span className="superadmin-access-gate__eyebrow">صلاحيات غير كافية</span>
+          <h1 id="superadmin-denied-title">هذه اللوحة للإدارة فقط</h1>
+          <p>الحساب الحالي لا يملك صلاحية الوصول إلى مركز الإدارة.</p>
+          <a className="superadmin-access-gate__cta" href="/home">العودة إلى الرئيسية</a>
+        </section>
+      </main>
+    );
+  }
+
+  return <>{children}</>;
+}
+
 export function AppShell() {
   return (
     <Routes>
@@ -72,7 +97,7 @@ export function AppShell() {
             data-apex-foundation="v4-phase-b"
             className="watany-mobile-shell watany-superadmin-shell"
           >
-            <SuperAdminPage />
+            <RequireAdmin><SuperAdminPage /></RequireAdmin>
           </div>
         }
       />

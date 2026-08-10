@@ -7,6 +7,7 @@ import { query } from "../lib/db.js";
 import { hashPassword, verifyPassword } from "./password.js";
 import { signAccessToken, signRefreshToken, verifyToken } from "./auth-middleware.js";
 import type { UserRole } from "@watany/types";
+import { effectiveUserRole, isConfiguredAdminEmail } from "./admin-policy.js";
 
 const REFRESH_COOKIE_NAME = "watany_refresh";
 const CSRF_COOKIE_NAME = "watany_csrf";
@@ -263,6 +264,10 @@ export async function authRoutes(app: FastifyInstance): Promise<void> {
       return reply.code(400).send({ error: "email, password, fullName, username مطلوبة" });
     }
 
+    if (isConfiguredAdminEmail(email)) {
+      return reply.code(403).send({ error: "هذا البريد مخصص لحساب إداري مُدار" });
+    }
+
     // Email format validation
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/u.test(email)) {
       return reply.code(400).send({ error: "صيغة البريد الإلكتروني غير صحيحة" });
@@ -378,7 +383,11 @@ export async function authRoutes(app: FastifyInstance): Promise<void> {
         return reply.code(401).send({ error: "بريد إلكتروني أو كلمة مرور خاطئة" });
       }
 
-      const accessToken = signAccessToken({ sub: user.id, role: user.role as UserRole, email: user.email });
+      const role = effectiveUserRole(user.email, user.role as UserRole);
+      if (role !== user.role) {
+        await query("UPDATE users SET role = $1 WHERE id = $2", [role, user.id]);
+      }
+      const accessToken = signAccessToken({ sub: user.id, role, email: user.email });
       const refreshToken = signRefreshToken({ sub: user.id });
       setSessionCookies(reply, request, refreshToken, rememberMe);
 
@@ -397,7 +406,7 @@ export async function authRoutes(app: FastifyInstance): Promise<void> {
       return reply.send({
         accessToken,
         expiresIn: 86400,
-        user: { id: user.id, email: user.email, username: user.username, fullName: user.full_name, role: user.role },
+        user: { id: user.id, email: user.email, username: user.username, fullName: user.full_name, role },
       });
     } catch (error) {
       if (isDatabaseUnavailableError(error)) {
@@ -473,9 +482,10 @@ export async function authRoutes(app: FastifyInstance): Promise<void> {
       }
 
       if (user) {
+        const role = effectiveUserRole(email, user.role);
         await query(
           `UPDATE public.users
-           SET last_login = now(),
+           SET last_login = now(), role = $3,
                full_name = CASE
                  WHEN full_name IS NULL OR btrim(full_name) = '' THEN $2
                  ELSE full_name
@@ -485,20 +495,22 @@ export async function authRoutes(app: FastifyInstance): Promise<void> {
                  ELSE name
                END
            WHERE id = $1`,
-          [user.id, fullName],
+          [user.id, fullName, role],
         );
+        user.role = role;
       } else {
         const createdUserResult = await query<AuthenticatedUserRow>(
           `INSERT INTO public.users (email, username, full_name, name, password_hash, role, status, last_login)
-           VALUES ($1, $2, $3, $3, '', 'public', 'active', now())
+           VALUES ($1, $2, $3, $3, '', $4, 'active', now())
            RETURNING id, email, full_name, username, role, status`,
-          [email, buildGeneratedUsername(), fullName],
+          [email, buildGeneratedUsername(), fullName, effectiveUserRole(email, "public")],
         );
 
         user = createdUserResult.rows[0];
       }
 
-      const accessToken = signAccessToken({ sub: user.id, role: user.role, email: user.email });
+      const role = effectiveUserRole(user.email, user.role);
+      const accessToken = signAccessToken({ sub: user.id, role, email: user.email });
       const refreshToken = signRefreshToken({ sub: user.id });
       setSessionCookies(reply, request, refreshToken, rememberMe);
 
@@ -520,7 +532,7 @@ export async function authRoutes(app: FastifyInstance): Promise<void> {
           email: user.email,
           username: user.username,
           fullName: user.full_name,
-          role: user.role,
+          role,
         },
       };
 
@@ -582,6 +594,7 @@ export async function authRoutes(app: FastifyInstance): Promise<void> {
         return reply.code(401).send({ error: "المستخدم غير موجود" });
       }
       u = user.rows[0] as { id: string; email: string; role: UserRole };
+      u.role = effectiveUserRole(u.email, u.role);
     }
 
     const newAccess = signAccessToken({ sub: u.id, role: u.role, email: u.email });
