@@ -77,6 +77,8 @@ export function AppShell() {
       />
       <Route path="/mobile-os" element={<Navigate to="/" replace />} />
       <Route path="/mobile-os/*" element={<Navigate to="/" replace />} />
+      <Route path="/mcp" element={<Navigate to="/home" replace />} />
+      <Route path="/mcp/*" element={<Navigate to="/home" replace />} />
       <Route path="/login" element={<LoginPage />} />
       <Route
         element={
