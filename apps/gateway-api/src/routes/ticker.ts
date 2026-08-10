@@ -9,13 +9,18 @@ interface TickerRoutesOptions {
   pluginDb: PluginDb;
 }
 
-const TICKER_CURATED: Array<{ kind: string; title: string }> = [
+const TICKER_CURATED: Array<{ kind: string; title: string; linkType?: string; linkId?: string }> = [
   { kind: "tip",      title: "💡 نصيحة اليوم: يمكنك حفظ أي رد بالنقر على المحفوظات لقراءته لاحقاً" },
   { kind: "tip",      title: "💡 هل تعلم؟ يمكنك التحدث صوتياً مع موطني بالضغط على 🎧" },
   { kind: "tip",      title: "💡 استخدم حاسبة الرواتب لمعرفة تفاصيل راتبك ومعاشك التقاعدي" },
   { kind: "tip",      title: "📋 النماذج الرسمية متاحة — اختر نموذجاً من القائمة لتعبئته وتحميله" },
   { kind: "announce", title: "📢 تم تحديث قاعدة المعرفة — 743 مقطع قانوني متاح للبحث" },
   { kind: "announce", title: "🔔 تابع حالة قضاياك ومستنداتك من الشريط الجانبي" },
+  { kind: "announce", title: "🍎 فرصة عمل موسمية: قطاف التفاح في عين الحفة - تنورين", linkType: "route", linkId: "/jobs/ainelhafeh" },
+  { kind: "announce", title: "💼 تحقق من أحدث عروض العمل", linkType: "route", linkId: "/jobs" },
+  { kind: "announce", title: "🛒 تحقق من إعلانات السوق", linkType: "route", linkId: "/marketplace" },
+  { kind: "announce", title: "💰 تحقق من معاشك", linkType: "route", linkId: "/salary" },
+  { kind: "announce", title: "🎓 تحقق من المنح المدرسية", linkType: "route", linkId: "/school-grants" },
   { kind: "suggest",  title: "❓ سؤال شائع: ما هي شروط الإحالة على التقاعد؟" },
   { kind: "suggest",  title: "❓ سؤال شائع: كيف أحسب معاشي التقاعدي؟" },
   { kind: "suggest",  title: "❓ سؤال شائع: ما هي حقوق ذوي العسكري المتوفى؟" },
