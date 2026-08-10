@@ -4,13 +4,12 @@ set -Eeuo pipefail
 REPO="/home/koudama/repositories/watanybot"
 WEB_ROOT="${REPO}/apps/web-user"
 DIST="${WEB_ROOT}/dist"
-PUBLIC_PARENT="/home/koudama/public_html"
-LIVE="${PUBLIC_PARENT}/mcp"
+PUBLIC_PARENT="/home/koudama"
+LIVE="${PUBLIC_PARENT}/public_html"
 STAMP="$(date +%Y%m%d-%H%M%S)"
-STAGE="${PUBLIC_PARENT}/.mcp-stage-${STAMP}"
-PREVIOUS="${PUBLIC_PARENT}/mcp-previous-${STAMP}"
-BACKUP="${PUBLIC_PARENT}/mcp-${STAMP}.tar.gz"
-SWAPPED=0
+STAGE="${PUBLIC_PARENT}/.watany-stage-${STAMP}"
+BACKUP="${PUBLIC_PARENT}/watany-public_html-${STAMP}.tar.gz"
+DEPLOYED=0
 
 fail() {
   printf '\nWATANYBOT CPANEL DEPLOYMENT: FAILED\n%s\n' "$1" >&2
@@ -18,15 +17,18 @@ fail() {
 }
 
 rollback() {
-  if [ "$SWAPPED" -eq 1 ] && [ -e "$PREVIOUS" ]; then
-    FAILED="${LIVE}.failed-${STAMP}"
-    rm -rf "$FAILED"
+  if [ "$DEPLOYED" -eq 1 ] && [ -s "$BACKUP" ]; then
+    RESTORE="${PUBLIC_PARENT}/.watany-restore-${STAMP}"
+    rm -rf "$RESTORE"
+    mkdir -p "$RESTORE"
+    tar -xzf "$BACKUP" --no-same-owner -C "$RESTORE"
+    RESTORE_ROOT="${RESTORE}/$(basename "$LIVE")"
+    [ -d "$RESTORE_ROOT" ] || return 1
 
-    if [ -e "$LIVE" ] || [ -L "$LIVE" ]; then
-      mv "$LIVE" "$FAILED"
-    fi
-
-    mv "$PREVIOUS" "$LIVE"
+    find "$LIVE" -mindepth 1 -maxdepth 1 ! -name '.htaccess' ! -name '.well-known' -exec rm -rf {} +
+    tar --exclude='./.htaccess' --exclude='./.well-known' --exclude='./.apex-deployed-sha' -C "$RESTORE_ROOT" -cf - . |
+      tar --no-same-owner -xf - -C "$LIVE"
+    rm -rf "$RESTORE"
     printf 'ROLLBACK: PASS\n'
   fi
 }
@@ -43,7 +45,7 @@ BRANCH="$(git branch --show-current)"
 STATUS="$(git status --porcelain --untracked-files=all)"
 COMMIT="$(git rev-parse HEAD)"
 
-[ "$BRANCH" = "main" ] || fail "Deployment is allowed only from main. Current branch: $BRANCH"
+[ "$BRANCH" = "integration/theme-upgrade-20260728" ] || fail "Deployment is allowed only from integration/theme-upgrade-20260728. Current branch: $BRANCH"
 [ -z "$STATUS" ] || fail "Repository worktree is not clean."
 
 export PATH="${HOME}/.local/bin:${HOME}/bin:${PATH}"
@@ -76,79 +78,57 @@ printf 'Using pnpm: %s\n' "${PNPM[*]}"
 printf 'Installing locked frontend dependencies...\n'
 "${PNPM[@]}" install --frozen-lockfile --ignore-scripts
 
-printf 'Building WatanyBot frontend for /mcp/...\n'
-VITE_BASE=/mcp/ "${PNPM[@]}" --dir "$WEB_ROOT" build
+printf 'Building WatanyBot frontend for the /mcp/ document-root fallback...\n'
+VITE_BASE=/ "${PNPM[@]}" --dir "$WEB_ROOT" build
 
 [ -f "$DIST/index.html" ] || fail "Build did not create dist/index.html."
 
-grep -Eq '(src|href)="/mcp/[^\"]+\.(js|css)' "$DIST/index.html" || \
-  fail "Built index does not reference /mcp/ JavaScript or CSS assets."
-
-cat > "$DIST/.htaccess" <<'HTACCESS'
-DirectoryIndex index.html
-
-<IfModule mod_rewrite.c>
-  RewriteEngine On
-  RewriteBase /mcp/
-
-  RewriteCond %{REQUEST_FILENAME} -f [OR]
-  RewriteCond %{REQUEST_FILENAME} -d
-  RewriteRule ^ - [L]
-
-  RewriteRule ^ index.html [L]
-</IfModule>
-HTACCESS
-
-cat > "$DIST/deploy-manifest.json" <<MANIFEST
-{
-  "application": "watanybot",
-  "component": "web-user",
-  "branch": "main",
-  "commit": "${COMMIT}",
-  "deployedAtUtc": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
-  "publicPath": "/mcp/"
-}
-MANIFEST
+grep -Eq '(src|href)="/assets/[^\"]+\.(js|css)' "$DIST/index.html" || \
+  fail "Built index does not reference root JavaScript or CSS assets."
 
 rm -rf "$STAGE"
 mkdir -p "$STAGE"
 cp -a "$DIST/." "$STAGE/"
+printf '%s\n' "$COMMIT" > "$STAGE/.apex-deployed-sha"
 
 [ -f "$STAGE/index.html" ] || fail "Staged release does not contain index.html."
 [ -f "$STAGE/.htaccess" ] || fail "Staged release does not contain .htaccess."
-[ -f "$STAGE/deploy-manifest.json" ] || fail "Staged release does not contain deploy-manifest.json."
+[ -f "$STAGE/.apex-deployed-sha" ] || fail "Staged release does not contain .apex-deployed-sha."
 
-grep -Fq "$COMMIT" "$STAGE/deploy-manifest.json" || \
-  fail "Staged deployment manifest does not contain commit $COMMIT."
+grep -Fq "$COMMIT" "$STAGE/.apex-deployed-sha" || \
+  fail "Staged deployment marker does not contain commit $COMMIT."
 
 find "$STAGE" -type d -exec chmod 755 {} +
 find "$STAGE" -type f -exec chmod 644 {} +
 
-rm -rf "$PREVIOUS"
+tar -czhf "$BACKUP" -C "$PUBLIC_PARENT" "$(basename "$LIVE")"
+[ -s "$BACKUP" ] || fail "Live frontend backup was not created."
 
-if [ -e "$LIVE" ] || [ -L "$LIVE" ]; then
-  tar -czhf "$BACKUP" -C "$PUBLIC_PARENT" "$(basename "$LIVE")"
-  [ -s "$BACKUP" ] || fail "Live frontend backup was not created."
-  mv "$LIVE" "$PREVIOUS"
-fi
-
-mv "$STAGE" "$LIVE"
-SWAPPED=1
+tar --exclude='./.htaccess' --exclude='./.well-known' --exclude='./.apex-deployed-sha' -C "$STAGE" -cf - . |
+  tar --no-same-owner -xf - -C "$LIVE"
+printf '%s\n' "$COMMIT" > "$LIVE/.apex-deployed-sha"
+DEPLOYED=1
 
 sleep 3
 
-PUBLIC_MANIFEST="$(
+PUBLIC_MARKER="$(
   curl \
     --fail \
     --silent \
     --show-error \
     --location \
     --header 'Cache-Control: no-cache' \
-    "https://koudama.com/mcp/deploy-manifest.json?cpanel=${STAMP}"
+    "https://koudama.com/.apex-deployed-sha?cpanel=${STAMP}"
 )"
 
-printf '%s' "$PUBLIC_MANIFEST" | grep -Fq "$COMMIT" || \
-  fail "Public deployment manifest does not contain commit $COMMIT."
+printf '%s' "$PUBLIC_MARKER" | grep -Fq "$COMMIT" || \
+  fail "Public deployment marker does not contain commit $COMMIT."
+
+ASSET_PATH="$(grep -oE 'src="/assets/[^\"]+\.js' "$DIST/index.html" | head -n 1 | cut -c 6-)"
+[ -n "$ASSET_PATH" ] || fail "Built index did not expose a root asset path."
+curl --fail --silent --show-error --location \
+  --header 'Cache-Control: no-cache' \
+  "https://koudama.com${ASSET_PATH}?cpanel=${STAMP}" > /dev/null
 
 for PUBLIC_URL in \
   "https://koudama.com/mcp/?cpanel=${STAMP}" \
@@ -168,7 +148,7 @@ do
     fail "Frontend shell was not detected at $PUBLIC_URL."
 done
 
-SWAPPED=0
+DEPLOYED=0
 trap - ERR
 
 printf '\nWATANYBOT CPANEL DEPLOYMENT: PASS\n'
