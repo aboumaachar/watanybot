@@ -79,7 +79,7 @@ printf 'Installing locked frontend dependencies...\n'
 "${PNPM[@]}" install --frozen-lockfile --ignore-scripts
 
 printf 'Building WatanyBot frontend for the /mcp/ document-root fallback...\n'
-VITE_BASE=/ "${PNPM[@]}" --dir "$WEB_ROOT" build
+VITE_BASE=/ VITE_API_URL=/mcp "${PNPM[@]}" --dir "$WEB_ROOT" build
 
 [ -f "$DIST/index.html" ] || fail "Build did not create dist/index.html."
 
