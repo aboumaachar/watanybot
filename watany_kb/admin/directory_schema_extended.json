@@ -1,0 +1,32 @@
+{
+  "version": "1.0.0",
+  "updated_at": "2026-02-24T11:51:34.965978Z",
+  "entry_fields": {
+    "id": "string",
+    "name_lb": "string",
+    "name_formal": "string",
+    "entity_type": "office|hospital|person|committee|bank|other",
+    "role_lb": "string (optional, for person/office)",
+    "scope": {
+      "country": "string default لبنان",
+      "muhafaza": "string optional",
+      "caza": "string optional",
+      "city": "string optional",
+      "branch": "string optional (bank branch, office branch)"
+    },
+    "domains": "array",
+    "topics": "array",
+    "phones": "array of {label_lb, number}",
+    "whatsapp": "array",
+    "emails": "array",
+    "hours_lb": "string",
+    "locations": "array of {label_lb,address_lb}",
+    "handoff_lb": "string",
+    "priority": "int"
+  },
+  "matching_rules_lb": [
+    "إذا سأل عن 'مين مسؤول' وذكر منطقة، منفضّل entry يلي scope بتطابق المنطقة.",
+    "إذا ما ذكر منطقة، منجيب الأعلى priority أو المركزي.",
+    "للأشخاص: الأفضل يكون role_lb واضح (رئيس قسم/مسؤول متابعة/نقطة اتصال)."
+  ]
+}

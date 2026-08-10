@@ -1,0 +1,191 @@
+{
+  "description": "بيانات الرتب وبدلات الأوسمة — حاسبة المعاش التقاعدي (v5)",
+  "familyAllowance": {
+    "wife": 60000,
+    "perChild": 33000
+  },
+  "familyAllowanceAfterRaise": {
+    "wife": 2100000,
+    "perChild": 1160000,
+    "note_ar": "القيم المقترحة بعد إقرار الزيادة في مجلس النواب — لم تُقرّ نهائياً بعد"
+  },
+  "usdRate": 89500,
+  "ranks": [
+    {
+      "rank": "جندي",
+      "category": "الأفراد",
+      "maxDegree": 20
+    },
+    {
+      "rank": "جندي اول",
+      "category": "الأفراد",
+      "maxDegree": 20
+    },
+    {
+      "rank": "عريف",
+      "category": "الأفراد",
+      "maxDegree": 20
+    },
+    {
+      "rank": "عريف اول",
+      "category": "الأفراد",
+      "maxDegree": 20
+    },
+    {
+      "rank": "رقيب",
+      "category": "الرتباء",
+      "maxDegree": 20
+    },
+    {
+      "rank": "رقيب اول",
+      "category": "الرتباء",
+      "maxDegree": 20
+    },
+    {
+      "rank": "معاون",
+      "category": "الرتباء",
+      "maxDegree": 20
+    },
+    {
+      "rank": "معاون اول",
+      "category": "الرتباء",
+      "maxDegree": 20
+    },
+    {
+      "rank": "مؤهل",
+      "category": "الرتباء",
+      "maxDegree": 20
+    },
+    {
+      "rank": "مؤهل اول",
+      "category": "الرتباء",
+      "maxDegree": 20
+    },
+    {
+      "rank": "ملازم",
+      "category": "الضباط الأعوان",
+      "maxDegree": 13
+    },
+    {
+      "rank": "ملازم اول",
+      "category": "الضباط الأعوان",
+      "maxDegree": 14
+    },
+    {
+      "rank": "نقيب",
+      "category": "الضباط الأعوان",
+      "maxDegree": 13
+    },
+    {
+      "rank": "رائد",
+      "category": "الضباط القادة",
+      "maxDegree": 13
+    },
+    {
+      "rank": "مقدم",
+      "category": "الضباط القادة",
+      "maxDegree": 14
+    },
+    {
+      "rank": "عقيد",
+      "category": "الضباط القادة",
+      "maxDegree": 13
+    },
+    {
+      "rank": "عميد",
+      "category": "الضباط العامون",
+      "maxDegree": 11
+    },
+    {
+      "rank": "لواء",
+      "category": "الضباط العامون",
+      "maxDegree": 7
+    },
+    {
+      "rank": "عماد",
+      "category": "الضباط العامون",
+      "maxDegree": 5
+    }
+  ],
+  "ornamentChoices": [
+    {
+      "id": "cedar_knight",
+      "name_ar": "وسام الأرز — فارس",
+      "annualValue": 750000,
+      "monthlyValue": 62500
+    },
+    {
+      "id": "cedar_officer",
+      "name_ar": "وسام الأرز — ضابط",
+      "annualValue": 1000000,
+      "monthlyValue": 83333
+    },
+    {
+      "id": "cedar_commander",
+      "name_ar": "وسام الأرز — كومندور",
+      "annualValue": 1180000,
+      "monthlyValue": 98333
+    },
+    {
+      "id": "cedar_grand_officer",
+      "name_ar": "وسام الأرز — ضابط أكبر",
+      "annualValue": 1800000,
+      "monthlyValue": 150000
+    },
+    {
+      "id": "cedar_grand_cordon",
+      "name_ar": "وسام الأرز — وشاح أكبر",
+      "annualValue": 2480000,
+      "monthlyValue": 206667
+    },
+    {
+      "id": "military_medal",
+      "name_ar": "الميدالية العسكرية",
+      "annualValue": 593500,
+      "monthlyValue": 49458
+    }
+  ],
+  "note_ar": "جدول الرواتب يحتوي على جميع القيم المُحتسبة مسبقاً. يُضاف فقط: تعويض عائلي + أوسمة.",
+  "socialAids": {
+    "budget_2022": {
+      "type": "multiplier_with_caps",
+      "multiplier": 2,
+      "base_excludes": [
+        "family_allowance",
+        "ornaments"
+      ],
+      "min_total_including_base": 500000,
+      "max_increase": 12000000
+    },
+    "decree_11227": {
+      "type": "multiplier",
+      "multiplier": 4,
+      "base_excludes": [
+        "family_allowance",
+        "ornaments"
+      ]
+    },
+    "decree_11227_2": {
+      "type": "multiplier_with_floor",
+      "multiplier": 3,
+      "base_excludes": [
+        "family_allowance",
+        "ornaments"
+      ],
+      "floor": 7000000
+    },
+    "decree_13020": {
+      "type": "multiplier_with_floor",
+      "multiplier": 3,
+      "base_excludes": [
+        "family_allowance",
+        "ornaments"
+      ],
+      "floor": 7000000
+    },
+    "grant_12m": {
+      "type": "fixed",
+      "amount": 12000000
+    }
+  }
+}

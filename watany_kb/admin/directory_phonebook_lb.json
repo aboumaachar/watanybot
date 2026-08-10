@@ -1,0 +1,334 @@
+{
+  "version": "1.0.0",
+  "updated_at": "2026-02-24T11:29:22.171558Z",
+  "notes_lb": "هيدا دفتر أرقام/جهات. الإدارة بتعبّي الأرقام والأسماء الرسمية. البوت بيجاوب بحسب الجهاز/المنطقة ونوع المشكلة.",
+  "entries": [
+    {
+      "id": "dir_2292490fdb83978f",
+      "name_lb": "المستشفى العسكري",
+      "name_formal": "المستشفى العسكري المركزي",
+      "entity_type": "hospital",
+      "category": "hospitals",
+      "subCategory": "مستشفيات لبنانية",
+      "source": "user_provided_hospital_list",
+      "sourceReliability": "user_provided_unverified",
+      "domains": [
+        "medical"
+      ],
+      "topics": [
+        "استشفاء",
+        "طبابة",
+        "مواعيد",
+        "طوارئ"
+      ],
+      "phones": [
+        {
+          "label_lb": "سنترال",
+          "number": "+961-XX-XXXXXX"
+        }
+      ],
+      "whatsapp": [],
+      "emails": [],
+      "hours_lb": "حسب الدوام الرسمي",
+      "locations": [
+        {
+          "label_lb": "بيروت",
+          "address_lb": "—"
+        }
+      ],
+      "handoff_lb": "إذا الموضوع طارئ/طوارئ، اتصل بالسنترال واطلب القسم المختص.",
+      "priority": 100
+    },
+    {
+      "id": "dir_c1a45e27dced151d",
+      "name_lb": "دائرة التقاعد",
+      "name_formal": "دائرة التقاعد/الرواتب",
+      "entity_type": "office",
+      "domains": [
+        "mof",
+        "pension",
+        "severance"
+      ],
+      "topics": [
+        "متابعة معاملة",
+        "دفتر تقاعد",
+        "تصفية",
+        "تخصيص",
+        "اعتراض"
+      ],
+      "phones": [
+        {
+          "label_lb": "مكتب المتابعة",
+          "number": "+961-XX-XXXXXX"
+        }
+      ],
+      "whatsapp": [],
+      "emails": [],
+      "hours_lb": "دوام رسمي",
+      "locations": [
+        {
+          "label_lb": "بيروت",
+          "address_lb": "—"
+        }
+      ],
+      "handoff_lb": "حضّر رقم المعاملة/الملف قبل الاتصال.",
+      "priority": 100
+    },
+    {
+      "id": "dir_hospital_jabal_lubnan",
+      "name_lb": "مستشفى جبل لبنان",
+      "name_formal": "مستشفى جبل لبنان",
+      "entity_type": "hospital",
+      "category": "hospitals",
+      "subCategory": "مستشفيات لبنانية",
+      "source": "user_provided_hospital_list",
+      "sourceReliability": "user_provided_unverified",
+      "domains": [
+        "medical"
+      ],
+      "topics": [
+        "استشفاء",
+        "طبابة",
+        "جراحة",
+        "رعاية"
+      ],
+      "phones": [
+        {
+          "label_lb": "مركز الاتصال",
+          "number": "+961-05-957000"
+        },
+        {
+          "label_lb": "الإدارة",
+          "number": "+961-05-955855"
+        }
+      ],
+      "whatsapp": [],
+      "emails": [],
+      "hours_lb": "دوام رسمي",
+      "locations": [
+        {
+          "label_lb": "بيروت",
+          "address_lb": "—"
+        }
+      ],
+      "handoff_lb": "اتصل بالمستشفى للاستفسار عن قسم العلاج وخدمات الطوارئ.",
+      "priority": 95
+    },
+    {
+      "id": "dir_hospital_aubmc",
+      "name_lb": "مستشفى الجامعة الأميركية في بيروت",
+      "name_formal": "American University of Beirut Medical Center",
+      "entity_type": "hospital",
+      "category": "hospitals",
+      "subCategory": "مستشفيات لبنانية",
+      "source": "user_provided_hospital_list",
+      "sourceReliability": "user_provided_unverified",
+      "domains": [
+        "medical"
+      ],
+      "topics": [
+        "استشفاء",
+        "طوارئ",
+        "عيادات",
+        "استشارات"
+      ],
+      "phones": [
+        {
+          "label_lb": "الهاتف الرئيسي",
+          "number": "+961-01-350000"
+        }
+      ],
+      "whatsapp": [],
+      "emails": [],
+      "hours_lb": "دوام رسمي",
+      "locations": [
+        {
+          "label_lb": "بيروت",
+          "address_lb": "—"
+        }
+      ],
+      "handoff_lb": "اطلب التحويل إلى الاستقبال الطبي أو الطوارئ.",
+      "priority": 95
+    },
+    {
+      "id": "dir_hospital_roum",
+      "name_lb": "مستشفى الروم الجامعي",
+      "name_formal": "مستشفى الروم الجامعي",
+      "entity_type": "hospital",
+      "category": "hospitals",
+      "subCategory": "مستشفيات لبنانية",
+      "source": "user_provided_hospital_list",
+      "sourceReliability": "user_provided_unverified",
+      "domains": [
+        "medical"
+      ],
+      "topics": [
+        "استشفاء",
+        "طبابة",
+        "جراحة",
+        "طوارئ"
+      ],
+      "phones": [
+        {
+          "label_lb": "الهاتف الرئيسي",
+          "number": "+961-01-614400"
+        }
+      ],
+      "whatsapp": [],
+      "emails": [],
+      "hours_lb": "دوام رسمي",
+      "locations": [
+        {
+          "label_lb": "بيروت",
+          "address_lb": "—"
+        }
+      ],
+      "handoff_lb": "للاستفسار عن مواعيد العيادات أو الطوارئ، اتصل مباشرة.",
+      "priority": 95
+    },
+    {
+      "id": "dir_hospital_mashreq",
+      "name_lb": "مستشفى المشرق",
+      "name_formal": "مستشفى المشرق",
+      "entity_type": "hospital",
+      "category": "hospitals",
+      "subCategory": "مستشفيات لبنانية",
+      "source": "user_provided_hospital_list",
+      "sourceReliability": "user_provided_unverified",
+      "domains": [
+        "medical"
+      ],
+      "topics": [
+        "استشفاء",
+        "عيادات",
+        "توليد",
+        "أطفال"
+      ],
+      "phones": [
+        {
+          "label_lb": "الهاتف الرئيسي",
+          "number": "+961-01-653000"
+        }
+      ],
+      "whatsapp": [],
+      "emails": [],
+      "hours_lb": "دوام رسمي",
+      "locations": [
+        {
+          "label_lb": "بيروت",
+          "address_lb": "—"
+        }
+      ],
+      "handoff_lb": "اطلب معلومات عن العيادات الخارجية وخدمات الإسعاف.",
+      "priority": 95
+    },
+    {
+      "id": "dir_hospital_anfal",
+      "name_lb": "مستشفى سيدة المعونات",
+      "name_formal": "مستشفى سيدة المعونات",
+      "entity_type": "hospital",
+      "category": "hospitals",
+      "subCategory": "مستشفيات لبنانية",
+      "source": "user_provided_hospital_list",
+      "sourceReliability": "user_provided_unverified",
+      "domains": [
+        "medical"
+      ],
+      "topics": [
+        "استشفاء",
+        "طبابة",
+        "عناية",
+        "عيادات"
+      ],
+      "phones": [
+        {
+          "label_lb": "الهاتف الرئيسي",
+          "number": "+961-01-478300"
+        }
+      ],
+      "whatsapp": [],
+      "emails": [],
+      "hours_lb": "دوام رسمي",
+      "locations": [
+        {
+          "label_lb": "بيروت",
+          "address_lb": "—"
+        }
+      ],
+      "handoff_lb": "استفسر عن أقسام الطوارئ والحالات المستعجلة.",
+      "priority": 95
+    },
+    {
+      "id": "dir_hospital_beirut_gov",
+      "name_lb": "مستشفى بيروت الحكومي",
+      "name_formal": "مستشفى بيروت الحكومي",
+      "entity_type": "hospital",
+      "category": "hospitals",
+      "subCategory": "مستشفيات لبنانية",
+      "source": "user_provided_hospital_list",
+      "sourceReliability": "user_provided_unverified",
+      "domains": [
+        "medical"
+      ],
+      "topics": [
+        "استشفاء",
+        "طوارئ",
+        "عيادات",
+        "أمومي"
+      ],
+      "phones": [
+        {
+          "label_lb": "الهاتف الرئيسي",
+          "number": "+961-01-612600"
+        }
+      ],
+      "whatsapp": [],
+      "emails": [],
+      "hours_lb": "دوام رسمي",
+      "locations": [
+        {
+          "label_lb": "بيروت",
+          "address_lb": "—"
+        }
+      ],
+      "handoff_lb": "اتصل باستقبال المستشفى لمعرفة الأقسام المتاحة.",
+      "priority": 95
+    },
+    {
+      "id": "dir_hospital_st_georges",
+      "name_lb": "مستشفى القديس جورج",
+      "name_formal": "مستشفى القديس جورج",
+      "entity_type": "hospital",
+      "category": "hospitals",
+      "subCategory": "مستشفيات لبنانية",
+      "source": "user_provided_hospital_list",
+      "sourceReliability": "user_provided_unverified",
+      "domains": [
+        "medical"
+      ],
+      "topics": [
+        "استشفاء",
+        "طبابة",
+        "طوارئ",
+        "عيادات"
+      ],
+      "phones": [
+        {
+          "label_lb": "الهاتف الرئيسي",
+          "number": "+961-01-339000"
+        }
+      ],
+      "whatsapp": [],
+      "emails": [],
+      "hours_lb": "دوام رسمي",
+      "locations": [
+        {
+          "label_lb": "بيروت",
+          "address_lb": "—"
+        }
+      ],
+      "handoff_lb": "اتصل للاستفسار عن مواعيد الطوارئ وخدمات العيادات.",
+      "priority": 95
+    }
+  ]
+}
