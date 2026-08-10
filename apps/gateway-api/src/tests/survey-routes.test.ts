@@ -29,7 +29,7 @@ afterEach(() => {
 });
 
 describe("survey routes", () => {
-  it("replaces stale local voting items with the built-in World Cup polls when no legacy source is configured", async () => {
+  it("replaces stale local voting items with the WatanyBot feedback surveys", async () => {
     const pluginDb = await createVotingPluginDb();
     pluginDb.prepare("INSERT INTO voting_elections (id, title, description, status, created_by, start_date, end_date, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")
       .run("legacy-local-election", "استطلاع قديم", "يجب استبداله", "active", "legacy-user", null, null, Date.now() - 10_000, Date.now() - 10_000);
@@ -54,35 +54,24 @@ describe("survey routes", () => {
     expect(listResponse.json()).toEqual({
       items: [
         {
-          id: "fifa-wc-2026-upcoming-games",
-          title: "أي مباراة من مواجهات 23 يونيو ستتابع أولاً؟",
-          description: "بحسب جدول FIFA الرسمي ليوم 23 يونيو 2026، هذه هي أبرز مباريات اليوم القادمة في المجموعتين K وL.",
+          id: "watanybot-feature-usage-intent",
+          title: "هل ترغب في استخدام ميزات موطني بوت؟",
+          description: "ساعدنا في معرفة مدى استعدادك لاستخدام خدمات موطني بوت اليومية.",
           status: "active",
-          startDate: "2026-06-23T08:00:00.000Z",
-          endDate: "2026-06-24T04:00:00.000Z",
-          createdBy: "system:fifa-world-cup-2026",
-          optionCount: 4,
+          startDate: "2026-08-01T00:00:00.000Z",
+          endDate: "2026-12-31T23:59:59.000Z",
+          createdBy: "system:watanybot-demo",
+          optionCount: 3,
           hasVoted: false,
         },
         {
-          id: "fifa-wc-2026-champion-team",
-          title: "من سيتوج بطلاً لكأس العالم 2026؟",
-          description: "اعتمادًا على تحديث FIFA للمتأهلين ونتائج 22 يونيو، هذه أبرز المنتخبات التي حسمت التأهل مبكرًا إلى دور الـ32.",
+          id: "watanybot-user-satisfaction",
+          title: "ما مدى رضاك عن تطبيق موطني بوت؟",
+          description: "نستخدم رأيك لتحسين تجربة المساعد والخدمات الرقمية داخل التطبيق.",
           status: "active",
-          startDate: "2026-06-23T08:00:00.000Z",
-          endDate: "2026-07-19T23:59:59.000Z",
-          createdBy: "system:fifa-world-cup-2026",
-          optionCount: 6,
-          hasVoted: false,
-        },
-        {
-          id: "fifa-wc-2026-golden-boot",
-          title: "من سيحصد الحذاء الذهبي في كأس العالم 2026؟",
-          description: "استنادًا إلى تحديث FIFA بتاريخ 22 و23 يونيو: ميسي يقود السباق، ومبابي يلاحقه، وأونداف متألق، وهالاند حاضر بقوة.",
-          status: "active",
-          startDate: "2026-06-23T08:00:00.000Z",
-          endDate: "2026-07-19T23:59:59.000Z",
-          createdBy: "system:fifa-world-cup-2026",
+          startDate: "2026-08-01T00:00:00.000Z",
+          endDate: "2026-12-31T23:59:59.000Z",
+          createdBy: "system:watanybot-demo",
           optionCount: 4,
           hasVoted: false,
         },
@@ -100,49 +89,51 @@ describe("survey routes", () => {
 
     const listResponse = await app.inject({ method: "GET", url: "/api/voting/elections" });
     expect(listResponse.statusCode).toBe(200);
-    expect((listResponse.json() as { items: Array<{ id: string }> }).items).toHaveLength(3);
+    expect((listResponse.json() as { items: Array<{ id: string }> }).items).toHaveLength(2);
 
-    const detailResponse = await app.inject({ method: "GET", url: "/api/voting/elections/fifa-wc-2026-upcoming-games" });
+    const closedListResponse = await app.inject({ method: "GET", url: "/api/voting/elections?status=closed" });
+    expect(closedListResponse.statusCode).toBe(200);
+    expect(closedListResponse.json()).toMatchObject({
+      items: [
+        expect.objectContaining({
+          id: "world-cup-2026-final-argentina-spain",
+          status: "closed",
+          optionCount: 2,
+        }),
+      ],
+    });
+
+    const detailResponse = await app.inject({ method: "GET", url: "/api/voting/elections/watanybot-feature-usage-intent" });
     expect(detailResponse.statusCode).toBe(200);
     expect(detailResponse.json()).toMatchObject({
       election: {
-        id: "fifa-wc-2026-upcoming-games",
-        title: "أي مباراة من مواجهات 23 يونيو ستتابع أولاً؟",
-        optionCount: 4,
+        id: "watanybot-feature-usage-intent",
+        title: "هل ترغب في استخدام ميزات موطني بوت؟",
+        optionCount: 3,
       },
       canVote: false,
       hasVoted: false,
       options: expect.arrayContaining([
-        expect.objectContaining({ name: "إنجلترا × غانا" }),
-        expect.objectContaining({ name: "البرتغال × أوزبكستان" }),
+        expect.objectContaining({ name: "نعم، بالتأكيد" }),
+        expect.objectContaining({ name: "ربما بعد التعرف عليها" }),
       ]),
     });
 
-    const resultsResponse = await app.inject({ method: "GET", url: "/api/voting/elections/fifa-wc-2026-upcoming-games/results" });
+    const resultsResponse = await app.inject({ method: "GET", url: "/api/voting/elections/world-cup-2026-final-argentina-spain/results" });
     expect(resultsResponse.statusCode).toBe(200);
     expect(resultsResponse.json()).toEqual({
-      electionId: "fifa-wc-2026-upcoming-games",
-      totalVotes: 0,
+      electionId: "world-cup-2026-final-argentina-spain",
+      totalVotes: 10,
       items: [
         {
-          optionId: "fifa-wc-2026-upcoming-games-por-uzb",
-          optionName: "البرتغال × أوزبكستان",
-          voteCount: 0,
+          optionId: "world-cup-2026-final-argentina-spain-spain",
+          optionName: "إسبانيا",
+          voteCount: 7,
         },
         {
-          optionId: "fifa-wc-2026-upcoming-games-eng-gha",
-          optionName: "إنجلترا × غانا",
-          voteCount: 0,
-        },
-        {
-          optionId: "fifa-wc-2026-upcoming-games-pan-cro",
-          optionName: "بنما × كرواتيا",
-          voteCount: 0,
-        },
-        {
-          optionId: "fifa-wc-2026-upcoming-games-col-cod",
-          optionName: "كولومبيا × الكونغو الديمقراطية",
-          voteCount: 0,
+          optionId: "world-cup-2026-final-argentina-spain-argentina",
+          optionName: "الأرجنتين",
+          voteCount: 3,
         },
       ],
     });
