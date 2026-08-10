@@ -603,11 +603,11 @@ html body #root .watany-recovery-shell .school-grants-page .watany-icon-grid > .
   width: min(100%, 320px);
   margin-inline: auto;
   padding: 18px 28px !important;
-  background: linear-gradient(135deg, #d6a72a, #b98513);
-  border: 1px solid rgba(137, 91, 5, 0.55);
+  background: linear-gradient(135deg, var(--royal-green-primary, #145c46), var(--royal-green-dark, #0c3d2c)) !important;
+  border: 1px solid color-mix(in srgb, var(--royal-green-dark, #0c3d2c) 78%, #061f17);
   border-radius: 14px;
   color: #ffffff !important;
-  box-shadow: 0 8px 20px rgba(137, 91, 5, 0.24);
+  box-shadow: 0 8px 20px color-mix(in srgb, var(--royal-green-dark, #0c3d2c) 28%, transparent);
   font-size: 1.3rem !important;
   font-weight: 900 !important;
   min-height: 68px !important;
@@ -644,17 +644,17 @@ html[data-apex-theme="v274"] body .sc-page .sc-calc-btn__hint {
 
 @keyframes sc-calc-btn-glow {
   0%, 100% {
-    box-shadow: 0 0 0 0 rgba(214, 167, 42, 0.55), 0 8px 20px rgba(137, 91, 5, 0.24);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--royal-green-accent, #1c7a5d) 55%, transparent), 0 8px 20px color-mix(in srgb, var(--royal-green-dark, #0c3d2c) 28%, transparent);
   }
   50% {
-    box-shadow: 0 0 0 5px rgba(214, 167, 42, 0.2), 0 10px 26px rgba(137, 91, 5, 0.38);
+    box-shadow: 0 0 0 5px color-mix(in srgb, var(--royal-green-accent, #1c7a5d) 22%, transparent), 0 10px 26px color-mix(in srgb, var(--royal-green-dark, #0c3d2c) 42%, transparent);
   }
 }
 
 .sc-page .sc-calc-btn:hover:not(:disabled),
 .sc-page .sc-calc-btn:focus-visible {
-  background: linear-gradient(135deg, #e4bb46, #c6931c);
-  box-shadow: 0 0 0 3px rgba(214, 167, 42, 0.24), 0 10px 24px rgba(137, 91, 5, 0.28);
+  background: linear-gradient(135deg, var(--royal-green-accent, #1c7a5d), var(--royal-green-primary, #145c46)) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--royal-green-accent, #1c7a5d) 24%, transparent), 0 10px 24px color-mix(in srgb, var(--royal-green-dark, #0c3d2c) 34%, transparent);
 }
 
 .sc-picker-grid--ranks {

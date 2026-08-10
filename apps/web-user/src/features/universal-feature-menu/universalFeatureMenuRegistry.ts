@@ -30,10 +30,9 @@ export const DRAWER_MENU_GROUPS: readonly UniversalFeatureMenuGroup[] = [
   },
   {
     id: "daily-services",
-    label: "الخدمات اليومية والفرص",
+    label: "الخدمات والفرص",
     route: "/taxi",
     iconFeatureId: "taxi",
-    drawerLevel: "top-level",
     items: [
       { id: "taxi", label: "تاكسي", route: "/taxi", iconFeatureId: "taxi" },
       { id: "market", label: "السوق", route: "/marketplace", iconFeatureId: "marketplace" },

@@ -136,13 +136,14 @@ describe("V4 authorized homepage contract", () => {
     expect(DRAWER_MENU_GROUPS).toHaveLength(5);
     expect(DRAWER_MENU_GROUPS.map((group) => group.label)).toEqual([
       "الإجراءات",
-      "الخدمات اليومية والفرص",
+      "الخدمات والفرص",
       "المعلومات والمراجع",
       "المجتمع والإعلام",
       "الحساب والإعدادات",
     ]);
     expect(DRAWER_MENU_GROUPS[0].id).toBe("procedures");
-    expect(DRAWER_MENU_GROUPS[1]).toEqual(expect.objectContaining({ id: "daily-services", drawerLevel: "top-level" }));
+    expect(DRAWER_MENU_GROUPS[1]).toEqual(expect.objectContaining({ id: "daily-services" }));
+    expect(DRAWER_MENU_GROUPS[1]).not.toHaveProperty("drawerLevel", "top-level");
     expect(DRAWER_MENU_GROUPS.reduce((total, group) => total + group.items.length, 0)).toBe(21);
     expect(DRAWER_MENU_GROUPS.every((group) => group.items.every((item) => item.route.startsWith("/")))).toBe(true);
     expect(DRAWER_MENU_GROUPS.at(-1)?.id).toBe("account");

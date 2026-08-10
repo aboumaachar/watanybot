@@ -90,7 +90,7 @@ button.ticker-item {
 
 /* Keep the compact recovery-shell ticker legible over its forest topbar. */
 .watany-recovery-ticker .ticker-item {
-  color: #fff;
+  color: #000;
   font-size: 15px;
 }
 

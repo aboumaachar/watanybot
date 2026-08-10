@@ -27,7 +27,7 @@ export function WatanyPublicShellV20() {
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
-  const [openMenuGroups, setOpenMenuGroups] = useState<Record<string, boolean>>({ procedures: true });
+  const [openMenuGroups, setOpenMenuGroups] = useState<Record<string, boolean>>({ procedures: true, "daily-services": true });
   const menuButtonRef = useRef<HTMLButtonElement | null>(null);
   const drawerRef = useRef<HTMLElement | null>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
