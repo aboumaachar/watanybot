@@ -16,6 +16,7 @@ import AinElHafehJobsPage from "../pages/AinElHafehJobsPage";
 import AinElHafehAcceptedApplicationsPage from "../pages/AinElHafehAcceptedApplicationsPage";
 import MarketPage from "../pages/MarketPage";
 import SuperAdminPage from "../pages/SuperAdminPage";
+import SuperadminUsersPage from "../features/superadmin-users/SuperadminUsersPage";
 import WatanyV4Homepage from "./WatanyV4Homepage";
 import MobileOsChatPage from "../pages/MobileOsChatPage";
 import HybridKbChatPage from "../pages/hybrid-kb-chat";
@@ -89,6 +90,18 @@ function RequireAdmin({ children }: { children: ReactNode }) {
 export function AppShell() {
   return (
     <Routes>
+      <Route
+        path="/superadmin/users"
+        element={
+          <div
+            data-apex-shell="superadmin"
+            data-apex-foundation="v4-phase-b"
+            className="watany-mobile-shell watany-superadmin-shell"
+          >
+            <RequireAdmin><SuperadminUsersPage /></RequireAdmin>
+          </div>
+        }
+      />
       <Route
         path="/superadmin/*"
         element={
