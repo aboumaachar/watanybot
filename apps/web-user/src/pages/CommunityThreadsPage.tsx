@@ -5,7 +5,7 @@ import { ReliableWebSocketClient, type ReliableWebSocketState } from "@watany/sh
 
 import { api } from "../lib/api";
 import { getDefaultApiWebSocketUrl } from "../lib/api-base";
-import { getAccessToken, subscribeAuthStateChange } from "../lib/auth";
+import { getAccessToken, profileFromToken, subscribeAuthStateChange } from "../lib/auth";
 import { useApp } from "../store/app";
 import { WatanyListingCard } from "../components/listings/WatanyListingCard";
 import type {
@@ -24,6 +24,7 @@ import type {
 } from "../types/domain";
 
 type GroupDiscoveryFilter = "all" | "live" | "unread" | "official";
+type ThreadSearchFilter = "all" | "media" | "links" | "documents" | "audio";
 
 const GROUP_CATEGORY_OPTIONS: Array<{ value: CommunityGroup["category"]; label: string }> = [
   { value: "salary", label: "راتب وتعويضات" },
@@ -42,14 +43,29 @@ const GROUP_DISCOVERY_FILTERS: Array<{ id: GroupDiscoveryFilter; label: string }
   { id: "official", label: "رسمي" },
 ];
 
+const THREAD_SEARCH_FILTERS: Array<{ id: ThreadSearchFilter; label: string }> = [
+  { id: "all", label: "الكل" },
+  { id: "media", label: "وسائط" },
+  { id: "links", label: "روابط" },
+  { id: "documents", label: "مستندات" },
+  { id: "audio", label: "صوت" },
+];
+
 const COMMUNITY_THREAD_PAGE_SIZE = 30;
 const COMMUNITY_THREAD_SEARCH_RESULT_LIMIT = 80;
 const COMMUNITY_LIST_STATE_STORAGE_KEY = "watany-community-list-state";
 const COMMUNITY_REALTIME_POLL_INTERVAL_MS = 5_000;
 const COMMUNITY_QUICK_REACTIONS = ["👍", "❤️", "🙏", "✅"] as const;
+const COMMUNITY_OFFLINE_OUTBOX_KEY = "watany-community-offline-outbox";
+const COMMUNITY_SWIPE_START_THRESHOLD = 10;
+const COMMUNITY_SWIPE_REPLY_THRESHOLD = 64;
+const COMMUNITY_SWIPE_MAX_TRANSLATION = 88;
+const COMMUNITY_SWIPE_HORIZONTAL_BIAS = 1.25;
 
 type LocalMessageStatus = "sending" | "sent" | "failed" | "retrying";
 type PendingAttachmentMessageType = Extract<CommunityMessage["type"], "attachment" | "voice">;
+type VoiceRecorderState = "idle" | "requesting" | "recording" | "failed";
+type AttachmentTransferState = "idle" | "selected" | "uploading" | "accepted" | "failed";
 
 type ThreadMessage = CommunityMessage & {
   clientRequestId?: string;
@@ -57,10 +73,38 @@ type ThreadMessage = CommunityMessage & {
   isOptimistic?: boolean;
 };
 
+function mergeReceiptStatus(current: ThreadMessage["receiptStatus"], next: ThreadMessage["receiptStatus"]): ThreadMessage["receiptStatus"] {
+  const rank = { sent: 0, delivered: 1, read: 2 };
+  return next && (!current || rank[next] > rank[current]) ? next : current;
+}
+
 type PendingThreadAttachment = {
-  file: File;
+  files: File[];
   messageType: PendingAttachmentMessageType;
 };
+
+type OfflineCommunityMessage = {
+  groupId: string;
+  body: string;
+  clientRequestId: string;
+  replyToMessageId?: string;
+  replyToPreview?: CommunityMessage["replyToPreview"];
+};
+
+function readOfflineCommunityOutbox(): OfflineCommunityMessage[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const value = JSON.parse(window.sessionStorage.getItem(COMMUNITY_OFFLINE_OUTBOX_KEY) || "[]");
+    return Array.isArray(value) ? value as OfflineCommunityMessage[] : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeOfflineCommunityOutbox(messages: OfflineCommunityMessage[]) {
+  if (typeof window === "undefined") return;
+  window.sessionStorage.setItem(COMMUNITY_OFFLINE_OUTBOX_KEY, JSON.stringify(messages));
+}
 
 type ProtectedCommunityAttachmentAsset = {
   objectUrl: string;
@@ -93,6 +137,32 @@ type ThreadDetail = Omit<CommunityGroupDetail, "messages" | "page" | "readState"
 };
 
 type ThreadRealtimeEvent = CommunityRealtimeEvent<Record<string, unknown>>;
+
+type CommunityV16BrowserControl = {
+  enabled?: boolean;
+  sinceOverride?: string | null;
+  socket?: ReliableWebSocketClient;
+  state?: ReliableWebSocketState;
+  lastEvent?: ThreadRealtimeEvent;
+  pageLimit?: number;
+  replayEvent?: (event: ThreadRealtimeEvent) => void;
+  getState?: () => ReliableWebSocketState;
+  getMessageReceiptStatus?: (messageId: string) => ThreadMessage["receiptStatus"] | undefined;
+};
+
+function getCommunityV16BrowserControl(): CommunityV16BrowserControl | null {
+  if (!import.meta.env.DEV || typeof window === "undefined") {
+    return null;
+  }
+
+  const control = (window as Window & { __WATANY_COMMUNITY_V16__?: CommunityV16BrowserControl }).__WATANY_COMMUNITY_V16__;
+  return control?.enabled === true ? control : null;
+}
+
+function getCommunityThreadPageLimit() {
+  const testLimit = getCommunityV16BrowserControl()?.pageLimit;
+  return typeof testLimit === "number" && testLimit >= COMMUNITY_THREAD_PAGE_SIZE ? testLimit : COMMUNITY_THREAD_PAGE_SIZE;
+}
 
 type PersistedCommunityListState = {
   groupQuery: string;
@@ -139,10 +209,17 @@ type OverviewScreenProps = Readonly<{
   error: string;
   onOpenGroup: (groupId: string) => void;
   onOpenHighlightedSession: (groupId?: string | null) => void;
+  onOpenStarred: () => void;
 }>;
 
 type ThreadScreenProps = Readonly<{
   thread: ThreadDetail | null;
+  destinationGroups: CommunityGroup[];
+  forwardMessage: CommunityMessage | null;
+  forwarding: boolean;
+  onForward: (messageId: string) => void;
+  onCancelForward: () => void;
+  onConfirmForward: (destinationGroupId: string) => void;
   displayedMessages: ThreadMessage[];
   apiBaseUrl: string;
   activeLiveSession: LiveSession | null;
@@ -153,20 +230,27 @@ type ThreadScreenProps = Readonly<{
   canLoadOlderMessages: boolean;
   firstUnreadMessageId: string | null;
   threadSearchQuery: string;
+  threadSearchFilter: ThreadSearchFilter;
   threadSearchError: string;
   searchingThreadMessages: boolean;
   onThreadSearchQueryChange: (nextValue: string) => void;
+  onThreadSearchFilterChange: (nextValue: ThreadSearchFilter) => void;
   visibleTypingUsers: string[];
   editingMessage: CommunityMessage | null;
   replyingToMessage: CommunityMessage | null;
   composer: string;
   pendingAttachment: PendingThreadAttachment | null;
+  attachmentTransferState: AttachmentTransferState;
   mentionSuggestions: MentionSuggestion[];
   setComposer: (nextValue: string) => void;
   onInsertMention: (token: string) => void;
   onPickAttachment: () => void;
   onPickVoiceAttachment: () => void;
+  voiceRecorderState: VoiceRecorderState;
+  onStopVoiceRecording: () => void;
+  onCancelVoiceRecording: () => void;
   onClearAttachment: () => void;
+  onRemoveAttachment: (index: number) => void;
   pulseTyping: (nextValue: string) => void;
   sending: boolean;
   canWriteToThread: boolean;
@@ -193,7 +277,9 @@ type ThreadScreenProps = Readonly<{
   onDeleteForEveryone: (messageId: string) => void;
   onDeleteForSelf: (messageId: string) => void;
   onTogglePinnedState: (messageId: string, nextPinned: boolean) => void;
+  onToggleStarredState: (messageId: string, nextStarred: boolean) => void;
   onToggleReaction: (messageId: string, emoji: string) => void;
+  onLocateMessage: (messageId: string) => void;
   onReplyToMessage: (messageId: string | null) => void;
   onRetryMessage: (messageId: string) => void;
   onCancelEdit: () => void;
@@ -201,6 +287,7 @@ type ThreadScreenProps = Readonly<{
   canDeleteMessage: (message: CommunityMessage) => boolean;
   currentUserId: string;
   currentUserName: string;
+  canStarMessages: boolean;
   isAdmin: boolean;
   editGroupName: string;
   editGroupDescription: string;
@@ -381,6 +468,10 @@ function isProtectedAudioAsset(message: Pick<CommunityMessage, "type">, contentT
 
 function isProtectedImageAsset(contentType?: string): boolean {
   return Boolean(contentType?.startsWith("image/"));
+}
+
+function isProtectedVideoAsset(contentType?: string): boolean {
+  return Boolean(contentType?.startsWith("video/"));
 }
 
 function buildReplyPreview(message: CommunityMessage): NonNullable<CommunityMessage["replyToPreview"]> {
@@ -932,11 +1023,15 @@ function CommunityGroupListItem({
 function CommunityProtectedAttachmentView({
   message,
   apiBaseUrl,
+  attachmentUrlOverride,
+  attachmentName,
 }: Readonly<{
   message: ThreadMessage;
   apiBaseUrl: string;
+  attachmentUrlOverride?: string;
+  attachmentName?: string;
 }>) {
-  const attachmentUrl = message.attachmentUrl;
+  const attachmentUrl = attachmentUrlOverride || message.attachmentUrl;
   const [asset, setAsset] = useState<ProtectedCommunityAttachmentAsset | null>(null);
   const [loadState, setLoadState] = useState<"idle" | "loading" | "ready" | "error">(
     attachmentUrl ? "loading" : "idle",
@@ -984,10 +1079,11 @@ function CommunityProtectedAttachmentView({
     return null;
   }
 
-  const displayName = asset?.fileName || fallbackAttachmentLabel(message);
+  const displayName = asset?.fileName || attachmentName || fallbackAttachmentLabel(message);
   const showAudio = Boolean(asset && isProtectedAudioAsset(message, asset.contentType));
   const showImage = Boolean(asset && isProtectedImageAsset(asset.contentType));
-  const showDownloadActions = Boolean(asset) && showAudio === false;
+  const showVideo = Boolean(asset && isProtectedVideoAsset(asset.contentType));
+  const showDownloadActions = Boolean(asset) && showAudio === false && showVideo === false;
 
   return (
     <div className="community-thread-attachment">
@@ -1003,12 +1099,38 @@ function CommunityProtectedAttachmentView({
           <track kind="captions" srcLang="ar" label="Arabic captions" />
         </audio>
       ) : null}
+      {showVideo && asset ? (
+        <video className="community-thread-attachment__video" controls preload="metadata" src={asset.objectUrl}>
+          <track kind="captions" srcLang="ar" label="Arabic captions" />
+        </video>
+      ) : null}
       {showDownloadActions && asset ? (
         <div className="community-thread-attachment__actions">
           <a href={asset.objectUrl} target="_blank" rel="noreferrer">فتح المرفق</a>
           <a href={asset.objectUrl} download={displayName}>تنزيل نسخة</a>
         </div>
       ) : null}
+    </div>
+  );
+}
+
+function CommunityProtectedAttachmentGallery({ message, apiBaseUrl }: Readonly<{ message: ThreadMessage; apiBaseUrl: string }>) {
+  const attachments = message.attachments || [];
+  if (attachments.length <= 1) {
+    return <CommunityProtectedAttachmentView message={message} apiBaseUrl={apiBaseUrl} />;
+  }
+
+  return (
+    <div className="community-thread-attachment-gallery" aria-label={`معرض مرفقات، ${attachments.length} عناصر`}>
+      {attachments.map((attachment) => (
+        <CommunityProtectedAttachmentView
+          key={attachment.id}
+          message={message}
+          apiBaseUrl={apiBaseUrl}
+          attachmentUrlOverride={attachment.url}
+          attachmentName={attachment.originalName}
+        />
+      ))}
     </div>
   );
 }
@@ -1020,15 +1142,19 @@ function CommunityMessageItem({ // NOSONAR
   currentUserName,
   isAdmin: _isAdmin,
   onReply,
+  onForward,
   onRetry,
   onStartEdit,
   onDeleteForEveryone,
   onDeleteForSelf,
   onTogglePinnedState,
+  onToggleStarredState,
   onToggleReaction,
+  onLocateMessage,
   editingMessageId,
   canDeleteMessage,
   canModerateMessages,
+  canStarMessages,
 }: Readonly<{
   message: ThreadMessage;
   apiBaseUrl: string;
@@ -1036,17 +1162,26 @@ function CommunityMessageItem({ // NOSONAR
   currentUserName: string;
   isAdmin: boolean;
   onReply: (messageId: string) => void;
+  onForward: (messageId: string) => void;
   onRetry: (messageId: string) => void;
   onStartEdit: (messageId: string) => void;
   onDeleteForEveryone: (messageId: string) => void;
   onDeleteForSelf: (messageId: string) => void;
   onTogglePinnedState: (messageId: string, nextPinned: boolean) => void;
+  onToggleStarredState: (messageId: string, nextStarred: boolean) => void;
   onToggleReaction: (messageId: string, emoji: string) => void;
+  onLocateMessage: (messageId: string) => void;
   editingMessageId: string | null;
   canDeleteMessage: (message: CommunityMessage) => boolean;
   canModerateMessages: boolean;
+  canStarMessages: boolean;
 }>) {
   const [copyState, setCopyState] = useState<"idle" | "copied" | "error">("idle");
+  const [actionSurfaceOpen, setActionSurfaceOpen] = useState(false);
+  const [swipeOffset, setSwipeOffset] = useState(0);
+  const swipeRef = useRef<{ pointerId: number; startX: number; startY: number; active: boolean; offset: number } | null>(null);
+  const longPressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const actionTriggerRef = useRef<HTMLButtonElement | null>(null);
   const mine = message.senderId === currentUserId || message.senderName === currentUserName;
   const badge = messageTypeLabel(message);
   const deletedForEveryone = Boolean(message.deletedForEveryoneAt);
@@ -1059,9 +1194,21 @@ function CommunityMessageItem({ // NOSONAR
   const isAnnouncement = message.type === "announcement" || message.type === "session_invite";
   const deliveryStatus = message.localStatus && message.localStatus !== "sent"
     ? messageStatusLabel(message.localStatus)
-    : null;
+    : mine && message.receiptStatus === "read"
+      ? "تمت القراءة"
+      : mine && message.receiptStatus === "delivered"
+        ? "تم التسليم"
+        : mine
+          ? "تم الإرسال"
+          : null;
   const canRetry = mine && message.localStatus === "failed" && Boolean(message.clientRequestId);
   const canReply = !message.isOptimistic;
+  const canForward = !message.isOptimistic
+    && !deletedForEveryone
+    && !isAnnouncement
+    && typeof navigator !== "undefined"
+    && navigator.onLine;
+  const canSwipeReply = canReply && !deletedForEveryone;
   const canDeleteServerMessage = !message.isOptimistic && canDeleteMessage(message);
   const canDeleteOnlyForMe = !message.isOptimistic;
   const canEditMessage = mine
@@ -1074,11 +1221,13 @@ function CommunityMessageItem({ // NOSONAR
   const showProtectedAttachment = deletedForEveryone === false;
   const isEditing = editingMessageId === message.id;
   const isPinned = message.isPinned === true;
+  const isStarred = message.isStarredByMe === true;
   const canTogglePinnedState = canModerateMessages
     && !message.isOptimistic
     && !deletedForEveryone
     && message.type !== "announcement"
     && message.type !== "session_invite";
+  const canToggleStarredState = canStarMessages && !message.isOptimistic && !deletedForEveryone;
   const copyableText = resolveCopyableCommunityMessageText(message);
   const canCopyMessage = Boolean(copyableText);
   let copyButtonLabel = "نسخ";
@@ -1092,9 +1241,106 @@ function CommunityMessageItem({ // NOSONAR
     ...COMMUNITY_QUICK_REACTIONS,
   ]));
 
+  function clearLongPress() {
+    if (longPressTimerRef.current) {
+      clearTimeout(longPressTimerRef.current);
+      longPressTimerRef.current = null;
+    }
+  }
+
+  function resetSwipe() {
+    swipeRef.current = null;
+    setSwipeOffset(0);
+  }
+
+  function isNestedInteractiveTarget(target: EventTarget | null): boolean {
+    return target instanceof Element && Boolean(target.closest("a,button,input,textarea,select,[contenteditable='true']"));
+  }
+
+  function handlePointerDown(event: React.PointerEvent<HTMLElement>) {
+    clearLongPress();
+    resetSwipe();
+    if (!canSwipeReply || actionSurfaceOpen || !["touch", "pen"].includes(event.pointerType) || isNestedInteractiveTarget(event.target)) {
+      return;
+    }
+
+    swipeRef.current = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startY: event.clientY,
+      active: false,
+      offset: 0,
+    };
+    longPressTimerRef.current = setTimeout(() => setActionSurfaceOpen(true), 520);
+  }
+
+  function handlePointerMove(event: React.PointerEvent<HTMLElement>) {
+    const gesture = swipeRef.current;
+    if (!gesture || gesture.pointerId !== event.pointerId) {
+      clearLongPress();
+      return;
+    }
+
+    const deltaX = event.clientX - gesture.startX;
+    const deltaY = event.clientY - gesture.startY;
+    if (Math.abs(deltaY) > Math.abs(deltaX) * COMMUNITY_SWIPE_HORIZONTAL_BIAS) {
+      clearLongPress();
+      resetSwipe();
+      return;
+    }
+
+    const direction = mine ? 1 : -1;
+    const directedDistance = deltaX * direction;
+    if (directedDistance <= COMMUNITY_SWIPE_START_THRESHOLD) {
+      clearLongPress();
+      resetSwipe();
+      return;
+    }
+
+    clearLongPress();
+    gesture.active = true;
+    gesture.offset = Math.min(directedDistance, COMMUNITY_SWIPE_MAX_TRANSLATION) * direction;
+    setSwipeOffset(gesture.offset);
+  }
+
+  function handlePointerUp(event: React.PointerEvent<HTMLElement>) {
+    const gesture = swipeRef.current;
+    const shouldReply = gesture?.pointerId === event.pointerId
+      && gesture.active
+      && Math.abs(gesture.offset) >= COMMUNITY_SWIPE_REPLY_THRESHOLD;
+    clearLongPress();
+    resetSwipe();
+    if (shouldReply) {
+      onReply(message.id);
+    }
+  }
+
+  function runAction(action: () => void) {
+    setActionSurfaceOpen(false);
+    action();
+  }
+
   useEffect(() => {
     setCopyState("idle");
   }, [message.id, message.body, message.deletedForEveryoneAt]);
+
+  useEffect(() => () => clearLongPress(), []);
+
+  useEffect(() => {
+    if (!actionSurfaceOpen) {
+      return;
+    }
+
+    function handleActionSurfaceKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setActionSurfaceOpen(false);
+        actionTriggerRef.current?.focus();
+      }
+    }
+
+    window.addEventListener("keydown", handleActionSurfaceKeyDown);
+    return () => window.removeEventListener("keydown", handleActionSurfaceKeyDown);
+  }, [actionSurfaceOpen]);
 
   async function handleCopyMessage() {
     if (!copyableText) {
@@ -1109,16 +1355,24 @@ function CommunityMessageItem({ // NOSONAR
     <article
       className={`community-thread-message ${mine ? "community-thread-message--mine" : "community-thread-message--other"}${isAnnouncement ? " community-thread-message--announcement" : ""}${message.localStatus === "failed" ? " community-thread-message--failed" : ""}${message.isOptimistic && message.localStatus !== "failed" ? " community-thread-message--optimistic" : ""}`}
       data-message-id={message.id}
+      style={{ transform: swipeOffset ? `translate3d(${swipeOffset}px, 0, 0)` : undefined }}
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
+      onPointerCancel={() => { clearLongPress(); resetSwipe(); }}
+      onContextMenu={(event) => { event.preventDefault(); setActionSurfaceOpen(true); }}
     >
+      {swipeOffset ? <span className="community-thread-message__swipe-affordance" aria-hidden="true">↩</span> : null}
       <div className="community-thread-message__sender">
         <strong dir="auto">{mine ? "أنت" : message.senderName}</strong>
         {badge ? <span className="community-thread-message__badge">{badge}</span> : null}
+        {message.isForwarded ? <span className="community-thread-message__badge">تمت إعادة توجيهها</span> : null}
       </div>
       {showReplyPreview && message.replyToPreview ? (
-        <div className="community-thread-message__reply">
+        <button type="button" className="community-thread-message__reply" onClick={() => onLocateMessage(message.replyToPreview!.id)}>
           <span className="community-thread-message__reply-author">رد على <bdi dir="auto">{message.replyToPreview.senderName}</bdi></span>
           <span className="community-thread-message__reply-text" dir="auto">{replyBody}</span>
-        </div>
+        </button>
       ) : null}
       {shouldRenderBody ? <p className={`community-thread-message__body${deletedForEveryone ? " community-thread-message__deleted" : ""}`} dir="auto">{messageBody}</p> : null}
       {message.mentions?.length ? (
@@ -1130,7 +1384,7 @@ function CommunityMessageItem({ // NOSONAR
           ))}
         </div>
       ) : null}
-      {showProtectedAttachment ? <CommunityProtectedAttachmentView message={message} apiBaseUrl={apiBaseUrl} /> : null}
+      {showProtectedAttachment ? <CommunityProtectedAttachmentGallery message={message} apiBaseUrl={apiBaseUrl} /> : null}
       {deletedForEveryone ? null : (
         <div className="community-thread-message__reactions" aria-label="تفاعلات الرسالة">
           {reactionChoices.map((emoji) => {
@@ -1158,19 +1412,71 @@ function CommunityMessageItem({ // NOSONAR
         <div className="community-thread-message__status">تم حذفها للجميع بواسطة <bdi dir="auto">{message.deletedForEveryoneBy || "أنت"}</bdi></div>
       ) : (
         <div className="community-thread-message__actions">
-          {canReply ? <button type="button" onClick={() => onReply(message.id)}>رد</button> : null}
           {canCopyMessage ? <button type="button" onClick={() => void handleCopyMessage()}>{copyButtonLabel}</button> : null}
-          {canRetry ? <button type="button" className="community-thread-message__retry" onClick={() => onRetry(message.id)}>إعادة الإرسال</button> : null}
           {canEditMessage ? <button type="button" onClick={() => onStartEdit(message.id)}>{isEditing ? "قيد التعديل" : "تعديل"}</button> : null}
           {canTogglePinnedState ? <button type="button" onClick={() => onTogglePinnedState(message.id, !isPinned)}>{isPinned ? "إلغاء التثبيت" : "تثبيت"}</button> : null}
+          {canToggleStarredState ? <button type="button" onClick={() => onToggleStarredState(message.id, !isStarred)}>{isStarred ? "إلغاء النجمة" : "نجمة"}</button> : null}
           {canDeleteOnlyForMe ? <button type="button" onClick={() => onDeleteForSelf(message.id)}>حذف لدي</button> : null}
-          {canDeleteServerMessage ? <button type="button" onClick={() => onDeleteForEveryone(message.id)}>حذف للجميع</button> : null}
+          {canRetry ? <button type="button" className="community-thread-message__retry" onClick={() => onRetry(message.id)}>إعادة الإرسال</button> : null}
+          <button ref={actionTriggerRef} type="button" className="community-thread-message__action-trigger" aria-haspopup="menu" aria-expanded={actionSurfaceOpen} onClick={() => setActionSurfaceOpen(true)}>إجراءات الرسالة</button>
         </div>
       )}
+      {actionSurfaceOpen && !deletedForEveryone ? (
+        <div className="community-thread-message__menu" role="menu" aria-label="إجراءات الرسالة">
+          {canReply ? <button type="button" role="menuitem" onClick={() => runAction(() => onReply(message.id))}>رد</button> : null}
+          {canForward ? <button type="button" role="menuitem" onClick={() => runAction(() => onForward(message.id))}>إعادة توجيه</button> : null}
+          {canCopyMessage ? <button type="button" role="menuitem" onClick={() => runAction(() => void handleCopyMessage())}>{copyButtonLabel}</button> : null}
+          {reactionChoices.slice(0, 4).map((emoji) => <button key={`menu:${message.id}:${emoji}`} type="button" role="menuitem" onClick={() => runAction(() => onToggleReaction(message.id, emoji))}>تفاعل {emoji}</button>)}
+          {canEditMessage ? <button type="button" role="menuitem" onClick={() => runAction(() => onStartEdit(message.id))}>{isEditing ? "قيد التعديل" : "تعديل"}</button> : null}
+          {canTogglePinnedState ? <button type="button" role="menuitem" onClick={() => runAction(() => onTogglePinnedState(message.id, !isPinned))}>{isPinned ? "إلغاء التثبيت" : "تثبيت"}</button> : null}
+          {canToggleStarredState ? <button type="button" role="menuitem" onClick={() => runAction(() => onToggleStarredState(message.id, !isStarred))}>{isStarred ? "إلغاء النجمة" : "نجمة"}</button> : null}
+          {canDeleteOnlyForMe ? <button type="button" role="menuitem" onClick={() => runAction(() => onDeleteForSelf(message.id))}>حذف لدي</button> : null}
+          {canDeleteServerMessage ? <button type="button" role="menuitem" onClick={() => runAction(() => onDeleteForEveryone(message.id))}>حذف للجميع</button> : null}
+          <button type="button" role="menuitem" onClick={() => setActionSurfaceOpen(false)}>إغلاق</button>
+        </div>
+      ) : null}
       {deliveryStatus ? (
         <div className={`community-thread-message__status${message.localStatus === "failed" ? " community-thread-message__status--error" : ""}`}>{deliveryStatus}</div>
       ) : null}
     </article>
+  );
+}
+
+function CommunityForwardSelector({
+  message,
+  destinationGroups,
+  forwarding,
+  onCancel,
+  onConfirm,
+}: Readonly<{
+  message: CommunityMessage;
+  destinationGroups: CommunityGroup[];
+  forwarding: boolean;
+  onCancel: () => void;
+  onConfirm: (destinationGroupId: string) => void;
+}>) {
+  const [destinationGroupId, setDestinationGroupId] = useState(destinationGroups[0]?.id || "");
+  return (
+    <div className="community-forward-selector" role="dialog" aria-modal="true" aria-labelledby="community-forward-title">
+      <h3 id="community-forward-title">إعادة توجيه الرسالة</h3>
+      <p dir="auto">{message.body || "رسالة مرفقة"}</p>
+      <label htmlFor="community-forward-destination">الوجهة</label>
+      <select
+        id="community-forward-destination"
+        value={destinationGroupId}
+        onChange={(event) => setDestinationGroupId(event.target.value)}
+        disabled={forwarding || destinationGroups.length === 0}
+      >
+        {destinationGroups.map((group) => <option key={group.id} value={group.id}>{group.name}</option>)}
+      </select>
+      {destinationGroups.length === 0 ? <p>لا توجد مجموعة متاحة للإرسال.</p> : null}
+      <div className="community-forward-selector__actions">
+        <button type="button" onClick={onCancel} disabled={forwarding}>إلغاء</button>
+        <button type="button" onClick={() => onConfirm(destinationGroupId)} disabled={forwarding || !destinationGroupId || destinationGroups.length === 0}>
+          {forwarding ? "جارٍ التوجيه..." : "تأكيد"}
+        </button>
+      </div>
+    </div>
   );
 }
 
@@ -1204,6 +1510,7 @@ function CommunityOverviewScreen({
   error,
   onOpenGroup,
   onOpenHighlightedSession,
+  onOpenStarred,
 }: OverviewScreenProps) {
   return (
     <div className="hybrid-screen community-thread-screen">
@@ -1219,6 +1526,15 @@ function CommunityOverviewScreen({
           </button>
         </section>
       ) : null}
+
+      <section className="community-starred-entry" aria-label="الرسائل ذات النجمة">
+        <div>
+          <span className="community-pinned-card__tag">خاص بك</span>
+          <strong>الرسائل ذات النجمة</strong>
+          <p>ارجع بسرعة إلى الرسائل التي حفظتها لنفسك.</p>
+        </div>
+        <button type="button" onClick={onOpenStarred}>فتح المحفوظة</button>
+      </section>
 
       <section className="community-discovery-panel" aria-label="البحث ومرشحات المجموعات">
         <label className="community-search-field">
@@ -1329,18 +1645,81 @@ function CommunityOverviewScreen({
   );
 }
 
+function CommunityStarredScreen({
+  apiBaseUrl,
+  onOpenMessage,
+  onGoBack,
+}: Readonly<{
+  apiBaseUrl: string;
+  onOpenMessage: (message: CommunityMessage) => void;
+  onGoBack: () => void;
+}>) {
+  const [messages, setMessages] = useState<CommunityMessage[]>([]);
+  const [state, setState] = useState<"loading" | "ready" | "error">("loading");
+
+  useEffect(() => {
+    let disposed = false;
+    setState("loading");
+    void api.getCommunityStarredMessages({ limit: 80 }, apiBaseUrl)
+      .then((result) => {
+        if (!disposed) {
+          setMessages(result.messages);
+          setState("ready");
+        }
+      })
+      .catch(() => {
+        if (!disposed) setState("error");
+      });
+    return () => { disposed = true; };
+  }, [apiBaseUrl]);
+
+  return (
+    <div className="hybrid-screen community-thread-screen">
+      <div className="community-starred-header">
+        <button type="button" onClick={onGoBack}>العودة للمجموعات</button>
+        <div>
+          <span className="hybrid-section__eyebrow">خاص بك</span>
+          <h1>الرسائل ذات النجمة</h1>
+        </div>
+      </div>
+      {state === "loading" ? <div className="community-thread-empty">جارٍ تحميل رسائلك المحفوظة...</div> : null}
+      {state === "error" ? <div className="chat-error-banner">تعذر تحميل الرسائل المحفوظة حالياً.</div> : null}
+      {state === "ready" && messages.length === 0 ? <div className="community-thread-empty">لم تحفظ أي رسالة بعد.</div> : null}
+      {state === "ready" && messages.length > 0 ? (
+        <div className="community-starred-list">
+          {messages.map((message) => (
+            <button key={message.id} type="button" className="community-starred-item" onClick={() => onOpenMessage(message)}>
+              <span aria-hidden="true">★</span>
+              <span>
+                <strong dir="auto">{message.senderName}</strong>
+                <span dir="auto">{message.body || "رسالة مرفقة"}</span>
+              </span>
+              <small>{formatThreadTime(message.createdAt)}</small>
+            </button>
+          ))}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
 function CommunityThreadComposer({
   editingMessage,
   replyingToMessage,
   composer,
   pendingAttachment,
+  attachmentTransferState,
   mentionSuggestions,
   sending,
   onComposerChange,
   onInsertMention,
   onPickAttachment,
   onPickVoiceAttachment,
+  voiceRecorderState,
+  onStopVoiceRecording,
+  onCancelVoiceRecording,
   onClearAttachment,
+  onRemoveAttachment,
   onCancelEdit,
   onCancelReply,
   onSendMessage,
@@ -1350,13 +1729,18 @@ function CommunityThreadComposer({
   replyingToMessage: CommunityMessage | null;
   composer: string;
   pendingAttachment: PendingThreadAttachment | null;
+  attachmentTransferState: AttachmentTransferState;
   mentionSuggestions: MentionSuggestion[];
   sending: boolean;
   onComposerChange: (nextValue: string) => void;
   onInsertMention: (token: string) => void;
   onPickAttachment: () => void;
   onPickVoiceAttachment: () => void;
+  voiceRecorderState: VoiceRecorderState;
+  onStopVoiceRecording: () => void;
+  onCancelVoiceRecording: () => void;
   onClearAttachment: () => void;
+  onRemoveAttachment: (index: number) => void;
   onCancelEdit: () => void;
   onCancelReply: () => void;
   onSendMessage: (event: SyntheticEvent<HTMLFormElement>) => void;
@@ -1366,6 +1750,8 @@ function CommunityThreadComposer({
   let submitLabel = editingMessage ? "حفظ التعديل" : "إرسال";
   if (sending) {
     submitLabel = editingMessage ? "جارٍ حفظ التعديل..." : "جارٍ الإرسال...";
+  } else if (attachmentTransferState === "failed" && pendingAttachment) {
+    submitLabel = "إعادة المحاولة";
   }
 
   return (
@@ -1395,17 +1781,49 @@ function CommunityThreadComposer({
         ) : null}
         <div className="community-thread-composer__tools" aria-label="أدوات الرسائل المتقدمة">
           <button type="button" className="community-thread-composer__tool" onClick={onPickAttachment} disabled={Boolean(editingMessage)}>إرفاق ملف</button>
-          <button type="button" className="community-thread-composer__tool community-thread-composer__tool--voice" onClick={onPickVoiceAttachment} disabled={Boolean(editingMessage)}>مذكرة صوتية</button>
+          <button
+            type="button"
+            className="community-thread-composer__tool community-thread-composer__tool--voice"
+            onClick={voiceRecorderState === "recording" ? onStopVoiceRecording : onPickVoiceAttachment}
+            disabled={Boolean(editingMessage) || voiceRecorderState === "requesting"}
+            aria-label={voiceRecorderState === "recording" ? "إيقاف التسجيل الصوتي" : "تسجيل مذكرة صوتية"}
+          >
+            {voiceRecorderState === "requesting" ? "جارٍ طلب الميكروفون..." : voiceRecorderState === "recording" ? "إيقاف التسجيل" : "تسجيل مذكرة صوتية"}
+          </button>
+          {voiceRecorderState === "failed" ? <span className="community-thread-composer__status" role="status">تعذر الوصول إلى الميكروفون.</span> : null}
+          {voiceRecorderState === "recording" ? (
+            <button type="button" className="community-thread-composer__tool" onClick={onCancelVoiceRecording} aria-label="إلغاء التسجيل الصوتي">
+              إلغاء التسجيل
+            </button>
+          ) : null}
         </div>
         {pendingAttachment ? (
           <div className="community-thread-attachment-draft">
             <div className="community-thread-attachment-draft__copy">
               <strong>{pendingAttachment.messageType === "voice" ? "صوتية جاهزة للإرسال" : "مرفق جاهز للإرسال"}</strong>
-              <span dir="auto">{pendingAttachment.file.name}</span>
+              <span dir="auto">{pendingAttachment.files[0]?.name}{pendingAttachment.files.length > 1 ? ` +${pendingAttachment.files.length - 1}` : ""}</span>
             </div>
+            {pendingAttachment.messageType === "attachment" && pendingAttachment.files.length > 1 ? (
+              <div className="community-thread-attachment-draft__files" aria-label="المرفقات المحددة">
+                {pendingAttachment.files.map((file, index) => (
+                  <button key={`${file.name}-${index}`} type="button" onClick={() => onRemoveAttachment(index)} aria-label={`إزالة ${file.name}`}>
+                    <span dir="auto">{file.name}</span>
+                    <Dismiss24Regular aria-hidden="true" />
+                  </button>
+                ))}
+              </div>
+            ) : null}
             <button type="button" onClick={onClearAttachment} aria-label="إزالة المرفق المحدد">
               <Dismiss24Regular aria-hidden="true" />
             </button>
+          </div>
+        ) : null}
+        {attachmentTransferState !== "idle" ? (
+          <div className="community-thread-composer__status" role="status" aria-live="polite">
+            {attachmentTransferState === "selected" ? "تم اختيار الملف" : null}
+            {attachmentTransferState === "uploading" ? "جارٍ الرفع" : null}
+            {attachmentTransferState === "accepted" ? "تم الرفع" : null}
+            {attachmentTransferState === "failed" ? "تعذر الرفع" : null}
           </div>
         ) : null}
         {mentionSuggestions.length > 0 ? (
@@ -1445,6 +1863,12 @@ function CommunityThreadComposer({
 
 function CommunityThreadScreen({ // NOSONAR
   thread,
+  destinationGroups,
+  forwardMessage,
+  forwarding,
+  onForward,
+  onCancelForward,
+  onConfirmForward,
   displayedMessages,
   apiBaseUrl,
   activeLiveSession,
@@ -1455,20 +1879,27 @@ function CommunityThreadScreen({ // NOSONAR
   canLoadOlderMessages,
   firstUnreadMessageId,
   threadSearchQuery,
+  threadSearchFilter,
   threadSearchError,
   searchingThreadMessages,
   onThreadSearchQueryChange,
+  onThreadSearchFilterChange,
   visibleTypingUsers,
   editingMessage,
   replyingToMessage,
   composer,
   pendingAttachment,
+  attachmentTransferState,
   mentionSuggestions,
   setComposer,
   onInsertMention,
   onPickAttachment,
   onPickVoiceAttachment,
+  voiceRecorderState,
+  onStopVoiceRecording,
+  onCancelVoiceRecording,
   onClearAttachment,
+  onRemoveAttachment,
   pulseTyping,
   sending,
   canWriteToThread,
@@ -1495,7 +1926,9 @@ function CommunityThreadScreen({ // NOSONAR
   onDeleteForEveryone,
   onDeleteForSelf,
   onTogglePinnedState,
+  onToggleStarredState,
   onToggleReaction,
+  onLocateMessage,
   onReplyToMessage,
   onRetryMessage,
   onCancelEdit,
@@ -1503,6 +1936,7 @@ function CommunityThreadScreen({ // NOSONAR
   canDeleteMessage,
   currentUserId,
   currentUserName,
+  canStarMessages,
   isAdmin,
   editGroupName,
   editGroupDescription,
@@ -1579,8 +2013,21 @@ function CommunityThreadScreen({ // NOSONAR
             aria-label="ابحث داخل هذه المحادثة"
           />
         </label>
+        <div className="community-thread-search-filters" role="group" aria-label="تصفية نتائج البحث">
+          {THREAD_SEARCH_FILTERS.map((filter) => (
+            <button
+              key={filter.id}
+              type="button"
+              className={`community-filter-chip${threadSearchFilter === filter.id ? " community-filter-chip--active" : ""}`}
+              aria-pressed={threadSearchFilter === filter.id}
+              onClick={() => onThreadSearchFilterChange(filter.id)}
+            >
+              {filter.label}
+            </button>
+          ))}
+        </div>
         <div className="community-thread-search-panel__meta">
-          <span>{threadSearchQuery.trim() ? `${threadMessages.length} نتيجة` : `${baseThreadMessages.length} رسالة في العرض الحالي`}</span>
+          <span>{threadSearchQuery.trim() || threadSearchFilter !== "all" ? `${threadMessages.length} نتيجة` : `${baseThreadMessages.length} رسالة في العرض الحالي`}</span>
           {searchingThreadMessages ? <span>جارٍ البحث...</span> : null}
         </div>
         {threadSearchError ? <p className="community-thread-history__error">{threadSearchError}</p> : null}
@@ -1797,8 +2244,8 @@ function CommunityThreadScreen({ // NOSONAR
 
         {!loadingThread && threadMessages.length === 0 ? (
           <div className="hybrid-empty-state community-thread-empty">
-            <h3>{threadSearchQuery.trim() ? "لا توجد نتائج مطابقة." : "لا توجد رسائل بعد."}</h3>
-            <p>{threadSearchQuery.trim() ? "جرّب تغيير عبارة البحث أو امسحها للعودة إلى كامل التسلسل الحالي." : "ابدأ الرسالة الأولى داخل هذه المجموعة وسيظهر التسلسل هنا مباشرة."}</p>
+            <h3>{threadSearchQuery.trim() || threadSearchFilter !== "all" ? "لا توجد نتائج مطابقة" : "لا توجد رسائل بعد."}</h3>
+            <p>{threadSearchQuery.trim() || threadSearchFilter !== "all" ? "جرّب تغيير عبارة البحث أو اختر الكل للعودة إلى كامل التسلسل الحالي." : "ابدأ الرسالة الأولى داخل هذه المجموعة وسيظهر التسلسل هنا مباشرة."}</p>
           </div>
         ) : null}
 
@@ -1826,20 +2273,32 @@ function CommunityThreadScreen({ // NOSONAR
                 currentUserName={currentUserName}
                 isAdmin={isAdmin}
                 onReply={onReplyToMessage}
+                onForward={onForward}
                 onRetry={onRetryMessage}
                 onStartEdit={onStartEditMessage}
                 onDeleteForEveryone={onDeleteForEveryone}
                 onDeleteForSelf={onDeleteForSelf}
                 onTogglePinnedState={onTogglePinnedState}
+                onToggleStarredState={onToggleStarredState}
                 onToggleReaction={onToggleReaction}
+                onLocateMessage={onLocateMessage}
                 editingMessageId={editingMessage?.id ?? null}
                 canDeleteMessage={canDeleteMessage}
                 canModerateMessages={canModerateMessages}
+                canStarMessages={canStarMessages}
               />
             </Fragment>
           );
         })}
       </section>
+
+      {forwardMessage ? <CommunityForwardSelector
+        message={forwardMessage}
+        destinationGroups={destinationGroups}
+        forwarding={forwarding}
+        onCancel={onCancelForward}
+        onConfirm={onConfirmForward}
+      /> : null}
 
       {visibleTypingUsers.length > 0 ? (
         <div className="community-thread-typing" role="status" aria-live="polite">
@@ -1854,13 +2313,18 @@ function CommunityThreadScreen({ // NOSONAR
           replyingToMessage={replyingToMessage}
           composer={composer}
           pendingAttachment={pendingAttachment}
+          attachmentTransferState={attachmentTransferState}
           mentionSuggestions={mentionSuggestions}
           sending={sending}
           onComposerChange={setComposer}
           onInsertMention={onInsertMention}
           onPickAttachment={onPickAttachment}
           onPickVoiceAttachment={onPickVoiceAttachment}
+          voiceRecorderState={voiceRecorderState}
+          onStopVoiceRecording={onStopVoiceRecording}
+          onCancelVoiceRecording={onCancelVoiceRecording}
           onClearAttachment={onClearAttachment}
+          onRemoveAttachment={onRemoveAttachment}
           onCancelEdit={onCancelEdit}
           onCancelReply={onCancelReply}
           onSendMessage={onSendMessage}
@@ -1879,10 +2343,12 @@ export default function CommunityThreadsPage() {
   const { groupId } = useParams<{ groupId: string }>();
   const { apiBaseUrl, profile, hasRole } = useApp();
   const communityWsUrl = useMemo(() => getDefaultApiWebSocketUrl("/ws/community"), []);
-  const currentUserId = profile.id || profile.email || profile.phone || profile.name || "current_user";
+  const tokenProfile = profileFromToken();
+  const currentUserId = profile.id || tokenProfile?.id || profile.email || profile.phone || profile.name || "current_user";
   const currentUserName = profile.email?.split("@")[0]?.trim() || profile.name || profile.id || "أنت";
   const initialPersistedListState = useMemo(() => loadPersistedCommunityListState(), []);
   const deepLinkedMessageId = useMemo(() => new URLSearchParams(location.search).get("messageId"), [location.search]);
+  const showingStarredView = useMemo(() => new URLSearchParams(location.search).get("view") === "starred", [location.search]);
   const messagesRef = useRef<HTMLDivElement | null>(null);
   const wsRef = useRef<ReliableWebSocketClient | null>(null);
   const pollingTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -1890,6 +2356,7 @@ export default function CommunityThreadsPage() {
   const threadRef = useRef<ThreadDetail | null>(null);
   const isAdmin = hasRole(["admin", "superadmin"]);
   const canManageCommunity = hasRole(["moderator", "admin", "superadmin"]);
+  const canStarMessages = Boolean(profile.isAuthed || tokenProfile?.id);
   const listScrollYRef = useRef(initialPersistedListState?.scrollY ?? 0);
   const pendingListScrollRestoreRef = useRef(false);
   const shouldRestoreThreadAnchorRef = useRef(false);
@@ -1899,6 +2366,9 @@ export default function CommunityThreadsPage() {
   const pendingDeepLinkedMessageIdRef = useRef<string | null>(deepLinkedMessageId);
   const attachmentInputRef = useRef<HTMLInputElement | null>(null);
   const voiceAttachmentInputRef = useRef<HTMLInputElement | null>(null);
+  const voiceRecorderRef = useRef<MediaRecorder | null>(null);
+  const voiceStreamRef = useRef<MediaStream | null>(null);
+  const voiceChunksRef = useRef<Blob[]>([]);
 
   const [community, setCommunity] = useState<Community | null>(null);
   const [groups, setGroups] = useState<CommunityGroup[]>([]);
@@ -1932,9 +2402,14 @@ export default function CommunityThreadsPage() {
   const [groupFilter, setGroupFilter] = useState<GroupDiscoveryFilter>(initialPersistedListState?.groupFilter || "all");
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
   const [replyingToMessageId, setReplyingToMessageId] = useState<string | null>(null);
+  const [forwardMessageId, setForwardMessageId] = useState<string | null>(null);
+  const [forwarding, setForwarding] = useState(false);
   const [typingUsers, setTypingUsers] = useState<string[]>([]);
   const [pendingAttachment, setPendingAttachment] = useState<PendingThreadAttachment | null>(null);
+  const [attachmentTransferState, setAttachmentTransferState] = useState<AttachmentTransferState>("idle");
+  const [voiceRecorderState, setVoiceRecorderState] = useState<VoiceRecorderState>("idle");
   const [threadSearchQuery, setThreadSearchQuery] = useState("");
+  const [threadSearchFilter, setThreadSearchFilter] = useState<ThreadSearchFilter>("all");
   const [threadSearchError, setThreadSearchError] = useState("");
   const [searchingThreadMessages, setSearchingThreadMessages] = useState(false);
   const [searchedThreadMessages, setSearchedThreadMessages] = useState<ThreadMessage[] | null>(null);
@@ -1980,7 +2455,7 @@ export default function CommunityThreadsPage() {
 
     const messagePage = await api.getCommunityGroupMessagesPage(
       targetGroupId,
-      { limit: COMMUNITY_THREAD_PAGE_SIZE },
+      { limit: getCommunityThreadPageLimit() },
       apiBaseUrl,
     );
 
@@ -2029,7 +2504,7 @@ export default function CommunityThreadsPage() {
 
     readSyncInFlightRef.current = true;
     try {
-      const result = await api.markCommunityGroupRead(targetGroupId, apiBaseUrl);
+      const result = await api.markCommunityGroupRead(targetGroupId, apiBaseUrl, pendingMessageId);
       setThread((prev) => {
         if (prev?.group.id !== targetGroupId) {
           return prev;
@@ -2170,11 +2645,12 @@ export default function CommunityThreadsPage() {
 
     Promise.all([
       api.getCommunityGroup(groupId, undefined, apiBaseUrl),
-      api.getCommunityGroupMessagesPage(groupId, { limit: COMMUNITY_THREAD_PAGE_SIZE }, apiBaseUrl),
+      api.getCommunityGroupMessagesPage(groupId, { limit: getCommunityThreadPageLimit() }, apiBaseUrl),
     ])
       .then(([detail, messagePage]) => {
         if (!active) return;
         const nextThread = toThreadDetail(detail, messagePage);
+        pendingAutoScrollRef.current = "auto";
         applyLoadedThread({
           data: nextThread,
           currentUserName,
@@ -2200,7 +2676,7 @@ export default function CommunityThreadsPage() {
 
   useLayoutEffect(() => {
     const container = messagesRef.current;
-    if (!container) {
+    if (!container || !thread) {
       return;
     }
 
@@ -2213,6 +2689,24 @@ export default function CommunityThreadsPage() {
     }
 
     if (pendingAutoScrollRef.current) {
+      if (pendingAutoScrollRef.current === "auto" && thread.readState.lastReadMessageId) {
+        const lastReadIndex = thread.messages.findIndex((message) => message.id === thread.readState.lastReadMessageId);
+        const firstUnreadMessage = lastReadIndex >= 0 ? thread.messages[lastReadIndex + 1] : null;
+        const firstUnreadElement = firstUnreadMessage
+          ? container.querySelector(`[data-message-id="${firstUnreadMessage.id}"]`)
+          : null;
+
+        if (firstUnreadElement instanceof HTMLElement) {
+          firstUnreadElement.scrollIntoView({ block: "center", behavior: "auto" });
+          pendingAutoScrollRef.current = null;
+          return;
+        }
+
+        container.scrollTo({ top: container.scrollHeight, behavior: "auto" });
+        pendingAutoScrollRef.current = null;
+        return;
+      }
+
       container.scrollTo({ top: container.scrollHeight, behavior: pendingAutoScrollRef.current });
       pendingAutoScrollRef.current = null;
     }
@@ -2253,7 +2747,7 @@ export default function CommunityThreadsPage() {
 
     const newestMessageId = getNewestThreadMessageId(thread.messages);
 
-    if (!thread.readState.lastReadMessageId && pendingReadSyncMessageIdRef.current !== newestMessageId) {
+    if (thread.readState.lastReadMessageId || pendingReadSyncMessageIdRef.current !== newestMessageId) {
       return;
     }
 
@@ -2291,6 +2785,7 @@ export default function CommunityThreadsPage() {
     setEditingMessageId(null);
     setReplyingToMessageId(null);
     setThreadSearchQuery("");
+    setThreadSearchFilter("all");
     setThreadSearchError("");
     setSearchingThreadMessages(false);
     setSearchedThreadMessages(null);
@@ -2530,6 +3025,20 @@ export default function CommunityThreadsPage() {
       case "community.read_state.updated":
         handleReadStateUpdatedEvent(currentGroupId, payload);
         return;
+      case "community.receipt.delivered":
+      case "community.receipt.read": {
+        if (realtimeEvent.actorId === currentUserId || !realtimeEvent.messageId) {
+          return;
+        }
+        const receiptStatus = realtimeEvent.eventType === "community.receipt.read" ? "read" : "delivered";
+        setThread((prev) => prev ? {
+          ...prev,
+          messages: prev.messages.map((message) => message.id === realtimeEvent.messageId
+            ? { ...message, receiptStatus: mergeReceiptStatus(message.receiptStatus, receiptStatus) }
+            : message),
+        } : prev);
+        return;
+      }
       case "community.typing.started":
       case "community.typing.stopped":
         handleTypingEvent(realtimeEvent, currentGroupId, payload);
@@ -2538,6 +3047,14 @@ export default function CommunityThreadsPage() {
         const eventMessage = payload.message as CommunityMessage | undefined;
         if (!eventMessage) {
           return;
+        }
+
+        if (eventMessage.senderId !== currentUserId) {
+          wsRef.current?.sendJSON({
+            type: "community.receipt.delivered",
+            groupId: currentGroupId,
+            messageId: eventMessage.id,
+          });
         }
 
         handleMessageCreatedEvent(realtimeEvent, currentGroupId, payload, eventMessage);
@@ -2592,10 +3109,14 @@ export default function CommunityThreadsPage() {
           return;
         }
 
+        const testControl = getCommunityV16BrowserControl();
+        const since = testControl && Object.prototype.hasOwnProperty.call(testControl, "sinceOverride")
+          ? testControl.sinceOverride
+          : currentThread.latestSequence;
         socket.sendJSON({
           type: "community.subscribe",
           groupId,
-          since: currentThread.latestSequence,
+          since,
         });
       },
       onMessage: (event) => {
@@ -2606,6 +3127,10 @@ export default function CommunityThreadsPage() {
         try {
           const payload = JSON.parse(event.data) as ThreadRealtimeEvent | { type?: string; message?: string };
           if (typeof (payload as ThreadRealtimeEvent).eventType === "string") {
+            const testControl = getCommunityV16BrowserControl();
+            if (testControl) {
+              testControl.lastEvent = payload as ThreadRealtimeEvent;
+            }
             handleCommunityRealtimeEventRef.current(payload as ThreadRealtimeEvent);
             return;
           }
@@ -2630,10 +3155,22 @@ export default function CommunityThreadsPage() {
       },
       onStateChange: (nextState) => {
         setRealtimeState(nextState);
+        const testControl = getCommunityV16BrowserControl();
+        if (testControl?.socket === socket) {
+          testControl.state = nextState;
+        }
       },
     });
 
     wsRef.current = socket;
+    const testControl = getCommunityV16BrowserControl();
+    if (testControl) {
+      testControl.socket = socket;
+      testControl.replayEvent = (event) => handleCommunityRealtimeEventRef.current(event);
+      testControl.getState = () => socket.getState();
+      testControl.state = socket.getState();
+      testControl.getMessageReceiptStatus = (messageId) => threadRef.current?.messages.find((message) => message.id === messageId)?.receiptStatus;
+    }
     socket.connect();
 
     const unsubscribeAuthState = subscribeAuthStateChange(() => {
@@ -2651,6 +3188,14 @@ export default function CommunityThreadsPage() {
     return () => {
       unsubscribeAuthState();
       socket.disconnect(1000, "community_thread_cleanup");
+      if (testControl?.socket === socket) {
+        delete testControl.socket;
+        delete testControl.replayEvent;
+        delete testControl.getState;
+        delete testControl.state;
+        delete testControl.lastEvent;
+        delete testControl.getMessageReceiptStatus;
+      }
       if (wsRef.current === socket) {
         wsRef.current = null;
       }
@@ -2742,7 +3287,7 @@ export default function CommunityThreadsPage() {
   const normalizedThreadSearchQuery = useMemo(() => normalizeCommunityQuery(threadSearchQuery), [threadSearchQuery]);
 
   useEffect(() => {
-    if (!groupId || !normalizedThreadSearchQuery) {
+    if (!groupId || (!normalizedThreadSearchQuery && threadSearchFilter === "all")) {
       setThreadSearchError("");
       setSearchingThreadMessages(false);
       setSearchedThreadMessages(null);
@@ -2755,6 +3300,7 @@ export default function CommunityThreadsPage() {
       api.searchCommunityGroupMessages(groupId, {
         limit: COMMUNITY_THREAD_SEARCH_RESULT_LIMIT,
         query: threadSearchQuery,
+        ...(threadSearchFilter !== "all" ? { filter: threadSearchFilter } : {}),
       }, apiBaseUrl)
         .then((messagePage) => {
           if (!active) {
@@ -2783,7 +3329,7 @@ export default function CommunityThreadsPage() {
       active = false;
       globalThis.clearTimeout(timeoutId);
     };
-  }, [apiBaseUrl, groupId, normalizedThreadSearchQuery, threadSearchQuery]);
+  }, [apiBaseUrl, groupId, normalizedThreadSearchQuery, threadSearchFilter, threadSearchQuery]);
 
   const orderedGroups = useMemo(() => {
     return groups.slice().sort((left, right) => {
@@ -2796,6 +3342,10 @@ export default function CommunityThreadsPage() {
       return left.name.localeCompare(right.name, "ar-LB");
     });
   }, [groups]);
+  const destinationGroups = useMemo(
+    () => orderedGroups.filter((group) => canWriteGroup(group)),
+    [orderedGroups],
+  );
   const liveGroupIds = useMemo(
     () => new Set(liveSessions.map((session) => session.groupId).filter((groupId): groupId is string => Boolean(groupId))),
     [liveSessions],
@@ -2857,6 +3407,10 @@ export default function CommunityThreadsPage() {
     () => searchedThreadMessages ?? thread?.messages ?? [],
     [searchedThreadMessages, thread?.messages],
   );
+  const forwardMessage = useMemo(
+    () => displayedMessages.find((message) => message.id === forwardMessageId) ?? null,
+    [displayedMessages, forwardMessageId],
+  );
   const mentionSuggestions = useMemo(() => {
     if (!membersOverview) {
       return [] as MentionSuggestion[];
@@ -2910,6 +3464,20 @@ export default function CommunityThreadsPage() {
         return previousMessage?.id === thread.readState.lastReadMessageId;
       })?.id ?? null
     : null;
+
+  useLayoutEffect(() => {
+    if (pendingAutoScrollRef.current !== "auto" || !firstUnreadMessageId) {
+      return;
+    }
+
+    const target = messagesRef.current?.querySelector(`[data-message-id="${firstUnreadMessageId}"]`);
+    if (!(target instanceof HTMLElement)) {
+      return;
+    }
+
+    target.scrollIntoView({ block: "center", behavior: "auto" });
+    pendingAutoScrollRef.current = null;
+  }, [firstUnreadMessageId, thread?.messages]);
 
   const visibleTypingUsers = useMemo(() => {
     return typingUsers.filter((name) => name !== currentUserName);
@@ -3008,14 +3576,106 @@ export default function CommunityThreadsPage() {
     }
   }
 
+  function releaseVoiceStream() {
+    voiceStreamRef.current?.getTracks().forEach((track) => track.stop());
+    voiceStreamRef.current = null;
+    voiceRecorderRef.current = null;
+    voiceChunksRef.current = [];
+  }
+
+  function stopVoiceRecording() {
+    const recorder = voiceRecorderRef.current;
+    if (recorder && recorder.state !== "inactive") {
+      recorder.stop();
+      return;
+    }
+
+    releaseVoiceStream();
+    setVoiceRecorderState("idle");
+  }
+
+  function cancelVoiceRecording() {
+    const recorder = voiceRecorderRef.current;
+    if (recorder && recorder.state !== "inactive") {
+      recorder.ondataavailable = null;
+      recorder.onstop = null;
+      recorder.stop();
+    }
+    releaseVoiceStream();
+    setVoiceRecorderState("idle");
+  }
+
+  async function startVoiceRecording() {
+    if (voiceRecorderState !== "idle" || pendingAttachment || typeof navigator.mediaDevices?.getUserMedia !== "function" || typeof MediaRecorder === "undefined") {
+      if (typeof navigator.mediaDevices?.getUserMedia !== "function" || typeof MediaRecorder === "undefined") {
+        setVoiceRecorderState("failed");
+      }
+      return;
+    }
+
+    setVoiceRecorderState("requesting");
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const recorder = new MediaRecorder(stream);
+      voiceStreamRef.current = stream;
+      voiceRecorderRef.current = recorder;
+      voiceChunksRef.current = [];
+      recorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          voiceChunksRef.current.push(event.data);
+        }
+      };
+      recorder.onstop = () => {
+        const mimeType = recorder.mimeType || "audio/webm";
+        const file = new File([new Blob(voiceChunksRef.current, { type: mimeType })], `voice-${Date.now()}.webm`, { type: mimeType });
+        releaseVoiceStream();
+        setPendingAttachment({ files: [file], messageType: "voice" });
+        setVoiceRecorderState("idle");
+      };
+      recorder.onerror = () => {
+        releaseVoiceStream();
+        setVoiceRecorderState("failed");
+      };
+      recorder.start();
+      setVoiceRecorderState("recording");
+    } catch {
+      releaseVoiceStream();
+      setVoiceRecorderState("failed");
+    }
+  }
+
+  useEffect(() => () => {
+    const recorder = voiceRecorderRef.current;
+    if (recorder && recorder.state !== "inactive") {
+      recorder.ondataavailable = null;
+      recorder.onstop = null;
+      recorder.stop();
+    }
+    voiceStreamRef.current?.getTracks().forEach((track) => track.stop());
+  }, []);
+
   function clearPendingAttachment() {
+    if (voiceRecorderState === "recording" || voiceRecorderState === "requesting") {
+      cancelVoiceRecording();
+    }
     setPendingAttachment(null);
+    setAttachmentTransferState("idle");
+    resetAttachmentPickers();
+  }
+  function removePendingAttachment(index: number) {
+    setPendingAttachment((current) => {
+      if (!current || current.messageType !== "attachment") {
+        return current;
+      }
+      const files = current.files.filter((_, fileIndex) => fileIndex !== index);
+      return files.length > 0 ? { ...current, files } : null;
+    });
     resetAttachmentPickers();
   }
 
   function openAttachmentPicker(messageType: PendingAttachmentMessageType) {
     if (messageType === "voice") {
-      voiceAttachmentInputRef.current?.click();
+      void startVoiceRecording();
       return;
     }
 
@@ -3023,15 +3683,16 @@ export default function CommunityThreadsPage() {
   }
 
   function handleAttachmentSelection(messageType: PendingAttachmentMessageType, event: ChangeEvent<HTMLInputElement>) {
-    const nextFile = event.target.files?.[0] || null;
-    if (!nextFile) {
+    const nextFiles = Array.from(event.target.files || []);
+    if (nextFiles.length === 0) {
       return;
     }
 
     setPendingAttachment({
-      file: nextFile,
+      files: messageType === "attachment" ? nextFiles.slice(0, 10) : nextFiles.slice(0, 1),
       messageType,
     });
+    setAttachmentTransferState("selected");
   }
 
   async function loadOlderMessages() {
@@ -3053,7 +3714,7 @@ export default function CommunityThreadsPage() {
     try {
       const detail = await api.getCommunityGroupMessagesPage(groupId, {
         before: thread.pageInfo.startCursor,
-        limit: COMMUNITY_THREAD_PAGE_SIZE,
+        limit: getCommunityThreadPageLimit(),
       }, apiBaseUrl);
 
       setThread((prev) => {
@@ -3080,19 +3741,38 @@ export default function CommunityThreadsPage() {
     }
   }
 
-  async function submitCommunityMessage(clientRequestId: string, body: string, replyTarget: CommunityMessage | null, isRetry = false) {
+  async function submitCommunityMessage(
+    clientRequestId: string,
+    body: string,
+    replyTarget: CommunityMessage | null,
+    isRetry = false,
+    retryReplyToMessageId?: string,
+    retryReplyToPreview?: CommunityMessage["replyToPreview"],
+  ) {
     if (!groupId) {
       return;
     }
 
-    const message = await api.sendCommunityMessage(groupId, {
-      body,
-      clientRequestId,
-      replyToMessageId: replyTarget?.id,
-      senderId: currentUserId,
-      senderName: currentUserName,
-      replyToPreview: replyTarget ? buildReplyPreview(replyTarget) : undefined,
-    }, apiBaseUrl);
+    const replyToMessageId = retryReplyToMessageId ?? replyTarget?.id;
+    const replyToPreview = retryReplyToPreview ?? (replyTarget ? buildReplyPreview(replyTarget) : undefined);
+    let message: CommunityMessage;
+    try {
+      message = await api.sendCommunityMessage(groupId, {
+        body,
+        clientRequestId,
+        replyToMessageId,
+        senderId: currentUserId,
+        senderName: currentUserName,
+        replyToPreview,
+      }, apiBaseUrl);
+    } catch (error) {
+      const outbox = readOfflineCommunityOutbox().filter((entry) => entry.clientRequestId !== clientRequestId);
+      outbox.push({ groupId, body, clientRequestId, replyToMessageId, replyToPreview });
+      writeOfflineCommunityOutbox(outbox);
+      throw error;
+    }
+
+    writeOfflineCommunityOutbox(readOfflineCommunityOutbox().filter((entry) => entry.clientRequestId !== clientRequestId));
 
     pendingAutoScrollRef.current = "smooth";
     setThread((prev) => {
@@ -3119,6 +3799,15 @@ export default function CommunityThreadsPage() {
     }
   }
 
+  useEffect(() => {
+    if (!groupId || !profile.isAuthed || !navigator.onLine) return;
+    const pending = readOfflineCommunityOutbox().filter((entry) => entry.groupId === groupId);
+    if (!pending.length) return;
+    for (const entry of pending) {
+      void submitCommunityMessage(entry.clientRequestId, entry.body, null, true, entry.replyToMessageId, entry.replyToPreview).catch(() => undefined);
+    }
+  }, [groupId, profile.isAuthed]);
+
   async function submitCommunityAttachment(
     attachment: PendingThreadAttachment,
     body: string,
@@ -3128,21 +3817,30 @@ export default function CommunityThreadsPage() {
       return;
     }
 
-    const result = await api.uploadCommunityAttachment(groupId, {
-      file: attachment.file,
-      body,
-      type: attachment.messageType,
-      replyToMessageId: replyTarget?.id,
-      replyToPreview: replyTarget ? buildReplyPreview(replyTarget) : undefined,
-    }, apiBaseUrl);
+    setAttachmentTransferState("uploading");
+    let result;
+    try {
+      result = await api.uploadCommunityAttachment(groupId, {
+        ...(attachment.files.length === 1 ? { file: attachment.files[0] } : { files: attachment.files }),
+        body,
+        type: attachment.messageType,
+        replyToMessageId: replyTarget?.id,
+        replyToPreview: replyTarget ? buildReplyPreview(replyTarget) : undefined,
+      }, apiBaseUrl);
+    } catch (error) {
+      setAttachmentTransferState("failed");
+      throw error;
+    }
 
+    setAttachmentTransferState("accepted");
     pendingAutoScrollRef.current = "smooth";
     setThread((prev) => applySentMessageToThread(prev, result.message, currentUserName));
     setGroups((prev) => updateThreadGroupsAfterSend(prev, groupId, result.message, currentUserName));
     setComposer("");
     setReplyingToMessageId(null);
     setTypingUsers([]);
-    clearPendingAttachment();
+    setPendingAttachment(null);
+    resetAttachmentPickers();
     void syncTypingState(false);
   }
 
@@ -3260,6 +3958,11 @@ export default function CommunityThreadsPage() {
       setError("");
 
       try {
+        if (!navigator.onLine) {
+          setError("لا يمكن الإرسال دون اتصال بالإنترنت. أعد الاتصال ثم أعد المحاولة.");
+          return;
+        }
+
         if (targetEditMessageId) {
           await submitEditedCommunityMessage(targetEditMessageId, body);
           return;
@@ -3302,8 +4005,10 @@ export default function CommunityThreadsPage() {
       await submitCommunityMessage(
         failedMessage.clientRequestId,
         failedMessage.body,
-        failedMessage.replyToPreview ? failedMessage : null,
+        null,
         true,
+        failedMessage.replyToMessageId,
+        failedMessage.replyToPreview,
       );
     } catch {
       setThread((prev) => prev ? {
@@ -3363,6 +4068,21 @@ export default function CommunityThreadsPage() {
       updateMessageCollections((messages) => mergeServerThreadMessage(messages, result.message));
     } catch {
       setError("تعذر تحديث التفاعل حالياً.");
+    }
+  }
+
+  async function handleToggleStarredState(messageId: string, nextStarred: boolean) {
+    if (!groupId || !canStarMessages || typeof navigator !== "undefined" && !navigator.onLine) {
+      setError("لا يمكن تحديث النجمة دون اتصال بالإنترنت.");
+      return;
+    }
+
+    try {
+      const result = await api.setCommunityMessageStarredState(groupId, messageId, nextStarred, apiBaseUrl);
+      syncGroupSnapshot(result.group);
+      updateMessageCollections((messages) => mergeServerThreadMessage(messages, result.message));
+    } catch {
+      setError(nextStarred ? "تعذر حفظ الرسالة بالنجمة حالياً." : "تعذر إزالة النجمة حالياً.");
     }
   }
 
@@ -3649,9 +4369,10 @@ export default function CommunityThreadsPage() {
         ref={attachmentInputRef}
         className="community-thread-composer__file-input"
         type="file"
+        multiple
         tabIndex={-1}
         aria-hidden="true"
-        accept=".pdf,.png,.jpg,.jpeg,.webp,application/pdf,image/*"
+        accept=".pdf,.png,.jpg,.jpeg,.webp,.mp4,.webm,.mov,application/pdf,image/*,video/*"
         onChange={(event) => handleAttachmentSelection("attachment", event)}
       />
       <input
@@ -3667,6 +4388,16 @@ export default function CommunityThreadsPage() {
   );
 
   if (!groupId) {
+    if (showingStarredView) {
+      return (
+        <CommunityStarredScreen
+          apiBaseUrl={apiBaseUrl}
+          onOpenMessage={(message) => navigate(`/groups/${message.groupId}?messageId=${encodeURIComponent(message.id)}`)}
+          onGoBack={() => navigate(listRoutePath)}
+        />
+      );
+    }
+
     const highlightedSession = liveSessions[0] || null;
     return (
       <>
@@ -3720,16 +4451,53 @@ export default function CommunityThreadsPage() {
               },
             });
           }}
+          onOpenStarred={() => navigate(`${listRoutePath}?view=starred`)}
         />
       </>
     );
 }
+
+  function handleLocateMessage(messageId: string) {
+    const target = messagesRef.current?.querySelector(`[data-message-id="${messageId}"]`);
+    if (!(target instanceof HTMLElement)) {
+      return;
+    }
+
+    target.scrollIntoView({ block: "center", behavior: "smooth" });
+    target.classList.add("community-thread-message--located");
+    window.setTimeout(() => target.classList.remove("community-thread-message--located"), 1200);
+  }
+
+  async function handleConfirmForward(destinationGroupId: string) {
+    if (!forwardMessage || forwarding || !navigator.onLine) return;
+    setForwarding(true);
+    try {
+      const forwarded = await api.forwardCommunityMessage(destinationGroupId, {
+        sourceMessageId: forwardMessage.id,
+        clientRequestId: makeCommunityClientRequestId("forward"),
+      }, apiBaseUrl);
+      if (destinationGroupId === groupId) {
+        setThread((current) => current ? { ...current, messages: [...current.messages, toThreadMessage(forwarded)] } : current);
+      }
+      setForwardMessageId(null);
+    } catch {
+      setError("تعذر إعادة توجيه الرسالة حالياً.");
+    } finally {
+      setForwarding(false);
+    }
+  }
 
   return (
     <>
       {attachmentInputs}
       <CommunityThreadScreen
         thread={thread}
+        destinationGroups={destinationGroups}
+        forwardMessage={forwardMessage}
+        forwarding={forwarding}
+        onForward={setForwardMessageId}
+        onCancelForward={() => setForwardMessageId(null)}
+        onConfirmForward={(destinationGroupId) => void handleConfirmForward(destinationGroupId)}
         displayedMessages={displayedMessages}
         apiBaseUrl={apiBaseUrl}
         activeLiveSession={activeLiveSession}
@@ -3740,20 +4508,27 @@ export default function CommunityThreadsPage() {
         canLoadOlderMessages={canLoadOlderMessages}
         firstUnreadMessageId={firstUnreadMessageId}
         threadSearchQuery={threadSearchQuery}
+        threadSearchFilter={threadSearchFilter}
         threadSearchError={threadSearchError}
         searchingThreadMessages={searchingThreadMessages}
         onThreadSearchQueryChange={setThreadSearchQuery}
+        onThreadSearchFilterChange={setThreadSearchFilter}
         visibleTypingUsers={visibleTypingUsers}
         editingMessage={editingMessage}
         replyingToMessage={replyingToMessage}
         composer={composer}
         pendingAttachment={pendingAttachment}
+        attachmentTransferState={attachmentTransferState}
         mentionSuggestions={mentionSuggestions}
         setComposer={setComposer}
         onInsertMention={handleInsertMention}
         onPickAttachment={() => openAttachmentPicker("attachment")}
         onPickVoiceAttachment={() => openAttachmentPicker("voice")}
+        voiceRecorderState={voiceRecorderState}
+        onStopVoiceRecording={stopVoiceRecording}
+        onCancelVoiceRecording={cancelVoiceRecording}
         onClearAttachment={clearPendingAttachment}
+        onRemoveAttachment={removePendingAttachment}
         pulseTyping={pulseTyping}
         sending={sending}
         canWriteToThread={canWriteCurrentThread}
@@ -3780,7 +4555,9 @@ export default function CommunityThreadsPage() {
         onDeleteForEveryone={(messageId) => void handleDeleteForEveryone(messageId)}
         onDeleteForSelf={(messageId) => void handleDeleteForSelf(messageId)}
         onTogglePinnedState={(messageId, nextPinned) => void handleTogglePinnedState(messageId, nextPinned)}
+        onToggleStarredState={(messageId, nextStarred) => void handleToggleStarredState(messageId, nextStarred)}
         onToggleReaction={(messageId, emoji) => void handleToggleReaction(messageId, emoji)}
+        onLocateMessage={handleLocateMessage}
         onReplyToMessage={(messageId) => {
           setEditingMessageId(null);
           setReplyingToMessageId(messageId);
@@ -3791,6 +4568,7 @@ export default function CommunityThreadsPage() {
         canDeleteMessage={canDeleteMessage}
         currentUserId={currentUserId}
         currentUserName={currentUserName}
+        canStarMessages={canStarMessages}
         isAdmin={isAdmin}
         editGroupName={editGroupName}
         editGroupDescription={editGroupDescription}

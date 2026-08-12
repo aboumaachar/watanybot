@@ -10,6 +10,7 @@ import {
   getLatestCommunityRealtimeSequence,
   setCommunityServiceRealtimeEmitter,
   validateCommunityGroupAccess,
+  validateCommunityMessageInGroup,
   type CommunityServiceRealtimeEvent,
   type CommunityViewer,
 } from "../community/service.js";
@@ -33,7 +34,13 @@ type PingMessage = {
   type: "ping";
 };
 
-type CommunitySocketMessage = CommunitySocketSubscribeMessage | CommunitySocketUnsubscribeMessage | PingMessage;
+type CommunitySocketReceiptMessage = {
+  type: "community.receipt.delivered";
+  groupId: string;
+  messageId: string;
+};
+
+type CommunitySocketMessage = CommunitySocketSubscribeMessage | CommunitySocketUnsubscribeMessage | CommunitySocketReceiptMessage | PingMessage;
 
 type AuthenticatedCommunitySocket = {
   userId: string;
@@ -296,6 +303,29 @@ async function handleSocketMessage(
     return;
   }
 
+  if (message.type === "community.receipt.delivered") {
+    const state = socketState.get(socket);
+    const groupId = message.groupId.trim();
+    const messageId = message.messageId.trim();
+    const subscribed = socketGroups.get(socket)?.has(groupId);
+    if (!state || !groupId || !messageId || !subscribed || !await validateCommunityMessageInGroup(groupId, messageId)) {
+      safeSend(socket, { type: "community.error", message: "community_receipt_forbidden" });
+      return;
+    }
+
+    await fanOutCommunityRealtimeEvent(app, {
+      eventId: randomUUID(),
+      eventType: "community.receipt.delivered",
+      occurredAt: new Date().toISOString(),
+      groupId,
+      actorId: state.userId,
+      messageId,
+      sequence: null,
+      payload: { recipientUserId: state.userId, messageId },
+    });
+    return;
+  }
+
   safeSend(socket, { type: "community.error", message: "unknown_message_type" });
 }
 
@@ -306,6 +336,25 @@ async function fanOutCommunityRealtimeEvent(app: FastifyInstance, event: Communi
     }
 
     const sockets = userSockets.get(event.actorId);
+    if (!sockets) {
+      return;
+    }
+
+    for (const socket of sockets) {
+      if (!safeSend(socket, event)) {
+        removeSocket(socket);
+      }
+    }
+    return;
+  }
+
+  if (event.eventType === "community.receipt.read") {
+    const senderUserId = typeof event.payload.senderUserId === "string" ? event.payload.senderUserId : null;
+    if (!senderUserId) {
+      return;
+    }
+
+    const sockets = userSockets.get(senderUserId);
     if (!sockets) {
       return;
     }
