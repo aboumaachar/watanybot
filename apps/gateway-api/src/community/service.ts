@@ -1205,8 +1205,8 @@ function buildCommunityMessagePageQuery(options: {
         deleted_for_everyone_by,
         is_pinned,
         client_request_id,
-        is_forwarded,
-        forward_source_message_id
+        COALESCE((to_jsonb(community_messages) ->> 'is_forwarded')::boolean, FALSE) AS is_forwarded,
+        to_jsonb(community_messages) ->> 'forward_source_message_id' AS forward_source_message_id
       FROM community_messages
       WHERE group_id = $1${beforeClause}${searchClause}${filterClause}${hiddenClause}
       ORDER BY created_at DESC, id DESC
@@ -1484,8 +1484,8 @@ async function loadLatestMessages(executor: QueryExecutor, groupIds: string[], v
         deleted_for_everyone_by,
         is_pinned,
         client_request_id,
-        is_forwarded,
-        forward_source_message_id
+        COALESCE((to_jsonb(community_messages) ->> 'is_forwarded')::boolean, FALSE) AS is_forwarded,
+        to_jsonb(community_messages) ->> 'forward_source_message_id' AS forward_source_message_id
       FROM community_messages
       WHERE group_id = ANY($1::text[])
       ${hiddenClause}
