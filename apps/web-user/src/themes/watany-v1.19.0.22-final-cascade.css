@@ -778,9 +778,7 @@ html[data-apex-theme="v274"] body .watany-recovery-shell > .watany-recovery-bott
   scroll-padding-bottom: var(--apex-content-bottom-clearance) !important;
 }
 
-.watany-recovery-shell .procedures-browser__item,
-.watany-recovery-shell .watany-procedure-card {
-  padding-bottom: var(--apex-content-bottom-clearance) !important;
+.watany-recovery-shell .procedures-browser__item {
   scroll-padding-bottom: var(--apex-content-bottom-clearance) !important;
 }
 

@@ -269,6 +269,7 @@
 }
 
 .watany-procedure-card__details {
+  grid-column: 1 / -1;
   display: grid;
   gap: 9px;
   padding: 10px 11px 12px;
