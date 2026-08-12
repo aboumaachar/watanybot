@@ -3,11 +3,11 @@ import multipart from "@fastify/multipart";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 import { registerAuthHook, signAccessToken } from "../auth/auth-middleware";
-import { addCommunityMessage, resetCommunityStore } from "../community/service";
+import { addCommunityMessage, createCommunityGroup, resetCommunityStore } from "../community/service";
 import { initPluginDb } from "../db/plugin-db";
 import { runMigrations } from "../db/migrate";
 import { query } from "../lib/db";
-import { communityRoutes, type CommunityTelemetryRecord } from "../routes/community";
+import { buildCommunityNotificationId, communityRoutes, type CommunityTelemetryRecord } from "../routes/community";
 import { notificationRoutes } from "../routes/notifications";
 import { acquireCommunityDbTestLock } from "./community-db-test-lock";
 import { COMMUNITY_ATTACHMENT_MAX_BYTES } from "../community/attachment-security";
@@ -229,6 +229,55 @@ afterEach(async () => {
 });
 
 describe("community routes", () => {
+  it("keeps notification IDs safe for URL parameters while preserving short IDs", () => {
+    expect(buildCommunityNotificationId("notif_community_reply", "message-1", "member-1"))
+      .toBe("notif_community_reply_message-1_member-1");
+
+    const longId = buildCommunityNotificationId("notif_community_reply", "m".repeat(200), "u".repeat(200));
+    expect(longId).toHaveLength("notif_community_reply_".length + 32);
+    expect(longId).toMatch(/^notif_community_reply_[0-9a-f]{32}$/);
+    expect(longId).toBe(buildCommunityNotificationId("notif_community_reply", "m".repeat(200), "u".repeat(200)));
+  });
+
+  it("forwards a server-resolved source once without reply metadata", async () => {
+    const app = buildApp("forward_contract");
+    await app.ready();
+
+    const invalidRequest = await app.inject({
+      method: "POST",
+      url: "/api/community/groups/health-room/forward",
+      headers: { authorization: `Bearer ${adminAccessToken()}` },
+      payload: { body: "client forged body" },
+    });
+    expect(invalidRequest.statusCode).toBe(400);
+
+    const payload = { sourceMessageId: "health-msg-1", clientRequestId: "forward-contract-once" };
+    const first = await app.inject({
+      method: "POST",
+      url: "/api/community/groups/health-room/forward",
+      headers: { authorization: `Bearer ${adminAccessToken()}` },
+      payload,
+    });
+    expect(first.statusCode).toBe(200);
+    expect(first.json()).toMatchObject({
+      isForwarded: true,
+      forwardSourceMessageId: "health-msg-1",
+    });
+    expect(first.json()).not.toHaveProperty("replyToMessageId");
+    expect(first.json()).not.toHaveProperty("replyToPreview");
+
+    const replay = await app.inject({
+      method: "POST",
+      url: "/api/community/groups/health-room/forward",
+      headers: { authorization: `Bearer ${adminAccessToken()}` },
+      payload,
+    });
+    expect(replay.statusCode).toBe(200);
+    expect(replay.json().id).toBe(first.json().id);
+
+    await app.close();
+  });
+
   it("lists groups and live sessions for the hybrid community shell", async () => {
     const app = buildApp("test");
     await app.ready();
@@ -434,6 +483,37 @@ describe("community routes", () => {
       },
     });
 
+    const memberDocumentFilter = await app.inject({
+      method: "GET",
+      url: `/api/community/groups/${group.id}/search?filter=documents`,
+      headers: {
+        authorization: `Bearer ${memberAccessToken()}`,
+      },
+    });
+    expect(memberDocumentFilter.statusCode).toBe(200);
+    expect(memberDocumentFilter.json().messages).toEqual(expect.arrayContaining([
+      expect.objectContaining({ id: "community_message_attachment_flow" }),
+    ]));
+
+    const outsiderDocumentFilter = await app.inject({
+      method: "GET",
+      url: `/api/community/groups/${group.id}/search?filter=documents`,
+      headers: {
+        authorization: `Bearer ${outsiderAccessToken()}`,
+      },
+    });
+    expect(outsiderDocumentFilter.statusCode).toBe(403);
+
+    const emptyAllFilter = await app.inject({
+      method: "GET",
+      url: `/api/community/groups/${group.id}/search?filter=all`,
+      headers: {
+        authorization: `Bearer ${memberAccessToken()}`,
+      },
+    });
+    expect(emptyAllFilter.statusCode).toBe(400);
+    expect(emptyAllFilter.json()).toEqual({ error: "community_search_query_required" });
+
     const memberDownload = await app.inject({
       method: "GET",
       url: "/api/community/attachments/community_attachment_attachment_flow/content",
@@ -454,6 +534,26 @@ describe("community routes", () => {
     });
     expect(outsiderDownload.statusCode).toBe(403);
     expect(outsiderDownload.json()).toEqual({ error: "community_group_forbidden" });
+
+    const deleted = await app.inject({
+      method: "POST",
+      url: `/api/community/groups/${group.id}/messages/community_message_attachment_flow/delete-for-everyone`,
+      headers: {
+        authorization: `Bearer ${adminAccessToken()}`,
+      },
+      payload: {},
+    });
+    expect(deleted.statusCode).toBe(200);
+
+    const deletedMemberDownload = await app.inject({
+      method: "GET",
+      url: "/api/community/attachments/community_attachment_attachment_flow/content",
+      headers: {
+        authorization: `Bearer ${memberAccessToken()}`,
+      },
+    });
+    expect(deletedMemberDownload.statusCode).toBe(404);
+    expect(deletedMemberDownload.json()).toEqual({ error: "community_attachment_not_found" });
 
     await app.close();
   });
@@ -953,6 +1053,66 @@ describe("community routes", () => {
       lastReadMessageId: expect.any(String),
       lastReadAt: expect.any(String),
     });
+
+    await app.close();
+  });
+
+  it("accepts an explicit read boundary and rejects a message from another group", async () => {
+    const app = buildApp("read_receipt_boundary");
+    await app.ready();
+
+    const author = { id: "community-admin-1", role: "admin" as const };
+    const message = await addCommunityMessage("health-room", {
+      id: "health-read-boundary-msg-1",
+      groupId: "health-room",
+      senderId: author.id,
+      senderName: "المرسل",
+      senderRole: "admin",
+      type: "text",
+      body: "رسالة حد القراءة",
+      createdAt: "2026-06-24T06:20:00.000Z",
+    }, { viewer: author });
+    expect(message.ok).toBe(true);
+
+    const otherGroup = await createCommunityGroup({
+      id: "receipt-boundary-other-room",
+      communityId: "watany-community",
+      name: "غرفة أخرى لإيصال القراءة",
+      description: "اختبار عزل إيصال القراءة",
+      category: "support",
+      memberCount: 1,
+      visibility: "public",
+    }, author);
+    const otherGroupMessage = await addCommunityMessage(otherGroup.id, {
+      id: "other-read-boundary-msg-1",
+      groupId: otherGroup.id,
+      senderId: author.id,
+      senderName: "المرسل",
+      senderRole: "admin",
+      type: "text",
+      body: "رسالة مجموعة أخرى",
+      createdAt: "2026-06-24T06:21:00.000Z",
+    }, { viewer: author });
+    expect(otherGroupMessage.ok).toBe(true);
+
+    const token = adminAccessToken();
+    const readResponse = await app.inject({
+      method: "POST",
+      url: "/api/community/groups/health-room/read",
+      headers: { authorization: `Bearer ${token}` },
+      payload: { messageId: "health-read-boundary-msg-1" },
+    });
+    expect(readResponse.statusCode).toBe(200);
+    expect(readResponse.json()).toMatchObject({ lastReadMessageId: "health-read-boundary-msg-1" });
+
+    const crossThreadRead = await app.inject({
+      method: "POST",
+      url: "/api/community/groups/health-room/read",
+      headers: { authorization: `Bearer ${token}` },
+      payload: { messageId: "other-read-boundary-msg-1" },
+    });
+    expect(crossThreadRead.statusCode).toBe(404);
+    expect(crossThreadRead.json()).toEqual({ error: "community_read_message_invalid" });
 
     await app.close();
   });

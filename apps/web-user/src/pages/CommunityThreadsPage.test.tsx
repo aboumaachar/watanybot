@@ -171,6 +171,7 @@ vi.mock("../lib/api", () => ({
 
 vi.mock("../lib/auth", () => ({
   getAccessToken: getAccessTokenMock,
+  profileFromToken: () => null,
   subscribeAuthStateChange: subscribeAuthStateChangeMock,
 }));
 
@@ -885,6 +886,50 @@ describe("CommunityThreadsPage", () => {
     expect(getMessageIds(container)).toEqual(["health-msg-2", "health-msg-3", "health-msg-4"]);
   });
 
+  it("positions an initially unread thread at the first unread message", async () => {
+    appState.profile = {
+      id: "community-viewer-1",
+      name: "viewer1",
+      isAuthed: true,
+    };
+
+    const message2 = createMessage("health-msg-2", "2026-05-12T19:00:00.000Z", "آخر رسالة مقروءة");
+    const message3 = createMessage("health-msg-3", "2026-05-12T19:10:00.000Z", "أول رسالة غير مقروءة");
+    const scrollIntoView = vi.spyOn(HTMLElement.prototype, "scrollIntoView").mockImplementation(() => undefined);
+
+    getCommunityOverviewMock.mockResolvedValue({
+      community: baseCommunity,
+      groups: [baseGroup],
+      liveSessions: [],
+    });
+    getCommunityGroupMock.mockResolvedValue(createThreadDetail());
+    getCommunityGroupMessagesPageMock.mockResolvedValue(createMessagesPage([message2, message3], {
+      latestSequence: "seq-health-3",
+      pageInfo: {
+        hasMoreBefore: false,
+        startCursor: null,
+        endCursor: "cursor-health-msg-3",
+      },
+      readState: {
+        unreadCount: 1,
+        lastReadMessageId: "health-msg-2",
+        lastReadAt: "2026-05-12T19:00:00.000Z",
+      },
+    }));
+    markCommunityGroupReadMock.mockResolvedValue({
+      ok: true,
+      unreadCount: 0,
+      lastReadMessageId: "health-msg-3",
+      lastReadAt: "2026-05-12T19:10:00.000Z",
+    });
+
+    await renderThreadPage();
+
+    expect(scrollIntoView).toHaveBeenCalledWith({ block: "center", behavior: "auto" });
+    expect(container.textContent).toContain("أول رسالة غير مقروءة");
+    scrollIntoView.mockRestore();
+  });
+
   it("suppresses duplicates when the realtime echo matches an optimistic client request id", async () => {
     appState.profile = {
       id: "community-viewer-1",
@@ -1045,6 +1090,37 @@ describe("CommunityThreadsPage", () => {
     expect(container.querySelector("img[alt='scan-result.png']")).not.toBeNull();
   });
 
+  it("renders protected video attachments with playback controls", async () => {
+    const videoMessage: CommunityMessage = {
+      id: "health-video-1",
+      groupId: "health-room",
+      senderId: "member-1",
+      senderName: "عضو المجتمع",
+      senderRole: "user",
+      type: "attachment",
+      body: "فيديو محمي",
+      attachmentUrl: "/api/community/attachments/health-video-1/asset",
+      createdAt: "2026-05-12T19:15:00.000Z",
+    };
+
+    getCommunityOverviewMock.mockResolvedValue({ community: baseCommunity, groups: [baseGroup], liveSessions: [] });
+    getCommunityGroupMock.mockResolvedValue(createThreadDetail());
+    getCommunityGroupMessagesPageMock.mockResolvedValue(createMessagesPage([videoMessage]));
+    fetchCommunityAttachmentAssetMock.mockResolvedValue({
+      blob: new Blob(["video"], { type: "video/mp4" }),
+      contentType: "video/mp4",
+      fileName: "briefing.mp4",
+    });
+
+    await renderThreadPage();
+    await flushEffects(8);
+
+    const video = container.querySelector("video[controls]");
+    expect(video).not.toBeNull();
+    expect(video?.getAttribute("src")).toBe("blob:community-attachment-1");
+    expect(container.querySelector("a[download='briefing.mp4']")).toBeNull();
+  });
+
   it("uploads protected attachments through the attachment route", async () => {
     appState.profile = {
       id: "community-viewer-1",
@@ -1130,6 +1206,82 @@ describe("CommunityThreadsPage", () => {
       "http://api.test",
     );
     expect(container.textContent).toContain("تم رفع الملف");
+  });
+
+  it("exposes the CHAT-030 attachment lifecycle and retries through the composer", async () => {
+    appState.profile = {
+      id: "community-viewer-1",
+      name: "viewer1",
+      isAuthed: true,
+    };
+
+    getCommunityOverviewMock.mockResolvedValue({
+      community: baseCommunity,
+      groups: [baseGroup],
+      liveSessions: [],
+    });
+    getCommunityGroupMock.mockResolvedValue(createWritableThreadDetail());
+    getCommunityGroupMessagesPageMock.mockResolvedValue(createMessagesPage([]));
+
+    const firstUpload = createDeferred<unknown>();
+    const secondUpload = createDeferred<unknown>();
+    uploadCommunityAttachmentMock
+      .mockReturnValueOnce(firstUpload.promise)
+      .mockReturnValueOnce(secondUpload.promise);
+
+    await renderThreadPage();
+
+    const attachmentInput = container.querySelector("input[type='file'][accept*='.pdf']") as HTMLInputElement | null;
+    const submitButton = Array.from(container.querySelectorAll("button")).find((button) => button.textContent?.includes("إرسال"));
+    expect(attachmentInput).not.toBeNull();
+    expect(submitButton).toBeTruthy();
+    if (!attachmentInput || !submitButton) {
+      return;
+    }
+
+    const file = new File(["document"], "claim.pdf", { type: "application/pdf" });
+    Object.defineProperty(attachmentInput, "files", { configurable: true, value: [file] });
+
+    await act(async () => {
+      attachmentInput.dispatchEvent(new Event("change", { bubbles: true }));
+      await Promise.resolve();
+    });
+    expect(container.textContent).toContain("تم اختيار الملف");
+    expect(container.textContent).not.toMatch(/\d+%/);
+
+    await act(async () => {
+      submitButton.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+      await Promise.resolve();
+    });
+    expect(container.textContent).toContain("جارٍ الرفع");
+    expect(container.textContent).not.toMatch(/\d+%/);
+
+    await act(async () => {
+      firstUpload.reject(new Error("upload failed"));
+      await Promise.resolve();
+    });
+    await flushEffects(4);
+    expect(container.textContent).toContain("تعذر الرفع");
+
+    const retryButton = Array.from(container.querySelectorAll("button")).find((button) => button.textContent?.includes("إعادة المحاولة"));
+    expect(retryButton).toBeTruthy();
+    if (!retryButton) {
+      return;
+    }
+
+    await act(async () => {
+      retryButton.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+      await Promise.resolve();
+    });
+    expect(container.textContent).toContain("جارٍ الرفع");
+
+    await act(async () => {
+      secondUpload.resolve({ ok: true, message: createMessage("health-attachment-retry", "2026-05-12T19:41:00.000Z", "تم رفع الملف") });
+      await Promise.resolve();
+    });
+    await flushEffects(6);
+    expect(container.textContent).toContain("تم الرفع");
+    expect(uploadCommunityAttachmentMock).toHaveBeenCalledTimes(2);
   });
 
   it("deduplicates uploaded voice messages when the realtime echo arrives with the same server id", async () => {
@@ -1225,6 +1377,92 @@ describe("CommunityThreadsPage", () => {
     await flushEffects(8);
 
     expect(getMessageIds(container).filter((id) => id === "health-voice-uploaded")).toHaveLength(1);
+  });
+
+  it("records a voice note only after an explicit microphone action and stages it for upload", async () => {
+    appState.profile = { id: "community-viewer-1", name: "viewer1", isAuthed: true };
+    getCommunityOverviewMock.mockResolvedValue({ community: baseCommunity, groups: [baseGroup], liveSessions: [] });
+    getCommunityGroupMock.mockResolvedValue(createWritableThreadDetail());
+    getCommunityGroupMessagesPageMock.mockResolvedValue(createMessagesPage([]));
+
+    const trackStopMock = vi.fn();
+    const stream = { getTracks: () => [{ stop: trackStopMock }] } as unknown as MediaStream;
+    const getUserMediaMock = vi.fn().mockResolvedValue(stream);
+    Object.defineProperty(globalThis.navigator, "mediaDevices", { configurable: true, value: { getUserMedia: getUserMediaMock } });
+
+    class FakeMediaRecorder {
+      static instances: FakeMediaRecorder[] = [];
+      state: RecordingState = "inactive";
+      mimeType = "audio/webm";
+      ondataavailable: ((event: BlobEvent) => void) | null = null;
+      onstop: (() => void) | null = null;
+      onerror: (() => void) | null = null;
+
+      constructor(_stream: MediaStream) {
+        FakeMediaRecorder.instances.push(this);
+      }
+
+      start() {
+        this.state = "recording";
+      }
+
+      stop() {
+        this.state = "inactive";
+        this.ondataavailable?.({ data: new Blob(["voice"], { type: this.mimeType }) } as BlobEvent);
+        this.onstop?.();
+      }
+    }
+    Object.defineProperty(globalThis, "MediaRecorder", { configurable: true, value: FakeMediaRecorder });
+
+    await renderThreadPage();
+    const voiceButton = Array.from(container.querySelectorAll("button")).find((button) => button.textContent?.includes("تسجيل مذكرة صوتية"));
+    expect(voiceButton).toBeTruthy();
+    if (!voiceButton) return;
+
+    await act(async () => {
+      voiceButton.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+      await Promise.resolve();
+    });
+    await flushEffects();
+
+    expect(getUserMediaMock).toHaveBeenCalledWith({ audio: true });
+    expect(container.textContent).toContain("إيقاف التسجيل");
+
+    const stopButton = Array.from(container.querySelectorAll("button")).find((button) => button.textContent?.includes("إيقاف التسجيل"));
+    expect(stopButton).toBeTruthy();
+    if (!stopButton) return;
+    await act(async () => {
+      stopButton.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+      await Promise.resolve();
+    });
+    await flushEffects();
+
+    expect(trackStopMock).toHaveBeenCalledTimes(1);
+    expect(container.textContent).toContain("صوتية جاهزة للإرسال");
+  });
+
+  it("shows a recorder failure when microphone permission is denied", async () => {
+    appState.profile = { id: "community-viewer-1", name: "viewer1", isAuthed: true };
+    getCommunityOverviewMock.mockResolvedValue({ community: baseCommunity, groups: [baseGroup], liveSessions: [] });
+    getCommunityGroupMock.mockResolvedValue(createWritableThreadDetail());
+    getCommunityGroupMessagesPageMock.mockResolvedValue(createMessagesPage([]));
+    Object.defineProperty(globalThis.navigator, "mediaDevices", {
+      configurable: true,
+      value: { getUserMedia: vi.fn().mockRejectedValue(new DOMException("Permission denied", "NotAllowedError")) },
+    });
+    Object.defineProperty(globalThis, "MediaRecorder", { configurable: true, value: class {} });
+
+    await renderThreadPage();
+    const voiceButton = Array.from(container.querySelectorAll("button")).find((button) => button.textContent?.includes("تسجيل مذكرة صوتية"));
+    expect(voiceButton).toBeTruthy();
+    if (!voiceButton) return;
+    await act(async () => {
+      voiceButton.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+      await Promise.resolve();
+    });
+    await flushEffects();
+
+    expect(container.textContent).toContain("تعذر الوصول إلى الميكروفون");
   });
 
   it("shows mention suggestions and searches within the active thread", async () => {
@@ -1434,6 +1672,147 @@ describe("CommunityThreadsPage", () => {
       "http://api.test",
     );
     expect(container.textContent).not.toContain("النص المعدل");
+  });
+
+  it("keeps ownership actions aligned for own, other, and optimistic messages", async () => {
+    appState.profile = {
+      id: "community-viewer-1",
+      name: "viewer1",
+      isAuthed: true,
+    };
+
+    const ownMessage: CommunityMessage = {
+      id: "health-msg-own-ownership",
+      groupId: "health-room",
+      senderId: "community-viewer-1",
+      senderName: "viewer1",
+      senderRole: "user",
+      type: "text",
+      body: "رسالة المالك",
+      createdAt: "2026-05-12T19:45:00.000Z",
+    };
+    const otherMessage: CommunityMessage = {
+      ...ownMessage,
+      id: "health-msg-other-ownership",
+      senderId: "community-member-2",
+      senderName: "عضو آخر",
+      body: "رسالة عضو آخر",
+    };
+    const optimisticMessage = {
+      ...ownMessage,
+      id: "health-msg-optimistic-ownership",
+      body: "رسالة مالك متفائلة",
+      isOptimistic: true,
+      localStatus: "queued",
+    } as CommunityMessage;
+
+    getCommunityOverviewMock.mockResolvedValue({
+      community: baseCommunity,
+      groups: [baseGroup],
+      liveSessions: [],
+    });
+    getCommunityGroupMock.mockResolvedValue(createWritableThreadDetail());
+    getCommunityGroupMessagesPageMock.mockResolvedValue(createMessagesPage([
+      ownMessage,
+      otherMessage,
+      optimisticMessage,
+    ]));
+
+    await renderThreadPage();
+
+    const ownRow = container.querySelector(`[data-message-id="${ownMessage.id}"]`);
+    const otherRow = container.querySelector(`[data-message-id="${otherMessage.id}"]`);
+    const optimisticRow = container.querySelector(`[data-message-id="${optimisticMessage.id}"]`);
+    expect(ownRow?.classList.contains("community-thread-message--mine")).toBe(true);
+    expect(otherRow?.classList.contains("community-thread-message--other")).toBe(true);
+    expect(optimisticRow?.classList.contains("community-thread-message--mine")).toBe(true);
+    expect(Array.from(ownRow?.querySelectorAll("button") || []).some((button) => button.textContent?.includes("تعديل"))).toBe(true);
+    expect(Array.from(otherRow?.querySelectorAll("button") || []).some((button) => button.textContent?.includes("تعديل"))).toBe(false);
+    expect(Array.from(optimisticRow?.querySelectorAll("button") || []).some((button) => button.textContent?.includes("تعديل"))).toBe(false);
+  });
+
+  it("selects the existing reply context only for a deliberate centerward swipe", async () => {
+    appState.profile = {
+      id: "member-1",
+      name: "عضو المجتمع",
+      isAuthed: true,
+    };
+    const targetMessage = createMessage("health-msg-swipe", "2026-05-12T19:45:00.000Z", "رسالة قابلة للرد");
+    getCommunityOverviewMock.mockResolvedValue({ community: baseCommunity, groups: [baseGroup], liveSessions: [] });
+    getCommunityGroupMock.mockResolvedValue(createWritableThreadDetail());
+    getCommunityGroupMessagesPageMock.mockResolvedValue(createMessagesPage([targetMessage]));
+
+    await renderThreadPage();
+    const row = container.querySelector(`[data-message-id="${targetMessage.id}"]`);
+    expect(row).toBeTruthy();
+    if (!row) return;
+
+    const dispatchPointer = async (type: string, clientX: number, clientY: number) => {
+      await act(async () => {
+        row.dispatchEvent(new PointerEvent(type, {
+          bubbles: true,
+          pointerId: 7,
+          pointerType: "touch",
+          clientX,
+          clientY,
+        }));
+        await Promise.resolve();
+      });
+    };
+
+    await dispatchPointer("pointerdown", 200, 200);
+    await dispatchPointer("pointermove", 205, 204);
+    await dispatchPointer("pointerup", 205, 204);
+    expect(container.textContent).not.toContain("الرد على عضو المجتمع");
+    expect((row as HTMLElement).style.transform).toBe("");
+
+    await dispatchPointer("pointerdown", 200, 200);
+    await dispatchPointer("pointermove", 200, 280);
+    await dispatchPointer("pointerup", 200, 280);
+    expect(container.textContent).not.toContain("الرد على عضو المجتمع");
+
+    await dispatchPointer("pointerdown", 200, 200);
+    await dispatchPointer("pointermove", 270, 203);
+    expect((row as HTMLElement).style.transform).toContain("70px");
+    await dispatchPointer("pointerup", 270, 203);
+    expect(container.textContent).toContain("الرد على عضو المجتمع");
+    expect((row as HTMLElement).style.transform).toBe("");
+  });
+
+  it("opens the message action menu after a mobile long press", async () => {
+    appState.profile = {
+      id: "member-1",
+      name: "عضو المجتمع",
+      isAuthed: true,
+    };
+    const targetMessage = createMessage("health-msg-long-press", "2026-05-12T19:45:00.000Z", "رسالة الضغط المطوّل");
+    getCommunityOverviewMock.mockResolvedValue({ community: baseCommunity, groups: [baseGroup], liveSessions: [] });
+    getCommunityGroupMock.mockResolvedValue(createWritableThreadDetail());
+    getCommunityGroupMessagesPageMock.mockResolvedValue(createMessagesPage([targetMessage]));
+
+    await renderThreadPage();
+    const row = container.querySelector(`[data-message-id="${targetMessage.id}"]`);
+    expect(row).toBeTruthy();
+    if (!row) return;
+
+    vi.useFakeTimers();
+    try {
+      await act(async () => {
+        row.dispatchEvent(new PointerEvent("pointerdown", {
+          bubbles: true,
+          pointerId: 8,
+          pointerType: "touch",
+          clientX: 180,
+          clientY: 240,
+        }));
+        vi.advanceTimersByTime(520);
+      });
+
+      expect(row.querySelector('[role="menu"]')).toBeTruthy();
+      expect(row.textContent).toContain("رد");
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it("pins and unpins moderated messages from the thread action bar", async () => {

@@ -322,6 +322,65 @@ describe("community websocket routes", () => {
     await app.close();
   });
 
+  it("emits a delivered receipt only after an authorized recipient acknowledges the message", async () => {
+    const { app, wsBaseUrl } = await startCommunityWsApp();
+    const page = await getCommunityGroupMessagesPage("health-room", { id: "community-admin-1", role: "admin" });
+    expect(page.ok).toBe(true);
+    if (!page.ok) {
+      await app.close();
+      return;
+    }
+
+    const senderSocket = await openCommunitySocket(wsBaseUrl, adminAccessToken());
+    const recipientSocket = await openCommunitySocket(wsBaseUrl, userAccessToken("community-user-7", "community.user7@watany.test"));
+    const senderQueue = createSocketQueue(senderSocket);
+    const recipientQueue = createSocketQueue(recipientSocket);
+    const subscribePayload = JSON.stringify({ type: "community.subscribe", groupId: "health-room", since: page.value.latestSequence });
+    senderSocket.send(subscribePayload);
+    recipientSocket.send(subscribePayload);
+    await expect(senderQueue.next()).resolves.toMatchObject({ eventType: "community.connection.ready" });
+    await expect(recipientQueue.next()).resolves.toMatchObject({ eventType: "community.connection.ready" });
+
+    const created = await addCommunityMessage(
+      "health-room",
+      {
+        id: "health-receipt-msg-1",
+        groupId: "health-room",
+        senderId: "community-admin-1",
+        senderName: "المرسل",
+        senderRole: "admin",
+        type: "text",
+        body: "رسالة لاختبار إيصال التسليم",
+        createdAt: "2026-06-24T06:10:00.000Z",
+      },
+      { viewer: { id: "community-admin-1", role: "admin" } },
+    );
+    expect(created.ok).toBe(true);
+
+    await expect(senderQueue.next()).resolves.toMatchObject({ eventType: "community.message.created", messageId: "health-receipt-msg-1" });
+    await expect(recipientQueue.next()).resolves.toMatchObject({ eventType: "community.message.created", messageId: "health-receipt-msg-1" });
+
+    recipientSocket.send(JSON.stringify({
+      type: "community.receipt.delivered",
+      groupId: "health-room",
+      messageId: "health-receipt-msg-1",
+    }));
+
+    await expect(senderQueue.next()).resolves.toMatchObject({
+      eventType: "community.receipt.delivered",
+      groupId: "health-room",
+      messageId: "health-receipt-msg-1",
+      actorId: "community-user-7",
+      payload: { recipientUserId: "community-user-7" },
+    });
+
+    senderQueue.dispose();
+    recipientQueue.dispose();
+    senderSocket.close();
+    recipientSocket.close();
+    await app.close();
+  });
+
   it("requires resync after reconnect when the since sequence is stale", async () => {
     const { app, wsBaseUrl } = await startCommunityWsApp();
     const viewer = { id: "community-admin-1", role: "admin" } as const;

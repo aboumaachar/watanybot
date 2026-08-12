@@ -1466,11 +1466,12 @@ describe("community persistence and authorization", () => {
       messages: expect.arrayContaining([
         expect.objectContaining({
           id: firstMessage.id,
-          body: "تم تعديل الرسالة قبل الحذف.",
           deletedForEveryoneBy: "community.admin",
         }),
       ]),
     });
+    const persistedDeletedMessage = persistedDetail.json().messages.find((message: { id: string }) => message.id === firstMessage.id);
+    expect(persistedDeletedMessage).not.toHaveProperty("body");
 
     const persistedPageAfterRestart = await restartedApp.inject({
       method: "GET",

@@ -1,4 +1,5 @@
 import { promises as fs } from "node:fs";
+import { createHash } from "node:crypto";
 import path from "node:path";
 import type { FastifyPluginAsync } from "fastify";
 import type {
@@ -23,6 +24,7 @@ import {
   deleteCommunityMessageForSelf,
   deleteCommunityMessageForEveryone,
   editCommunityMessage,
+  forwardCommunityMessage,
   getCommunityGroupDetail,
   getCommunityGroupMessagesPage,
   inviteCommunityGroupMember,
@@ -31,6 +33,7 @@ import {
   listCommunityGroupMembers,
   listCommunityGroups,
   listCommunityGroupReports,
+  listCommunityStarredMessages,
   markCommunityGroupRead,
   muteCommunityGroupMember,
   reinstateCommunityGroupMember,
@@ -41,6 +44,7 @@ import {
   reviewCommunityGroupReport,
   reviewCommunityGroupMembership,
   setCommunityMessagePinnedState,
+  setCommunityMessageStarredState,
   setCommunityGroupTyping,
   setCommunityServiceTelemetryEmitter,
   suspendCommunityGroupMember,
@@ -107,10 +111,12 @@ type CommunityAttachmentRow = {
   sha256: string;
   storage_key: string;
   scan_status: string;
+  message_deleted_for_everyone: boolean;
   scan_provider: string | null;
   duration_ms: string | number | null;
   scanned_at: string | Date | null;
   created_at: string | Date;
+  position: number;
 };
 
 type CommunityAttachmentView = {
@@ -267,6 +273,16 @@ function buildCommunityNotificationRoute(groupId: string, messageId: string): st
   return `/groups/${encodeURIComponent(groupId)}?messageId=${encodeURIComponent(messageId)}`;
 }
 
+export function buildCommunityNotificationId(prefix: string, messageId: string, targetUserId: string): string {
+  const rawId = `${prefix}_${messageId}_${targetUserId}`;
+  if (rawId.length <= 96) {
+    return rawId;
+  }
+
+  const digest = createHash("sha256").update(rawId).digest("hex").slice(0, 32);
+  return `${prefix}_${digest}`;
+}
+
 function buildCommunityReplyNotificationBody(actorDisplayName: string, message: CommunityMessage): string {
   const trimmedBody = typeof message.body === "string" ? message.body.trim() : "";
   if (trimmedBody) {
@@ -354,7 +370,7 @@ async function enqueueCommunityReplyNotification(input: {
     pluginDb: input.pluginDb,
     targetUserId,
     groupId: input.groupId,
-    notificationId: `notif_community_reply_${input.message.id}_${targetUserId}`,
+    notificationId: buildCommunityNotificationId("notif_community_reply", input.message.id, targetUserId),
     title: `رد جديد في ${groupName}`,
     safeBody: buildCommunityReplyNotificationSafeBody(input.actorDisplayName),
     richBody: buildCommunityReplyNotificationBody(input.actorDisplayName, input.message),
@@ -420,7 +436,7 @@ async function enqueueCommunityMentionNotifications(input: {
       pluginDb: input.pluginDb,
       targetUserId,
       groupId: input.groupId,
-      notificationId: `notif_community_mention_${input.message.id}_${targetUserId}`,
+      notificationId: buildCommunityNotificationId("notif_community_mention", input.message.id, targetUserId),
       title: `ذُكرت في ${groupName}`,
       safeBody: buildCommunityMentionNotificationSafeBody(input.actorDisplayName),
       richBody: buildCommunityMentionNotificationBody(input.actorDisplayName, input.message),
@@ -668,8 +684,11 @@ function sendCommunityError(
     | "community_membership_not_found"
     | "community_invalid_cursor"
     | "community_message_not_found"
+    | "community_read_message_invalid"
     | "community_message_forbidden"
     | "community_message_deleted"
+    | "community_forward_source_invalid"
+    | "community_forward_destination_forbidden"
     | "community_message_edit_window_expired"
     | "community_report_not_found"
     | "community_report_duplicate"
@@ -689,7 +708,7 @@ function sendCommunityError(
     });
     return reply.code(401).send({ error: code });
   }
-  if (code === "community_group_forbidden" || code === "community_message_forbidden") {
+  if (code === "community_group_forbidden" || code === "community_message_forbidden" || code === "community_forward_destination_forbidden") {
     emit("community.authorization_denied", "warn", {
       ...context,
       errorCode: code,
@@ -703,6 +722,9 @@ function sendCommunityError(
       errorCode: code,
       statusCode: 400,
     });
+    return reply.code(400).send({ error: code });
+  }
+  if (code === "community_forward_source_invalid") {
     return reply.code(400).send({ error: code });
   }
   if (code === "community_report_invalid_target") {
@@ -914,7 +936,7 @@ export const communityRoutes: FastifyPluginAsync<CommunityRoutesOptions> = async
     return page.value;
   });
 
-  app.get<{ Params: { id: string }; Querystring: { limit?: string; q?: string } }>("/api/community/groups/:id/search", async (req, reply) => {
+  app.get<{ Params: { id: string }; Querystring: { filter?: string; limit?: string; q?: string } }>("/api/community/groups/:id/search", async (req, reply) => {
     const context: CommunityTelemetryContext = {
       action: "group_messages_search",
       actorId: req.user?.id,
@@ -927,7 +949,12 @@ export const communityRoutes: FastifyPluginAsync<CommunityRoutesOptions> = async
     }
 
     const searchQuery = normalizeOptionalCommunityField(req.query?.q);
-    if (!searchQuery) {
+    const searchFilter = req.query?.filter || "all";
+    if (!["all", "media", "links", "documents", "audio"].includes(searchFilter)) {
+      reply.code(400).send({ error: "community_search_filter_invalid" });
+      return;
+    }
+    if (!searchQuery && searchFilter === "all") {
       emit("community.read", "warn", {
         ...context,
         errorCode: "community_search_query_required",
@@ -943,6 +970,7 @@ export const communityRoutes: FastifyPluginAsync<CommunityRoutesOptions> = async
       {
         limit: parseCommunityPageLimit(req.query?.limit),
         search: searchQuery,
+        filter: searchFilter as "all" | "media" | "links" | "documents" | "audio",
       },
     ));
 
@@ -1063,6 +1091,38 @@ export const communityRoutes: FastifyPluginAsync<CommunityRoutesOptions> = async
 
     emit("community.write", "info", context);
 
+    return result.value;
+  });
+
+  app.post<{
+    Params: { id: string };
+    Body: { sourceMessageId?: string; clientRequestId?: string };
+  }>("/api/community/groups/:id/forward", async (req, reply) => {
+    const sourceMessageId = typeof req.body?.sourceMessageId === "string" ? req.body.sourceMessageId.trim() : "";
+    const clientRequestId = typeof req.body?.clientRequestId === "string" ? req.body.clientRequestId.trim() : "";
+    if (!sourceMessageId || !clientRequestId) {
+      return reply.code(400).send({ error: "community_forward_request_invalid" });
+    }
+
+    const baseContext: CommunityTelemetryContext = {
+      action: "forward_message",
+      actorId: req.user?.id,
+      actorRole: req.user?.role || "public",
+      groupId: req.params.id,
+    };
+    const actor = resolveAuthenticatedActor(req, reply, emit, baseContext);
+    if (!actor) return;
+    const context = { ...baseContext, actorId: actor.id, actorRole: actor.role };
+    if (!await ensureCommunityFeatures(reply, emit, getFeatureFlag, ["community.threads.enabled", "community.writes.enabled"], context)) return;
+
+    const result = await withPersistenceTelemetry(emit, context, async () => forwardCommunityMessage(
+      req.params.id,
+      sourceMessageId,
+      clientRequestId,
+      { id: actor.id, role: actor.role, displayName: actor.displayName },
+    ));
+    if (!result.ok) return sendCommunityError(reply, result.code, emit, context);
+    emit("community.write", "info", { ...context, messageId: result.value.id });
     return result.value;
   });
 
@@ -2024,21 +2084,15 @@ export const communityRoutes: FastifyPluginAsync<CommunityRoutesOptions> = async
     }
 
     const fields: Record<string, string> = {};
-    let fileBuffer: Buffer | null = null;
-    let filename = "";
-    let mimeType = "";
+    const files: Array<{ buffer: Buffer; filename: string; mimeType: string }> = [];
 
     for await (const part of anyRequest.parts()) {
       if (part.type === "file") {
-        if (fileBuffer) {
-          await part.toBuffer();
-          reply.code(400);
-          return { error: "community_attachment_single_file_required" };
-        }
-
-        fileBuffer = await part.toBuffer();
-        filename = part.filename || "attachment.bin";
-        mimeType = part.mimetype || "application/octet-stream";
+        files.push({
+          buffer: await part.toBuffer(),
+          filename: part.filename || "attachment.bin",
+          mimeType: part.mimetype || "application/octet-stream",
+        });
         continue;
       }
 
@@ -2047,9 +2101,13 @@ export const communityRoutes: FastifyPluginAsync<CommunityRoutesOptions> = async
       }
     }
 
-    if (!fileBuffer) {
+    if (files.length === 0) {
       reply.code(400);
       return { error: "community_attachment_upload_required" };
+    }
+    if (files.length > 10) {
+      reply.code(400);
+      return { error: "community_attachment_max_files_exceeded" };
     }
 
     const requestedTypeRaw = normalizeOptionalCommunityField(fields.type);
@@ -2072,9 +2130,9 @@ export const communityRoutes: FastifyPluginAsync<CommunityRoutesOptions> = async
     const attachmentId = makeId("community_attachment");
     const storedAttachment = await storeCommunityAttachmentUpload({
       attachmentId,
-      filename,
-      mimeType,
-      buffer: fileBuffer,
+      filename: files[0].filename,
+      mimeType: files[0].mimeType,
+      buffer: files[0].buffer,
       requestedType: requestedType || undefined,
     });
     if (!storedAttachment.ok) {
@@ -2096,6 +2154,23 @@ export const communityRoutes: FastifyPluginAsync<CommunityRoutesOptions> = async
         ...(storedAttachment.scan?.errorCategory ? { category: storedAttachment.scan.errorCategory } : {}),
       };
     }
+    const storedAttachments = [{ id: attachmentId, value: storedAttachment.value }];
+    for (const file of files.slice(1)) {
+      const nextAttachmentId = makeId("community_attachment");
+      const nextStoredAttachment = await storeCommunityAttachmentUpload({
+        attachmentId: nextAttachmentId,
+        filename: file.filename,
+        mimeType: file.mimeType,
+        buffer: file.buffer,
+        requestedType: requestedType || undefined,
+      });
+      if (!nextStoredAttachment.ok) {
+        await Promise.all(storedAttachments.map((item) => fs.unlink(item.value.storedPath).catch(() => undefined)));
+        reply.code(nextStoredAttachment.statusCode);
+        return { error: nextStoredAttachment.error };
+      }
+      storedAttachments.push({ id: nextAttachmentId, value: nextStoredAttachment.value });
+    }
 
     const createdAt = new Date().toISOString();
     let insertedAttachment: CommunityAttachmentRow | null = null;
@@ -2116,8 +2191,9 @@ export const communityRoutes: FastifyPluginAsync<CommunityRoutesOptions> = async
             scan_provider,
             duration_ms,
             scanned_at,
-            created_at
-          ) VALUES ($1, $2, NULL, $3, $4, $5, $6, $7, $8, 'clean', $9, $10, $11, $12)
+            created_at,
+            position
+          ) VALUES ($1, $2, NULL, $3, $4, $5, $6, $7, $8, 'clean', $9, $10, $11, $12, $13)
           RETURNING
             id,
             group_id,
@@ -2132,7 +2208,8 @@ export const communityRoutes: FastifyPluginAsync<CommunityRoutesOptions> = async
             scan_provider,
             duration_ms,
             scanned_at,
-            created_at`,
+            created_at,
+            position`,
         [
           attachmentId,
           req.params.id,
@@ -2146,10 +2223,24 @@ export const communityRoutes: FastifyPluginAsync<CommunityRoutesOptions> = async
           storedAttachment.value.durationMs ?? null,
           storedAttachment.value.scannedAt,
           createdAt,
+          0,
         ],
       ));
       const [nextInsertedAttachment] = insertedAttachmentResult.rows;
       insertedAttachment = nextInsertedAttachment || null;
+
+      for (const [index, item] of storedAttachments.slice(1).entries()) {
+        await query(
+          `INSERT INTO community_message_attachments (
+              id, group_id, message_id, uploaded_by_user_id, original_name, mime_type,
+              bytes, sha256, storage_key, scan_status, scan_provider, duration_ms,
+              scanned_at, created_at, position
+            ) VALUES ($1, $2, NULL, $3, $4, $5, $6, $7, $8, 'clean', $9, $10, $11, $12, $13)`,
+          [item.id, req.params.id, actor.id, item.value.originalName, item.value.mimeType,
+            item.value.bytes, item.value.sha256, item.value.storageKey, item.value.scanProvider,
+            item.value.durationMs ?? null, item.value.scannedAt, createdAt, index + 1],
+        );
+      }
 
       const message = await withPersistenceTelemetry(emit, context, async () => addCommunityMessage(req.params.id, {
         id: makeId("community_message"),
@@ -2160,6 +2251,13 @@ export const communityRoutes: FastifyPluginAsync<CommunityRoutesOptions> = async
         type: storedAttachment.value.messageType,
         body: normalizeOptionalCommunityField(fields.body),
         attachmentUrl: storedAttachment.value.contentUrl,
+        attachments: storedAttachments.map((item) => ({
+          id: item.id,
+          url: item.value.contentUrl,
+          originalName: item.value.originalName,
+          mimeType: item.value.mimeType,
+          size: item.value.bytes,
+        })),
         createdAt,
         replyToMessageId,
         replyToPreview: replyTarget.value,
@@ -2191,7 +2289,7 @@ export const communityRoutes: FastifyPluginAsync<CommunityRoutesOptions> = async
       const updatedAttachmentResult = await withPersistenceTelemetry(emit, context, async () => query<CommunityAttachmentRow>(
         `UPDATE community_message_attachments
             SET message_id = $2
-          WHERE id = $1
+          WHERE id = ANY($1::text[])
           RETURNING
             id,
             group_id,
@@ -2207,17 +2305,17 @@ export const communityRoutes: FastifyPluginAsync<CommunityRoutesOptions> = async
             duration_ms,
             scanned_at,
             created_at`,
-        [attachmentId, message.value.id],
+        [storedAttachments.map((item) => item.id), message.value.id],
       ));
 
-      const [updatedAttachmentRow] = updatedAttachmentResult.rows;
-      const attachment = mapCommunityAttachmentRow(updatedAttachmentRow);
+      const attachments = updatedAttachmentResult.rows.map(mapCommunityAttachmentRow);
+      const attachment = attachments[0];
       emit("community.attachment_uploaded", "info", {
         ...context,
         messageId: message.value.id,
-        attachmentId,
+        attachmentId: attachment.id,
         mimeType: attachment.mimeType,
-        bytes: attachment.size,
+        bytes: attachments.reduce((total, item) => total + item.size, 0),
         scanStatus: storedAttachment.value.scanStatus,
         scanProvider: storedAttachment.value.scanProvider,
         scanProviderVersion: storedAttachment.value.scanProviderVersion,
@@ -2229,12 +2327,13 @@ export const communityRoutes: FastifyPluginAsync<CommunityRoutesOptions> = async
         ok: true,
         message: message.value,
         attachment,
+        attachments,
       };
     } catch (error) {
       if (insertedAttachment) {
-        await query("DELETE FROM community_message_attachments WHERE id = $1", [insertedAttachment.id]).catch(() => undefined);
+        await query("DELETE FROM community_message_attachments WHERE id = ANY($1::text[])", [storedAttachments.map((item) => item.id)]).catch(() => undefined);
       }
-      await fs.unlink(storedAttachment.value.storedPath).catch(() => undefined);
+      await Promise.all(storedAttachments.map((item) => fs.unlink(item.value.storedPath).catch(() => undefined)));
       throw error;
     }
   });
@@ -2333,7 +2432,7 @@ export const communityRoutes: FastifyPluginAsync<CommunityRoutesOptions> = async
     return { ok: true, typingUsers: group.value.typingUsers || [] };
   });
 
-  app.post<{ Params: { id: string } }>("/api/community/groups/:id/read", async (req, reply) => {
+  app.post<{ Params: { id: string }; Body: { messageId?: string } }>("/api/community/groups/:id/read", async (req, reply) => {
     const baseContext: CommunityTelemetryContext = {
       action: "mark_read",
       actorId: req.user?.id,
@@ -2355,7 +2454,8 @@ export const communityRoutes: FastifyPluginAsync<CommunityRoutesOptions> = async
       return;
     }
 
-    const readResult = await withPersistenceTelemetry(emit, context, async () => markCommunityGroupRead(req.params.id, { id: actor.id, role: actor.role }));
+    const messageId = typeof req.body?.messageId === "string" ? req.body.messageId.trim() || undefined : undefined;
+    const readResult = await withPersistenceTelemetry(emit, context, async () => markCommunityGroupRead(req.params.id, { id: actor.id, role: actor.role }, messageId));
     if (!readResult.ok) {
       return sendCommunityError(reply, readResult.code, emit, context);
     }
@@ -2456,6 +2556,54 @@ export const communityRoutes: FastifyPluginAsync<CommunityRoutesOptions> = async
 
     emit("community.write", "info", context);
 
+    return result.value;
+  });
+
+  app.post<{
+    Params: { id: string; messageId: string };
+    Body: { starred?: boolean };
+  }>('/api/community/groups/:id/messages/:messageId/star', async (req, reply) => {
+    const baseContext: CommunityTelemetryContext = {
+      action: "set_message_starred",
+      actorId: req.user?.id,
+      actorRole: req.user?.role || "public",
+      groupId: req.params.id,
+      messageId: req.params.messageId,
+    };
+    const actor = resolveAuthenticatedActor(req, reply, emit, baseContext);
+    if (!actor) return;
+    const context = { ...baseContext, actorId: actor.id, actorRole: actor.role };
+    if (!await ensureCommunityFeatures(reply, emit, getFeatureFlag, ["community.threads.enabled"], context)) return;
+    const result = await withPersistenceTelemetry(emit, context, async () => setCommunityMessageStarredState(
+      req.params.id,
+      req.params.messageId,
+      req.body?.starred !== false,
+      { id: actor.id, role: actor.role, displayName: actor.displayName },
+    ));
+    if (!result.ok) return sendCommunityError(reply, result.code, emit, context);
+    emit("community.write", "info", context);
+    return result.value;
+  });
+
+  app.get<{ Querystring: { before?: string; limit?: string } }>('/api/community/starred-messages', async (req, reply) => {
+    const baseContext: CommunityTelemetryContext = {
+      action: "list_starred_messages",
+      actorId: req.user?.id,
+      actorRole: req.user?.role || "public",
+    };
+    const actor = resolveAuthenticatedActor(req, reply, emit, baseContext);
+    if (!actor) return;
+    const context = { ...baseContext, actorId: actor.id, actorRole: actor.role };
+    const parsedLimit = Number.parseInt(req.query?.limit || "", 10);
+    const result = await withPersistenceTelemetry(emit, context, async () => listCommunityStarredMessages({
+      id: actor.id,
+      role: actor.role,
+      displayName: actor.displayName,
+    }, {
+      limit: Number.isFinite(parsedLimit) ? parsedLimit : undefined,
+      beforeCursor: req.query?.before,
+    }));
+    if (!result.ok) return sendCommunityError(reply, result.code, emit, context);
     return result.value;
   });
 
@@ -2593,22 +2741,32 @@ export const communityRoutes: FastifyPluginAsync<CommunityRoutesOptions> = async
       actorRole: actor.role,
     }, async () => query<CommunityAttachmentRow>(
       `SELECT
-          id,
-          group_id,
-          message_id,
-          uploaded_by_user_id,
-          original_name,
-          mime_type,
-          bytes,
-          sha256,
-          storage_key,
-          scan_status,
-          scan_provider,
-          duration_ms,
-          scanned_at,
-          created_at
-        FROM community_message_attachments
-        WHERE id = $1
+          attachments.id,
+          attachments.group_id,
+          attachments.message_id,
+          attachments.uploaded_by_user_id,
+          attachments.original_name,
+          attachments.mime_type,
+          attachments.bytes,
+          attachments.sha256,
+          attachments.storage_key,
+          attachments.scan_status,
+          EXISTS (
+            SELECT 1
+            FROM community_messages AS messages
+            WHERE messages.deleted_for_everyone_at IS NOT NULL
+              AND (
+                messages.id = attachments.message_id
+                OR messages.attachment_url = CONCAT('/api/community/attachments/', attachments.id, '/content')
+              )
+          ) AS message_deleted_for_everyone,
+          attachments.scan_provider,
+          attachments.duration_ms,
+          attachments.scanned_at,
+          attachments.created_at
+        FROM community_message_attachments AS attachments
+        LEFT JOIN community_messages AS messages ON messages.id = attachments.message_id
+        WHERE attachments.id = $1
         LIMIT 1`,
       [req.params.attachmentId],
     ));
@@ -2620,6 +2778,11 @@ export const communityRoutes: FastifyPluginAsync<CommunityRoutesOptions> = async
 
     const [attachmentRow] = attachmentResult.rows;
     if (attachmentRow.scan_status !== "clean") {
+      reply.code(404);
+      return { error: "community_attachment_not_found" };
+    }
+
+    if (!attachmentRow.message_id || attachmentRow.message_deleted_for_everyone) {
       reply.code(404);
       return { error: "community_attachment_not_found" };
     }
@@ -2658,7 +2821,7 @@ export const communityRoutes: FastifyPluginAsync<CommunityRoutesOptions> = async
       return reply
         .type(attachmentRow.mime_type)
         .headers({
-          "Cache-Control": "private, max-age=60",
+          "Cache-Control": "no-store",
           "Content-Disposition": buildInlineContentDisposition(attachmentRow.original_name),
           "X-Content-Type-Options": "nosniff",
         })

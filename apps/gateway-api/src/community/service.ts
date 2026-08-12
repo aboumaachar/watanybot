@@ -3,6 +3,7 @@ import type { QueryResultRow } from "pg";
 import { createAdminAuditEvent, type AdminAuditEvent } from "../admin-authority/adminAuthorityAudit.js";
 import { ensureAdminAuthorityTables } from "../admin-authority/adminAuthorityStore.js";
 import { getClient, query } from "../lib/db.js";
+import { buildCommunityAttachmentContentUrl } from "./attachment-security.js";
 import type {
   Community,
   CommunityAppeal,
@@ -52,8 +53,11 @@ export type CommunityServiceErrorCode =
   | "community_membership_not_found"
   | "community_invalid_cursor"
   | "community_message_not_found"
+  | "community_read_message_invalid"
   | "community_message_forbidden"
   | "community_message_deleted"
+  | "community_forward_source_invalid"
+  | "community_forward_destination_forbidden"
   | "community_message_edit_window_expired"
   | "community_report_not_found"
   | "community_report_duplicate"
@@ -83,7 +87,10 @@ export type CommunityDetailOptions = {
   beforeCursor?: string;
   limit?: number;
   search?: string;
+  filter?: CommunityMessageFilter;
 };
+
+export type CommunityMessageFilter = "all" | "media" | "links" | "documents" | "audio";
 
 type CommunityMessageCursorPayload = {
   groupId: string;
@@ -133,7 +140,16 @@ export type CommunityAppealsOverview = {
 
 export type CommunityMessageInput = CommunityMessage & {
   clientRequestId?: string;
+  forwardSourceMessageId?: string;
 };
+
+export async function validateCommunityMessageInGroup(groupId: string, messageId: string): Promise<boolean> {
+  const result = await query(
+    `SELECT 1 FROM community_messages WHERE group_id = $1 AND id = $2 LIMIT 1`,
+    [groupId, messageId],
+  );
+  return Number(result.rowCount || 0) > 0;
+}
 
 export type CommunityGroupCreateInput = CommunityGroup & {
   visibility?: CommunityVisibility;
@@ -203,6 +219,19 @@ type MessageRow = {
   deleted_for_everyone_by: string | null;
   is_pinned: boolean;
   client_request_id: string | null;
+  is_forwarded: boolean;
+  forward_source_message_id: string | null;
+  is_starred_by_me?: boolean;
+  starred_created_at?: string | Date;
+};
+
+type MessageAttachmentRow = {
+  id: string;
+  message_id: string;
+  original_name: string;
+  mime_type: string;
+  bytes: string | number;
+  content_url: string | null;
 };
 
 type LiveSessionRow = {
@@ -1101,10 +1130,33 @@ function buildCommunityMessageSearchClause(paramIndex: number): string {
   return String.raw` AND body ILIKE $${paramIndex} ESCAPE '\' AND deleted_for_everyone_at IS NULL`;
 }
 
+function buildCommunityMessageFilterClause(filter: CommunityMessageFilter | undefined): string {
+  if (!filter || filter === "all") {
+    return "";
+  }
+
+  if (filter === "links") {
+    return " AND deleted_for_everyone_at IS NULL AND body ~* 'https?://|www\\.'";
+  }
+
+  const mediaPredicate = "attachment.mime_type LIKE 'image/%' OR attachment.mime_type LIKE 'video/%'";
+  const audioPredicate = "community_messages.type = 'voice' OR attachment.mime_type LIKE 'audio/%'";
+  const documentPredicate = "attachment.mime_type NOT LIKE 'image/%' AND attachment.mime_type NOT LIKE 'video/%' AND attachment.mime_type NOT LIKE 'audio/%'";
+  const predicate = filter === "media" ? mediaPredicate : filter === "audio" ? audioPredicate : documentPredicate;
+
+  return ` AND deleted_for_everyone_at IS NULL AND EXISTS (
+        SELECT 1
+        FROM community_message_attachments attachment
+        WHERE attachment.message_id = community_messages.id
+          AND (${predicate})
+      )`;
+}
+
 function buildCommunityMessagePageQuery(options: {
   groupId: string;
   rowLimit: number;
   searchValue?: string;
+  filter?: CommunityMessageFilter;
   viewerId?: string;
   before?: { createdAt: string | Date; id: string };
 }): { text: string; params: unknown[] } {
@@ -1122,6 +1174,8 @@ function buildCommunityMessagePageQuery(options: {
     params.push(options.searchValue);
     nextParamIndex += 1;
   }
+
+  const filterClause = buildCommunityMessageFilterClause(options.filter);
 
   let hiddenClause = "";
   if (options.viewerId) {
@@ -1150,9 +1204,11 @@ function buildCommunityMessagePageQuery(options: {
         deleted_for_everyone_at,
         deleted_for_everyone_by,
         is_pinned,
-        client_request_id
+        client_request_id,
+        is_forwarded,
+        forward_source_message_id
       FROM community_messages
-      WHERE group_id = $1${beforeClause}${searchClause}${hiddenClause}
+      WHERE group_id = $1${beforeClause}${searchClause}${filterClause}${hiddenClause}
       ORDER BY created_at DESC, id DESC
       LIMIT $${nextParamIndex}`,
     params,
@@ -1178,7 +1234,7 @@ function mapMessageRow(row: MessageRow, reactions?: CommunityMessageReaction[]):
     senderName: row.sender_name,
     senderRole: row.sender_role,
     type: row.type,
-    body: typeof row.body === "string" ? row.body : undefined,
+    body: row.deleted_for_everyone_at ? undefined : (typeof row.body === "string" ? row.body : undefined),
     attachmentUrl: typeof row.attachment_url === "string" ? row.attachment_url : undefined,
     createdAt: toIsoString(row.created_at),
     editedAt: row.edited_at ? toIsoString(row.edited_at) : undefined,
@@ -1186,10 +1242,37 @@ function mapMessageRow(row: MessageRow, reactions?: CommunityMessageReaction[]):
     replyToPreview: parseReplyPreview(row.reply_to_preview),
     mentions: parseMessageMentions(row.mentions),
     reactions: reactions && reactions.length > 0 ? reactions : undefined,
+    isStarredByMe: row.is_starred_by_me ? true : undefined,
     deletedForEveryoneAt: row.deleted_for_everyone_at ? toIsoString(row.deleted_for_everyone_at) : undefined,
     deletedForEveryoneBy: typeof row.deleted_for_everyone_by === "string" ? row.deleted_for_everyone_by : undefined,
     isPinned: Boolean(row.is_pinned),
+    isForwarded: Boolean(row.is_forwarded),
+    forwardSourceMessageId: typeof row.forward_source_message_id === "string" ? row.forward_source_message_id : undefined,
   };
+}
+
+async function loadMessageAttachments(executor: QueryExecutor, messageIds: string[]): Promise<Map<string, NonNullable<CommunityMessage["attachments"]>>> {
+  if (messageIds.length === 0) return new Map();
+  const result = await executor.query<MessageAttachmentRow>(
+    `SELECT id, message_id, original_name, mime_type, bytes, storage_key AS content_url
+       FROM community_message_attachments
+      WHERE message_id = ANY($1::text[]) AND scan_status = 'clean'
+      ORDER BY message_id, position ASC, created_at ASC, id ASC`,
+    [messageIds],
+  );
+  const attachments = new Map<string, NonNullable<CommunityMessage["attachments"]>>();
+  for (const row of result.rows) {
+    const list = attachments.get(row.message_id) ?? [];
+    list.push({
+      id: row.id,
+      url: buildCommunityAttachmentContentUrl(row.id),
+      originalName: row.original_name,
+      mimeType: row.mime_type,
+      size: Number(row.bytes) || 0,
+    });
+    attachments.set(row.message_id, list);
+  }
+  return attachments;
 }
 
 function mapLiveSessionRow(row: LiveSessionRow): LiveSession {
@@ -1400,7 +1483,9 @@ async function loadLatestMessages(executor: QueryExecutor, groupIds: string[], v
         deleted_for_everyone_at,
         deleted_for_everyone_by,
         is_pinned,
-        client_request_id
+        client_request_id,
+        is_forwarded,
+        forward_source_message_id
       FROM community_messages
       WHERE group_id = ANY($1::text[])
       ${hiddenClause}
@@ -1498,13 +1583,42 @@ async function loadMessageReactions(
   return reactionsByMessageId;
 }
 
+async function loadMessageStars(
+  executor: QueryExecutor,
+  messageIds: string[],
+  viewerId?: string,
+): Promise<Set<string>> {
+  if (!viewerId || messageIds.length === 0) {
+    return new Set();
+  }
+
+  const result = await executor.query<{ message_id: string }>(
+    `SELECT message_id
+       FROM community_message_stars
+      WHERE user_id = $1 AND message_id = ANY($2::text[])`,
+    [viewerId, messageIds],
+  );
+  return new Set(result.rows.map((row) => row.message_id));
+}
+
 async function hydrateCommunityMessages(
   executor: QueryExecutor,
   rows: MessageRow[],
   viewerId?: string,
 ): Promise<CommunityMessage[]> {
-  const reactionsByMessageId = await loadMessageReactions(executor, rows.map((row) => row.id), viewerId);
-  return rows.map((row) => mapMessageRow(row, reactionsByMessageId.get(row.id)));
+  const messageIds = rows.map((row) => row.id);
+  const [reactionsByMessageId, starredMessageIds] = await Promise.all([
+    loadMessageReactions(executor, messageIds, viewerId),
+    loadMessageStars(executor, messageIds, viewerId),
+  ]);
+  const attachmentsByMessageId = await loadMessageAttachments(executor, messageIds);
+  return rows.map((row) => {
+    const attachments = attachmentsByMessageId.get(row.id);
+    return {
+      ...mapMessageRow({ ...row, is_starred_by_me: starredMessageIds.has(row.id) }, reactionsByMessageId.get(row.id)),
+      ...(attachments && attachments.length > 0 ? { attachments, attachmentUrl: attachments[0].url } : {}),
+    };
+  });
 }
 
 async function hydrateCommunityMessage(
@@ -2550,6 +2664,7 @@ async function loadMessagesPageForGroup(
       groupId,
       rowLimit,
       searchValue,
+      filter: options?.filter,
       viewerId,
       before: {
         createdAt: anchor.created_at,
@@ -2562,6 +2677,7 @@ async function loadMessagesPageForGroup(
       groupId,
       rowLimit,
       searchValue,
+      filter: options?.filter,
       viewerId,
     });
     result = await executor.query(pageQuery.text, pageQuery.params);
@@ -2611,6 +2727,7 @@ async function listCommunityMessagesPage(
       groupId,
       rowLimit,
       searchValue,
+      filter: options?.filter,
       viewerId,
       before: {
         createdAt: beforeCursor.createdAt,
@@ -2623,6 +2740,7 @@ async function listCommunityMessagesPage(
       groupId,
       rowLimit,
       searchValue,
+      filter: options?.filter,
       viewerId,
     });
     result = await executor.query(pageQuery.text, pageQuery.params);
@@ -3292,8 +3410,10 @@ export async function addCommunityMessage(
           deleted_for_everyone_by,
           deleted_for_everyone_by_id,
           is_pinned,
-          client_request_id
-        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NULL, $10, $11, $12, NULL, NULL, NULL, $13, $14)
+          client_request_id,
+          is_forwarded,
+          forward_source_message_id
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NULL, $10, $11, $12, NULL, NULL, NULL, $13, $14, $15, $16)
         RETURNING
           id,
           group_id,
@@ -3311,7 +3431,9 @@ export async function addCommunityMessage(
           deleted_for_everyone_at,
           deleted_for_everyone_by,
           is_pinned,
-          client_request_id`,
+          client_request_id,
+          is_forwarded,
+          forward_source_message_id`,
       [
         message.id,
         groupId,
@@ -3327,6 +3449,8 @@ export async function addCommunityMessage(
         mentions ? stringifyJsonValue(mentions) : null,
         Boolean(message.isPinned),
         message.clientRequestId || null,
+        Boolean(message.forwardSourceMessageId),
+        message.forwardSourceMessageId || null,
       ],
     );
 
@@ -3398,6 +3522,60 @@ export async function addCommunityMessage(
   } catch (error) {
     await client.query("ROLLBACK");
     throw error;
+  } finally {
+    client.release();
+  }
+}
+
+export async function forwardCommunityMessage(
+  destinationGroupId: string,
+  sourceMessageId: string,
+  clientRequestId: string,
+  actor: CommunityActor,
+): Promise<CommunityResult<CommunityMessage>> {
+  await ensureCommunitySeeded();
+  const client = await getClient();
+  try {
+    const sourceResult = await client.query(
+      `SELECT id, group_id, type, sender_role, body, attachment_url, deleted_for_everyone_at
+         FROM community_messages
+        WHERE id = $1
+        LIMIT 1`,
+      [sourceMessageId],
+    );
+    if (
+      Number(sourceResult.rowCount || 0) === 0
+      || sourceResult.rows[0].deleted_for_everyone_at
+      || sourceResult.rows[0].sender_role === "system"
+      || sourceResult.rows[0].type === "announcement"
+      || sourceResult.rows[0].type === "session_invite"
+    ) {
+      return { ok: false, code: "community_forward_source_invalid" };
+    }
+
+    const sourceGroupAccess = await requireGroupAccess(client, sourceResult.rows[0].group_id, actor, true);
+    if (!sourceGroupAccess.ok) {
+      return { ok: false, code: "community_forward_source_invalid" };
+    }
+
+    const source = sourceResult.rows[0];
+    const result = await addCommunityMessage(destinationGroupId, {
+      id: randomUUID(),
+      groupId: destinationGroupId,
+      senderId: actor.id,
+      senderName: actor.displayName,
+      senderRole: actor.role === "admin" || actor.role === "moderator" || actor.role === "superadmin" ? "admin" : "user",
+      type: source.type,
+      body: source.body || "",
+      attachmentUrl: source.attachment_url || undefined,
+      createdAt: new Date().toISOString(),
+      clientRequestId,
+      replyToMessageId: undefined,
+      replyToPreview: undefined,
+      isForwarded: true,
+      forwardSourceMessageId: source.id,
+    }, { viewer: { id: actor.id, role: actor.role } });
+    return result;
   } finally {
     client.release();
   }
@@ -3902,6 +4080,133 @@ export async function toggleCommunityMessageReaction(
   }
 }
 
+export async function setCommunityMessageStarredState(
+  groupId: string,
+  messageId: string,
+  starred: boolean,
+  actor: CommunityActor,
+): Promise<CommunityResult<{ message: CommunityMessage; group: CommunityGroupView }>> {
+  await ensureCommunitySeeded();
+
+  const client = await getClient();
+  try {
+    await client.query("BEGIN");
+    const access = await requireGroupAccess(client, groupId, actor, true);
+    if (!access.ok) {
+      await client.query("ROLLBACK");
+      return access;
+    }
+
+    const currentMessageResult = await client.query<MessageRow>(
+      `SELECT id, group_id, sender_id, sender_name, sender_role, type, body, attachment_url,
+              created_at, edited_at, reply_to_message_id, reply_to_preview, mentions,
+              deleted_for_everyone_at, deleted_for_everyone_by, is_pinned, client_request_id,
+              is_forwarded, forward_source_message_id
+         FROM community_messages
+        WHERE group_id = $1 AND id = $2
+        LIMIT 1`,
+      [groupId, messageId],
+    );
+    const currentMessage = currentMessageResult.rows[0];
+    if (!currentMessage) {
+      await client.query("ROLLBACK");
+      return { ok: false, code: "community_message_not_found" };
+    }
+    if (currentMessage.deleted_for_everyone_at) {
+      await client.query("ROLLBACK");
+      return { ok: false, code: "community_message_deleted" };
+    }
+
+    if (starred) {
+      await client.query(
+        `INSERT INTO community_message_stars (message_id, group_id, user_id)
+         VALUES ($1, $2, $3)
+         ON CONFLICT (user_id, message_id) DO NOTHING`,
+        [messageId, groupId, actor.id],
+      );
+    } else {
+      await client.query(
+        `DELETE FROM community_message_stars WHERE user_id = $1 AND message_id = $2`,
+        [actor.id, messageId],
+      );
+    }
+
+    const persistedMessage = await hydrateCommunityMessage(client, currentMessage, actor.id);
+    await client.query("COMMIT");
+    const group = await readGroupView(defaultExecutor, groupId, actor);
+    if (!group) {
+      return { ok: false, code: "community_group_not_found" };
+    }
+
+    return { ok: true, value: { message: persistedMessage, group } };
+  } catch (error) {
+    await client.query("ROLLBACK");
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
+export async function listCommunityStarredMessages(
+  actor: CommunityActor,
+  options?: { limit?: number; beforeCursor?: string },
+): Promise<CommunityResult<CommunityMessagesPage>> {
+  await ensureCommunitySeeded();
+  const limit = Math.min(Math.max(Math.floor(options?.limit || 30), 1), 80);
+  const beforeCursor = decodeCommunityMessageCursor(options?.beforeCursor);
+  if (options?.beforeCursor && (!beforeCursor || beforeCursor.groupId !== "starred")) {
+    return { ok: false, code: "community_invalid_cursor" };
+  }
+  const beforeClause = beforeCursor ? " AND (stars.created_at, stars.message_id) < ($3, $4)" : "";
+  const limitParam = beforeCursor ? 5 : 3;
+  const params: unknown[] = [actor.id, actor.role];
+  if (beforeCursor) params.push(beforeCursor.createdAt, beforeCursor.id);
+  params.push(limit + 1);
+  const result = await query<MessageRow>(
+    `SELECT m.id, m.group_id, m.sender_id, m.sender_name, m.sender_role, m.type, m.body,
+            m.attachment_url, m.created_at, m.edited_at, m.reply_to_message_id,
+            m.reply_to_preview, m.mentions, m.deleted_for_everyone_at, m.deleted_for_everyone_by,
+            m.is_pinned, m.client_request_id, m.is_forwarded, m.forward_source_message_id,
+            stars.created_at AS starred_created_at
+       FROM community_message_stars stars
+       JOIN community_messages m ON m.id = stars.message_id AND m.group_id = stars.group_id
+       JOIN community_groups g ON g.id = m.group_id
+      WHERE stars.user_id = $1
+        AND NOT EXISTS (
+          SELECT 1 FROM community_message_hidden_for_user hidden
+           WHERE hidden.message_id = m.id AND hidden.user_id = $1
+        )
+        AND (g.visibility = 'public' OR $2 IN ('admin', 'superadmin') OR EXISTS (
+          SELECT 1 FROM community_group_members member
+           WHERE member.group_id = g.id AND member.user_id = $1 AND member.status = 'active'
+        ))
+        ${beforeClause}
+      ORDER BY stars.created_at DESC, stars.message_id DESC
+      LIMIT $${limitParam}`,
+    params,
+  );
+  const hasMoreBefore = result.rows.length > limit;
+  const rows = result.rows.slice(0, limit);
+  const messages = await hydrateCommunityMessages(defaultExecutor, rows, actor.id);
+  const oldest = rows.at(-1);
+  return {
+    ok: true,
+    value: {
+      groupId: "starred",
+      messages,
+      pageInfo: {
+        hasMoreBefore,
+        startCursor: hasMoreBefore && oldest?.starred_created_at
+          ? encodeCommunityMessageCursor("starred", toIsoString(oldest.starred_created_at), oldest.id)
+          : null,
+        endCursor: null,
+      },
+      latestSequence: null,
+      readState: { unreadCount: 0, lastReadMessageId: null, lastReadAt: null },
+    },
+  };
+}
+
 const selectCommunityMessageForPinStateSql = `SELECT
     id,
     group_id,
@@ -4230,7 +4535,7 @@ export async function deleteCommunityMessageForSelf(
   }
 }
 
-export async function markCommunityGroupRead(groupId: string, viewer: CommunityViewer): Promise<CommunityResult<CommunityReadUpdateResult>> {
+export async function markCommunityGroupRead(groupId: string, viewer: CommunityViewer, messageId?: string): Promise<CommunityResult<CommunityReadUpdateResult>> {
   await ensureCommunitySeeded();
 
   const access = await requireGroupPresenceAccess(defaultExecutor, groupId, viewer, true);
@@ -4239,14 +4544,18 @@ export async function markCommunityGroupRead(groupId: string, viewer: CommunityV
   }
 
   const latestMessageResult = await query(
-    `SELECT id, created_at
+    `SELECT id, created_at, sender_id
       FROM community_messages
       WHERE group_id = $1
+        AND ($2::text IS NULL OR id = $2)
       ORDER BY created_at DESC, id DESC
       LIMIT 1`,
-    [groupId],
+    [groupId, messageId || null],
   );
-  const latestMessage = latestMessageResult.rows[0] as { id: string; created_at: string | Date } | undefined;
+  if (messageId && Number(latestMessageResult.rowCount || 0) === 0) {
+    return { ok: false, code: "community_read_message_invalid" };
+  }
+  const latestMessage = latestMessageResult.rows[0] as { id: string; created_at: string | Date; sender_id: string } | undefined;
   const lastReadAt = latestMessage ? toIsoString(latestMessage.created_at) : new Date().toISOString();
 
   await query(
@@ -4281,6 +4590,23 @@ export async function markCommunityGroupRead(groupId: string, viewer: CommunityV
       },
     },
   }));
+
+  if (latestMessage) {
+    emitCommunityServiceRealtime(buildCommunityRealtimeEvent({
+      eventId: randomUUID(),
+      eventType: "community.receipt.read",
+      occurredAt: lastReadAt,
+      groupId,
+      actorId: viewer.id,
+      messageId: latestMessage.id,
+      sequence: null,
+      payload: {
+        readerUserId: viewer.id,
+        messageId: latestMessage.id,
+        senderUserId: latestMessage.sender_id,
+      },
+    }));
+  }
 
   return {
     ok: true,
