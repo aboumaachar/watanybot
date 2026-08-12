@@ -300,7 +300,7 @@ export async function otpRoutes(app: FastifyInstance): Promise<void> {
    */
   app.post(
     "/api/auth/otp/request",
-    { config: { public: true } },
+    { config: { public: true, rateLimit: { max: 10, timeWindow: "1 minute" } } },
     async (request, reply) => {
       const genericSuccess = { ok: true, message: OTP_REQUEST_SUCCESS_MESSAGE };
       const { phoneNumber } = request.body as { phoneNumber?: unknown };
@@ -552,7 +552,7 @@ export async function otpRoutes(app: FastifyInstance): Promise<void> {
    */
   app.post(
     "/api/auth/otp/verify",
-    { config: { public: true } },
+    { config: { public: true, rateLimit: { max: 20, timeWindow: "1 minute" } } },
     async (request, reply) => {
       const body = request.body as { phoneNumber?: unknown; code?: unknown };
       const requestIp = request.ip;
@@ -642,6 +642,7 @@ export async function otpRoutes(app: FastifyInstance): Promise<void> {
          VALUES (NULL, $1, $1, 'public', 'active', $2, $2, $3, false, now())
          ON CONFLICT ON CONSTRAINT users_phone_number_unique DO UPDATE SET
            last_login = now(),
+           last_login_ip = $4,
            phone_verified_at = now(),
            full_name = CASE
              WHEN users.full_name IS NULL OR btrim(users.full_name) = '' THEN EXCLUDED.full_name
@@ -652,7 +653,7 @@ export async function otpRoutes(app: FastifyInstance): Promise<void> {
              ELSE users.name
            END
          RETURNING id, role, full_name, phone_number, profile_completed`,
-        [normalized, OTP_DEFAULT_NAME, username],
+        [normalized, OTP_DEFAULT_NAME, username, requestIp],
       );
 
       if (!upsertResult.rows.length) {

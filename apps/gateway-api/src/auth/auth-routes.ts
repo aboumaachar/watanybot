@@ -396,7 +396,7 @@ export async function authRoutes(app: FastifyInstance): Promise<void> {
         [user.id, refreshToken, request.ip, request.headers["user-agent"] || ""],
       );
 
-      await query("UPDATE users SET last_login = now() WHERE id = $1", [user.id]);
+      await query("UPDATE users SET last_login = now(), last_login_ip = $2 WHERE id = $1", [user.id, request.ip]);
 
       await query(
         "INSERT INTO audit_log (user_id, action, resource, ip, user_agent) VALUES ($1, $2, $3, $4, $5)",
@@ -485,7 +485,7 @@ export async function authRoutes(app: FastifyInstance): Promise<void> {
         const role = effectiveUserRole(email, user.role);
         await query(
           `UPDATE public.users
-           SET last_login = now(), role = $3,
+           SET last_login = now(), last_login_ip = $4, role = $3,
                full_name = CASE
                  WHEN full_name IS NULL OR btrim(full_name) = '' THEN $2
                  ELSE full_name
@@ -495,15 +495,15 @@ export async function authRoutes(app: FastifyInstance): Promise<void> {
                  ELSE name
                END
            WHERE id = $1`,
-          [user.id, fullName, role],
+          [user.id, fullName, role, request.ip],
         );
         user.role = role;
       } else {
         const createdUserResult = await query<AuthenticatedUserRow>(
-          `INSERT INTO public.users (email, username, full_name, name, password_hash, role, status, last_login)
-           VALUES ($1, $2, $3, $3, '', $4, 'active', now())
+          `INSERT INTO public.users (email, username, full_name, name, password_hash, role, status, last_login, last_login_ip)
+           VALUES ($1, $2, $3, $3, '', $4, 'active', now(), $5)
            RETURNING id, email, full_name, username, role, status`,
-          [email, buildGeneratedUsername(), fullName, effectiveUserRole(email, "public")],
+          [email, buildGeneratedUsername(), fullName, effectiveUserRole(email, "public"), request.ip],
         );
 
         user = createdUserResult.rows[0];
@@ -644,7 +644,7 @@ export async function authRoutes(app: FastifyInstance): Promise<void> {
     }
 
     const result = await query(
-      "SELECT id, email, name, phone, role, rank, military_id, region, status, created_at, last_login FROM users WHERE id = $1",
+      "SELECT id, email, name, phone, role, rank, military_id, region, status, created_at, last_login, last_login_ip FROM users WHERE id = $1",
       [user.id],
     );
 

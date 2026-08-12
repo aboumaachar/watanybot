@@ -162,6 +162,7 @@ export default defineConfig(async (env: ConfigEnv) => {
     plugins: [finalCascadePlugin(), socialPreviewBuildPlugin()],
     build: {
       cssCodeSplit: false,
+      modulePreload: false,
       rollupOptions: {
         output: {
           manualChunks,

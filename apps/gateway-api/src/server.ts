@@ -39,6 +39,7 @@ import { seasonalAppleJobRouter } from './koudama/surveys/seasonal-apple-job';
 export const app = Fastify({
   logger:    { level: LOG_LEVEL },
   bodyLimit: 11 * 1024 * 1024,
+  trustProxy: process.env.TRUST_PROXY === "true" ? ["127.0.0.1", "::1"] : false,
 });
 
 /* ================================================================

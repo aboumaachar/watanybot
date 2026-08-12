@@ -112,4 +112,18 @@ describe("runHybridKbChat social/work contextual exceptions", () => {
     expect(result.mode).toBe("retrieval-context-ready");
     expect(result.confidence).toBeGreaterThan(0);
   });
+
+  it("does not treat search snapshot top tags as user-selected context", async () => {
+    const result = await runHybridKbChat({
+      message: "الابن",
+      searchSnapshot: {
+        query: "الابن",
+        topTags: ["workspace-noise", "salary"],
+      },
+    });
+
+    expect(result.selectedTags).toEqual([]);
+    expect(result.answer).not.toContain("workspace-noise");
+    expect(result.answer).not.toContain("salary");
+  });
 });

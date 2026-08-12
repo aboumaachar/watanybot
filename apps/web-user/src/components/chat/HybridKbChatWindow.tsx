@@ -83,7 +83,11 @@ function getResultOriginLabel(result: HybridKbSelectableResult | null): string {
   }
 }
 
-export function HybridKbChatWindow() {
+export type HybridKbChatWindowProps = Readonly<{
+  onClose?: () => void;
+}>;
+
+export function HybridKbChatWindow({ onClose }: HybridKbChatWindowProps) {
   const location = useLocation();
   const { apiBaseUrl } = useConfig();
   const [input, setInput] = useState("");
@@ -123,7 +127,7 @@ export function HybridKbChatWindow() {
     } : null;
   }, [chatContext.pageContext, currentFeatureSearch.documents.length, liveSearch.documents.length, mergedDocuments.length, originPathname]);
 
-  const topTagIds = useMemo(() => liveSearch.tags.slice(0, 5).map((tag) => tag.id), [liveSearch.tags]);
+  const isExpanded = input.trim().length >= liveSearch.minChars || Boolean(selectedResult) || messages.length > 0 || isAnswering || Boolean(chatError);
 
   useEffect(() => {
     if (appliedLocationStateRef.current) {
@@ -156,7 +160,7 @@ export function HybridKbChatWindow() {
         {
           id: makeId("context"),
           role: "context",
-          content: `تم اختيار: ${nextResult.label}. اضغط Enter لعرض المعلومات أو اكتب سؤالك ضمن هذا الموضوع.`,
+          content: `تم اختيار: ${nextResult.label}`,
         },
       ]);
     }
@@ -179,7 +183,7 @@ export function HybridKbChatWindow() {
       {
         id: makeId("context"),
         role: "context",
-        content: `تم اختيار: ${result.label}. اضغط Enter لعرض المعلومات أو اكتب سؤالك ضمن هذا الموضوع.`,
+        content: `تم اختيار: ${result.label}`,
       },
     ]);
   }
@@ -221,7 +225,7 @@ export function HybridKbChatWindow() {
           selectedResult,
           searchSnapshot: {
             query: selectedResult?.label || input || messageToSend,
-            topTags: selectedTags.length ? selectedTags : topTagIds,
+            topTags: selectedTags,
             selectedLabel: selectedResult?.label,
             currentFeatureResults: currentFeatureSearch.documents.slice(0, 5).map((document) => ({
               title: document.title,
@@ -266,39 +270,39 @@ export function HybridKbChatWindow() {
   }
 
   return (
-    <div className="hybrid-kb-chat-window" data-hybrid-kb-chat-window="true" dir="auto">
-      <div className="hybrid-kb-chat-header">
-        <strong>البحث الهجين</strong>
-        <span>استخدم شريط الإدخال السفلي كنافذة البحث الرئيسية. تظهر الاقتراحات مباشرة أثناء الكتابة داخل نفس الصفحة.</span>
-      </div>
+    <div
+      className="hybrid-kb-chat-window"
+      data-hybrid-kb-chat-window="true"
+      data-hybrid-kb-expanded={isExpanded ? "true" : "false"}
+      dir="auto"
+    >
+      {isExpanded ? (
+        <LiveKbResultPanel
+          query={input}
+          visibleLength={liveSearch.visibleLength}
+          minChars={liveSearch.minChars}
+          tags={liveSearch.tags}
+          documents={mergedDocuments}
+          suggestedQuestions={liveSearch.suggestedQuestions}
+          selectedTags={selectedTags}
+          selectedResultId={selectedResult?.id}
+          isSearching={liveSearch.isSearching || currentFeatureSearch.isSearching}
+          error={currentFeatureSearch.error || liveSearch.error}
+          resultInfoDismissed={resultInfoDismissed}
+          onDismissResultInfo={() => setResultInfoDismissed(true)}
+          onResultSelect={handleResultSelect}
+          onUseQuestion={(question) => {
+            setInput(question);
+            setChatError(null);
+          }}
+          debugSummary={debugSummary}
+        />
+      ) : null}
 
-      <LiveKbResultPanel
-        query={input}
-        visibleLength={liveSearch.visibleLength}
-        minChars={liveSearch.minChars}
-        tags={liveSearch.tags}
-        documents={mergedDocuments}
-        suggestedQuestions={liveSearch.suggestedQuestions}
-        selectedTags={selectedTags}
-        selectedResultId={selectedResult?.id}
-        isSearching={liveSearch.isSearching || currentFeatureSearch.isSearching}
-        error={currentFeatureSearch.error || liveSearch.error}
-        resultInfoDismissed={resultInfoDismissed}
-        onDismissResultInfo={() => setResultInfoDismissed(true)}
-        onResultSelect={handleResultSelect}
-        onUseQuestion={(question) => {
-          setInput(question);
-          setChatError(null);
-        }}
-        debugSummary={debugSummary}
-      />
-
-      {selectedResult ? (
+      {isExpanded && selectedResult ? (
         <div className="hybrid-kb-selected-context" data-hybrid-kb-selected-context="true" data-hybrid-kb-selected-id={selectedResult.id}>
           <div>
-            <strong>السياق المختار</strong>
             <span>{selectedResult.label}</span>
-            <small>{getResultOriginLabel(selectedResult)}{selectedTags.length ? ` • وسوم: ${selectedTags.join(", ")}` : ""}</small>
           </div>
           <button type="button" onClick={clearSelectedContext}>
             إلغاء الاختيار
@@ -306,35 +310,8 @@ export function HybridKbChatWindow() {
         </div>
       ) : null}
 
-      <div className="hybrid-kb-messages" data-hybrid-kb-messages="true">
-        {messages.map((message) => (
-          <article key={message.id} className={`hybrid-kb-message hybrid-kb-message--${message.role}`}>
-            <p>{message.content}</p>
-            {message.sources?.length ? (
-              <ul className="hybrid-kb-sources">
-                {message.sources.map((source, index) => (
-                  <li key={`${message.id}-source-${index}`}>{source.title || source.chunkId || source.id || "KB source"}</li>
-                ))}
-              </ul>
-            ) : null}
-            {message.actions?.length ? (
-              <div className="hybrid-kb-actions" data-hybrid-kb-actions="true">
-                {message.actions.map((action, index) => (
-                  <button key={`${message.id}-action-${index}`} type="button" disabled>
-                    {action.label || "متابعة"}
-                  </button>
-                ))}
-              </div>
-            ) : null}
-          </article>
-        ))}
-        {isAnswering ? <div className="hybrid-kb-answering">جاري تحضير الجواب...</div> : null}
-        {chatError ? <div className="hybrid-kb-chat-error">{chatError}</div> : null}
-      </div>
-
       <form className="hybrid-kb-composer" onSubmit={submitMessage}>
         <label className="hybrid-kb-input-label">
-          <span>اكتب سؤالك</span>
           <div className="hybrid-kb-input-row">
             <input
               value={input}
@@ -344,13 +321,49 @@ export function HybridKbChatWindow() {
             />
             <button
               type="submit"
+              className="hybrid-kb-icon-button"
+              aria-label="إرسال"
+              title="إرسال"
               disabled={isAnswering || (!input.trim() && !selectedResult)}
             >
-              {isAnswering ? "جاري الإرسال..." : "إرسال"}
+              <span aria-hidden="true">{isAnswering ? "…" : "➤"}</span>
             </button>
+            {onClose ? (
+              <button type="button" className="hybrid-kb-icon-button hybrid-kb-close-button" onClick={onClose} aria-label="إغلاق المساعد" title="إغلاق">
+                <span aria-hidden="true">×</span>
+              </button>
+            ) : null}
           </div>
         </label>
       </form>
+
+      {isExpanded ? (
+        <div className="hybrid-kb-messages" data-hybrid-kb-messages="true">
+          {messages.map((message) => (
+            <article key={message.id} className={`hybrid-kb-message hybrid-kb-message--${message.role}`}>
+              <p>{message.content}</p>
+              {message.sources?.length ? (
+                <ul className="hybrid-kb-sources">
+                  {message.sources.map((source, index) => (
+                    <li key={`${message.id}-source-${index}`}>{source.title || source.chunkId || source.id || "KB source"}</li>
+                  ))}
+                </ul>
+              ) : null}
+              {message.actions?.length ? (
+                <div className="hybrid-kb-actions" data-hybrid-kb-actions="true">
+                  {message.actions.map((action, index) => (
+                    <button key={`${message.id}-action-${index}`} type="button" disabled>
+                      {action.label || "متابعة"}
+                    </button>
+                  ))}
+                </div>
+              ) : null}
+            </article>
+          ))}
+          {isAnswering ? <div className="hybrid-kb-answering">جاري تحضير الجواب...</div> : null}
+          {chatError ? <div className="hybrid-kb-chat-error">{chatError}</div> : null}
+        </div>
+      ) : null}
     </div>
   );
 }

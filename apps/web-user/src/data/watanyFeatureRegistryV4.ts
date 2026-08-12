@@ -111,7 +111,7 @@ export const watanyV4BottomDockItems = watanyFeatureRegistryV4
   .map(toDrawerItem);
 
 const homepageFeatureOrder = [
-  "for-you", "latest", "popular", "marketplace", "jobs", "schools", "procedures", "salary", "taxi", "circulars", "network",
+  "for-you", "latest", "popular", "salary", "procedures", "schools", "marketplace", "jobs", "taxi", "circulars", "network",
   "forms", "useful-links", "deaths", "community", "voting", "news", "laws", "faq", "fake-fact", "profile", "settings", "children", "sports",
 ] as const;
 

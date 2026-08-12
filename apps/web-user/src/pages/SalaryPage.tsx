@@ -33,6 +33,7 @@ type LocalSalaryRow = {
   budget2022: number;
   val2019: number;
   pension2026: number;
+  officialNetPension2026?: number;
   pension2026usd: number;
   val2019usd: number;
   pct2019: number;
@@ -40,6 +41,9 @@ type LocalSalaryRow = {
   totalSalary2026usd: number;
   sixPct: number;
   fiftyPct: number;
+  officialDeduction2026?: number;
+  officialMedalMonthlyValue?: number;
+  officialBasePension2026?: number;
 };
 
 type LocalSalaryTable = { rows: LocalSalaryRow[] };
@@ -113,9 +117,24 @@ function buildLocalSalaryResult(
 
   if (!fallbackEntry) return null;
 
-  const grossPension2026 = Math.round(Number(fallbackEntry.pension2026 || 0));
-  const deduction15Pct = Math.round(Number(fallbackEntry.vetSalary || 0) * 0.015);
-  const pensionCurrent = Math.max(0, grossPension2026 - deduction15Pct);
+  const basePension = Number(fallbackEntry.officialBasePension2026 || 0) > 0
+    ? Number(fallbackEntry.officialBasePension2026)
+    : Number(fallbackEntry.vetSalary || 0) + Number(fallbackEntry.degreeValue || 0);
+  const tableSupplements = Number(fallbackEntry.equipment || 0)
+    + Number(fallbackEntry.driver || 0)
+    + Number(fallbackEntry.position || 0);
+  const socialAids = Number(fallbackEntry.grant2025 || 0)
+    + Number(fallbackEntry.d13020 || 0)
+    + Number(fallbackEntry.d11227_2 || 0)
+    + Number(fallbackEntry.d11227_1 || 0)
+    + Number(fallbackEntry.budget2022 || 0);
+  const grossPension2026 = basePension + tableSupplements + socialAids;
+  const deduction15Pct = Number(fallbackEntry.officialDeduction2026 || 0) > 0
+    ? Number(fallbackEntry.officialDeduction2026)
+    : Math.round(basePension * 0.015);
+  const pensionCurrent = Number(fallbackEntry.officialNetPension2026 || 0) > 0
+    ? Number(fallbackEntry.officialNetPension2026)
+    : Math.max(0, grossPension2026 - deduction15Pct);
   const pensionAfterSixRaise = Math.round(pensionCurrent * SIX_INCREMENTS_FACTOR);
   const pensionAfterFiftyPct = Math.round(pensionCurrent * FIFTY_PERCENT_INCREASE);
   const familyAllowance = {
@@ -129,16 +148,27 @@ function buildLocalSalaryResult(
   const ornamentChoices = meta?.ornamentChoices ?? [];
   const medalItems = ornamentChoices
     .filter((choice) => input.selectedOrnaments.includes(choice.id))
-    .map((choice) => ({ id: choice.id, name_ar: choice.name_ar, monthlyValue: choice.monthlyValue ?? 0 }));
+    .map((choice) => ({
+      id: choice.id,
+      name_ar: choice.name_ar,
+      monthlyValue: Number(fallbackEntry.officialMedalMonthlyValue || 0) > 0
+        ? Number(fallbackEntry.officialMedalMonthlyValue)
+        : choice.monthlyValue ?? 0,
+      annualValue: (Number(fallbackEntry.officialMedalMonthlyValue || 0) > 0
+        ? Number(fallbackEntry.officialMedalMonthlyValue)
+        : choice.monthlyValue ?? 0) * 12,
+    }));
   const medalsTotal = medalItems.reduce((sum, medal) => sum + medal.monthlyValue, 0);
   const totalPension = pensionCurrent + familyAllowance.wife + familyAllowance.children + medalsTotal;
   const totalAfterSixRaise = pensionAfterSixRaise + familyAllowanceAfterRaise.wife + familyAllowanceAfterRaise.children + medalsTotal;
   const totalAfterFiftyPct = pensionAfterFiftyPct + familyAllowanceAfterRaise.wife + familyAllowanceAfterRaise.children + medalsTotal;
 
   return {
+    ok: true,
     input: {
       rank: input.rank,
       degree: input.degree,
+      category: fallbackEntry.category || categoryForRank(input.rank),
       married: input.married,
       kidsCount: input.kidsCount,
       selectedOrnaments: input.selectedOrnaments,
@@ -148,7 +178,7 @@ function buildLocalSalaryResult(
     totalPensionUsd: totalPension / LOCAL_SALARY_USD_RATE,
     breakdown: {
       basicSalary: Number(fallbackEntry.basicSalary || 0),
-      vetSalary: Number(fallbackEntry.vetSalary || 0),
+      vetSalary: basePension,
       equipment: Number(fallbackEntry.equipment || 0),
       driver: Number(fallbackEntry.driver || 0),
       position: Number(fallbackEntry.position || 0),
@@ -161,6 +191,7 @@ function buildLocalSalaryResult(
       },
       deduction15Pct,
       pension2026: pensionCurrent,
+      officialNetPension2026: Number(fallbackEntry.officialNetPension2026 || 0) || undefined,
       pension2026usd: pensionCurrent / LOCAL_SALARY_USD_RATE,
       familyAllowance: {
         wife: familyAllowance.wife,
@@ -183,8 +214,13 @@ function buildLocalSalaryResult(
       },
       totalAfterSixRaise,
       totalAfterSixRaiseUsd: totalAfterSixRaise / LOCAL_SALARY_USD_RATE,
+      sixPct: Number(fallbackEntry.sixPct || 0),
     },
     fiftyPctRaise: {
+      val2019: Number(fallbackEntry.val2019 || 0),
+      val2019usd: Number(fallbackEntry.val2019usd || 0),
+      fiftyPctTargetUsd: Number(fallbackEntry.fiftyPct || 0),
+      fiftyPctTargetLbp: Math.round(Number(fallbackEntry.fiftyPct || 0) * LOCAL_SALARY_USD_RATE),
       additionalRaise: Math.max(0, pensionAfterFiftyPct - pensionCurrent),
       pensionAfterFiftyPct,
       pensionAfterFiftyPctUsd: pensionAfterFiftyPct / LOCAL_SALARY_USD_RATE,
@@ -205,6 +241,41 @@ type SalaryStep = 'rank' | 'degree' | 'family' | 'kids' | 'medals';
 type SalaryResultScenario = 'current' | 'six' | 'half' | 'installment';
 type SectionIndex = 0 | 1 | 2 | 3;
 type SalaryMetaStatus = 'ready' | 'partial_data_loaded' | 'metadata_missing' | 'server_unavailable';
+type SalaryHealth = {
+  ok: boolean;
+  status: SalaryMetaStatus;
+  metadataReady: boolean;
+  rankCount: number;
+  degreeCount: number;
+  medalCount: number;
+};
+
+const SALARY_META_CACHE_TTL_MS = 5 * 60 * 1000;
+const salaryBootstrapCache = new Map<string, {
+  cachedAt: number;
+  promise: Promise<{ health: SalaryHealth; data: SalaryMeta }>;
+}>();
+
+function getSalaryBootstrap(baseUrl: string) {
+  const cached = salaryBootstrapCache.get(baseUrl);
+  if (cached && Date.now() - cached.cachedAt < SALARY_META_CACHE_TTL_MS) {
+    return cached.promise;
+  }
+
+  const promise = (async () => {
+    const [health, data] = await Promise.all([
+      api.salaryHealth(baseUrl),
+      api.salaryMeta(baseUrl),
+    ]);
+    return { health, data };
+  })();
+  const entry = { cachedAt: Date.now(), promise };
+  salaryBootstrapCache.set(baseUrl, entry);
+  void promise.catch(() => {
+    if (salaryBootstrapCache.get(baseUrl) === entry) salaryBootstrapCache.delete(baseUrl);
+  });
+  return promise;
+}
 
 type SalaryPageViewProps = Readonly<{
   meta: SalaryMeta | null;
@@ -737,31 +808,22 @@ function useSalaryPageController() {
     setMetaErr("");
     setMetaStatusNote("");
     setMetaLoading(true);
-    const MAX_RETRIES = 3;
-    for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
-      try {
-        const [health, data] = await Promise.all([
-          api.salaryHealth(apiBaseUrl),
-          api.salaryMeta(apiBaseUrl),
-        ]);
-        setMeta({ ...data, ranks: data.ranks.filter((entry) => !HIDDEN_PUBLIC_RANKS.has(entry.rank)) });
-        setMetaStatus(health.status);
-        if (health.status !== 'ready') {
-          setMetaStatusNote(`رتب ${health.rankCount} • درجات ${health.degreeCount} • أوسمة ${health.medalCount}`);
-        }
-        setMetaLoading(false);
-        return;
-      } catch {
-        if (attempt < MAX_RETRIES) {
-          await new Promise((r) => setTimeout(r, 1000 * attempt));
-        }
+    try {
+      const { health, data } = await getSalaryBootstrap(apiBaseUrl);
+      setMeta({ ...data, ranks: data.ranks.filter((entry) => !HIDDEN_PUBLIC_RANKS.has(entry.rank)) });
+      setMetaStatus(health.status);
+      if (health.status !== 'ready') {
+        setMetaStatusNote(`رتب ${health.rankCount} • درجات ${health.degreeCount} • أوسمة ${health.medalCount}`);
       }
+      setMetaLoading(false);
+      return;
+    } catch {
+      setMeta(buildLocalSalaryMeta());
+      setMetaStatus('server_unavailable');
+      setMetaStatusNote('تم تفعيل وضع محلي احتياطي');
+      setMetaErr("");
+      setMetaLoading(false);
     }
-    setMeta(buildLocalSalaryMeta());
-    setMetaStatus('server_unavailable');
-    setMetaStatusNote('تم تفعيل وضع محلي احتياطي');
-    setMetaErr("");
-    setMetaLoading(false);
   }, [apiBaseUrl]);
 
   useEffect(() => { loadMeta(); }, [loadMeta]);

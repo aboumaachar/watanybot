@@ -9,6 +9,8 @@ type User = {
   status: string;
   phone?: string;
   created_at: string;
+  last_login?: string | null;
+  last_login_ip?: string | null;
 };
 
 export default function UsersPage() {
@@ -96,19 +98,21 @@ export default function UsersPage() {
               <th>Role</th>
               <th>Status</th>
               <th>Created</th>
+              <th>Last Login</th>
+              <th>Last Login IP</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={6} className="muted center">
+                <td colSpan={8} className="muted center">
                   Loading…
                 </td>
               </tr>
             ) : filtered.length === 0 ? (
               <tr>
-                <td colSpan={6} className="muted center">
+                <td colSpan={8} className="muted center">
                   No users found.
                 </td>
               </tr>
@@ -134,6 +138,8 @@ export default function UsersPage() {
                     <span className={`status-badge ${u.status}`}>{u.status}</span>
                   </td>
                   <td className="muted">{new Date(u.created_at).toLocaleDateString()}</td>
+                  <td className="muted">{u.last_login ? new Date(u.last_login).toLocaleString() : "Never"}</td>
+                  <td className="mono" dir="ltr">{u.last_login_ip || "—"}</td>
                   <td>
                     {u.status === "active" ? (
                       <button className="ghost sm danger" onClick={() => updateStatus(u.id, "banned")}>

@@ -1,53 +1,54 @@
-import type { ReactNode } from "react";
+import { lazy, Suspense, type ReactNode } from "react";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { WatanyPublicShellV20 } from "./layouts/WatanyPublicShellV20";
 import { UnavailableRecoveryPage } from "../pages/WatanyRecoveryPages";
-import LoginPage from "../pages/LoginPage";
 import RegisterPage from "../pages/RegisterPage";
-import SalaryPage from "../pages/SalaryPage";
-import ProceduresPage from "../pages/ProceduresPage";
-import SchoolGrantsPage from "../pages/SchoolGrantsPage";
-import SettingsPage from "../pages/SettingsPage";
-import SavedChatsPage from "../pages/SavedChatsPage";
-import BookmarksPage from "../pages/BookmarksPage";
-import ChatSessionsPage from "../pages/ChatSessionsPage";
-import JobsPage from "../pages/JobsPage";
-import AinElHafehJobsPage from "../pages/AinElHafehJobsPage";
-import AinElHafehAcceptedApplicationsPage from "../pages/AinElHafehAcceptedApplicationsPage";
-import MarketPage from "../pages/MarketPage";
-import SuperAdminPage from "../pages/SuperAdminPage";
-import SuperadminUsersPage from "../features/superadmin-users/SuperadminUsersPage";
 import WatanyV4Homepage from "./WatanyV4Homepage";
-import MobileOsChatPage from "../pages/MobileOsChatPage";
-import HybridKbChatPage from "../pages/hybrid-kb-chat";
-import DocumentsPage from "../pages/DocumentsPage";
-import LegalPage from "../pages/LegalPage";
-import ProfilePage from "../pages/ProfilePage";
-import NotificationsPage from "../pages/NotificationsPage";
-import NewsPage from "../pages/NewsPage";
-import FakeFactPage from "../pages/FakeNewsPage";
-import FormsPage from "../pages/FormsPage";
-import SurveyDetailPage from "../pages/SurveyDetailPage";
-import SurveyResultsPage from "../pages/SurveyResultsPage";
-import SurveyPage from "../pages/SurveyPage";
-import FaqPage from "../pages/FaqPage";
-import DeathsPage from "../pages/DeathsPage";
-import CommunityPage from "../pages/CommunityPage";
-import CommunityThreadsPage from "../pages/CommunityThreadsPage";
-import TaxiPage from "../pages/TaxiPage";
-import NetworkPage from "../pages/NetworkPage";
-import CircularsPage from "../pages/CircularsPage";
-import ChildrenHubPage from "../pages/ChildrenHubPage";
-import AdsPage from "../pages/AdsPage";
-import HealthPage from "../pages/HealthPage";
-import OfficialServicesPage from "../pages/OfficialServicesPage";
-import AdminAuthorityDemoPage from "../pages/AdminAuthorityDemoPage";
 import WatanyGuidedSmokePage from "../pages/WatanyGuidedHelperSmokePage";
 import WatanyV4FeatureLanding from "./WatanyV4FeatureLanding";
 import { SmartAttentionFeaturePage } from "../features/smart-attention-native/SmartAttentionPages";
 import { useApp } from "../store/app";
 import { isLoggedIn } from "../lib/auth";
 import "../apex/apex-theme-runtime-v274";
+
+const LoginPage = lazy(() => import("../pages/LoginPage"));
+const SalaryPage = lazy(() => import("../pages/SalaryPage"));
+const ProceduresPage = lazy(() => import("../pages/ProceduresPage"));
+const SchoolGrantsPage = lazy(() => import("../pages/SchoolGrantsPage"));
+const SettingsPage = lazy(() => import("../pages/SettingsPage"));
+const SavedChatsPage = lazy(() => import("../pages/SavedChatsPage"));
+const BookmarksPage = lazy(() => import("../pages/BookmarksPage"));
+const ChatSessionsPage = lazy(() => import("../pages/ChatSessionsPage"));
+const JobsPage = lazy(() => import("../pages/JobsPage"));
+const AinElHafehJobsPage = lazy(() => import("../pages/AinElHafehJobsPage"));
+const AinElHafehAcceptedApplicationsPage = lazy(() => import("../pages/AinElHafehAcceptedApplicationsPage"));
+const MarketPage = lazy(() => import("../pages/MarketPage"));
+const SuperAdminPage = lazy(() => import("../pages/SuperAdminPage"));
+const SuperadminUsersPage = lazy(() => import("../features/superadmin-users/SuperadminUsersPage"));
+const MobileOsChatPage = lazy(() => import("../pages/MobileOsChatPage"));
+const HybridKbChatPage = lazy(() => import("../pages/hybrid-kb-chat"));
+const DocumentsPage = lazy(() => import("../pages/DocumentsPage"));
+const LegalPage = lazy(() => import("../pages/LegalPage"));
+const ProfilePage = lazy(() => import("../pages/ProfilePage"));
+const NotificationsPage = lazy(() => import("../pages/NotificationsPage"));
+const NewsPage = lazy(() => import("../pages/NewsPage"));
+const FakeFactPage = lazy(() => import("../pages/FakeNewsPage"));
+const FormsPage = lazy(() => import("../pages/FormsPage"));
+const SurveyDetailPage = lazy(() => import("../pages/SurveyDetailPage"));
+const SurveyResultsPage = lazy(() => import("../pages/SurveyResultsPage"));
+const SurveyPage = lazy(() => import("../pages/SurveyPage"));
+const FaqPage = lazy(() => import("../pages/FaqPage"));
+const DeathsPage = lazy(() => import("../pages/DeathsPage"));
+const CommunityPage = lazy(() => import("../pages/CommunityPage"));
+const CommunityThreadsPage = lazy(() => import("../pages/CommunityThreadsPage"));
+const TaxiPage = lazy(() => import("../pages/TaxiPage"));
+const NetworkPage = lazy(() => import("../pages/NetworkPage"));
+const CircularsPage = lazy(() => import("../pages/CircularsPage"));
+const ChildrenHubPage = lazy(() => import("../pages/ChildrenHubPage"));
+const AdsPage = lazy(() => import("../pages/AdsPage"));
+const HealthPage = lazy(() => import("../pages/HealthPage"));
+const OfficialServicesPage = lazy(() => import("../pages/OfficialServicesPage"));
+const AdminAuthorityDemoPage = lazy(() => import("../pages/AdminAuthorityDemoPage"));
 
 
 function RequireAuthenticated({ children }: { children: ReactNode }) {
@@ -89,7 +90,8 @@ function RequireAdmin({ children }: { children: ReactNode }) {
 
 export function AppShell() {
   return (
-    <Routes>
+    <Suspense fallback={<div className="screen-loader" aria-live="polite"><span className="screen-loader__spinner" /> جارٍ تحميل الصفحة…</div>}>
+      <Routes>
       <Route
         path="/superadmin/users"
         element={
@@ -180,6 +182,7 @@ export function AppShell() {
         <Route path="admin-authority-demo" element={<AdminAuthorityDemoPage />} />
         <Route path="*" element={<UnavailableRecoveryPage />} />
       </Route>
-    </Routes>
+      </Routes>
+    </Suspense>
   );
 }

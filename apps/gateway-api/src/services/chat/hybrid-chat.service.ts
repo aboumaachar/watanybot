@@ -73,8 +73,7 @@ function resolveSelectedTags(request: HybridChatRequest): string[] {
   const selectedResult = request.selectedResult || null;
   const resultTags = Array.isArray(selectedResult?.tags) ? selectedResult?.tags || [] : [];
   const resultIdAsTag = selectedResult?.kind === "tag" ? [selectedResult.id] : [];
-  const snapshotTags = Array.isArray(request.searchSnapshot?.topTags) ? request.searchSnapshot.topTags : [];
-  return unique([...(request.selectedTags || []), ...resultTags, ...resultIdAsTag, ...snapshotTags]);
+  return unique([...(request.selectedTags || []), ...resultTags, ...resultIdAsTag]);
 }
 
 function resolveSelectedKbIds(request: HybridChatRequest): string[] {

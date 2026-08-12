@@ -41,6 +41,10 @@ async function requireSeasonalSurveyAdmin(
   request: FastifyRequest,
   reply: FastifyReply,
 ): Promise<boolean> {
+  if (request.user?.role === 'admin' || request.user?.role === 'superadmin') {
+    return true;
+  }
+
   const configuredToken = process.env.KOUDAMA_SURVEY_ADMIN_TOKEN || process.env.ADMIN_API_TOKEN || '';
   const providedToken = extractAdminToken(request);
 

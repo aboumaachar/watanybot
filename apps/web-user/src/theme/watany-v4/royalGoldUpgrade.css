@@ -1318,6 +1318,10 @@ html body .watany-recovery-shell:has(.community-thread-screen--thread) > nav.wat
   font: 900 12px/1.2 "Cairo", Tahoma, Arial, sans-serif !important;
 }
 
+.watany-recovery-shell > .watany-recovery-bottom > .watany-recovery-bottom__install {
+  color: var(--watany-forest-950) !important;
+}
+
 .watany-v4-homepage .watany-v4-launcher-card__label {
   margin-top: 0 !important;
 }

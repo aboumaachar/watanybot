@@ -23,7 +23,7 @@ export async function adminUsersRoutes(app: FastifyInstance): Promise<void> {
     };
 
     try {
-      let sql = "SELECT id, email, name, role, status, phone, rank, military_id, created_at FROM users WHERE 1=1";
+      let sql = "SELECT id, email, name, role, status, phone, rank, military_id, created_at, last_login, last_login_ip FROM users WHERE 1=1";
       const params: unknown[] = [];
       let idx = 1;
 

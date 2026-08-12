@@ -41,6 +41,10 @@
     return !!(el && (el.matches('[data-sticky-hybrid-chat-launcher="true"]') || (el.closest && el.closest('[data-sticky-hybrid-chat-launcher="true"]'))));
   }
 
+  function isSafeChat(el) {
+    return !!(el && (el.matches('[data-watany-safe-chat="true"]') || (el.closest && el.closest('[data-watany-safe-chat="true"]'))));
+  }
+
   function isRecoveryMenu(el) {
     return !!(el && (el.matches('[data-watany-recovery-menu-open="true"], [data-watany-recovery-menu="true"], .watany-recovery-menu-layer, .watany-recovery-menu-panel') || (el.closest && el.closest('[data-watany-recovery-menu-open="true"], [data-watany-recovery-menu="true"], .watany-recovery-menu-layer, .watany-recovery-menu-panel'))));
   }
@@ -128,6 +132,7 @@
 
   function shouldSkip(el) {
     if (!el || el.nodeType !== 1) return true;
+    if (isSafeChat(el)) return true;
     if (isHybridLauncher(el)) {
       clearOverlayStyles(el);
       return true;

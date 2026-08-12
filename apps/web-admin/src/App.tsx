@@ -21,6 +21,7 @@ const AuditPage = lazy(() => import("./pages/AuditPage"));
 const KBEditorPage = lazy(() => import("./pages/KBEditorPage"));
 const FeatureControlsPage = lazy(() => import("./pages/FeatureControlsPage"));
 const NewsAdminPage = lazy(() => import("./pages/NewsAdminPage"));
+const JobsAdminPage = lazy(() => import("./pages/JobsAdminPage"));
 
 function RedirectToWebUser() {
   const location = useLocation();
@@ -44,6 +45,7 @@ const NAV_ITEMS = [
   { path: "/audit", label: "Audit Log", icon: "audit" },
   { path: "/kb", label: "KB Editor", icon: "knowledge" },
   { path: "/news", label: "News", icon: "news" },
+  { path: "/jobs", label: "Jobs & Applications", icon: "briefcase" },
 ];
 
 function Loading() {
@@ -154,6 +156,7 @@ export default function App() {
                     <Route path="/audit" element={<AuditPage />} />
                     <Route path="/kb" element={<KBEditorPage />} />
                     <Route path="/news" element={<NewsAdminPage />} />
+                    <Route path="/jobs" element={<JobsAdminPage />} />
                     <Route path="/market" element={<AdminMarketPage />} />
                     <Route path="*" element={<Navigate to="/" replace />} />
                   </Routes>

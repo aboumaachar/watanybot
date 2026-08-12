@@ -1,5 +1,6 @@
 /* ── Job Search Feature – Fastify routes ─────────────── */
 import type { FastifyInstance } from "fastify";
+import { requireRole } from "../auth/rbac.js";
 import {
   SEED_CATEGORIES,
   SEED_EMPLOYERS,
@@ -7,7 +8,7 @@ import {
   applications,
   savedJobs,
 } from "./seed.js";
-import type { JobApplicationRecord, SavedJob, JobSearchResult } from "./types.js";
+import type { JobApplicationRecord, JobPosting, SavedJob, JobSearchResult } from "./types.js";
 
 let idCounter = 1;
 function makeId(prefix: string) {
@@ -154,6 +155,47 @@ export async function jobsRoutes(app: FastifyInstance) {
   const requireActionsAuth = readFlag("JOBS_ACTIONS_REQUIRE_AUTH", false);
   const explicitPublicCardShaping = readFlag("JOBS_PUBLIC_CARD_EXPLICIT_SHAPING", false);
   const explicitDetailShaping = readFlag("JOBS_DETAIL_PAYLOAD_SHAPING", false);
+
+  app.get(`${prefix}/admin/jobs`, { preHandler: [requireRole("superadmin")] }, async () => {
+    return { jobs: SEED_JOBS.map((job) => ({
+      ...job,
+      employer: SEED_EMPLOYERS.find((employer) => employer.id === job.employer_id) || null,
+      category: SEED_CATEGORIES.find((category) => category.id === job.category_id) || null,
+    })) };
+  });
+
+  app.get(`${prefix}/admin/applications`, { preHandler: [requireRole("superadmin")] }, async () => {
+    return { applications: applications.map((application) => ({
+      ...application,
+      job: SEED_JOBS.find((job) => job.id === application.job_id) || null,
+    })) };
+  });
+
+  app.patch<{ Params: { id: string }; Body: { status?: JobApplicationRecord["status"] } }>(
+    `${prefix}/admin/applications/:id`,
+    { preHandler: [requireRole("superadmin")] },
+    async (request, reply) => {
+      const application = applications.find((entry) => entry.id === request.params.id);
+      if (!application) return reply.code(404).send({ error: "الطلب غير موجود" });
+      const allowed = new Set<JobApplicationRecord["status"]>(["pending", "reviewing", "shortlisted", "interview", "rejected", "accepted", "withdrawn"]);
+      if (!request.body.status || !allowed.has(request.body.status)) return reply.code(400).send({ error: "حالة الطلب غير صالحة" });
+      application.status = request.body.status;
+      return { ok: true, application };
+    },
+  );
+
+  app.patch<{ Params: { id: string }; Body: { status?: JobPosting["status"] } }>(
+    `${prefix}/admin/jobs/:id`,
+    { preHandler: [requireRole("superadmin")] },
+    async (request, reply) => {
+      const job = SEED_JOBS.find((entry) => entry.id === request.params.id);
+      if (!job) return reply.code(404).send({ error: "الوظيفة غير موجودة" });
+      const allowed = new Set<JobPosting["status"]>(["draft", "active", "paused", "closed", "filled"]);
+      if (!request.body.status || !allowed.has(request.body.status)) return reply.code(400).send({ error: "حالة الوظيفة غير صالحة" });
+      job.status = request.body.status;
+      return { ok: true, job };
+    },
+  );
 
   /* ─── GET /api/v2/jobs/categories — list categories ─── */
   app.get(`${prefix}/categories`, async () => {

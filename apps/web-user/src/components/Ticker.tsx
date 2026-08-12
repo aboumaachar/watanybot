@@ -67,7 +67,7 @@ export function Ticker({
   disabledKinds?: string[];
   loop?: boolean;
 }>) {
-  const [items, setItems] = useState<TickerItem[]>([]);
+  const [items, setItems] = useState<TickerItem[]>(DEFAULT_TICKER_ITEMS);
   const [paused, setPaused] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
   const trackRef = useRef<HTMLDivElement | null>(null);
@@ -77,14 +77,18 @@ export function Ticker({
     let cancelled = false;
     const loadTicker = async () => {
       try {
-        const [tickerRes, deathsRes] = await Promise.all([
-          api.getTicker(apiBaseUrl),
-          api.listAlWafiyat({ limit: 1 }, apiBaseUrl).catch(() => null),
-        ]);
+        const tickerRes = await api.getTicker(apiBaseUrl);
         if (cancelled) return;
 
-        const nextItems = withOfficialDeathsTicker(tickerRes.items || [], Number(deathsRes?.total || 0));
-        setItems(nextItems.length > 0 ? nextItems : DEFAULT_TICKER_ITEMS);
+        setItems(tickerRes.items?.length ? tickerRes.items : DEFAULT_TICKER_ITEMS);
+
+        const deathsRes = await api.listAlWafiyat({ limit: 1 }, apiBaseUrl).catch(() => null);
+        if (cancelled) return;
+
+        const deathsTotal = Number(deathsRes?.total || 0);
+        if (deathsTotal > 0) {
+          setItems((currentItems) => withOfficialDeathsTicker(currentItems, deathsTotal));
+        }
       } catch {
         if (!cancelled) setItems(DEFAULT_TICKER_ITEMS);
       }

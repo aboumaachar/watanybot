@@ -73,6 +73,78 @@ describe("Salary API", () => {
   });
 
   describe("POST /api/salary/calc", () => {
+    it("computes Moahel degree 17 from the salary table", async () => {
+      const res = await app.inject({
+        method: "POST",
+        url: "/api/salary/calc",
+        payload: { rank: "مؤهل", degree: 17, married: true, kidsCount: 1, selectedOrnaments: ["military_medal"] },
+      });
+
+      expect(res.statusCode).toBe(200);
+      const body = res.json();
+      const breakdown = body.breakdown;
+      const componentGross = breakdown.vetSalary
+        + breakdown.equipment
+        + breakdown.driver
+        + breakdown.position
+        + breakdown.aids.grant2025
+        + breakdown.aids.d13020
+        + breakdown.aids.d11227_2
+        + breakdown.aids.d11227_1
+        + breakdown.aids.budget2022;
+      expect(breakdown.pension2026).toBe(componentGross - 29733);
+      expect(breakdown.deduction15Pct).toBe(29733);
+      expect(breakdown.familyAllowance.total).toBe(93000);
+      expect(breakdown.medals.total).toBe(49458);
+      expect(body.totalPension).toBe(43247925);
+    });
+
+    it("computes Moahel First degree 14 from the salary table", async () => {
+      const res = await app.inject({
+        method: "POST",
+        url: "/api/salary/calc",
+        payload: { rank: "مؤهل اول", degree: 14, married: true, kidsCount: 1, selectedOrnaments: ["military_medal"] },
+      });
+
+      expect(res.statusCode).toBe(200);
+      const body = res.json();
+      expect(body.breakdown.deduction15Pct).toBe(27744);
+      expect(body.breakdown.medals.total).toBe(49458);
+      expect(body.breakdown.familyAllowance.total).toBe(93000);
+      expect(body.breakdown.vetSalary).toBe(1849600);
+      expect(body.totalPension).toBe(43117314);
+    });
+
+    it("computes Moahel First degree 12 from the salary table", async () => {
+      const res = await app.inject({
+        method: "POST",
+        url: "/api/salary/calc",
+        payload: { rank: "مؤهل اول", degree: 12, married: true, kidsCount: 1, selectedOrnaments: ["military_medal"] },
+      });
+
+      expect(res.statusCode).toBe(200);
+      const body = res.json();
+      expect(body.breakdown.deduction15Pct).toBe(25844);
+      expect(body.breakdown.medals.total).toBe(49458);
+      expect(body.breakdown.familyAllowance.total).toBe(93000);
+      expect(body.breakdown.vetSalary).toBe(1722950);
+      expect(body.totalPension).toBe(42992564);
+    });
+
+    it("computes Raqeeb First degree 12 from the salary table", async () => {
+      const res = await app.inject({
+        method: "POST",
+        url: "/api/salary/calc",
+        payload: { rank: "رقيب اول", degree: 12, married: true, kidsCount: 3, selectedOrnaments: [] },
+      });
+
+      expect(res.statusCode).toBe(200);
+      const body = res.json();
+      expect(body.breakdown.vetSalary).toBe(1496850);
+      expect(body.breakdown.deduction15Pct).toBe(22453);
+      expect(body.totalPension).toBe(37034136);
+    });
+
     it("rejects when rank is missing", async () => {
       const res = await app.inject({
         method: "POST",

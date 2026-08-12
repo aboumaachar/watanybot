@@ -4804,15 +4804,19 @@ export const api = {
 
   async searchCommunityGroupMessages(
     groupId: string,
-    options: { query: string; limit?: number },
+    options: { query?: string; filter?: "all" | "media" | "links" | "documents" | "audio"; limit?: number },
     baseUrl = API_URL,
   ): Promise<CommunityMessagesPage> {
     const params = new URLSearchParams();
-    const normalizedQuery = options.query.trim();
-    if (!normalizedQuery) {
+    const normalizedQuery = options.query?.trim() || "";
+    const filter = options.filter || "all";
+    if (!normalizedQuery && filter === "all") {
       throw new Error("community group search query required");
     }
-    params.set("q", normalizedQuery);
+    if (normalizedQuery) {
+      params.set("q", normalizedQuery);
+    }
+    params.set("filter", filter);
     if (typeof options.limit === "number") {
       params.set("limit", String(options.limit));
     }
@@ -5045,10 +5049,25 @@ export const api = {
     return await res.json() as CommunityMessage;
   },
 
+  async forwardCommunityMessage(
+    groupId: string,
+    payload: { sourceMessageId: string; clientRequestId: string },
+    baseUrl = API_URL,
+  ): Promise<CommunityMessage> {
+    const res = await authFetch(`${baseUrl}/api/community/groups/${encodeURIComponent(groupId)}/forward`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) throw new Error("community message forward failed");
+    return await res.json() as CommunityMessage;
+  },
+
   async uploadCommunityAttachment(
     groupId: string,
     payload: {
-      file: File;
+      file?: File;
+      files?: File[];
       body?: string;
       type?: Extract<CommunityMessage["type"], "attachment" | "voice">;
       replyToMessageId?: string;
@@ -5074,7 +5093,9 @@ export const api = {
     };
   }> {
     const form = new FormData();
-    form.append("file", payload.file);
+    for (const file of payload.files || (payload.file ? [payload.file] : [])) {
+      form.append("file", file);
+    }
     if (payload.body?.trim()) {
       form.append("body", payload.body.trim());
     }
@@ -5110,6 +5131,17 @@ export const api = {
         attachmentUrl: string;
         durationMs?: number;
       };
+      attachments?: Array<{
+        id: string;
+        groupId: string;
+        messageId?: string;
+        originalName: string;
+        mimeType: string;
+        size: number;
+        sha256: string;
+        createdAt: string;
+        attachmentUrl: string;
+      }>;
     };
   },
 
@@ -5133,9 +5165,11 @@ export const api = {
     };
   },
 
-  async markCommunityGroupRead(groupId: string, baseUrl = API_URL): Promise<CommunityReadUpdate> {
+  async markCommunityGroupRead(groupId: string, baseUrl = API_URL, messageId?: string): Promise<CommunityReadUpdate> {
     const res = await authFetch(`${baseUrl}/api/community/groups/${encodeURIComponent(groupId)}/read`, {
       method: "POST",
+      headers: messageId ? { "content-type": "application/json" } : undefined,
+      body: messageId ? JSON.stringify({ messageId }) : undefined,
     });
     if (!res.ok) throw new Error("community read failed");
     return await res.json() as CommunityReadUpdate;
@@ -5186,6 +5220,34 @@ export const api = {
     });
     if (!res.ok) throw new Error("community reaction toggle failed");
     return await res.json() as { message: CommunityMessage; group: CommunityGroup };
+  },
+
+  async setCommunityMessageStarredState(
+    groupId: string,
+    messageId: string,
+    starred: boolean,
+    baseUrl = API_URL,
+  ): Promise<{ message: CommunityMessage; group: CommunityGroup }> {
+    const res = await authFetch(`${baseUrl}/api/community/groups/${encodeURIComponent(groupId)}/messages/${encodeURIComponent(messageId)}/star`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ starred }),
+    });
+    if (!res.ok) throw new Error("community star toggle failed");
+    return await res.json() as { message: CommunityMessage; group: CommunityGroup };
+  },
+
+  async getCommunityStarredMessages(
+    options?: { before?: string; limit?: number },
+    baseUrl = API_URL,
+  ): Promise<CommunityMessagesPage> {
+    const params = new URLSearchParams();
+    if (options?.before) params.set("before", options.before);
+    if (typeof options?.limit === "number") params.set("limit", String(options.limit));
+    const query = params.size ? `?${params.toString()}` : "";
+    const res = await authFetch(`${baseUrl}/api/community/starred-messages${query}`);
+    if (!res.ok) throw new Error("community starred messages fetch failed");
+    return await res.json() as CommunityMessagesPage;
   },
 
   async pinCommunityMessage(

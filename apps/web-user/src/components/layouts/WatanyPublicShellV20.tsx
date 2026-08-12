@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { MainHybridChatSurface } from "../chat/MainHybridChatSurface";
+import { PwaInstallController } from "../PwaInstallController";
 import { Ticker, type TickerItem } from "../Ticker";
 import { resolveTickerTarget } from "../../lib/ticker-targets";
 import { WatanyV4Icon } from "../../theme/watany-v4/WatanyV4Icon";
@@ -209,13 +210,11 @@ export function WatanyPublicShellV20() {
 
       {chatOpen ? (
         <section className="watany-recovery-chat" data-watany-safe-chat="true" aria-label="المساعد">
-          <div className="watany-recovery-chat-head">
-            <strong>مساعد موطني</strong>
-            <button type="button" onClick={() => setChatOpen(false)} aria-label="إغلاق المساعد">×</button>
-          </div>
-          <MainHybridChatSurface context={`shell:${location.pathname}`} />
+          <MainHybridChatSurface context={`shell:${location.pathname}`} onClose={() => setChatOpen(false)} />
         </section>
       ) : null}
+
+      <PwaInstallController />
 
       <nav className="watany-recovery-bottom" aria-label="التنقل السريع" data-watany-bottom-bar="true" data-watany-dock="true" data-watany-bottom-nav="true">
         {bottomItems.map((item) => (
@@ -228,6 +227,16 @@ export function WatanyPublicShellV20() {
             <span className="watany-recovery-bottom__label">{item.label}</span>
           </NavLink>
         ))}
+        <button
+          type="button"
+          className="watany-recovery-bottom__install"
+          aria-label="تثبيت التطبيق"
+          title="تثبيت التطبيق"
+          onClick={() => globalThis.dispatchEvent(new Event("watany-open-install-prompt"))}
+        >
+          <WatanyV4Icon name="install" aria-hidden="true" width={20} height={20} />
+          <span className="watany-recovery-bottom__label">تثبيت</span>
+        </button>
         <button type="button" aria-label="فتح مساعد موطني" aria-expanded={chatOpen} onClick={() => setChatOpen((value) => !value)}>
           <WatanyV4Icon name="ask-watany" aria-hidden="true" width={20} height={20} />
           <span className="watany-recovery-bottom__label">المساعد</span>

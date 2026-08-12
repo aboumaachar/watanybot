@@ -26,6 +26,10 @@
     return !!(el && (el.matches('[data-sticky-hybrid-chat-launcher="true"]') || (el.closest && el.closest('[data-sticky-hybrid-chat-launcher="true"]'))));
   }
 
+  function isSafeChat(el) {
+    return !!(el && (el.matches('[data-watany-safe-chat="true"]') || (el.closest && el.closest('[data-watany-safe-chat="true"]'))));
+  }
+
   function isRecoveryMenu(el) {
     return !!(el && (el.matches('[data-watany-recovery-menu-open="true"], [data-watany-recovery-menu="true"], .watany-recovery-menu-layer, .watany-recovery-menu-panel') || (el.closest && el.closest('[data-watany-recovery-menu-open="true"], [data-watany-recovery-menu="true"], .watany-recovery-menu-layer, .watany-recovery-menu-panel'))));
   }
@@ -96,6 +100,10 @@
     ));
     var out = [];
     list.forEach(function (el) {
+      if (isSafeChat(el)) {
+        clearForcedSnap(el);
+        return;
+      }
       if (isHybridLauncher(el)) {
         clearForcedSnap(el);
         return;
@@ -128,6 +136,10 @@
 
   function forceSnap(el, idx) {
     if (el && el.id === "watany-form-viewer-root") return false;
+    if (isSafeChat(el)) {
+      clearForcedSnap(el);
+      return false;
+    }
     if (isHybridLauncher(el)) {
       clearForcedSnap(el);
       return false;

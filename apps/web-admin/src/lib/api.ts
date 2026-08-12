@@ -23,6 +23,152 @@ export type WebUserSettingsResponse = {
   lastUpdatedAt: string | null;
 };
 
+export type RecruitmentAnnouncementStatus = "draft" | "published" | "expired" | "cancelled";
+
+export type RecruitmentAnnouncement = {
+  id: string;
+  title: string;
+  apparatusName: string;
+  announcementNumber?: string;
+  startDate?: string;
+  endDate?: string;
+  status: RecruitmentAnnouncementStatus;
+  conditions: string[];
+  requiredDocuments: string[];
+  eligibleCategories: string[];
+  applicationLocation?: string;
+  applicationMethod?: string;
+  sourceName?: string;
+  sourceUrl?: string;
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+  createdBy: string;
+};
+
+export type SeasonalApplication = {
+  id: string;
+  name: string;
+  phone: string;
+  email?: string;
+  age: number | string;
+  gender?: string;
+  relationType: string;
+  governorate: string;
+  governorateAr?: string;
+  caza: string;
+  cazaAr?: string;
+  village: string;
+  villageAr?: string;
+  availability: string;
+  preferredPeriod?: string;
+  weekendWork?: boolean | string;
+  canArrive6am: boolean | string;
+  hasAgriExperience: boolean | string;
+  experienceText?: string;
+  canStandHours: boolean | string;
+  healthNote?: string;
+  futureJobsInterest: boolean | string;
+  interests?: string[];
+  familyMore?: string;
+  weightedScore: number;
+  status: "pending_review" | "accepted" | "waitlist" | "rejected" | "withdrawn";
+  followUpStatus: "not_contacted" | "called" | "no_answer" | "confirmed" | "declined" | "needs_follow_up";
+  adminNotes: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type MarketplaceJob = {
+  id: string;
+  title_ar: string;
+  employer_id: string;
+  status: "draft" | "active" | "paused" | "closed" | "filled";
+  location_city?: string;
+  job_type: string;
+  applications_count: number;
+  published_at: string;
+  employer?: { company_name?: string } | null;
+};
+
+export type MarketplaceApplication = {
+  id: string;
+  job_id: string;
+  veteran_name: string;
+  phone: string;
+  email?: string;
+  status: "pending" | "reviewing" | "shortlisted" | "interview" | "rejected" | "accepted" | "withdrawn";
+  applied_at: string;
+  job?: { title_ar?: string } | null;
+};
+
+export async function listRecruitmentAnnouncements(): Promise<RecruitmentAnnouncement[]> {
+  const response = await adminFetch("/api/admin/recruitment/announcements");
+  const data = await response.json() as { announcements?: RecruitmentAnnouncement[] };
+  return data.announcements ?? [];
+}
+
+export async function saveRecruitmentAnnouncement(
+  payload: Partial<RecruitmentAnnouncement>,
+  id?: string,
+): Promise<RecruitmentAnnouncement> {
+  const response = await adminFetch(
+    id ? `/api/admin/recruitment/announcements/${id}` : "/api/admin/recruitment/announcements",
+    {
+      method: id ? "PATCH" : "POST",
+      body: JSON.stringify(payload),
+    },
+  );
+  const data = await response.json() as { announcement: RecruitmentAnnouncement };
+  return data.announcement;
+}
+
+export async function deleteRecruitmentAnnouncement(id: string): Promise<void> {
+  await adminFetch(`/api/admin/recruitment/announcements/${id}`, { method: "DELETE" });
+}
+
+export async function listSeasonalApplications(): Promise<SeasonalApplication[]> {
+  const response = await adminFetch("/api/admin/koudama/surveys/seasonal-apple-job/applications");
+  const data = await response.json() as { applications?: SeasonalApplication[] };
+  return data.applications ?? [];
+}
+
+export async function updateSeasonalApplication(
+  id: string,
+  payload: Partial<Pick<SeasonalApplication, "status" | "followUpStatus" | "adminNotes">>,
+): Promise<SeasonalApplication> {
+  const response = await adminFetch(`/api/admin/koudama/surveys/seasonal-apple-job/applications/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify(payload),
+  });
+  const data = await response.json() as { application: SeasonalApplication };
+  return data.application;
+}
+
+export async function listMarketplaceJobs(): Promise<MarketplaceJob[]> {
+  const response = await adminFetch("/api/v2/jobs/admin/jobs");
+  const data = await response.json() as { jobs?: MarketplaceJob[] };
+  return data.jobs ?? [];
+}
+
+export async function listMarketplaceApplications(): Promise<MarketplaceApplication[]> {
+  const response = await adminFetch("/api/v2/jobs/admin/applications");
+  const data = await response.json() as { applications?: MarketplaceApplication[] };
+  return data.applications ?? [];
+}
+
+export async function updateMarketplaceJobStatus(id: string, status: MarketplaceJob["status"]): Promise<MarketplaceJob> {
+  const response = await adminFetch(`/api/v2/jobs/admin/jobs/${id}`, { method: "PATCH", body: JSON.stringify({ status }) });
+  const data = await response.json() as { job: MarketplaceJob };
+  return data.job;
+}
+
+export async function updateMarketplaceApplicationStatus(id: string, status: MarketplaceApplication["status"]): Promise<MarketplaceApplication> {
+  const response = await adminFetch(`/api/v2/jobs/admin/applications/${id}`, { method: "PATCH", body: JSON.stringify({ status }) });
+  const data = await response.json() as { application: MarketplaceApplication };
+  return data.application;
+}
+
 type AdminApiErrorKind = "network" | "http";
 
 type RefreshResponse = {

@@ -201,8 +201,7 @@ function isNoisyRecord(hit: KbWeightedSearchHit): boolean {
 }
 
 function pickUserFacingHits(hits: KbWeightedSearchHit[]): KbWeightedSearchHit[] {
-  const cleanHits = hits.filter((hit) => !isNoisyRecord(hit));
-  return cleanHits.length > 0 ? cleanHits : hits;
+  return hits.filter((hit) => !isNoisyRecord(hit));
 }
 
 export async function searchKbLive(query: string, options: LiveSearchOptions = {}): Promise<LiveSearchResponse> {

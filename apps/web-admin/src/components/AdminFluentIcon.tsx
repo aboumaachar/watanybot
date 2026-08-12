@@ -90,6 +90,7 @@ const ICON_MAP: Record<string, IconComponent> = {
   users: People24Regular,
   audit: DocumentText24Regular,
   knowledge: Book24Regular,
+  jobs: Briefcase24Regular,
 };
 
 export function AdminFluentIcon({

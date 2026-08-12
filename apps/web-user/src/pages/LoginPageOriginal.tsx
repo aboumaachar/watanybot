@@ -436,6 +436,8 @@ function LoginPageOriginal() {
             </form>
           )}
 
+          <p className="auth-link approved-login-register">ليس لديك حساب؟ <Link to="/register">إنشاء حساب جديد</Link></p>
+
           <section className="auth-provider">
             {googleClientId ? (
               <div className="auth-google-slot-wrap">
@@ -551,7 +553,6 @@ function LoginPageOriginal() {
             <button type="button" onClick={() => setError("سيتم تفعيل استعادة كلمة المرور قريباً.")}>نسيت كلمة المرور؟</button>
             <button type="button" onClick={() => { setTab("phone"); setError(""); }}>الدخول لمرة واحدة</button>
           </div>
-          <p className="auth-link approved-login-register">ليس لديك حساب؟ <Link to="/register">إنشاء حساب جديد</Link></p>
         </div>
       </div>
     </main>

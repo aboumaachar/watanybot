@@ -186,7 +186,7 @@ function findSalaryRow(salariesIndex: Record<string, Record<string, unknown>>, r
 }
 
 export const salaryInlineRoutes: FastifyPluginAsync<SalaryInlineRoutesOptions> = async (app, { getKb }) => {
-  app.get("/api/salary", async (req, reply) => {
+  app.get("/api/salary", { config: { rateLimit: { max: 300, timeWindow: "1 minute" } } }, async (req, reply) => {
     const q = (req.query || {}) as Record<string, string | undefined>;
     const rank = String(q.rank || "").trim();
     const degree = (q.degree == null || String(q.degree).trim() === "") ? "1" : String(q.degree).trim();
@@ -223,7 +223,7 @@ export const salaryInlineRoutes: FastifyPluginAsync<SalaryInlineRoutesOptions> =
   });
 
   // GET: salary KB metadata for the calculator UI
-  app.get("/api/salary/meta", async (_req, reply) => {
+  app.get("/api/salary/meta", { config: { rateLimit: { max: 300, timeWindow: "1 minute" } } }, async (_req, reply) => {
     const kb = getKb();
     if (!kb) return reply.code(500).send({ ok: false, error: "KB not loaded" });
     const meta = kb.rankMeta || {};
@@ -238,7 +238,7 @@ export const salaryInlineRoutes: FastifyPluginAsync<SalaryInlineRoutesOptions> =
   });
 
   // GET: compatibility endpoint expected by runtime smoke scripts
-  app.get("/api/salary/grades", async (_req, reply) => {
+  app.get("/api/salary/grades", { config: { rateLimit: { max: 300, timeWindow: "1 minute" } } }, async (_req, reply) => {
     const kb = getKb();
     if (!kb) return reply.code(500).send({ ok: false, error: "KB not loaded" });
 
@@ -265,7 +265,7 @@ export const salaryInlineRoutes: FastifyPluginAsync<SalaryInlineRoutesOptions> =
     return reply.send({ ok: true, count: grades.length, grades });
   });
 
-  app.get("/api/salary/health", async (_req, reply) => {
+  app.get("/api/salary/health", { config: { rateLimit: { max: 300, timeWindow: "1 minute" } } }, async (_req, reply) => {
     const kb = getKb();
     if (!kb) {
       return reply.code(503).send({
@@ -307,7 +307,7 @@ export const salaryInlineRoutes: FastifyPluginAsync<SalaryInlineRoutesOptions> =
   });
 
   // POST: pension calculation — pension2026 (P) + family + medals
-  app.post<{ Body: Record<string, unknown> }>("/api/salary/calc", async (req, reply) => {
+  app.post<{ Body: Record<string, unknown> }>("/api/salary/calc", { config: { rateLimit: { max: 30, timeWindow: "1 minute" } } }, async (req, reply) => {
     const b = req.body || {};
     const rank = typeof b.rank === "string" ? b.rank.trim() : "";
     let degree = "1";
@@ -326,8 +326,17 @@ export const salaryInlineRoutes: FastifyPluginAsync<SalaryInlineRoutesOptions> =
     const row = findSalaryRow(salariesIndex, rank, degree);
     if (!row) return reply.code(404).send({ ok: false, error: "No salary found", rank, degree });
 
-    const grossPension2026 = Number(row.pension2026 || 0);
-    const deduction15Pct = Math.round(Number(row.vetSalary || 0) * 0.015);
+    const basePension = Number(row.vetSalary || 0);
+    const tableSupplements = Number(row.equipment || 0) + Number(row.driver || 0) + Number(row.position || 0);
+    const socialAids = Number(row.grant2025 || 0)
+      + Number(row.d13020 || 0)
+      + Number(row.d11227_2 || 0)
+      + Number(row.d11227_1 || 0)
+      + Number(row.budget2022 || 0);
+    const grossPension2026 = basePension + tableSupplements + socialAids;
+    const deduction15Pct = Number(row.officialDeduction2026 || 0) > 0
+      ? Number(row.officialDeduction2026)
+      : Math.round(basePension * 0.015);
     const pension2026 = Math.max(0, grossPension2026 - deduction15Pct);
     const usdRate = Number(rankMeta.usdRate || 89500);
 
@@ -349,8 +358,9 @@ export const salaryInlineRoutes: FastifyPluginAsync<SalaryInlineRoutesOptions> =
     for (const id of selectedOrnaments) {
       const o = ornLookup[id];
       if (!o) continue;
-      medalItems.push({ id: o.id, name_ar: o.name_ar, monthlyValue: o.monthlyValue, annualValue: o.annualValue });
-      medalsTotal += o.monthlyValue;
+      const monthlyValue = o.monthlyValue;
+      medalItems.push({ id: o.id, name_ar: o.name_ar, monthlyValue, annualValue: monthlyValue * 12 });
+      medalsTotal += monthlyValue;
     }
 
     const totalPension = pension2026 + familyTotal + medalsTotal;
@@ -381,7 +391,7 @@ export const salaryInlineRoutes: FastifyPluginAsync<SalaryInlineRoutesOptions> =
       input: { rank, degree: Number(degree), category: row.category, married, kidsCount, selectedOrnaments },
       breakdown: {
         basicSalary: Number(row.basicSalary || 0),
-        vetSalary: Number(row.vetSalary || 0),
+        vetSalary: basePension,
         deduction15Pct,
         equipment: Number(row.equipment || 0),
         driver: Number(row.driver || 0),
