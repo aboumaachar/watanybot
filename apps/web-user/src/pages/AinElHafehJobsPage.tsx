@@ -25,7 +25,7 @@ type FormState = {
 
 const initialForm: FormState = {
   name: "", phone: "", email: "", age: "", gender: "", relationType: "",
-  availability: "أسبوع واحد", preferredPeriod: "3-15 أيلول", weekendWork: "لا",
+  availability: "شهر كامل", preferredPeriod: "3 أيلول", weekendWork: "لا",
   arrive: "", experience: "", experienceText: "", stand: "", health: "", future: "نعم", familyMore: "لا",
 };
 
@@ -146,7 +146,7 @@ export default function AinElHafehJobsPage() {
         <div className="ainelhafeh-hero__content">
           <p className="ainelhafeh-kicker">فرصة عمل موسمية</p>
           <h1>قطاف التفاح في تنورين</h1>
-          <p className="ainelhafeh-hero__lead">التسجيل مفتوح للعسكريين المتقاعدين وأفراد عائلاتهم، الأبناء والبنات بعمر 18 سنة وما فوق، للمشاركة في قطاف الموسم بدءاً من 3 أيلول ولمدة شهر تقريباً.</p>
+          <p className="ainelhafeh-hero__lead">التسجيل مفتوح للعسكريين المتقاعدين وأفراد عائلاتهم، الأبناء والبنات بعمر 18 سنة وما فوق، للمشاركة في قطاف الموسم بدءاً من 3 أيلول ولمدة شهر.</p>
           <div className="ainelhafeh-hero__actions">
             <a className="ainelhafeh-button ainelhafeh-button--primary" href="#application">سجّل في الفرصة</a>
             <a className="ainelhafeh-button ainelhafeh-button--quiet" href="#details">اطّلع على التفاصيل</a>
@@ -156,15 +156,15 @@ export default function AinElHafehJobsPage() {
           <strong>3 أيلول</strong>
           <span>بداية الموسم</span>
           <strong>20$</strong>
-          <span>الأجر اليومي</span>
+          <span>الأجر عن يوم العمل</span>
         </div>
       </section>
 
       <section className="ainelhafeh-facts" aria-label="ملخص الفرصة">
         <div><strong>8 ساعات</strong><span>عمل + ساعة استراحة</span></div>
-        <div><strong>أسبوع إلى شهر</strong><span>أسبوع واحد كحد أدنى، حتى شهر تقريباً</span></div>
-        <div><strong>الاثنين - الجمعة</strong><span>إقامة على الأرض، وعودة أسبوعية إلى جبيل</span></div>
-        <div><strong>جبيل</strong><span>التجمع صباح الاثنين 6:00 والدفع نهاية كل أسبوع</span></div>
+        <div><strong>شهر واحد</strong><span>مدة العمل ابتداءً من 3 أيلول</span></div>
+        <div><strong>أيام العمل مدفوعة</strong><span>يوم العطلة غير مدفوع</span></div>
+        <div><strong>السكن مؤمّن</strong><span>ويبقى مؤمّناً خلال يوم العطلة</span></div>
       </section>
 
       <section className="ainelhafeh-layout" id="details">
@@ -172,15 +172,15 @@ export default function AinElHafehJobsPage() {
           <p className="ainelhafeh-kicker">ما تحتاج إلى معرفته</p>
           <h2>عمل واضح، وسكن مؤمّن،<br />وتسجيل منظم</h2>
           <div className="ainelhafeh-detail-list">
-            <article><span>01</span><div><h3>الدوام والدفع</h3><p>من الاثنين إلى الجمعة، 8 ساعات عمل مع ساعة استراحة، والدفع في نهاية كل أسبوع عمل.</p></div></article>
-            <article><span>02</span><div><h3>التجمع والعودة</h3><p>التجمع في مفرق جبيل صباح الاثنين الساعة 6:00. العودة مساء الجمعة إلى جبيل لمن لا يعمل خلال عطلة نهاية الأسبوع.</p></div></article>
-            <article><span>03</span><div><h3>البقاء في نهاية الأسبوع</h3><p>العمل يومي السبت والأحد اختياري لمن يرغب بالبقاء في الأرض.</p></div></article>
+            <article><span>01</span><div><h3>الدوام والدفع</h3><p>8 ساعات عمل مع ساعة استراحة. أيام العمل مدفوعة الأجر، والدفع في نهاية كل أسبوع عمل.</p></div></article>
+            <article><span>02</span><div><h3>مدة العمل</h3><p>تبدأ فرصة العمل في 3 أيلول، وتمتد لمدة شهر واحد.</p></div></article>
+            <article><span>03</span><div><h3>يوم العطلة</h3><p>يوم العطلة غير مدفوع الأجر، مع استمرار تأمين السكن خلال يوم العطلة.</p></div></article>
             <article><span>04</span><div><h3>السكن والطعام</h3><p>خيم متوفرة على الأرض، والمياه مؤمّنة بالكامل. يُختار شخص واحد من كل مجموعة ليكون الطبّاخ، والمزرعة تؤمّن المواد الأولية والصحون وقدر الطبخ.</p></div></article>
             <article><span>05</span><div><h3>المرافق والاحتياجات</h3><p>مرحاض متنقل ومستلزمات نظافة شخصية متوفرة. أحضر بطانية وأغراضك الشخصية، وارتداء القبعة إلزامي.</p></div></article>
             <article><span>06</span><div><h3>الأولوية</h3><p>الأولوية للعسكريين المتقاعدين وأفراد عائلاتهم، وللمتقدمين من جبيل والبترون، مع حد أدنى للعمر هو 18 سنة.</p></div></article>
           </div>
         </div>
-        <aside className="ainelhafeh-note"><span>قبل الإرسال</span><strong>اختر عنوانك الإداري بدقة</strong><p>سنستخدم المحافظة والقضاء والبلدة للتحقق من التسجيل وتنظيم التواصل معك.</p></aside>
+        <aside className="ainelhafeh-note"><span>توضيح مهم</span><strong>الدفع لأيام العمل فقط</strong><p>يوم العطلة غير مدفوع، لكن السكن يبقى مؤمّناً خلاله. الأجر المعلن هو عن يوم العمل.</p></aside>
       </section>
 
       <section className="ainelhafeh-application" id="application">
@@ -203,8 +203,8 @@ export default function AinElHafehJobsPage() {
           <fieldset><legend>صفة المتقدم *</legend><div className="ainelhafeh-options">{relationOptions.map((option) => <label key={option}><input required type="radio" name="relationType" checked={form.relationType === option} onChange={() => update("relationType", option)} /><span>{option}</span></label>)}</div></fieldset>
           <LebanonAddressSelector required value={address} onChange={setAddress} exactAddressLabel="تفصيل إضافي للعنوان" />
           <div className="ainelhafeh-form-grid">
-            <label><span>الفترة المتاحة *</span><select required value={form.availability} onChange={(event) => update("availability", event.target.value)}><option>أسبوع واحد</option><option>أسبوعين</option><option>3 أسابيع</option><option>شهر كامل</option><option>حسب الحاجة</option></select></label>
-            <label><span>الفترة المفضلة للبدء</span><select value={form.preferredPeriod} onChange={(event) => update("preferredPeriod", event.target.value)}><option>3-15 أيلول</option><option>16-30 أيلول</option><option>1-3 تشرين الأول</option><option>مرن</option></select></label>
+            <label><span>مدة التوفر *</span><select required value={form.availability} onChange={(event) => update("availability", event.target.value)}><option>شهر كامل</option></select></label>
+            <label><span>تاريخ البدء</span><select value={form.preferredPeriod} onChange={(event) => update("preferredPeriod", event.target.value)}><option>3 أيلول</option></select></label>
           </div>
           <div className="ainelhafeh-form-progress" aria-label={`أجبت عن ${answeredQuestionCount} من ${readinessQuestions.length} أسئلة الاستعداد`}>
             <div className="ainelhafeh-form-progress__label"><strong>{answeredQuestionCount} / {readinessQuestions.length}</strong><span>إجابات أسئلة الاستعداد</span></div>
