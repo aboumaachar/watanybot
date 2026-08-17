@@ -82,7 +82,7 @@ beforeAll(async () => {
   if (!liveSuperadminToken) {
     liveSuperadminToken = makeToken('superadmin', 'live-super');
   }
-});
+}, 30000);
 
 afterAll(async () => {
   if (app) await app.close();

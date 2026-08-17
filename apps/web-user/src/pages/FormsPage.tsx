@@ -215,6 +215,11 @@ export default function FormsPage() {
     void previewForm(form);
   }
 
+  function getPreviewHref(form: FormListItem): string {
+    const href = form.previewUrl ?? form.downloadUrl ?? `/api/forms/${encodeURIComponent(form.id)}/preview`;
+    return href.startsWith("http") ? href : `${apiBaseUrl}${href}`;
+  }
+
   function handlePreviewButtonKeyDown(event: KeyboardEvent<HTMLButtonElement>, form: FormListItem) {
     if (event.key !== "Enter" && event.key !== " " && event.key !== "Spacebar") {
       return;
@@ -352,18 +357,17 @@ export default function FormsPage() {
                               {summary ? <p className="forms-item-summary">{summary}</p> : null}
                             </div>
                             <div className="wmo-service-route wmo-rebuilt-route wmo-core-route wmo-route-normalized forms-item-actions">
-                              <button
-                                type="button"
+                              <a
                                 className="wmo-service-route wmo-rebuilt-route wmo-core-route wmo-route-normalized forms-action-btn forms-action-btn--primary"
-                                onClick={() => handlePreviewButtonClick(form)}
-                                onKeyDown={(event) => handlePreviewButtonKeyDown(event, form)}
+                                href={getPreviewHref(form)}
+                                target="_blank"
+                                rel="noopener noreferrer"
                                 data-form-preview-trigger="true"
                                 aria-haspopup="dialog"
                                 aria-controls={previewDialogId}
-                                aria-expanded={selectedForm?.id === form.id}
                               >
                                 معاينة
-                              </button>
+                              </a>
                               <button
                                 type="button"
                                 className={`forms-action-btn${isDownloadFallbackOnly(form) ? " forms-action-btn--limited" : ""}`}
@@ -404,18 +408,17 @@ export default function FormsPage() {
                 {summary ? <p className="forms-item-summary">{summary}</p> : null}
               </div>
               <div className="wmo-service-route wmo-rebuilt-route wmo-core-route wmo-route-normalized forms-item-actions">
-                <button
-                  type="button"
+                <a
                   className="wmo-service-route wmo-rebuilt-route wmo-core-route wmo-route-normalized forms-action-btn"
-                  onClick={() => handlePreviewButtonClick(form)}
-                  onKeyDown={(event) => handlePreviewButtonKeyDown(event, form)}
+                  href={getPreviewHref(form)}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   data-form-preview-trigger="true"
                   aria-haspopup="dialog"
                   aria-controls={previewDialogId}
-                  aria-expanded={selectedForm?.id === form.id}
                 >
                   معاينة
-                </button>
+                </a>
                 <button
                   type="button"
                   className={`forms-action-btn${isDownloadFallbackOnly(form) ? " forms-action-btn--limited" : ""}`}
@@ -450,18 +453,17 @@ export default function FormsPage() {
                 {summary ? <p className="forms-item-summary">{summary}</p> : null}
               </div>
               <div className="wmo-service-route wmo-rebuilt-route wmo-core-route wmo-route-normalized forms-item-actions">
-                <button
-                  type="button"
+                <a
                   className="wmo-service-route wmo-rebuilt-route wmo-core-route wmo-route-normalized forms-action-btn forms-action-btn--primary"
-                  onClick={() => handlePreviewButtonClick(form)}
-                  onKeyDown={(event) => handlePreviewButtonKeyDown(event, form)}
+                  href={getPreviewHref(form)}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   data-form-preview-trigger="true"
                   aria-haspopup="dialog"
                   aria-controls={previewDialogId}
-                  aria-expanded={selectedForm?.id === form.id}
                 >
                   معاينة
-                </button>
+                </a>
                 <button
                   type="button"
                   className={`forms-action-btn${isDownloadFallbackOnly(form) ? " forms-action-btn--limited" : ""}`}

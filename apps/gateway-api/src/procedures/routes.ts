@@ -126,6 +126,24 @@ function actionTargetPaths(doc: StoredDocAsset): string[] {
   return uniquePaths(candidates);
 }
 
+function mofPublicAssetPaths(doc: StoredDocAsset): string[] {
+  const identity = `${doc.title || ""} ${doc.file_name || ""}`;
+  const idMatch = doc.id.match(/DOC-WATANY_MOF_HTML-000([6-8])$/i);
+  if (!idMatch && deriveReferenceSourceId(doc) !== "mof") return [];
+  const code = idMatch ? String(Number(idMatch[1]) - 0) : identity.match(/(?:^|\s|[-_/])(ت|t)\s*([789])/i)?.[2];
+  if (!code) return [];
+
+  const fileName = `t${code === "6" ? "7" : code === "7" ? "8" : "9"}-original.jpg`;
+  const kbRoot = getKbRoot();
+  return uniquePaths([
+    path.resolve(__dirname, "..", "..", "..", "..", "apps", "web-user", "public", "mof", fileName),
+    path.resolve(process.cwd(), "apps", "web-user", "public", "mof", fileName),
+    path.resolve(process.cwd(), "..", "web-user", "public", "mof", fileName),
+    path.resolve(kbRoot, "..", "apps", "web-user", "public", "mof", fileName),
+    path.resolve(kbRoot, "..", "..", "apps", "web-user", "public", "mof", fileName),
+  ]);
+}
+
 function referenceAttachmentPaths(doc: StoredDocAsset): string[] {
   const sourceId = deriveReferenceSourceId(doc);
   const fileName = doc.file_name ? path.basename(doc.file_name) : "";
@@ -164,6 +182,7 @@ function docCandidates(doc: StoredDocAsset): string[] {
     exportedFilePath ? path.join(kbRoot, "docs", exportedFilePath) : null,
     exportedFilePath ? path.join(dataDir, "docs", exportedFilePath) : null,
     ...actionTargetPaths(doc),
+    ...mofPublicAssetPaths(doc),
     ...sourceRefPaths(doc),
   ]);
 }
@@ -813,8 +832,8 @@ function buildPdfProcedurePreviewPage(doc: StoredDocAsset, filePath: string): st
 </html>`;
 }
 
-async function serveProcedurePreview(reply: any, doc: StoredDocAsset) {
-  const filePath = findDocFile(doc);
+async function serveProcedurePreview(reply: any, doc: StoredDocAsset, resolvedFilePath?: string) {
+  const filePath = resolvedFilePath || findDocFile(doc);
   if (!filePath) {
     reply.type("text/html; charset=utf-8");
     return reply.send(buildMissingProcedurePreviewPage(doc.id));
@@ -1159,12 +1178,12 @@ function buildProceduresReferenceHtml(procedures: Procedure[]): string {
 </html>`;
 }
 
-async function serveProcedureDoc(reply: any, doc: StoredDocAsset, disposition: "inline" | "attachment") {
+async function serveProcedureDoc(reply: any, doc: StoredDocAsset, disposition: "inline" | "attachment", resolvedFilePath?: string) {
   if (doc.public_url) {
     return reply.redirect(doc.public_url);
   }
 
-  const filePath = findDocFile(doc);
+  const filePath = resolvedFilePath || findDocFile(doc);
   if (!filePath) {
     if (disposition === "attachment") {
       reply.type("text/plain; charset=utf-8");
@@ -1580,6 +1599,10 @@ export async function proceduresRoutes(app: FastifyInstance) {
     const docSource = deriveReferenceSourceId(doc);
     const sourceFile = docSource ? getReferenceSourceFile(docSource) : null;
     const filePath = findDocFile(doc);
+    const directMofAsset = mofPublicAssetPaths(doc).find((candidate) => isAbsoluteExistingFile(candidate));
+    if (directMofAsset) {
+      return serveProcedurePreview(reply, doc, directMofAsset);
+    }
     // If the doc is a source fallback, only redirect to the reference HTML
     // when the resolved file is missing or when the resolved file is the
     // original source HTML itself. For non-HTML resolved files (images, PDFs)
@@ -1602,10 +1625,11 @@ export async function proceduresRoutes(app: FastifyInstance) {
           const ext = path.extname(c).toLowerCase();
           return ![".html", ".htm"].includes(ext);
         });
-        if (alt) {
+        const publicMofAsset = mofPublicAssetPaths(doc).find((c) => isAbsoluteExistingFile(c));
+        if (publicMofAsset || alt) {
           // Serve the non-HTML asset inline (image/PDF) instead of redirecting
           // to the reference HTML so the viewer can display the actual file.
-          return serveProcedureDoc(reply, doc, "inline");
+          return serveProcedurePreview(reply, doc, publicMofAsset || alt);
         }
       }
 

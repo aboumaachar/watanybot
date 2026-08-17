@@ -4,6 +4,7 @@
  * Returns the resources that downstream services need (kbStore, pluginDb).
  */
 import path from "node:path";
+import fs from "node:fs";
 import { fileURLToPath } from "node:url";
 import type { FastifyInstance } from "fastify";
 import { createSqliteV3Store } from "@watany/kb";
@@ -35,6 +36,18 @@ export type KbBootstrapResult = {
   runtimeKbPath: string;
 };
 
+function resolveMutableRagPath(sourcePath: string): string {
+  const isTestRuntime = process.env.VITEST === "true" || process.env.NODE_ENV === "test";
+  const frozenName = path.join("watany_kb_tables_v4", "watany_rag_chunks_v4.jsonl");
+  if (!isTestRuntime || !sourcePath.endsWith(frozenName)) return sourcePath;
+
+  const runtimeId = `${process.pid}-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  const runtimePath = path.resolve(repoRoot, "tmp", `rag-test-runtime-${runtimeId}.jsonl`);
+  fs.mkdirSync(path.dirname(runtimePath), { recursive: true });
+  fs.copyFileSync(sourcePath, runtimePath);
+  return runtimePath;
+}
+
 function hasUsableSalaryKb(kb: { salariesIndex?: Record<string, unknown>; rankMeta?: Record<string, unknown> }): boolean {
   const salaryEntries = Object.keys(kb.salariesIndex || {}).length;
   const rankCount = Array.isArray(kb.rankMeta?.ranks) ? kb.rankMeta.ranks.length : 0;
@@ -42,7 +55,7 @@ function hasUsableSalaryKb(kb: { salariesIndex?: Record<string, unknown>; rankMe
 }
 
 export async function bootstrapKb(app: FastifyInstance): Promise<KbBootstrapResult> {
-  const resolvedRagPath = resolveRagPath();
+  const resolvedRagPath = resolveMutableRagPath(resolveRagPath());
   const kbPath          = resolveKbPath();
   const runtimeKbPath   = resolveRuntimeKbPath();
 

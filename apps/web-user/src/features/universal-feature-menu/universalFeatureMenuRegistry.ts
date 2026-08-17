@@ -1,4 +1,4 @@
-export type UniversalFeatureMenuItem = Readonly<{
+﻿export type UniversalFeatureMenuItem = Readonly<{
   id: string;
   label: string;
   route: string;

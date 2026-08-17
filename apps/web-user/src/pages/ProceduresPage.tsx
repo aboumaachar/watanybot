@@ -714,28 +714,26 @@ export default function ProceduresPage() {
       return;
     }
 
-    const isPdfPath = (value: string): boolean => {
+    const getFileExtension = (value: string): string => {
       try {
         const parsed = new URL(value, globalThis.location.origin);
-        const lowerPath = parsed.pathname.toLowerCase();
-        return lowerPath.endsWith(".pdf") || parsed.search.toLowerCase().includes("pdf");
+        return parsed.pathname.toLowerCase().match(/\.([a-z0-9]+)$/)?.[1] || "";
       } catch {
-        const lowerValue = value.toLowerCase();
-        return lowerValue.includes(".pdf") || lowerValue.includes("pdf");
+        return value.toLowerCase().match(/\.([a-z0-9]+)(?:[?#]|$)/)?.[1] || "";
       }
     };
 
-    const pdfUrl = [previewUrl, downloadUrl].find((url) => Boolean(url) && isPdfPath(url));
-    if (!pdfUrl) {
-      setViewerMessage("لا يتوفر ملف PDF لهذا النموذج حالياً.");
-      return;
-    }
+    const originalFileExtensions = new Set([
+      "doc", "docx", "xls", "xlsx", "jpg", "jpeg", "png", "webp", "gif", "tif", "tiff", "pdf",
+    ]);
+    const originalFileUrl = [downloadUrl, previewUrl].find((url) => originalFileExtensions.has(getFileExtension(url)));
+    const viewerUrl = originalFileUrl || previewUrl || downloadUrl;
 
     setViewerMessage("");
     await openWatanyUniversalFormViewer({
       titleAr: title,
-      previewUrl: pdfUrl,
-      downloadUrl: pdfUrl,
+      previewUrl: viewerUrl,
+      downloadUrl: downloadUrl || viewerUrl,
       preferUniversal: true,
     });
   }

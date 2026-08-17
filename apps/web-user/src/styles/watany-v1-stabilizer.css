@@ -686,6 +686,13 @@ body [class*="cup" i] img {
   backdrop-filter: blur(6px) saturate(115%) !important;
 }
 
+/* A stale backdrop must never block the page after the viewer root is closed. */
+body:not(:has(#watany-form-viewer-root)) #watany-form-viewer-backdrop {
+  display: none !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
+}
+
 .watany-form-viewer {
   position: relative !important;
   z-index: 2147483060 !important;

@@ -13,18 +13,73 @@ type MofMobileProceduresViewerProps = {
   hideSearch?: boolean;
 };
 
-const MOF_FORM_PDF_MAP: Record<string, { previewUrl: string; downloadUrl: string }> = {
+const MOF_FORM_MAP: Record<string, { previewUrl: string; downloadUrl: string }> = {
+  'mof-form-اقرار-من-متقاعد': {
+    previewUrl: '/mof/اقرار من متقاعد.jpg',
+    downloadUrl: '/mof/اقرار من متقاعد.jpg',
+  },
+  'mof-form-طلب-توطين': {
+    previewUrl: '/mof/طلب توطين.jpg',
+    downloadUrl: '/mof/طلب توطين.jpg',
+  },
+  'mof-form-طلب-تخصيص-معاش-تقاعدي-او-تعويض-صرف': {
+    previewUrl: '/mof/طلب تخصيص معاش تقاعدي أو تعويض صرف.jpg',
+    downloadUrl: '/mof/طلب تخصيص معاش تقاعدي أو تعويض صرف.jpg',
+  },
+  'mof-form-t1': {
+    previewUrl: '/mof/طلب دفتر تقاعد - بدل عن ضائع - ت1.jpg',
+    downloadUrl: '/mof/طلب دفتر تقاعد - بدل عن ضائع - ت1.jpg',
+  },
+  'mof-form-t2': {
+    previewUrl: '/mof/طلب تعديل وضع عائلي - ت2.jpg',
+    downloadUrl: '/mof/طلب تعديل وضع عائلي - ت2.jpg',
+  },
+  'mof-form-t3': {
+    previewUrl: '/mof/طلب صرف تعويض عائلي أو معاش تقاعدي لإبن المتقاعد الذي يتابع الدراسة - ت3.jpg',
+    downloadUrl: '/mof/طلب صرف تعويض عائلي أو معاش تقاعدي لإبن المتقاعد الذي يتابع الدراسة - ت3.jpg',
+  },
+  'mof-form-t4': {
+    previewUrl: '/mof/طلب صرف تعويض عائلي او معاش تقاعدي لإبنة المتقاعد الأرملة او المطلقة في حال مثابرة ابنها للدراسة - ت4 .jpg',
+    downloadUrl: '/mof/طلب صرف تعويض عائلي او معاش تقاعدي لإبنة المتقاعد الأرملة او المطلقة في حال مثابرة ابنها للدراسة - ت4 .jpg',
+  },
+  'mof-form-t5': {
+    previewUrl: '/mof/طلب معاينة من اللجنة الطبية الدائمة في وزارة الصحة العامة.pdf',
+    downloadUrl: '/mof/طلب معاينة من اللجنة الطبية الدائمة في وزارة الصحة العامة.pdf',
+  },
+  'mof-form-t6': {
+    previewUrl: '/mof/طلب ايقاف معاش تقاعدي - ت6.jpg',
+    downloadUrl: '/mof/طلب ايقاف معاش تقاعدي - ت6.jpg',
+  },
   'mof-form-t7': {
-    previewUrl: '/api/v2/procedures/docs/DOC-WATANY_MOF_HTML-0006/preview',
-    downloadUrl: '/api/v2/procedures/docs/DOC-WATANY_MOF_HTML-0006/download',
+    previewUrl: '/mof/طلب اعادة تخصيص معاش تقاعدي - ت7.jpg',
+    downloadUrl: '/mof/طلب اعادة تخصيص معاش تقاعدي - ت7.jpg',
   },
   'mof-form-t8': {
-    previewUrl: '/api/v2/procedures/docs/DOC-WATANY_MOF_HTML-0007/preview',
-    downloadUrl: '/api/v2/procedures/docs/DOC-WATANY_MOF_HTML-0007/download',
+    previewUrl: '/mof/اقرار من مستفيد - ت8.jpg',
+    downloadUrl: '/mof/اقرار من مستفيد - ت8.jpg',
   },
   'mof-form-t9': {
-    previewUrl: '/api/v2/procedures/docs/DOC-WATANY_MOF_HTML-0008/preview',
-    downloadUrl: '/api/v2/procedures/docs/DOC-WATANY_MOF_HTML-0008/download',
+    previewUrl: '/mof/شهادة ايتام وارامل - ت9.jpg',
+    downloadUrl: '/mof/شهادة ايتام وارامل - ت9.jpg',
+  },
+  'mof-form-t10': {
+    previewUrl: '/mof/طلب تعديل رقم حساب مصرفي - ت10.jpg',
+    downloadUrl: '/mof/طلب تعديل رقم حساب مصرفي - ت10.jpg',
+  },
+  'mof-form-t11': {
+    previewUrl: '/mof/اقرار وتعهد من الابنة الارملة أو المطلقة - ت11.jpg',
+    downloadUrl: '/mof/اقرار وتعهد من الابنة الارملة أو المطلقة - ت11.jpg',
+  },
+  'mof-form-t12': {
+    previewUrl: '/mof/اقرار من متقاعد - ت12.jpg',
+    downloadUrl: '/mof/اقرار من متقاعد - ت12.jpg',
+  },
+};
+
+const MOF_TITLE_FILE_MAP: Record<string, { previewUrl: string; downloadUrl: string }> = {
+  'طلب توطين': {
+    previewUrl: '/mof/طلب توطين.jpg',
+    downloadUrl: '/mof/طلب توطين.jpg',
   },
 };
 
@@ -127,12 +182,20 @@ function cardMatchesQuery(card: MofV9Card, q: string): boolean {
 }
 
 function resolveViewerUrls(btn: MofV9CtaButton): { previewUrl: string; downloadUrl: string; badge: string } {
-  const known = MOF_FORM_PDF_MAP[btn.id];
+  const known = MOF_FORM_MAP[btn.id];
   if (known) {
     return {
       previewUrl: known.previewUrl,
       downloadUrl: known.downloadUrl,
-      badge: 'PDF',
+      badge: 'JPG',
+    };
+  }
+
+  const titleFile = MOF_TITLE_FILE_MAP[normalizeLookup(btn.title)];
+  if (titleFile) {
+    return {
+      ...titleFile,
+      badge: 'JPG',
     };
   }
 
@@ -142,7 +205,7 @@ function resolveViewerUrls(btn: MofV9CtaButton): { previewUrl: string; downloadU
     return {
       previewUrl: urls.previewUrl,
       downloadUrl: urls.downloadUrl,
-      badge: 'PDF',
+      badge: 'عرض',
     };
   }
 

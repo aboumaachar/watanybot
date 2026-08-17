@@ -247,11 +247,27 @@ async function loadProcedureFormCandidates(): Promise<FormLike[]> {
     });
 }
 
+  function getFormIdentity(form: FormLike): string {
+    const title = normalizeArabic((form.title_ar || "").replace(/[\u200B-\u200D\uFEFF]/g, ""))
+      .replace(/\.(jpg|jpeg|png|pdf|docx?)\b/gi, "")
+      .replace(/[^\p{L}\p{N}]+/gu, "")
+      .trim();
+    if (title) return title;
+    return normalizeArabic((form.code || "").replace(/[\u200B-\u200D\uFEFF]/g, ""))
+      .replace(/\.(jpg|jpeg|png|pdf|docx?)\b/gi, "")
+      .replace(/[^\p{L}\p{N}]+/gu, "")
+      .trim();
+  }
+
 async function getCombinedCatalog(getFormsCatalog: () => FormLike[]): Promise<FormLike[]> {
   const catalog = getFormsCatalog();
   const procedureForms = await loadProcedureFormCandidates();
   const ids = new Set(catalog.map((form) => form.id));
-  const uniqueProcedureForms = procedureForms.filter((form) => !ids.has(form.id));
+    const identities = new Set(catalog.map(getFormIdentity).filter(Boolean));
+    const uniqueProcedureForms = procedureForms.filter((form) => {
+      if (ids.has(form.id)) return false;
+      return !identities.has(getFormIdentity(form));
+    });
   return [...catalog, ...uniqueProcedureForms];
 }
 
