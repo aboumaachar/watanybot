@@ -672,6 +672,24 @@ export async function authFetch(url: string, init?: RequestInit): Promise<Respon
   return res;
 }
 
+export type SuperadminContact = {
+  name: string;
+  first_name?: string;
+  last_name?: string;
+  full_name?: string;
+  company_name?: string;
+  status?: string;
+};
+
+export async function getSuperadminContacts(limit = 50): Promise<SuperadminContact[]> {
+  const response = await authFetch(`${API_URL}/api/admin-authority/crm/contacts?limit=${Math.min(Math.max(limit, 1), 100)}`);
+  if (!response.ok) {
+    throw new Error(`CRM_CONTACTS_HTTP_${response.status}`);
+  }
+  const payload = (await response.json()) as { items?: SuperadminContact[] };
+  return Array.isArray(payload.items) ? payload.items : [];
+}
+
 function parseContentDispositionFileName(value: string | null): string | undefined {
   if (!value) {
     return undefined;

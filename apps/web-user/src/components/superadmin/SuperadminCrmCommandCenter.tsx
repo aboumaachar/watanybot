@@ -2,6 +2,7 @@
 import { useNavigate } from "react-router-dom";
 // APEX_CSS_FREEZE_DISABLED_IMPORT import "../../styles/watany-superadmin-crm-command-center.css";
 import ProceduresAdminDashboard from "../ProceduresAdminDashboard";
+import { getSuperadminContacts, type SuperadminContact } from "../../lib/api";
 
 const SuperadminUsersPage = lazy(() => import("../../features/superadmin-users/SuperadminUsersPage"));
 
@@ -117,6 +118,9 @@ export function SuperadminCrmCommandCenter() {
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
   const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState<string | null>(null);
+  const [contacts, setContacts] = useState<SuperadminContact[]>([]);
+  const [contactsLoading, setContactsLoading] = useState(true);
+  const [contactsError, setContactsError] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -129,6 +133,25 @@ export function SuperadminCrmCommandCenter() {
         setFetchError(error ?? "Unknown");
       }
       setLoading(false);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    getSuperadminContacts(25).then((items) => {
+      if (!cancelled) {
+        setContacts(items);
+        setContactsError(null);
+        setContactsLoading(false);
+      }
+    }).catch((error: unknown) => {
+      if (!cancelled) {
+        setContactsError(error instanceof Error ? error.message : String(error));
+        setContactsLoading(false);
+      }
     });
     return () => {
       cancelled = true;
@@ -243,6 +266,29 @@ export function SuperadminCrmCommandCenter() {
             <Suspense fallback={<div className="wsa-card">Loading user management…</div>}>
               <SuperadminUsersPage />
             </Suspense>
+          </div>
+        </section>
+
+        <section className="wsa-section" id="crm-contacts">
+          <div className="wsa-section-head">
+            <p className="wsa-eyebrow">Live ERPNext Contact adapter</p>
+            <h2>CRM contacts</h2>
+          </div>
+          <div className="wsa-inline-panel">
+            {contactsLoading ? <p className="wsa-muted">Loading Contact records…</p> : null}
+            {contactsError ? <p className="wsa-muted">Contact data unavailable: {contactsError}</p> : null}
+            {!contactsLoading && !contactsError && contacts.length === 0 ? <p className="wsa-muted">No bounded Contact records returned.</p> : null}
+            {!contactsLoading && !contactsError && contacts.length > 0 ? (
+              <div className="wsa-card-grid" aria-label="ERPNext Contact records">
+                {contacts.map((contact) => (
+                  <article className="wsa-card" key={contact.name}>
+                    <h3>{contact.full_name || contact.name}</h3>
+                    <p>{contact.company_name || "No company"}</p>
+                    <span className="wsa-muted">{contact.status || "Unknown status"}</span>
+                  </article>
+                ))}
+              </div>
+            ) : null}
           </div>
         </section>
 
