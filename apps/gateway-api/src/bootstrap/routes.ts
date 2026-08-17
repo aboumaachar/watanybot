@@ -38,6 +38,8 @@ import { mediaWSRoutes } from "../ws/media-ws.js";
 import { worldCupWSRoutes } from "../ws/world-cup-ws.js";
 import { unifiedSearchRoutes } from "../routes/unified-search.js";
 import { diagnosticsRoutes } from "../routes/diagnostics.js";
+import { erpNextReadinessRoutes } from "../routes/erpnext-readiness.js";
+import { adminCrmContactsRoutes } from "../routes/admin-crm-contacts.js";
 import { proceduresRoutes } from "../procedures/index.js";
 import { jobsRoutes } from "../jobs/index.js";
 import { disasterRoutes } from "../disaster/index.js";
@@ -375,6 +377,8 @@ export async function registerRoutes(
     isKbNodesReady,
     getKbNodesStats,
   });
+  app.register(erpNextReadinessRoutes);
+  app.register(adminCrmContactsRoutes, { prefix: '/api' });
 
   app.register(voiceAdvancedRoutes);
   app.register(casesRoutes,     { pluginDb: kb.pluginDb, makeId });

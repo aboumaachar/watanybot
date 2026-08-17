@@ -28,6 +28,10 @@ function firstExistingPath(candidates: Array<string | undefined>): string {
 export const isDev = (process.env.NODE_ENV || "development") !== "production";
 export const port = Number(process.env.PORT || 4000);
 export const host = process.env.HOST || "0.0.0.0";
+export const erpNextBaseUrl = process.env.ERPNEXT_BASE_URL || "http://127.0.0.1:18080";
+export const erpNextSiteName = process.env.ERPNEXT_SITE_NAME || "frontend";
+export const erpNextCredentialFile = resolveConfiguredPath(process.env.ERPNEXT_CREDENTIAL_FILE);
+export const erpNextRequestTimeoutMs = Number(process.env.ERPNEXT_REQUEST_TIMEOUT_MS || "10000");
 
 export const usePython = (process.env.USE_PYTHON_API || "true").toLowerCase() === "true";
 let pythonBase = process.env.PYTHON_API_URL || "http://localhost:8010";
