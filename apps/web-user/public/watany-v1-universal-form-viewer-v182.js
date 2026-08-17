@@ -55,11 +55,22 @@
 
   function removeExisting() {
     var a = document.getElementById("watany-form-viewer-backdrop");
-    if (a) a.remove();
     var b = document.getElementById("watany-form-viewer-root");
+    // Hide composited fixed layers before removal so backdrop-filter cannot linger until the next input.
+    if (a) {
+      a.style.setProperty("display", "none", "important");
+      a.style.setProperty("pointer-events", "none", "important");
+    }
+    if (b) {
+      b.style.setProperty("display", "none", "important");
+      b.style.setProperty("pointer-events", "none", "important");
+    }
+    if (a) a.remove();
     if (b) b.remove();
     if (a || b) {
       try { window.dispatchEvent(new CustomEvent("watany-universal-form-viewer-closed")); } catch (e) {}
+      void document.documentElement.offsetHeight;
+      window.requestAnimationFrame(function () { void document.documentElement.offsetHeight; });
     }
   }
 
@@ -290,7 +301,16 @@
     print.addEventListener("click", function () { printHtml(options, html); });
     zoomIn.addEventListener("click", function () { setZoom(root, (Number(root.getAttribute("data-zoom") || "1") || 1) + 0.15); });
     zoomOut.addEventListener("click", function () { setZoom(root, (Number(root.getAttribute("data-zoom") || "1") || 1) - 0.15); });
-    close.addEventListener("click", removeExisting);
+    close.addEventListener("click", function (event) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      removeExisting();
+      window.setTimeout(function () {
+        var staleBackdrop = document.getElementById("watany-form-viewer-backdrop");
+        if (staleBackdrop) staleBackdrop.remove();
+        removeExisting();
+      }, 0);
+    }, true);
 
     document.body.appendChild(backdrop);
     document.body.appendChild(root);

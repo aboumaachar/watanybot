@@ -40,3 +40,4 @@ export function SmartAttentionDashboardIcons(): React.ReactElement {
     </section>
   );
 }
+

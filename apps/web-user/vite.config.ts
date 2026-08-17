@@ -1,7 +1,34 @@
 import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
+import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+
+function formsDevAssetsPlugin(repoRoot: string) {
+  const formsRoot = path.resolve(repoRoot, "public/forms");
+  return {
+    name: "watany-forms-dev-assets",
+    configureServer(server: { middlewares: { use: (handler: (request: { url?: string }, response: { statusCode: number; setHeader: (name: string, value: string) => void; end: (body: string | Buffer) => void }, next: () => void) => void) => void } }) {
+      server.middlewares.use((request, response, next) => {
+        const requestPath = request.url?.split("?", 1)[0] || "";
+        if (!requestPath.startsWith("/forms/") || requestPath.includes("..")) {
+          next();
+          return;
+        }
+
+        const filePath = path.resolve(repoRoot, `public${requestPath}`);
+        if (!filePath.startsWith(formsRoot) || !existsSync(filePath)) {
+          next();
+          return;
+        }
+
+        response.statusCode = 200;
+        response.setHeader("Content-Type", "text/html; charset=utf-8");
+        response.end(readFileSync(filePath));
+      });
+    },
+  };
+}
 
 function toChunkSafeName(value: string): string {
   return value.replace(/^@/, "").replaceAll("/", "-");
@@ -27,7 +54,7 @@ export default defineConfig(({ mode }) => {
   const repoRoot = fileURLToPath(new URL("../..", import.meta.url));
 
   return {
-    plugins: [react()],
+    plugins: [react(), formsDevAssetsPlugin(repoRoot)],
     server: {
       port: 5174,
       strictPort: true,
