@@ -5,10 +5,10 @@ import {
   SEED_CATEGORIES,
   SEED_EMPLOYERS,
   SEED_JOBS,
-  applications,
   savedJobs,
 } from "./seed.js";
 import type { JobApplicationRecord, JobPosting, SavedJob, JobSearchResult } from "./types.js";
+import { marketplaceJobApplicationsRepository, type MarketplaceJobApplicationsRepository } from "./repository.js";
 
 let idCounter = 1;
 function makeId(prefix: string) {
@@ -149,7 +149,11 @@ function toPublicEmployerDetail(employer: {
   };
 }
 
-export async function jobsRoutes(app: FastifyInstance) {
+  export async function jobsRoutes(
+    app: FastifyInstance,
+    options: { applicationsRepository?: MarketplaceJobApplicationsRepository } = {},
+  ) {
+    const applicationsRepository = options.applicationsRepository ?? marketplaceJobApplicationsRepository;
   const prefix = "/api/v2/jobs";
   const requireDetailsAuth = readFlag("JOBS_DETAILS_REQUIRE_AUTH", false);
   const requireActionsAuth = readFlag("JOBS_ACTIONS_REQUIRE_AUTH", false);
@@ -165,6 +169,7 @@ export async function jobsRoutes(app: FastifyInstance) {
   });
 
   app.get(`${prefix}/admin/applications`, { preHandler: [requireRole("superadmin")] }, async () => {
+    const applications = await applicationsRepository.listAll();
     return { applications: applications.map((application) => ({
       ...application,
       job: SEED_JOBS.find((job) => job.id === application.job_id) || null,
@@ -175,11 +180,10 @@ export async function jobsRoutes(app: FastifyInstance) {
     `${prefix}/admin/applications/:id`,
     { preHandler: [requireRole("superadmin")] },
     async (request, reply) => {
-      const application = applications.find((entry) => entry.id === request.params.id);
-      if (!application) return reply.code(404).send({ error: "الطلب غير موجود" });
       const allowed = new Set<JobApplicationRecord["status"]>(["pending", "reviewing", "shortlisted", "interview", "rejected", "accepted", "withdrawn"]);
       if (!request.body.status || !allowed.has(request.body.status)) return reply.code(400).send({ error: "حالة الطلب غير صالحة" });
-      application.status = request.body.status;
+      const application = await applicationsRepository.updateStatus(request.params.id, request.body.status);
+      if (!application) return reply.code(404).send({ error: "الطلب غير موجود" });
       return { ok: true, application };
     },
   );
@@ -476,7 +480,7 @@ export async function jobsRoutes(app: FastifyInstance) {
       return { error: "الوظيفة غير موجودة" };
     }
 
-    const dup = applications.find((a) => a.job_id === id && a.phone === phone);
+    const dup = await applicationsRepository.findByJobAndPhone(id, phone);
     if (dup) {
       reply.code(409);
       return { error: "لقد تقدّمت لهذه الوظيفة سابقاً" };
@@ -492,10 +496,10 @@ export async function jobsRoutes(app: FastifyInstance) {
       status: "pending",
       applied_at: new Date().toISOString(),
     };
-    applications.push(record);
+    const persisted = await applicationsRepository.save(record);
     job.applications_count += 1;
 
-    return { ok: true, application: record };
+    return { ok: true, application: persisted };
   });
 
   /* ─── GET /api/v2/jobs/my/applications — user apps ─── */
@@ -509,7 +513,7 @@ export async function jobsRoutes(app: FastifyInstance) {
     const phone = normalize(qs.phone);
     if (!phone) return { applications: [] };
 
-    const mine = applications.filter((a) => a.phone === phone);
+    const mine = await applicationsRepository.listByPhone(phone);
     const enriched = mine.map((a) => {
       const job = SEED_JOBS.find((j) => j.id === a.job_id);
       const emp = job ? SEED_EMPLOYERS.find((e) => e.id === job.employer_id) : null;
@@ -606,7 +610,7 @@ export async function jobsRoutes(app: FastifyInstance) {
   app.get(`${prefix}/stats`, async () => {
     return {
       total_jobs: SEED_JOBS.filter((j) => j.status === "active").length,
-      total_applications: applications.length,
+      total_applications: (await applicationsRepository.listAll()).length,
       total_saved: savedJobs.length,
       categories: SEED_CATEGORIES.length,
       employers: SEED_EMPLOYERS.length,

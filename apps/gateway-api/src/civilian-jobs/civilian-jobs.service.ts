@@ -1,7 +1,7 @@
 ﻿import { civilianOpportunitySeed, civilianOpportunitySources } from "./civilian-jobs.seed";
 import type { CivilianOpportunity, OpportunityApplicationInput, OpportunityApplicationRecord, OpportunitySource, OpportunityType } from "./civilian-jobs.types";
-
-const applications: OpportunityApplicationRecord[] = [];
+import type { CivilianJobsRepository } from "./civilian-jobs.repository";
+import { civilianJobsRepository } from "./civilian-jobs.repository";
 
 function includesText(value: string | undefined, query: string): boolean {
   if (!query) return true;
@@ -39,13 +39,24 @@ export function listCivilianOpportunitySources(): OpportunitySource[] {
   return civilianOpportunitySources;
 }
 
-export function createCivilianOpportunityApplication(input: OpportunityApplicationInput): OpportunityApplicationRecord {
+export async function createCivilianOpportunityApplication(input: OpportunityApplicationInput, repository: CivilianJobsRepository = civilianJobsRepository): Promise<OpportunityApplicationRecord> {
   const opportunity = getCivilianOpportunity(input.opportunityId);
   if (!opportunity) {
     throw new Error("Civilian opportunity was not found or is not published.");
   }
   if (!input.applicantName || !input.applicantPhone || !input.applicantType) {
     throw new Error("Applicant name, phone, and applicant type are required.");
+  }
+  if (input.cvUrl) {
+    let parsedUrl: URL;
+    try {
+      parsedUrl = new URL(input.cvUrl);
+    } catch {
+      throw new Error("CV URL must be a valid external URL.");
+    }
+    if (parsedUrl.protocol !== "https:") {
+      throw new Error("CV URL must use HTTPS.");
+    }
   }
   const now = new Date().toISOString();
   const record: OpportunityApplicationRecord = {
@@ -55,10 +66,9 @@ export function createCivilianOpportunityApplication(input: OpportunityApplicati
     createdAt: now,
     updatedAt: now
   };
-  applications.push(record);
-  return record;
+  return repository.saveApplication(record);
 }
 
-export function listCivilianOpportunityApplications(): OpportunityApplicationRecord[] {
-  return [...applications];
+export async function listCivilianOpportunityApplications(repository: CivilianJobsRepository = civilianJobsRepository): Promise<OpportunityApplicationRecord[]> {
+  return repository.listApplications();
 }

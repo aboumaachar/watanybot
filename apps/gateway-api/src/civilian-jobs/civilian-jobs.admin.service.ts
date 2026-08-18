@@ -143,16 +143,16 @@ const VALID_APPLICATION_STATUSES = new Set<OpportunityApplicationStatus>([
   "FOLLOW_UP_NEEDED", "CLOSED",
 ]);
 
-export function adminUpdateApplicationStatus(
+export async function adminUpdateApplicationStatus(
   id: string,
   status: string,
-): OpportunityApplicationRecord | undefined {
+): Promise<OpportunityApplicationRecord | undefined> {
   if (!VALID_APPLICATION_STATUSES.has(status as OpportunityApplicationStatus)) {
     throw new Error(`Invalid status: ${status}`);
   }
   // Applications are held in the service module's private array.
   // Access via the exported list and mutate by reference.
-  const all = _listApplications();
+  const all = await _listApplications();
   const app = all.find((a) => a.id === id);
   if (!app) return undefined;
   app.status = status as OpportunityApplicationStatus;

@@ -113,7 +113,7 @@ export async function registerCivilianJobsAdminRoutes(app: FastifyInstance) {
     "/api/admin/opportunities/applications",
     { preHandler: [requireRole("admin")] },
     async () => {
-      return { items: listCivilianOpportunityApplications() };
+      return { items: await listCivilianOpportunityApplications() };
     },
   );
 
@@ -124,7 +124,7 @@ export async function registerCivilianJobsAdminRoutes(app: FastifyInstance) {
       const { id } = request.params as { id: string };
       const body = (request.body || {}) as { status?: string };
       try {
-        const item = adminUpdateApplicationStatus(id, body.status || "");
+        const item = await adminUpdateApplicationStatus(id, body.status || "");
         if (!item) return reply.code(404).send({ error: "NOT_FOUND" });
         return { item };
       } catch (error) {
