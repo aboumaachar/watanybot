@@ -22,6 +22,7 @@ const ChatSessionsPage = lazy(() => import("../pages/ChatSessionsPage"));
 const JobsPage = lazy(() => import("../pages/JobsPage"));
 const AinElHafehJobsPage = lazy(() => import("../pages/AinElHafehJobsPage"));
 const AinElHafehAcceptedApplicationsPage = lazy(() => import("../pages/AinElHafehAcceptedApplicationsPage"));
+const AinElHafehApplicationsAdminPage = lazy(() => import("../pages/AinElHafehApplicationsAdminPage"));
 const MarketPage = lazy(() => import("../pages/MarketPage"));
 const SuperAdminPage = lazy(() => import("../pages/SuperAdminPage"));
 const SuperadminUsersPage = lazy(() => import("../features/superadmin-users/SuperadminUsersPage"));
@@ -147,6 +148,7 @@ export function AppShell() {
         <Route path="school-grants" element={<SchoolGrantsPage />} />
         <Route path="jobs/ainelhafeh" element={<AinElHafehJobsPage />} />
         <Route path="jobs/ainelhafeh/accepted" element={<AinElHafehAcceptedApplicationsPage />} />
+        <Route path="superadmin/ainelhafeh/applications" element={<AinElHafehApplicationsAdminPage />} />
         <Route path="jobs" element={<JobsPage />} />
         <Route path="marketplace" element={<MarketPage />} />
         <Route path="saved" element={<RequireAuthenticated><SavedChatsPage /></RequireAuthenticated>} />

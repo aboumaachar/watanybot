@@ -33,6 +33,7 @@ import { isIgnorableGatewayDisconnectError } from "./lib/gateway-hardening";
 import registerKbImportRoutes from "./routes/kb-import";
 import multipart from "@fastify/multipart";
 import { seasonalAppleJobRouter } from './koudama/surveys/seasonal-apple-job';
+import { registerAinElHafehAdminRoutes } from "./routes/ainelhafeh-admin";
 /* ================================================================
  *  Fastify instance
  * ================================================================ */
@@ -146,6 +147,7 @@ if (process.env.NODE_ENV !== "test") {
     await app.register(seasonalAppleJobRouter);
     // APEX_FEATURE01_KB_IMPORT_ROUTE_REGISTERED
     await app.register(registerKbImportRoutes);
+await registerAinElHafehAdminRoutes(app);
     await app.listen({ port, host, backlog: 2048 });
   } catch (err) {
     app.log.error(err);
