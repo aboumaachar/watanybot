@@ -59,6 +59,7 @@ PATH_TO_MODE.set("/world-cup", "community");
 
 /** Derive current mode from browser URL */
 export function modeFromPath(pathname: string): Mode {
+  if (pathname.startsWith("/jobs")) return "jobs";
   if (pathname.startsWith("/admin/al-wafiyat")) return "services";
   if (pathname.startsWith("/al-wafiyat")) return "services";
   if (pathname.startsWith("/deaths")) return "services";

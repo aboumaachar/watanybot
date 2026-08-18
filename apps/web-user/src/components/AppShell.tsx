@@ -23,6 +23,8 @@ const JobsPage = lazy(() => import("../pages/JobsPage"));
 const AinElHafehJobsPage = lazy(() => import("../pages/AinElHafehJobsPage"));
 const AinElHafehAcceptedApplicationsPage = lazy(() => import("../pages/AinElHafehAcceptedApplicationsPage"));
 const AinElHafehApplicationsAdminPage = lazy(() => import("../pages/AinElHafehApplicationsAdminPage"));
+const AinMreissehBuildingAssistantJobsPage = lazy(() => import("../pages/AinMreissehBuildingAssistantJobsPage"));
+const AinMreissehBuildingAssistantApplicationsAdminPage = lazy(() => import("../pages/AinMreissehBuildingAssistantApplicationsAdminPage"));
 const MarketPage = lazy(() => import("../pages/MarketPage"));
 const SuperAdminPage = lazy(() => import("../pages/SuperAdminPage"));
 const SuperadminUsersPage = lazy(() => import("../features/superadmin-users/SuperadminUsersPage"));
@@ -94,6 +96,18 @@ export function AppShell() {
     <Suspense fallback={<div className="screen-loader" aria-live="polite"><span className="screen-loader__spinner" /> جارٍ تحميل الصفحة…</div>}>
       <Routes>
       <Route
+        path="/superadmin/ain-mreisseh-building-assistant/applications"
+        element={
+          <div
+            data-apex-shell="superadmin"
+            data-apex-foundation="v4-phase-b"
+            className="watany-mobile-shell watany-superadmin-shell"
+          >
+            <RequireAdmin><AinMreissehBuildingAssistantApplicationsAdminPage /></RequireAdmin>
+          </div>
+        }
+      />
+      <Route
         path="/superadmin/users"
         element={
           <div
@@ -147,6 +161,7 @@ export function AppShell() {
         <Route path="procedures" element={<ProceduresPage />} />
         <Route path="school-grants" element={<SchoolGrantsPage />} />
         <Route path="jobs/ainelhafeh" element={<AinElHafehJobsPage />} />
+        <Route path="jobs/ain-mreisseh-building-assistant" element={<AinMreissehBuildingAssistantJobsPage />} />
         <Route path="jobs/ainelhafeh/accepted" element={<AinElHafehAcceptedApplicationsPage />} />
         <Route path="superadmin/ainelhafeh/applications" element={<AinElHafehApplicationsAdminPage />} />
         <Route path="jobs" element={<JobsPage />} />

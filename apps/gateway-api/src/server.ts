@@ -34,6 +34,7 @@ import registerKbImportRoutes from "./routes/kb-import";
 import multipart from "@fastify/multipart";
 import { seasonalAppleJobRouter } from './koudama/surveys/seasonal-apple-job';
 import { registerAinElHafehAdminRoutes } from "./routes/ainelhafeh-admin";
+import { registerAinMreissehBuildingAssistantRoutes } from "./koudama/surveys/ain-mreisseh-building-assistant/ainMreissehBuildingAssistant.routes.js";
 /* ================================================================
  *  Fastify instance
  * ================================================================ */
@@ -148,6 +149,7 @@ if (process.env.NODE_ENV !== "test") {
     // APEX_FEATURE01_KB_IMPORT_ROUTE_REGISTERED
     await app.register(registerKbImportRoutes);
 await registerAinElHafehAdminRoutes(app);
+    await registerAinMreissehBuildingAssistantRoutes(app);
     await app.listen({ port, host, backlog: 2048 });
   } catch (err) {
     app.log.error(err);
