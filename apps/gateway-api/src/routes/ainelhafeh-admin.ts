@@ -46,7 +46,7 @@ export async function registerAinElHafehAdminRoutes(app: FastifyInstance) {
 
     if (status) {
       values.push(status);
-      where.push(`COALESCE(status,'PENDING') = $${values.length}`);
+      where.push(`UPPER(COALESCE(status,'pending_review')) = $${values.length}`);
     }
 
     const whereSql = where.length ? `WHERE ${where.join(" AND ")}` : "";
@@ -66,8 +66,8 @@ export async function registerAinElHafehAdminRoutes(app: FastifyInstance) {
          governorate_ar,caza_ar,village_ar,
          availability,preferred_period,weekend_work,
          weighted_score,
-         COALESCE(status,'PENDING') AS status,
-         COALESCE(follow_up_status,'NOT_CONTACTED') AS follow_up_status,
+         UPPER(COALESCE(status,'pending_review')) AS status,
+         UPPER(COALESCE(follow_up_status,'not_contacted')) AS follow_up_status,
          admin_notes,created_at,updated_at
        FROM seasonal_apple_job_applications
        ${whereSql}
@@ -127,8 +127,8 @@ export async function registerAinElHafehAdminRoutes(app: FastifyInstance) {
          governorate_ar,caza_ar,village_ar,
          availability,preferred_period,weekend_work,
          weighted_score,
-         COALESCE(status,'PENDING') AS status,
-         COALESCE(follow_up_status,'NOT_CONTACTED') AS follow_up_status,
+         UPPER(COALESCE(status,'pending_review')) AS status,
+         UPPER(COALESCE(follow_up_status,'not_contacted')) AS follow_up_status,
          admin_notes,created_at,updated_at`,
       values
     );
