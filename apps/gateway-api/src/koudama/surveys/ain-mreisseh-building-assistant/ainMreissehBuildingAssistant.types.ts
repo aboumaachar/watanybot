@@ -13,6 +13,7 @@ export interface AinMreissehBuildingAssistantApplicationInput {
   name: string;
   phone: string;
   age: number | string;
+  email?: string;
   governorate: string;
   governorateAr?: string;
   caza: string;

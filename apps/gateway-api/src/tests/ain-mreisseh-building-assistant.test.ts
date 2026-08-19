@@ -11,6 +11,7 @@ const validInput = {
   name: "مستخدم تجريبي",
   phone: "+96170123456",
   age: "35",
+  email: "candidate@example.com",
   governorate: "عكار",
   governorateAr: "عكار",
   caza: "عكار",
@@ -56,12 +57,18 @@ describe("Ain Mreisseh building assistant application contract", () => {
     expect(queryMock).not.toHaveBeenCalled();
   });
 
+  it("rejects invalid optional email values", async () => {
+    await expect(createAinMreissehBuildingAssistantApplication({ ...validInput, email: "not-an-email" })).rejects.toThrow("INVALID_EMAIL");
+    expect(queryMock).not.toHaveBeenCalled();
+  });
+
   it("preserves the canonical location identity and campaign on create", async () => {
     queryMock.mockResolvedValueOnce({ rows: [{ ok: 1 }] }).mockResolvedValueOnce({ rows: [row] });
     const result = await createAinMreissehBuildingAssistantApplication(validInput);
     expect(result.campaignId).toBe("ain-mreisseh-building-assistant");
     expect(result.villageId).toBe("LB-LOC-35249");
     expect(result.villageAr).toBe("العبودية");
+    expect(result.email).toBe("candidate@example.com");
     expect(queryMock.mock.calls[1][0]).toContain("ain_mreisseh_building_assistant_applications");
     expect(queryMock.mock.calls[1][1]).toContain("ain-mreisseh-building-assistant");
   });

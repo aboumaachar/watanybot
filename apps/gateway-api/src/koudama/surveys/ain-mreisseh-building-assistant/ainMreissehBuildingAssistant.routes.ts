@@ -32,6 +32,7 @@ export async function registerAinMreissehBuildingAssistantRoutes(app: FastifyIns
       const clientErrors = new Set([
         "MISSING_REQUIRED_FIELD",
         "INVALID_PHONE",
+        "INVALID_EMAIL",
         "INVALID_START_DATE",
         "INVALID_ADDRESS_LOCATOR_SELECTION",
         "INVALID_VILLAGE_ID",

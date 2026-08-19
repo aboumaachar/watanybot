@@ -8,6 +8,7 @@ type FormState = {
   name: string;
   phone: string;
   age: string;
+  email: string;
   canWorkFullTime: string;
   acceptsSalary600: string;
   wantsHousing: string;
@@ -18,6 +19,7 @@ const initialForm: FormState = {
   name: "",
   phone: "",
   age: "",
+  email: "",
   canWorkFullTime: "",
   acceptsSalary600: "",
   wantsHousing: "",
@@ -32,9 +34,41 @@ export default function AinMreissehBuildingAssistantJobsPage() {
   const [address, setAddress] = useState<Partial<LebanonAddressValue>>({});
   const [status, setStatus] = useState<"idle" | "saving" | "success" | "error">("idle");
   const [applicationId, setApplicationId] = useState("");
+  const [shareStatus, setShareStatus] = useState("");
 
   function update(field: keyof FormState, value: string) {
     setForm((current) => ({ ...current, [field]: value }));
+  }
+
+  async function shareRegistrationLink() {
+    const url = globalThis.location.href;
+    const shareData = {
+      title: "فرصة عمل في عين المريسة",
+      text: "تقديم طلب للعمل كمساعد مدير مبنى في عين المريسة",
+      url,
+    };
+
+    if (globalThis.navigator.share) {
+      try {
+        await globalThis.navigator.share(shareData);
+        setShareStatus("تمت مشاركة الرابط.");
+      } catch {
+        setShareStatus("");
+      }
+      return;
+    }
+
+    try {
+      if (globalThis.navigator.clipboard) {
+        await globalThis.navigator.clipboard.writeText(url);
+        setShareStatus("تم نسخ الرابط.");
+        return;
+      }
+    } catch {
+      // Use the prompt fallback below when clipboard access is unavailable.
+    }
+
+    globalThis.prompt("انسخ رابط الفرصة:", url);
   }
 
   async function submit(event: FormEvent<HTMLFormElement>) {
@@ -54,6 +88,7 @@ export default function AinMreissehBuildingAssistantJobsPage() {
           name: form.name,
           phone: form.phone,
           age: form.age,
+          email: form.email,
           governorate: address.mohafaza,
           governorateAr: address.mohafaza,
           caza: address.qaza,
@@ -112,6 +147,7 @@ export default function AinMreissehBuildingAssistantJobsPage() {
             <label><span>الاسم *</span><input required type="text" value={form.name} onChange={(event) => update("name", event.target.value)} /></label>
             <label><span>رقم الهاتف *</span><input required type="tel" inputMode="tel" value={form.phone} onChange={(event) => update("phone", event.target.value)} /></label>
             <label><span>العمر *</span><input required type="number" min="1" max="120" value={form.age} onChange={(event) => update("age", event.target.value)} /></label>
+            <label><span>البريد الإلكتروني (اختياري)</span><input type="email" inputMode="email" autoComplete="email" value={form.email} onChange={(event) => update("email", event.target.value)} /></label>
             <label><span>تاريخ بدء العمل المتاح *</span><input required type="date" value={form.availableStartDate} onChange={(event) => update("availableStartDate", event.target.value)} /></label>
           </div>
 
@@ -130,6 +166,8 @@ export default function AinMreissehBuildingAssistantJobsPage() {
             <div className="ainmreisseh-options">{answerOptions.map((option) => <label className="ainmreisseh-option" key={`housing-${option}`}><input required type="radio" name="wantsHousing" checked={form.wantsHousing === option} onChange={() => update("wantsHousing", option)} /><span>{option}</span></label>)}</div>
           </fieldset>
           <button className="ainmreisseh-submit" type="submit" disabled={status === "saving"}>{status === "saving" ? "جارٍ إرسال الطلب…" : "إرسال الطلب"}</button>
+          <button className="ainmreisseh-share" type="button" onClick={() => { void shareRegistrationLink(); }}>مشاركة فرصة العمل</button>
+          {shareStatus ? <p className="ainmreisseh-share-status" role="status">{shareStatus}</p> : null}
         </form>
       </section>
     </main>

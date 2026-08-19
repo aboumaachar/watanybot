@@ -7,6 +7,7 @@ type ApplicationRow = {
   name: string;
   phone: string;
   age: string;
+  email: string;
   governorateAr: string;
   cazaAr: string;
   villageAr: string;
@@ -102,9 +103,9 @@ export default function AinMreissehBuildingAssistantApplicationsAdminPage() {
         {error ? <p className="ainmreisseh-message ainmreisseh-message--error" role="alert">{error}</p> : null}
         <div className="ainmreisseh-admin__table-wrap">
           <table>
-            <thead><tr><th>الاسم</th><th>الهاتف</th><th>العمر</th><th>الموقع</th><th>دوام كامل</th><th>الراتب</th><th>السكن</th><th>البدء</th><th>الحالة</th><th>المتابعة</th><th>التقديم</th><th>إجراء</th></tr></thead>
+            <thead><tr><th>الاسم</th><th>الهاتف</th><th>العمر</th><th>البريد الإلكتروني</th><th>الموقع</th><th>دوام كامل</th><th>الراتب</th><th>السكن</th><th>البدء</th><th>الحالة</th><th>المتابعة</th><th>التقديم</th><th>إجراء</th></tr></thead>
             <tbody>{items.map((item) => <tr key={item.id}>
-              <td>{item.name}</td><td>{item.phone}</td><td>{item.age}</td>
+              <td>{item.name}</td><td>{item.phone}</td><td>{item.age}</td><td>{item.email || "—"}</td>
               <td>{[item.governorateAr, item.cazaAr, item.villageAr].filter(Boolean).join(" / ")}</td>
               <td>{answerLabel(item.canWorkFullTime)}</td><td>{answerLabel(item.acceptsSalary600)}</td><td>{answerLabel(item.wantsHousing)}</td>
               <td>{dateLabel(item.availableStartDate)}</td><td>{item.status}</td><td>{item.followUpStatus}</td><td>{dateLabel(item.createdAt)}</td>
@@ -114,7 +115,7 @@ export default function AinMreissehBuildingAssistantApplicationsAdminPage() {
         </div>
         {selected ? <section className="ainmreisseh-admin__detail" aria-label="تفاصيل الطلب">
           <h2>{selected.name}</h2>
-          <div>الهاتف: {selected.phone} | الموقع: {[selected.governorateAr, selected.cazaAr, selected.villageAr].filter(Boolean).join(" / ")}</div>
+          <div>الهاتف: {selected.phone} | البريد الإلكتروني: {selected.email || "غير مضاف"} | الموقع: {[selected.governorateAr, selected.cazaAr, selected.villageAr].filter(Boolean).join(" / ")}</div>
           <div className="ainmreisseh-admin__detail-controls">
             <label>الحالة <select value={selected.status} onChange={(event) => { void updateApplication(selected.id, { status: event.target.value }); }}><option value="pending">pending</option><option value="approved">approved</option><option value="rejected">rejected</option></select></label>
             <label>المتابعة <select value={selected.followUpStatus} onChange={(event) => { void updateApplication(selected.id, { followUpStatus: event.target.value }); }}>{FOLLOW_UP_OPTIONS.map((option) => <option key={option} value={option}>{option}</option>)}</select></label>

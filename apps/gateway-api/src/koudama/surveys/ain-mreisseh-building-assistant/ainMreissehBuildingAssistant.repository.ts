@@ -33,6 +33,7 @@ function rowToApplication(row: Record<string, unknown>): AinMreissehBuildingAssi
     name: clean(row.name),
     phone: clean(row.phone),
     age: clean(row.age),
+    email: clean(row.email),
     governorate: clean(row.governorate),
     governorateAr: clean(row.governorate_ar),
     caza: clean(row.caza),
@@ -91,6 +92,7 @@ async function normalizeInput(input: AinMreissehBuildingAssistantApplicationInpu
   name: string;
   phone: string;
   age: string;
+  email: string;
   governorate: string;
   governorateAr: string;
   caza: string;
@@ -107,6 +109,7 @@ async function normalizeInput(input: AinMreissehBuildingAssistantApplicationInpu
     name: clean(input.name),
     phone: normalizePhone(input.phone),
     age: clean(input.age),
+    email: clean(input.email).toLowerCase(),
     governorate: clean(input.governorate),
     governorateAr: clean(input.governorateAr),
     caza: clean(input.caza),
@@ -122,6 +125,7 @@ async function normalizeInput(input: AinMreissehBuildingAssistantApplicationInpu
 
   if (!normalized.name || !normalized.phone || !normalized.age || !normalized.availableStartDate) throw new Error("MISSING_REQUIRED_FIELD");
   if (!/^\+?[0-9]{7,15}$/.test(normalized.phone)) throw new Error("INVALID_PHONE");
+  if (normalized.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalized.email)) throw new Error("INVALID_EMAIL");
   if (!/^\d{4}-\d{2}-\d{2}$/.test(normalized.availableStartDate) || Number.isNaN(Date.parse(normalized.availableStartDate))) throw new Error("INVALID_START_DATE");
   await validateCanonicalLocation({ ...input, ...normalized });
   return normalized;
@@ -133,11 +137,11 @@ export async function createAinMreissehBuildingAssistantApplication(input: AinMr
   if (await databaseAvailable()) {
     const result = await query(
       `INSERT INTO ain_mreisseh_building_assistant_applications
-        (id,campaign_id,name,phone,age,governorate,governorate_ar,caza,caza_ar,village,village_ar,village_id,
+        (id,campaign_id,name,phone,age,email,governorate,governorate_ar,caza,caza_ar,village,village_ar,village_id,
          can_work_full_time,accepts_salary_600,wants_housing,available_start_date)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17)
        RETURNING *`,
-      [id, CAMPAIGN_ID, normalized.name, normalized.phone, normalized.age, normalized.governorate, normalized.governorateAr,
+      [id, CAMPAIGN_ID, normalized.name, normalized.phone, normalized.age, normalized.email, normalized.governorate, normalized.governorateAr,
         normalized.caza, normalized.cazaAr, normalized.village, normalized.villageAr, normalized.villageId,
         normalized.canWorkFullTime, normalized.acceptsSalary600, normalized.wantsHousing, normalized.availableStartDate],
     );

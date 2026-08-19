@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS ain_mreisseh_building_assistant_applications (
   name TEXT NOT NULL,
   phone TEXT NOT NULL,
   age TEXT NOT NULL,
+  email TEXT,
   governorate TEXT NOT NULL,
   governorate_ar TEXT,
   caza TEXT NOT NULL,
@@ -21,6 +22,9 @@ CREATE TABLE IF NOT EXISTS ain_mreisseh_building_assistant_applications (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+
+ALTER TABLE ain_mreisseh_building_assistant_applications
+  ADD COLUMN IF NOT EXISTS email TEXT;
 
 CREATE INDEX IF NOT EXISTS idx_ain_mreisseh_building_assistant_campaign_status
   ON ain_mreisseh_building_assistant_applications(campaign_id, status, created_at DESC);
