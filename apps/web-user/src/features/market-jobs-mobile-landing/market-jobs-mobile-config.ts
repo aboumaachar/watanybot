@@ -192,6 +192,14 @@ export const jobsMobileLandingConfig: LandingConfig = {
       badge: "تسجيل مفتوح",
       href: "/jobs/ainelhafeh",
     },
+{
+      title: "مساعد مدير مبنى – عين المريسة",
+      company: "مساعد مدير مبنى – عين المريسة",
+      location: "عين المريسة، بيروت",
+      summary: "مساعد مدير مبنى – عين المريسة",
+      badge: "تسجيل مفتوح",
+      href: "/jobs/ain-mreisseh-building-assistant",
+    }
   ],
   sections: [
     {
