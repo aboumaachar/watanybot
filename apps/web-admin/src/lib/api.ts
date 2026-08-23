@@ -18,6 +18,73 @@ export type FeatureFlagsResponse = {
   lastUpdatedAt: string | null;
 };
 
+export type AdminAuthority = {
+  actorId: string;
+  email: string;
+  roles: string[];
+  isSuperadmin: boolean;
+  permissions: string[];
+};
+
+export type NetworkVisibilityLevel = "VISIBLE_PUBLIC" | "VISIBLE_NETWORK_ONLY" | "VISIBLE_CAZA_ONLY" | "VISIBLE_VILLAGE_ONLY" | "HIDDEN";
+export type NetworkApprovalStatus = "PENDING" | "APPROVED" | "SUSPENDED" | "HIDDEN_BY_ADMIN";
+export type NetworkFamilyTier = "BASIC_FAMILY_MEMBER" | "VERIFIED_FAMILY_MEMBER" | "CONTRIBUTOR" | "COMMUNITY_STEWARD";
+export type NetworkProfile = {
+  id: string;
+  userId: string;
+  displayName: string;
+  address: { governorateId?: string; cazaId?: string; municipalityId?: string; villageId?: string; latitude?: number; longitude?: number };
+  visibilityLevel: NetworkVisibilityLevel;
+  familyTier?: NetworkFamilyTier;
+  points?: number;
+  isVerifiedUser?: boolean;
+  approvalStatus: NetworkApprovalStatus;
+  isActive: boolean;
+  createdAt: string;
+  submittedAt?: string;
+  approvedAt?: string;
+  updatedAt: string;
+};
+export type NetworkSettings = {
+  featureEnabled: boolean;
+  requireApproval: boolean;
+  defaultVisibilityLevel: NetworkVisibilityLevel;
+  gpsEnabled: boolean;
+  mapEnabled: boolean;
+  connectionsEnabled: boolean;
+};
+
+export async function getNetworkSettings(): Promise<NetworkSettings> {
+  const response = await adminFetch("/api/network/settings");
+  const data = await response.json() as { settings?: NetworkSettings };
+  if (!data.settings) throw new AdminApiError("Network settings are missing", { kind: "http", status: 502 });
+  return data.settings;
+}
+
+export async function listNetworkProfiles(): Promise<NetworkProfile[]> {
+  const response = await adminFetch("/api/network/map");
+  const data = await response.json() as { profiles?: NetworkProfile[] };
+  return Array.isArray(data.profiles) ? data.profiles : [];
+}
+
+export async function searchNetworkProfiles(filters: { governorateId?: string; cazaId?: string; municipalityId?: string; villageId?: string } = {}): Promise<NetworkProfile[]> {
+  const query = new URLSearchParams();
+  Object.entries(filters).forEach(([key, value]) => { if (value) query.set(key, value); });
+  const suffix = query.toString();
+  const response = await adminFetch(`/api/network/search${suffix ? "?" + suffix : ""}`);
+  const data = await response.json() as { profiles?: NetworkProfile[] };
+  return Array.isArray(data.profiles) ? data.profiles : [];
+}
+
+export async function getAdminAuthorityMe(): Promise<AdminAuthority> {
+  const res = await adminFetch("/api/admin-authority/me");
+  const data = await res.json() as { authority?: AdminAuthority };
+  if (!data.authority) {
+    throw new AdminApiError("Authority response is missing", { kind: "http", status: 502 });
+  }
+  return data.authority;
+}
+
 export type WebUserSettingsResponse = {
   settings: import("@watany/shared/web-user-settings").PublishedWebUserSettings;
   lastUpdatedAt: string | null;
@@ -358,6 +425,67 @@ export async function saveFeatureFlags(flags: Record<string, boolean>): Promise<
     flags: data.flags ?? flags,
     lastUpdatedAt: data.lastUpdatedAt ?? null,
   };
+}
+
+export type CmsStatus = "DRAFT" | "REVIEW_READY" | "PUBLISHED" | "UNPUBLISHED" | "ARCHIVED";
+export type CmsItem = { id: string; title: string; status: CmsStatus; version: string; updatedAt: string | null; record: Record<string, unknown> };
+export type CmsListResponse = { items: CmsItem[]; total: number; page: number; pageSize: number; statusCounts: Record<CmsStatus, number> };
+export type CmsDocumentListResponse = Omit<CmsListResponse, "statusCounts"> & { statusCounts: Partial<Record<CmsStatus, number>> };
+export type CmsFormItem = CmsItem & { publicId: string; publicCode: string | null; sourceId: string | null };
+
+export async function getCmsAnnouncements(params: { q?: string; status?: CmsStatus; page?: number; pageSize?: number } = {}): Promise<CmsListResponse> {
+  const queryString = new URLSearchParams(Object.entries(params).filter(([, value]) => value) as string[][]).toString();
+  const res = await adminFetch(`/api/admin/cms/announcements${queryString ? "?" + queryString : ""}`);
+  return (await res.json()) as CmsListResponse;
+}
+
+export async function runCmsAnnouncementAction(id: string, action: "publish" | "unpublish" | "archive"): Promise<CmsItem> {
+  const res = await adminFetch(`/api/admin/cms/announcements/${encodeURIComponent(id)}/actions/${action}`, { method: "POST" });
+  return ((await res.json()) as { item: CmsItem }).item;
+}
+
+export function getCmsFormPublicUrl(form: CmsFormItem): string {
+  const sourceId = form.sourceId?.trim();
+  if (!sourceId) return "/forms";
+  return `/forms/${encodeURIComponent(sourceId)}`;
+}
+
+export async function getCmsForms(params: { q?: string; status?: CmsStatus; page?: number; pageSize?: number } = {}): Promise<CmsListResponse> {
+  const queryString = new URLSearchParams(Object.entries(params).filter(([, value]) => value) as string[][]).toString();
+  const res = await adminFetch(`/api/admin/cms/forms${queryString ? "?" + queryString : ""}`);
+  return (await res.json()) as CmsListResponse;
+}
+export async function runCmsFormAction(id: string, action: "publish" | "unpublish" | "archive"): Promise<CmsFormItem> {
+  const res = await adminFetch(`/api/admin/cms/forms/${encodeURIComponent(id)}/actions/${action}`, { method: "POST" });
+  return ((await res.json()) as { item: CmsFormItem }).item;
+}
+
+export async function getCmsProcedures(params: { q?: string; status?: CmsStatus; page?: number; pageSize?: number } = {}): Promise<CmsListResponse> {
+  const query = new URLSearchParams();
+  Object.entries(params).forEach(([key, value]) => { if (value) query.set(key, String(value)); });
+  const queryString = query.toString();
+  const res = await adminFetch(`/api/admin/cms/procedures${queryString ? "?" + queryString : ""}`);
+  return res.json();
+}
+
+export async function runCmsProcedureAction(id: string, action: "publish" | "unpublish" | "archive" | "restore"): Promise<CmsItem> {
+  const res = await adminFetch(`/api/admin/cms/procedures/${encodeURIComponent(id)}/actions/${action}`, { method: "POST" });
+  const data = await res.json();
+  return data.item;
+}
+
+export async function getCmsDocuments(params: { q?: string; status?: CmsStatus; page?: number; pageSize?: number } = {}): Promise<CmsDocumentListResponse> {
+  const query = new URLSearchParams();
+  Object.entries(params).forEach(([key, value]) => { if (value) query.set(key, String(value)); });
+  const queryString = query.toString();
+  const res = await adminFetch(`/api/admin/cms/documents${queryString ? "?" + queryString : ""}`);
+  return res.json();
+}
+
+export async function runCmsDocumentAction(id: string, action: "publish" | "unpublish" | "archive"): Promise<CmsItem> {
+  const res = await adminFetch(`/api/admin/cms/documents/${encodeURIComponent(id)}/actions/${action}`, { method: "POST" });
+  const data = await res.json();
+  return data.item;
 }
 
 export async function getWebUserSettings(): Promise<WebUserSettingsResponse> {

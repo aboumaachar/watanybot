@@ -1,0 +1,9 @@
+{
+  "status": "PASS",
+  "details": {
+    "status": "PASS",
+    "procedureResidue": 0,
+    "attachmentResidue": 0
+  },
+  "immutableAuditVersionRetained": true
+}

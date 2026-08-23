@@ -13,6 +13,7 @@ import AdminKBStudioPage from "./pages/AdminKBStudioPage";
 import AdminDocumentsPage from "./pages/AdminDocumentsPage";
 import AdminProceduresPage from "./pages/AdminProceduresPage";
 import AdminCommandCenterPage from "./pages/AdminCommandCenterPage";
+import SuperadminShellPage from "./pages/SuperadminShellPage";
 const DashboardPage = lazy(() => import("./pages/DashboardPage"));
 const UsersPage = lazy(() => import("./pages/UsersPage"));
 const ChatMonitorPage = lazy(() => import("./pages/ChatMonitorPage"));
@@ -21,6 +22,7 @@ const AuditPage = lazy(() => import("./pages/AuditPage"));
 const KBEditorPage = lazy(() => import("./pages/KBEditorPage"));
 const FeatureControlsPage = lazy(() => import("./pages/FeatureControlsPage"));
 const NewsAdminPage = lazy(() => import("./pages/NewsAdminPage"));
+const NetworkAdminPage = lazy(() => import("./pages/NetworkAdminPage"));
 const JobsAdminPage = lazy(() => import("./pages/JobsAdminPage"));
 
 function RedirectToWebUser() {
@@ -45,6 +47,7 @@ const NAV_ITEMS = [
   { path: "/audit", label: "Audit Log", icon: "audit" },
   { path: "/kb", label: "KB Editor", icon: "knowledge" },
   { path: "/news", label: "News", icon: "news" },
+  { path: "/network", label: "Network", icon: "location" },
   { path: "/jobs", label: "Jobs & Applications", icon: "briefcase" },
 ];
 
@@ -64,7 +67,7 @@ export default function App() {
 
   const handleLogout = useCallback(async () => {
     await logoutAdmin();
-    // Do NOT clear admin_api_url â€” keep server selection for next login
+    // Do NOT clear admin_api_url — keep server selection for next login
     setToken(null);
   }, []);
 
@@ -109,7 +112,7 @@ export default function App() {
                     background: "#0f172a", borderRadius: 6, overflow: "hidden",
                     textOverflow: "ellipsis", whiteSpace: "nowrap" }}
                 >
-                  ðŸŒ {serverLabel}
+                  🌐 {serverLabel}
                 </div>
                 <div className={`ws-status ${connected ? "connected" : "disconnected"}`}>
                   <span className="ws-dot" />
@@ -118,7 +121,7 @@ export default function App() {
                 {messages.length > 0 && (
                   <div className="ws-count">{messages.length} events</div>
                 )}
-                <button className="ghost" onClick={handleLogout} style={{ marginTop: 8, fontSize: 12, width: "100%" }}>
+                <button type="button" className="ghost" onClick={handleLogout} style={{ marginTop: 8, fontSize: 12, width: "100%" }}>
                   Sign Out
                 </button>
               </div>
@@ -132,9 +135,9 @@ export default function App() {
                   <p className="subtle">Unified view of runtime health, queues, and knowledge.</p>
                 </div>
                 <div className="top-actions">
-                  <button className="ghost">Create Incident</button>
-                  <button className="ghost">Sync KB</button>
-                  <button className="accent">Export Report</button>
+                  <button type="button" className="ghost">Create Incident</button>
+                  <button type="button" className="ghost">Sync KB</button>
+                  <button type="button" className="accent">Export Report</button>
                 </div>
               </header>
 
@@ -156,8 +159,10 @@ export default function App() {
                     <Route path="/audit" element={<AuditPage />} />
                     <Route path="/kb" element={<KBEditorPage />} />
                     <Route path="/news" element={<NewsAdminPage />} />
+                    <Route path="/network" element={<NetworkAdminPage />} />
                     <Route path="/jobs" element={<JobsAdminPage />} />
                     <Route path="/market" element={<AdminMarketPage />} />
+                    <Route path="/superadmin/*" element={<SuperadminShellPage />} />
                     <Route path="*" element={<Navigate to="/" replace />} />
                   </Routes>
                 </Suspense>

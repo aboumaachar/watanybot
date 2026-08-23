@@ -38,6 +38,7 @@ export interface CivilianJobsRepository {
   updateOpportunityStatus(id: string, status: OpportunityStatus, actorId?: string, note?: string): Promise<CivilianOpportunity>;
   listApplications(): Promise<OpportunityApplicationRecord[]>;
   saveApplication(row: OpportunityApplicationRecord): Promise<OpportunityApplicationRecord>;
+  updateApplicationStatus(id: string, status: OpportunityApplicationRecord["status"]): Promise<OpportunityApplicationRecord | undefined>;
   listSources(): Promise<OpportunitySource[]>;
   saveSource(row: OpportunitySource): Promise<OpportunitySource>;
   listImported(): Promise<ImportedCivilianJobOpportunity[]>;
@@ -76,6 +77,13 @@ export class InMemoryCivilianJobsRepository implements CivilianJobsRepository {
 
   async listApplications() { return [...this.applications.values()].map((x) => ({ ...x })); }
   async saveApplication(row: OpportunityApplicationRecord) { this.applications.set(row.id, { ...row }); return { ...row }; }
+  async updateApplicationStatus(id: string, status: OpportunityApplicationRecord["status"]) {
+    const existing = this.applications.get(id);
+    if (!existing) return undefined;
+    const updated = { ...existing, status, updatedAt: nowIso() };
+    this.applications.set(id, updated);
+    return { ...updated };
+  }
   async listSources() { return [...this.sources.values()].map((x) => ({ ...x })); }
   async saveSource(row: OpportunitySource) { this.sources.set(row.id, { ...row }); return { ...row }; }
   async listImported() { return [...this.imported.values()].map((x) => ({ ...x })); }
@@ -125,6 +133,17 @@ export class PostgresCivilianJobsRepository implements CivilianJobsRepository {
       [row.id, row.opportunityId, row.applicantName, row.applicantPhone, row.applicantType, row.status, row.note || null, row.cvUrl || null, row.createdAt, row.updatedAt],
     );
     return mapApplication(result.rows[0]);
+  }
+
+  async updateApplicationStatus(id: string, status: OpportunityApplicationRecord["status"]) {
+    const result = await query(
+      `UPDATE civilian_job_applications
+       SET status = $2, updated_at = $3
+       WHERE id = $1
+       RETURNING id, opportunity_id, applicant_name, applicant_phone, applicant_type, status, note, cv_url, created_at, updated_at`,
+      [id, status, new Date().toISOString()],
+    );
+    return result.rows[0] ? mapApplication(result.rows[0]) : undefined;
   }
 
   async listSources() { return this.fallback.listSources(); }

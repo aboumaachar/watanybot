@@ -60,7 +60,7 @@ describe("official services routes", () => {
     const cases = [
       {
         serviceId: "isf-medical-allowances",
-        payload: { name: "Ø£Ø­Ù…Ø¯ Ù…Ø­Ù…ÙˆØ¯", military_number: "123456" },
+        payload: { name: "أحمد محمود", military_number: "123456" },
       },
       {
         serviceId: "isf-traffic-tickets",
@@ -115,7 +115,7 @@ describe("official services routes", () => {
       payload: {
         sourceUrl: "https://example.com/mechanic-taxes",
         enabled: true,
-        fallbackMessageAr: "ØªÙ… ØªØ­Ø¯ÙŠØ« Ø§Ù„Ø±Ø§Ø¨Ø· Ø§Ù„Ø±Ø³Ù…ÙŠ.",
+        fallbackMessageAr: "تم تحديث الرابط الرسمي.",
       },
     });
 
@@ -125,7 +125,7 @@ describe("official services routes", () => {
     expect(patchBody.item).toMatchObject({
       sourceUrl: "https://example.com/mechanic-taxes",
       enabled: true,
-      fallbackMessageAr: "ØªÙ… ØªØ­Ø¯ÙŠØ« Ø§Ù„Ø±Ø§Ø¨Ø· Ø§Ù„Ø±Ø³Ù…ÙŠ.",
+      fallbackMessageAr: "تم تحديث الرابط الرسمي.",
       externalOnly: true,
     });
 

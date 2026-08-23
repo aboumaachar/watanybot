@@ -97,7 +97,7 @@ test.describe('WatanyBot hybrid chat default contract', () => {
         data: {
           message: 'ÙƒÙŠÙ ÙÙŠÙ†ÙŠ Ø§Ø¹Ø±Ù Ù…Ø¹Ø§Ù…Ù„ØªÙŠ',
           route: '/mcp/procedures',
-          pageText: 'Ù…Ø¹Ø§Ù…Ù„Ø© ÙˆØ·Ù†ÙŠ Ù„Ù„Ø§Ø¬Ø±Ø§Ø¡Ø§Øª',
+          pageText: 'معاملة وطني للاجراءات',
         },
       }).catch(() => null);
 

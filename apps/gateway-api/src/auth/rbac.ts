@@ -93,6 +93,23 @@ export const PERMISSIONS = {
   "admin.users":          ["admin", "superadmin"],
   "admin.rules":          ["admin", "superadmin"],
   "superadmin.all":       ["superadmin"],
+  "superadmin.shell.read": ["superadmin"],
+  "superadmin.audit.read": ["superadmin"],
+  "superadmin.feature_controls.read": ["superadmin"],
+  "superadmin.feature_controls.write": ["superadmin"],
+  "superadmin.system.read": ["superadmin"],
+  "cms.read": ["admin", "superadmin"],
+  "cms.create": ["superadmin"],
+  "cms.edit": ["superadmin"],
+  "cms.publish": ["superadmin"],
+  "cms.unpublish": ["superadmin"],
+  "cms.archive": ["superadmin"],
+  "cms.restore": ["superadmin"],
+  "cms.audit.read": ["superadmin"],
+  "cms.version.read": ["superadmin"],
+  "cms.bulk.manage": ["superadmin"],
+  "cms.procedures.read": ["admin", "superadmin"],
+  "cms.procedures.attachments.manage": ["superadmin"],
 } as const;
 
 export type Permission = keyof typeof PERMISSIONS;

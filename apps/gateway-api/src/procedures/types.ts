@@ -34,6 +34,7 @@ export type Procedure = {
   domain?: string;
 
   version?: string;
+  status?: "DRAFT" | "REVIEW_READY" | "PUBLISHED" | "UNPUBLISHED" | "ARCHIVED";
   last_updated?: string;
 };
 

@@ -139,6 +139,7 @@ import { registerCivilianJobsDailyCrawlerRoutes } from '../civilian-jobs/civilia
 import { createIdentityProfileFoundationProofRouter } from '../routes/identity-profile-foundation-proof-routes';
 import adminAuthorityProofPlugin from '../admin-authority/adminAuthorityProofPlugin';
 import { adminAuthorityRoutes } from '../admin-authority/adminAuthorityRoutes';
+import { cmsRoutes } from '../cms/cms-routes';
 import type { FastifyInstance, FastifyRequest } from 'fastify';
 
 
@@ -210,6 +211,7 @@ export async function registerRoutes(
   app.register(kbVNextRoutes,       { isKbNodesReady, searchKbNodes, getKbNodesStats, listKbNodes });
   app.register(legalRoutes);
   app.register(filesRoutes);
+  app.register(cmsRoutes);
   app.register(taxiPools);
   app.register(directoryRoutes,      { repoRootPath });
   app.register(faqRoutes);

@@ -1,0 +1,18 @@
+{
+  "status": "PASS",
+  "details": {
+    "status": "PASS",
+    "apiCount": 8,
+    "dbEvents": [
+      "cms.procedures.created",
+      "cms.procedures.updated",
+      "cms.procedures.attachments.updated",
+      "cms.procedures.attachments.updated",
+      "cms.procedures.publish",
+      "cms.procedures.unpublish",
+      "cms.procedures.archive",
+      "cms.procedures.restore"
+    ]
+  },
+  "immutableRetained": true
+}

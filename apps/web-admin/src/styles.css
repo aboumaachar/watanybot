@@ -131,6 +131,141 @@ button:disabled,
   gap: 16px;
 }
 
+.superadmin-shell {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 20px;
+}
+
+.superadmin-header,
+.superadmin-layout {
+  display: grid;
+  gap: 20px;
+}
+
+.superadmin-header {
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  padding: 24px;
+  background: var(--surface);
+  border: 1px solid var(--stroke);
+  border-radius: 18px;
+}
+
+.superadmin-header h1 {
+  margin: 6px 0 0;
+}
+
+.superadmin-actor {
+  display: grid;
+  gap: 4px;
+  text-align: left;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.superadmin-actor strong {
+  color: var(--ink);
+}
+
+.superadmin-layout {
+  grid-template-columns: 220px minmax(0, 1fr);
+  align-items: start;
+}
+
+.superadmin-nav {
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+  background: #172b3a;
+  border-radius: 18px;
+}
+
+.superadmin-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 42px;
+  padding: 9px 12px;
+  border-radius: 10px;
+  color: #e8f1f4;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.superadmin-nav-item:hover,
+.superadmin-nav-item.active {
+  background: #d7a632;
+  color: #172b3a;
+}
+
+.superadmin-main {
+  min-width: 0;
+}
+
+.superadmin-breadcrumb {
+  margin-bottom: 14px;
+  color: var(--muted);
+  font-size: 12px;
+  direction: ltr;
+  text-align: right;
+}
+
+.superadmin-kpis {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.superadmin-kpi {
+  min-height: 122px;
+}
+
+.superadmin-kpi strong,
+.superadmin-kpi span:last-child {
+  overflow-wrap: anywhere;
+}
+
+.superadmin-kpi strong {
+  font-size: 18px;
+}
+
+.superadmin-kpi > span:last-child {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.superadmin-shortcuts {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+}
+
+.superadmin-shortcuts a {
+  text-decoration: none;
+}
+
+.superadmin-surface,
+.superadmin-denied {
+  min-height: 220px;
+  align-content: center;
+}
+
+.superadmin-status {
+  width: fit-content;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: #f7e7b7;
+  color: #6b4e00;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.superadmin-denied {
+  border-inline-start: 4px solid #b33a3a;
+}
+
 .card h2,
 .card h3 {
   margin: 0;

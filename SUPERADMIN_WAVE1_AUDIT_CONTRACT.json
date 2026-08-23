@@ -1,0 +1,16 @@
+{
+  "storageOwner": "apps/gateway-api/src/admin-authority/adminAuthorityAudit.ts",
+  "eventType": "superadmin.feature_controls.updated",
+  "actorIdentity": "request.user.id",
+  "actorRole": "request.user.role",
+  "domain": "cms",
+  "entityType": "feature_controls",
+  "entityId": "global",
+  "action": "update",
+  "beforeStateReference": "before.flags",
+  "afterStateReference": "after.flags",
+  "correlationId": "request.id",
+  "sourceInterface": "web-admin.superadmin.feature-controls",
+  "runtimeCanary": "UNVERIFIED",
+  "reason": "No isolated local audit canary harness was available without database-backed mutation execution."
+}

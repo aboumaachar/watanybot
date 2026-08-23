@@ -6,6 +6,7 @@ vi.mock("node:child_process", () => ({
 
 import { execFile } from "node:child_process";
 import { resolveCommand } from "../kb-import/extractors";
+import { deriveIndividualKbId } from "../kb-import/job-store";
 
 type ExecFileCallback = (error: Error | null, stdout?: string, stderr?: string) => void;
 
@@ -65,5 +66,12 @@ describe("kb-import extractor command resolution", () => {
 
     const resolved = await resolveCommand("pdftotext");
     expect(resolved).toBeNull();
+  });
+});
+
+describe("kb-import individual KB identity", () => {
+  it("is stable for the same source name and content hash", () => {
+    expect(deriveIndividualKbId("source.md", "ABC123")).toBe(deriveIndividualKbId("source.md", "abc123"));
+    expect(deriveIndividualKbId("source.md", "abc123")).not.toBe(deriveIndividualKbId("renamed.md", "abc123"));
   });
 });

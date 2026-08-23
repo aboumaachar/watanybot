@@ -45,12 +45,12 @@ test('KB edit â†’ rebuild â†’ retrieval â†’ (chat if available)',
   const searchBody = await searchRes.json();
   expect(searchBody.total).toBeGreaterThan(0);
 
-  // 5) optional: call /api/chat â€” assert response shape and (if present) marker
+  // 5) optional: call /api/chat — assert response shape and (if present) marker
   const chatRes = await request.post(apiUrl('/api/chat'), { data: { message: marker, userId: 'e2e' } });
   if (chatRes.ok()) {
     const chatBody = await chatRes.json();
     expect(typeof chatBody.reply).toBe('string');
-    // AI may be disabled in CI/dev â€” only assert marker presence if returned
+    // AI may be disabled in CI/dev — only assert marker presence if returned
     if ((chatBody.reply || '').includes(marker)) expect(chatBody.reply).toContain(marker);
   }
 });

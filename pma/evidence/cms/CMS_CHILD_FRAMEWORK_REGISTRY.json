@@ -1,0 +1,1 @@
+{"status":"IMPLEMENTED","shell":"/superadmin/cms","child":"/superadmin/cms/procedures","descriptor":"procedures","sharedControls":["search","status filter","pagination","lifecycle actions"]}

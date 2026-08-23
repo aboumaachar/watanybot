@@ -1,5 +1,6 @@
 ﻿import { describe, expect, it } from "vitest";
-import { createCivilianOpportunityApplication, getCivilianOpportunity, listCivilianOpportunities } from "./civilian-jobs.service";
+import { adminUpdateApplicationStatus } from "./civilian-jobs.admin.service";
+import { createCivilianOpportunityApplication, getCivilianOpportunity, listCivilianOpportunityApplications, listCivilianOpportunities, updateCivilianOpportunityApplicationStatus } from "./civilian-jobs.service";
 import { InMemoryCivilianJobsRepository } from "./civilian-jobs.repository";
 
 describe("civilian jobs wave 01 service", () => {
@@ -38,6 +39,39 @@ describe("civilian jobs wave 01 service", () => {
       applicantPhone: "70000001",
       applicantType: "VETERAN",
     }, repository)).rejects.toThrow("storage unavailable");
+  });
+
+  it("persists application status updates through the repository", async () => {
+    const first = listCivilianOpportunities()[0];
+    const repository = new InMemoryCivilianJobsRepository();
+    const application = await createCivilianOpportunityApplication({
+      opportunityId: first.id,
+      applicantName: "Status Applicant",
+      applicantPhone: "70000004",
+      applicantType: "VETERAN",
+    }, repository);
+
+    const updated = await updateCivilianOpportunityApplicationStatus(application.id, "REVIEWED", repository);
+    const listed = await listCivilianOpportunityApplications(repository);
+
+    expect(updated?.status).toBe("REVIEWED");
+    expect(listed.find((item) => item.id === application.id)?.status).toBe("REVIEWED");
+  });
+
+  it("persists status changes through the admin service boundary", async () => {
+    const first = listCivilianOpportunities()[0];
+    const repository = new InMemoryCivilianJobsRepository();
+    const application = await createCivilianOpportunityApplication({
+      opportunityId: first.id,
+      applicantName: "Admin Status Applicant",
+      applicantPhone: "70000005",
+      applicantType: "VETERAN",
+    }, repository);
+
+    const updated = await adminUpdateApplicationStatus(application.id, "ACCEPTED", repository);
+
+    expect(updated?.status).toBe("ACCEPTED");
+    expect((await listCivilianOpportunityApplications(repository)).find((item) => item.id === application.id)?.status).toBe("ACCEPTED");
   });
 
   it("accepts only HTTPS external CV metadata", async () => {

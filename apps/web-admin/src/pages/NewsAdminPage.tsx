@@ -13,6 +13,7 @@ interface NewsItem {
   published_at: number;
   created_at: number;
   created_by: string | null;
+  status?: "DRAFT" | "PUBLISHED" | "UNPUBLISHED" | "ARCHIVED";
 }
 
 const empty = (): Partial<NewsItem> => ({
@@ -23,6 +24,7 @@ const empty = (): Partial<NewsItem> => ({
   source_url: "",
   is_published: 1,
   published_at: Date.now(),
+  status: "DRAFT",
 });
 
 export default function NewsAdminPage() {
@@ -68,8 +70,9 @@ export default function NewsAdminPage() {
           category: form.category || null,
           image_url: form.image_url || null,
           source_url: form.source_url || null,
-          is_published: form.is_published ?? 1,
+          is_published: form.status === "PUBLISHED" ? 1 : 0,
           published_at: form.published_at ?? Date.now(),
+          status: form.status ?? (form.is_published ? "PUBLISHED" : "DRAFT"),
         }),
       });
       if (!res.ok) {
@@ -86,20 +89,18 @@ export default function NewsAdminPage() {
   };
 
   const togglePublish = async (item: NewsItem) => {
-    const next = item.is_published ? 0 : 1;
-    await adminFetch(`/admin/news/${item.id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ is_published: next }),
-    });
+    const next = item.status === "PUBLISHED" || item.is_published ? "unpublish" : "publish";
+    await adminFetch(`/admin/news/${item.id}/actions/${next}`, { method: "POST" });
     load();
   };
 
-  const handleDelete = async (id: string) => {
-    if (!window.confirm("حذف هذا الخبر نهائياً؟")) return;
-    await adminFetch(`/admin/news/${id}`, { method: "DELETE" });
-    if (editId === id) resetForm();
+  const runLifecycle = async (item: NewsItem, action: "archive" | "restore") => {
+    await adminFetch(`/admin/news/${item.id}/actions/${action}`, { method: "POST" });
     load();
+  };
+
+  const openPublic = () => {
+    globalThis.open("/news", "_blank", "noopener,noreferrer");
   };
 
   return (
@@ -221,32 +222,32 @@ export default function NewsAdminPage() {
                 style={{
                   padding: "1px 8px",
                   borderRadius: 20,
-                  background: item.is_published ? "#15803d22" : "#7f1d1d22",
-                  color: item.is_published ? "#86efac" : "#fca5a5",
-                  border: `1px solid ${item.is_published ? "#166534" : "#991b1b"}`,
+                  background: item.status === "PUBLISHED" || item.is_published ? "#15803d22" : "#7f1d1d22",
+                  color: item.status === "PUBLISHED" || item.is_published ? "#86efac" : "#fca5a5",
+                  border: `1px solid ${item.status === "PUBLISHED" || item.is_published ? "#166534" : "#991b1b"}`,
                 }}
               >
-                {item.is_published ? "منشور" : "مسودة"}
+                {item.status === "PUBLISHED" ? "منشور" : item.status === "ARCHIVED" ? "مؤرشف" : item.status === "UNPUBLISHED" ? "غير منشور" : "مسودة"}
               </span>
             </div>
           </div>
           <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
             <button
               className="ghost"
-              title={item.is_published ? "إلغاء النشر" : "نشر"}
+              title={item.status === "PUBLISHED" || item.is_published ? "إلغاء النشر" : "نشر"}
               onClick={() => togglePublish(item)}
               style={{ fontSize: 12 }}
             >
-              {item.is_published ? "إخفاء" : "نشر"}
+              {item.status === "PUBLISHED" || item.is_published ? "إخفاء" : "نشر"}
+            </button>
+            <button className="ghost" onClick={openPublic} style={{ fontSize: 12 }}>
+              فتح العام
             </button>
             <button className="ghost" onClick={() => startEdit(item)} style={{ fontSize: 12 }}>
               تعديل
             </button>
-            <button
-              onClick={() => handleDelete(item.id)}
-              style={{ fontSize: 12, color: "#f87171", background: "transparent", border: "1px solid #7f1d1d", borderRadius: 6, cursor: "pointer", padding: "4px 10px" }}
-            >
-              حذف
+            <button className="ghost" onClick={() => void runLifecycle(item, item.status === "ARCHIVED" ? "restore" : "archive")} style={{ fontSize: 12 }}>
+              {item.status === "ARCHIVED" ? "استعادة" : "أرشفة"}
             </button>
           </div>
         </div>

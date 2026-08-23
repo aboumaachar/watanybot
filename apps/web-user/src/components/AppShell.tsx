@@ -52,6 +52,7 @@ const AdsPage = lazy(() => import("../pages/AdsPage"));
 const HealthPage = lazy(() => import("../pages/HealthPage"));
 const OfficialServicesPage = lazy(() => import("../pages/OfficialServicesPage"));
 const AdminAuthorityDemoPage = lazy(() => import("../pages/AdminAuthorityDemoPage"));
+const WorldCupPage = lazy(() => import("../pages/WorldCupPage"));
 
 
 function RequireAuthenticated({ children }: { children: ReactNode }) {
@@ -197,6 +198,7 @@ export function AppShell() {
         <Route path="health" element={<HealthPage />} />
         <Route path="services/official" element={<OfficialServicesPage />} />
         <Route path="admin-authority-demo" element={<AdminAuthorityDemoPage />} />
+        <Route path="world-cup/*" element={<WorldCupPage />} />
         <Route path="*" element={<UnavailableRecoveryPage />} />
       </Route>
       </Routes>

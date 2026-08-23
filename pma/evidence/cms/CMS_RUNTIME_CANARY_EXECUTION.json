@@ -1,0 +1,100 @@
+{
+  "canaryId": "proc-apex-cms-canary-20260821102510545-d574b7",
+  "titleMarker": "إجراء خدمة قبول proc-apex-cms-canary-20260821102510545-d574b7",
+  "attachmentMarker": "APEX-CMS-ATTACHMENT-proc-apex-cms-canary-20260821102510545-d574b7",
+  "correlationId": "cms-runtime-42f84014-316b-4edb-853b-eb2276e5d5ed",
+  "checks": {
+    "gatewayHealth": {
+      "status": "PASS"
+    },
+    "registry": {
+      "status": "PASS"
+    },
+    "baselineResidue": {
+      "status": "PASS",
+      "count": 0
+    },
+    "rbacNegative": {
+      "status": "PASS",
+      "anonymous": 401,
+      "admin": 403
+    },
+    "superadminMutation": {
+      "status": "PASS",
+      "statusCode": 201
+    },
+    "createRead": {
+      "status": "PASS"
+    },
+    "update": {
+      "status": "PASS"
+    },
+    "attachments": {
+      "status": "PASS",
+      "attached": 200,
+      "readback": [
+        "APEX-CMS-ATTACHMENT-proc-apex-cms-canary-20260821102510545-d574b7"
+      ],
+      "detached": 200
+    },
+    "publishPublicRead": {
+      "status": "PASS",
+      "publish": 200,
+      "publicRead": 200
+    },
+    "unpublishPublicHide": {
+      "status": "PASS",
+      "unpublish": 200,
+      "publicHidden": 404
+    },
+    "archiveRestore": {
+      "status": "PASS"
+    },
+    "versions": {
+      "status": "PASS",
+      "apiCount": 8,
+      "dbCount": 8
+    },
+    "audit": {
+      "status": "PASS",
+      "apiCount": 8,
+      "dbEvents": [
+        "cms.procedures.created",
+        "cms.procedures.updated",
+        "cms.procedures.attachments.updated",
+        "cms.procedures.attachments.updated",
+        "cms.procedures.publish",
+        "cms.procedures.unpublish",
+        "cms.procedures.archive",
+        "cms.procedures.restore"
+      ]
+    },
+    "identity": {
+      "status": "PASS"
+    },
+    "lifecycle": {
+      "status": "PASS",
+      "publish": 200,
+      "unpublish": 200,
+      "archive": 200,
+      "restore": 200
+    },
+    "publicReflection": {
+      "status": "PASS",
+      "publishRead": 200,
+      "unpublishHidden": 404
+    },
+    "cleanup": {
+      "status": "PASS",
+      "procedureResidue": 0,
+      "attachmentResidue": 0
+    }
+  },
+  "protectedData": {
+    "registeredUsersMutated": "NO",
+    "submittedApplicationsMutated": "NO",
+    "realProcedureMutated": "NO",
+    "productionDatabaseMutated": "NO"
+  },
+  "retainedImmutableEvidence": true
+}

@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "details": {
+    "status": "PASS",
+    "attached": 200,
+    "readback": [
+      "APEX-CMS-ATTACHMENT-proc-apex-cms-canary-20260821102510545-d574b7"
+    ],
+    "detached": 200
+  }
+}

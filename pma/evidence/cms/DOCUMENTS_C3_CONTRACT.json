@@ -1,0 +1,6 @@
+{
+  "status": "PASS",
+  "capabilities": ["list", "read", "create", "edit", "publish", "unpublish", "archive", "audit", "versions", "rollback"],
+  "canonicalIdentity": "documents.id",
+  "storage": "existing documents owner/pluginDb"
+}

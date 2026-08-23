@@ -1,0 +1,12 @@
+{
+  "checkpointId": "APEX_WATANYBOT_SUPERADMIN_FOUNDATION_CHECKPOINT_V1",
+  "gitHead": "d7eb802b7b9563d61e64aa8cadce34805a9d8dae",
+  "branch": "integration/theme-upgrade-20260728",
+  "foundationDirtyPathCount": 10,
+  "foundationDirtyFingerprint": "96FDE75ABDAECA97AF691BA0BCADC86684C659A1F14FAFEC59C079105251931F",
+  "gatewayPort": 4000,
+  "pythonUpstreamPort": 8010,
+  "pythonOwner": "apps/api-backend/apps/api/main.py",
+  "protectedDataMutation": "NO",
+  "note": "Baseline bound before Wave-1 edits; existing dirty owner work preserved."
+}

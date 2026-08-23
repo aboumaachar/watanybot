@@ -24,6 +24,7 @@ const NNA_CACHE_TTL_MS = 5 * 60 * 1000;
 const FACTCHECK_LANDING_URL = "https://factchecklebanon.nna-leb.gov.lb/";
 const FACTCHECK_FETCH_TIMEOUT_MS = 15000;
 const FACTCHECK_CACHE_TTL_MS = 5 * 60 * 1000;
+const PUBLIC_NEWS_COLUMNS = "id, title, body, category, image_url, source_url, is_published, published_at, created_at, updated_at, created_by";
 
 type NewsRow = NewsItem;
 
@@ -477,13 +478,13 @@ export const newsRoutes: FastifyPluginAsync = async (app) => {
       if (category) {
         adminRows = app.pluginDb
           .prepare(
-            "SELECT * FROM news_items WHERE is_published = 1 AND category = ? ORDER BY published_at DESC LIMIT ?"
+            `SELECT ${PUBLIC_NEWS_COLUMNS} FROM news_items WHERE is_published = 1 AND category = ? ORDER BY published_at DESC LIMIT ?`
           )
           .all(category, maxItems) as unknown as NewsItem[];
       } else {
         adminRows = app.pluginDb
           .prepare(
-            "SELECT * FROM news_items WHERE is_published = 1 ORDER BY published_at DESC LIMIT ?"
+            `SELECT ${PUBLIC_NEWS_COLUMNS} FROM news_items WHERE is_published = 1 ORDER BY published_at DESC LIMIT ?`
           )
           .all(maxItems) as unknown as NewsItem[];
       }

@@ -1,0 +1,10 @@
+{
+  "roles": {
+    "PUBLIC_USER": { "superadmin.shell.read": "DENY", "superadmin.audit.read": "DENY", "superadmin.feature_controls.write": "DENY", "superadmin.system.read": "DENY" },
+    "REGISTERED_USER": { "superadmin.shell.read": "DENY", "superadmin.audit.read": "DENY", "superadmin.feature_controls.write": "DENY", "superadmin.system.read": "DENY" },
+    "ADMIN": { "superadmin.shell.read": "DENY", "superadmin.audit.read": "DENY", "superadmin.feature_controls.write": "DENY", "superadmin.system.read": "DENY" },
+    "SUPERADMIN": { "superadmin.shell.read": "ALLOW", "superadmin.audit.read": "ALLOW", "superadmin.feature_controls.read": "ALLOW", "superadmin.feature_controls.write": "ALLOW", "superadmin.system.read": "ALLOW" }
+  },
+  "serverGuard": "requireRole(superadmin)",
+  "negativeAuthTests": "PASS"
+}

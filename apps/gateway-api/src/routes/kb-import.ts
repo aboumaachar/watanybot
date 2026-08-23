@@ -3,6 +3,7 @@ import { mkdir } from "node:fs/promises";
 import path from "node:path";
 import { pipeline } from "node:stream/promises";
 import type { FastifyPluginAsync } from "fastify";
+import { requireRole } from "../auth/rbac";
 import { buildAssetFromStoredFile, sanitizeOriginalName } from "../kb-import/file-security";
 import { ensureKbImportStorage } from "../kb-import/storage";
 import {
@@ -20,6 +21,8 @@ import type { CreateRawImportInput } from "../kb-import/types";
 type RawImportBody = Partial<CreateRawImportInput> & { processNow?: boolean };
 
 export const registerKbImportRoutes: FastifyPluginAsync = async (app) => {
+  app.addHook("preHandler", requireRole("admin"));
+
   app.get("/api/admin/kb-import/health", async () => {
     const storage = await ensureKbImportStorage();
     return { ok: true, feature: "kb-import-build", storageRoot: storage.root };

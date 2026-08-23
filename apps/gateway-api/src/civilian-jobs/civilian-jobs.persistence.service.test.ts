@@ -1,5 +1,5 @@
 ﻿import { describe, expect, it } from "vitest";
-import { civilianJobsRepository } from "./civilian-jobs.repository";
+import { civilianJobsRepository, InMemoryCivilianJobsRepository } from "./civilian-jobs.repository";
 import { getCivilianJobsPersistenceHealth } from "./civilian-jobs.persistence.service";
 
 const firstOpportunity = async () => {
@@ -10,8 +10,8 @@ const firstOpportunity = async () => {
 
 describe("civilian jobs persistence repository", () => {
   it("exposes repository health", async () => {
-    const health = await getCivilianJobsPersistenceHealth();
-    expect(health.mode).toBe("IN_MEMORY_REPOSITORY_READY_FOR_DB_ADAPTER");
+    const health = await getCivilianJobsPersistenceHealth(new InMemoryCivilianJobsRepository());
+    expect(health.mode).toBe("IN_MEMORY_REPOSITORY_TEST_FIXTURE");
     expect(health.opportunities).toBeGreaterThan(0);
     expect(health.sources).toBeGreaterThan(0);
   });

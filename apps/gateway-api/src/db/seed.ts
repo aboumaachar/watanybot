@@ -1,5 +1,5 @@
 /**
- * Seed development data â€” creates a super-admin user + sample data.
+ * Seed development data — creates a super-admin user + sample data.
  *
  * Usage:  tsx apps/gateway-api/src/db/seed.ts
  */
@@ -21,7 +21,7 @@ export async function seed(): Promise<void> {
     await query(
       `INSERT INTO users (email, password_hash, name, role, phone)
        VALUES ($1, $2, $3, $4, $5)`,
-      ["admin@watany.lb", hash, "Ù…Ø¯ÙŠØ± Ø§Ù„Ù†Ø¸Ø§Ù…", "superadmin", "+961-1-000000"],
+      ["admin@watany.lb", hash, "مدير النظام", "superadmin", "+961-1-000000"],
     );
     console.log("[seed] created development super-admin account");
   } else {
@@ -37,7 +37,7 @@ export async function seed(): Promise<void> {
     await query(
       `INSERT INTO users (email, password_hash, name, role, phone, rank, military_id)
        VALUES ($1, $2, $3, $4, $5, $6, $7)`,
-      ["veteran@watany.lb", hash, "Ø£Ø­Ù…Ø¯ Ø­Ø³ÙŠÙ†", "accredited", "+961-3-123456", "Ø¹Ù…ÙŠØ¯", "MIL-2024-001"],
+      ["veteran@watany.lb", hash, "أحمد حسين", "accredited", "+961-3-123456", "عميد", "MIL-2024-001"],
     );
     console.log("[seed] created development demo veteran account");
   }

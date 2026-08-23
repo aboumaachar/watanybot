@@ -1,0 +1,6 @@
+{
+  "status": "RECORDED",
+  "ownedChanges": ["runtime create contract", "runtime attachment association contract", "public-reflection canary harness", "runtime evidence"],
+  "unrelatedDirtyWork": "preserved",
+  "gitOperations": "no commit/push/deploy/reset/clean/checkout"
+}

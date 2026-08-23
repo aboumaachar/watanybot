@@ -1,0 +1,21 @@
+{
+  "status": "PASS",
+  "method": "POST",
+  "path": "/api/files/upload",
+  "requestSchema": {
+    "contentType": "application/json",
+    "body": {
+      "dataUrl": "base64 PNG data URL string"
+    }
+  },
+  "expectedStatus": 200,
+  "expectedResponseFields": {
+    "ok": true,
+    "url": "string"
+  },
+  "source": {
+    "methodPathBody": "apps/gateway-api/test/upload.test.ts",
+    "responseAssertions": "apps/gateway-api/test/upload.test.ts",
+    "canonicalRuntime": "apps/api-backend/apps/api/main.py"
+  }
+}

@@ -11,7 +11,7 @@ interface State {
 }
 
 /**
- * React Error Boundary â€” catches unhandled JS errors in the component tree
+ * React Error Boundary — catches unhandled JS errors in the component tree
  * and shows a recovery UI instead of crashing the entire app.
  */
 export class ErrorBoundary extends Component<Props, State> {
@@ -53,10 +53,10 @@ export class ErrorBoundary extends Component<Props, State> {
             color: "var(--ink, #333)",
           }}
         >
-          <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>âš ï¸</div>
-          <h2 style={{ margin: "0 0 0.5rem", fontSize: "1.25rem" }}>Ø­Ø¯Ø« Ø®Ø·Ø£ ØºÙŠØ± Ù…ØªÙˆÙ‚Ø¹</h2>
+          <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>⚠️</div>
+          <h2 style={{ margin: "0 0 0.5rem", fontSize: "1.25rem" }}>حدث خطأ غير متوقع</h2>
           <p style={{ margin: "0 0 1.5rem", opacity: 0.7, maxWidth: "400px" }}>
-            Ù†Ø¹ØªØ°Ø± Ø¹Ù† Ù‡Ø°Ø§ Ø§Ù„Ø®Ø·Ø£. ÙŠÙ…ÙƒÙ†Ùƒ Ø§Ù„Ù…Ø­Ø§ÙˆÙ„Ø© Ù…Ø±Ø© Ø£Ø®Ø±Ù‰ Ø£Ùˆ Ø¥Ø¹Ø§Ø¯Ø© ØªØ­Ù…ÙŠÙ„ Ø§Ù„ØµÙØ­Ø©.
+            نعتذر عن هذا الخطأ. يمكنك المحاولة مرة أخرى أو إعادة تحميل الصفحة.
           </p>
           <div style={{ display: "flex", gap: "0.75rem" }}>
             <button
@@ -71,7 +71,7 @@ export class ErrorBoundary extends Component<Props, State> {
                 fontSize: "1rem",
               }}
             >
-              Ø¥Ø¹Ø§Ø¯Ø© Ø§Ù„Ù…Ø­Ø§ÙˆÙ„Ø©
+              إعادة المحاولة
             </button>
             <button
               onClick={() => window.location.reload()}
@@ -85,7 +85,7 @@ export class ErrorBoundary extends Component<Props, State> {
                 fontSize: "1rem",
               }}
             >
-              Ø¥Ø¹Ø§Ø¯Ø© ØªØ­Ù…ÙŠÙ„
+              إعادة تحميل
             </button>
           </div>
           {import.meta.env.DEV && this.state.error && (

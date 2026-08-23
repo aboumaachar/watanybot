@@ -20,7 +20,7 @@ export default function () {
     check(res, { [`GET ${path} status OK`]: (r) => r.status >= 200 && r.status < 400 });
     sleep(0.3);
   }
-  const payload = JSON.stringify({ message: "Ù…Ø±Ø­Ø¨Ø§", lang: "ar", channel: "web" });
+  const payload = JSON.stringify({ message: "مرحبا", lang: "ar", channel: "web" });
   const chat = http.post(`${BASE}/mcp/api/chat`, payload, { headers: { "Content-Type": "application/json" }, timeout: "10s" });
   check(chat, { "chat status OK": (r) => r.status >= 200 && r.status < 400, "chat has body": (r) => r.body && r.body.length > 20 });
   sleep(1);

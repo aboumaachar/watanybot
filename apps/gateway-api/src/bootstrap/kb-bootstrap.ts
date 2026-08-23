@@ -32,20 +32,33 @@ export type KbBootstrapResult = {
   kbStore: ReturnType<typeof createSqliteV3Store> | null;
   pluginDb: import("../types/domain").PluginDb;
   resolvedRagPath: string;
+  cleanupRuntimeRag: () => Promise<void>;
   kbPath: string;
   runtimeKbPath: string;
 };
 
-function resolveMutableRagPath(sourcePath: string): string {
+async function cleanupRuntimeRag(runtimePath: string | undefined): Promise<void> {
+  if (process.env.NODE_ENV !== "test" || !runtimePath) return;
+  const tmpRoot = path.resolve(repoRoot, "tmp");
+  const resolvedPath = path.resolve(runtimePath);
+  const relativePath = path.relative(tmpRoot, resolvedPath);
+  if (relativePath.startsWith(".." + path.sep) || path.isAbsolute(relativePath)) return;
+  if (!path.basename(resolvedPath).match(/^rag-test-runtime-[^.]+\.jsonl$/)) return;
+  const stat = await fs.promises.stat(resolvedPath).catch(() => null);
+  if (!stat?.isFile()) return;
+  await fs.promises.unlink(resolvedPath);
+}
+
+function resolveMutableRagPath(sourcePath: string): { path: string; cleanup: () => Promise<void> } {
   const isTestRuntime = process.env.VITEST === "true" || process.env.NODE_ENV === "test";
   const frozenName = path.join("watany_kb_tables_v4", "watany_rag_chunks_v4.jsonl");
-  if (!isTestRuntime || !sourcePath.endsWith(frozenName)) return sourcePath;
+  if (!isTestRuntime || !sourcePath.endsWith(frozenName)) return { path: sourcePath, cleanup: async () => undefined };
 
   const runtimeId = `${process.pid}-${Date.now()}-${Math.random().toString(36).slice(2)}`;
   const runtimePath = path.resolve(repoRoot, "tmp", `rag-test-runtime-${runtimeId}.jsonl`);
   fs.mkdirSync(path.dirname(runtimePath), { recursive: true });
   fs.copyFileSync(sourcePath, runtimePath);
-  return runtimePath;
+  return { path: runtimePath, cleanup: () => cleanupRuntimeRag(runtimePath) };
 }
 
 function hasUsableSalaryKb(kb: { salariesIndex?: Record<string, unknown>; rankMeta?: Record<string, unknown> }): boolean {
@@ -55,7 +68,8 @@ function hasUsableSalaryKb(kb: { salariesIndex?: Record<string, unknown>; rankMe
 }
 
 export async function bootstrapKb(app: FastifyInstance): Promise<KbBootstrapResult> {
-  const resolvedRagPath = resolveMutableRagPath(resolveRagPath());
+  const mutableRag = resolveMutableRagPath(resolveRagPath());
+  const resolvedRagPath = mutableRag.path;
   const kbPath          = resolveKbPath();
   const runtimeKbPath   = resolveRuntimeKbPath();
 
@@ -136,5 +150,5 @@ export async function bootstrapKb(app: FastifyInstance): Promise<KbBootstrapResu
   });
   app.decorate("pluginDb", pluginDb);
 
-  return { kbStore, pluginDb, resolvedRagPath, kbPath, runtimeKbPath };
+  return { kbStore, pluginDb, resolvedRagPath, cleanupRuntimeRag: mutableRag.cleanup, kbPath, runtimeKbPath };
 }

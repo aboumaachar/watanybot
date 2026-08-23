@@ -1,0 +1,7 @@
+{
+  "status": "PASS",
+  "allowedExistingFiles": ["apps/web-admin/src/pages/CmsPage.tsx", "apps/web-admin/src/lib/api.ts", "apps/gateway-api/src/cms/cms-routes.ts"],
+  "allowedNewFiles": ["apps/gateway-api/src/cms/documents/documents-cms-adapter.ts"],
+  "outOfScopeProductChanges": [],
+  "preExistingDirtyPathsPreserved": true
+}

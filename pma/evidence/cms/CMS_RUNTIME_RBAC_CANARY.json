@@ -1,0 +1,12 @@
+{
+  "status": "PASS",
+  "details": {
+    "status": "PASS",
+    "anonymous": 401,
+    "admin": 403
+  },
+  "superadmin": {
+    "status": "PASS",
+    "statusCode": 201
+  }
+}

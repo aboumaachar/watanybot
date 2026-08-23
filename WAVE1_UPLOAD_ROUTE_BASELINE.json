@@ -1,0 +1,18 @@
+{
+  "status": "PASS",
+  "observedAt": "2026-08-21",
+  "canonicalOwner": "apps/api-backend/apps/api/main.py",
+  "runtime": "apps.api.main:app on 127.0.0.1:8010",
+  "health": {
+    "statusCode": 200,
+    "service": "watanbot-api"
+  },
+  "preRepairFailure": {
+    "failureClass": "APEX_PYTHON8010_UPLOAD_ROUTE_EXPECTED_200_RECEIVED_404",
+    "path": "/api/files/upload",
+    "expectedStatus": 200,
+    "receivedStatus": 404,
+    "source": "C:/APEX/CMSUPLOADV110/V1_0_9_FAILURE_EVIDENCE_SUMMARY.json"
+  },
+  "uploadResidueBeforeIsolatedProof": 0
+}

@@ -1,0 +1,8 @@
+{
+  "status": "PASS",
+  "webAdminTypecheck": {"exitCode": 0, "stderrBytes": 0},
+  "gatewayTypecheck": {"exitCode": 0, "stderrBytes": 0},
+  "webAdminBuild": {"exitCode": 0, "stderrBytes": 0, "summary": "vite production build passed"},
+  "documentsFocusedTest": {"exitCode": 0, "tests": 2, "files": 1},
+  "runtimeAcceptance": "UNVERIFIED_RUNTIME"
+}

@@ -63,6 +63,7 @@ function createInitialPluginStore() {
       status: item.status,
       created_at: item.createdAt,
     })),
+    news: [] as Array<Record<string, unknown>>,
   };
 }
 
@@ -104,6 +105,83 @@ function prepareInMemoryCasesStmt(n: string): PluginDbStatement | null {
         if (!row) return { changes: 0 };
         row.title = title; row.type = type; row.status = status; row.checklist = checklist; row.updated_at = updatedAt;
         return { changes: 1 };
+      },
+    };
+  }
+  return null;
+}
+
+function prepareInMemoryNewsStmt(n: string): PluginDbStatement | null {
+  if (n.startsWith("select * from news_items where is_published = 1 and category =") || n.startsWith("select id, title, body, category, image_url, source_url, is_published, published_at, created_at, updated_at, created_by from news_items where is_published = 1 and category =")) {
+    return {
+      all: (category: string, limit: number) => [...pluginStore.news]
+        .filter((row) => row.is_published === 1 && row.category === category)
+        .sort((left, right) => Number(right.published_at) - Number(left.published_at))
+        .slice(0, limit),
+      get: () => undefined,
+      run: () => ({ changes: 0 }),
+    };
+  }
+  if (n.startsWith("select * from news_items where is_published = 1 order by") || n.startsWith("select id, title, body, category, image_url, source_url, is_published, published_at, created_at, updated_at, created_by from news_items where is_published = 1 order by")) {
+    return {
+      all: (limit: number) => [...pluginStore.news]
+        .filter((row) => row.is_published === 1)
+        .sort((left, right) => Number(right.published_at) - Number(left.published_at))
+        .slice(0, limit),
+      get: () => undefined,
+      run: () => ({ changes: 0 }),
+    };
+  }
+  if (n.startsWith("select * from news_items where id")) {
+    return { all: () => [], get: (id: string) => pluginStore.news.find((row) => row.id === id), run: () => ({ changes: 0 }) };
+  }
+  if (n.startsWith("select * from news_items order by")) {
+    return {
+      all: () => [...pluginStore.news].sort((left, right) => Number(right.published_at) - Number(left.published_at)),
+      get: () => undefined,
+      run: () => ({ changes: 0 }),
+    };
+  }
+  if (n.startsWith("insert into news_items")) {
+    return {
+      all: () => [],
+      get: () => undefined,
+      run: (...args: any[]) => {
+        const row = args.length === 1 && typeof args[0] === "object"
+          ? { ...(args[0] as Record<string, unknown>) }
+          : {
+              id: args[0], title: args[1], body: args[2], category: args[3], image_url: args[4], source_url: args[5],
+              is_published: args[6], published_at: args[7], created_at: args[8], updated_at: args[9], created_by: args[10],
+              status: args[11], archived_at: args[12],
+            };
+        row.status = row.status || (row.is_published === 1 ? "PUBLISHED" : "DRAFT");
+        const existing = pluginStore.news.find((candidate) => candidate.id === row.id);
+        if (existing) Object.assign(existing, row); else pluginStore.news.unshift(row);
+        return { changes: 1, lastInsertRowid: row.id };
+      },
+    };
+  }
+  if (n.startsWith("update news_items set")) {
+    return {
+      all: () => [],
+      get: () => undefined,
+      run: (...args: any[]) => {
+        const [title, body, category, imageUrl, sourceUrl, isPublished, publishedAt, updatedAt, status, archivedAt, id] = args;
+        const row = pluginStore.news.find((candidate) => candidate.id === id);
+        if (!row) return { changes: 0 };
+        Object.assign(row, { title, body, category, image_url: imageUrl, source_url: sourceUrl, is_published: isPublished, published_at: publishedAt, updated_at: updatedAt, status, archived_at: archivedAt });
+        return { changes: 1 };
+      },
+    };
+  }
+  if (n.startsWith("delete from news_items where id")) {
+    return {
+      all: () => [],
+      get: () => undefined,
+      run: (id: string) => {
+        const before = pluginStore.news.length;
+        pluginStore.news = pluginStore.news.filter((row) => row.id !== id);
+        return { changes: before - pluginStore.news.length };
       },
     };
   }
@@ -712,6 +790,7 @@ function createInMemoryPluginDb(): PluginDb {
     const n = sql.replace(/\s+/g, " ").trim().toLowerCase();
     return (
       prepareInMemoryCasesStmt(n) ??
+      prepareInMemoryNewsStmt(n) ??
       prepareInMemoryProfileStmt(n) ??
       prepareInMemoryVotingStmt(n) ??
       prepareInMemoryDocumentsStmt(n) ??
@@ -744,7 +823,7 @@ function setupPluginDbSchema(db: any): void {
   db.exec(`CREATE TABLE IF NOT EXISTS marketplace_listings (id TEXT PRIMARY KEY, title TEXT NOT NULL, price REAL NOT NULL, currency TEXT NOT NULL, location TEXT NOT NULL, seller TEXT NOT NULL, contact TEXT NOT NULL, description TEXT, category TEXT, status TEXT NOT NULL, created_at INTEGER NOT NULL)`);
   db.exec(`CREATE TABLE IF NOT EXISTS chat_sessions (id TEXT PRIMARY KEY, status TEXT NOT NULL, messages TEXT NOT NULL, note TEXT, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL)`);
   db.exec(`CREATE TABLE IF NOT EXISTS ticker_items (id TEXT PRIMARY KEY, type TEXT NOT NULL, title TEXT NOT NULL, body TEXT, link_type TEXT, link_id TEXT, priority INTEGER NOT NULL DEFAULT 50, starts_at INTEGER, ends_at INTEGER, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL, created_by TEXT)`);
-  db.exec(`CREATE TABLE IF NOT EXISTS news_items (id TEXT PRIMARY KEY, title TEXT NOT NULL, body TEXT, category TEXT, image_url TEXT, source_url TEXT, is_published INTEGER NOT NULL DEFAULT 1, published_at INTEGER NOT NULL, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL, created_by TEXT)`);
+  db.exec(`CREATE TABLE IF NOT EXISTS news_items (id TEXT PRIMARY KEY, title TEXT NOT NULL, body TEXT, category TEXT, image_url TEXT, source_url TEXT, is_published INTEGER NOT NULL DEFAULT 1, published_at INTEGER NOT NULL, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL, created_by TEXT, status TEXT NOT NULL DEFAULT 'PUBLISHED', archived_at INTEGER)`);
   db.exec(`CREATE TABLE IF NOT EXISTS fake_news_items (id TEXT PRIMARY KEY, title TEXT NOT NULL, summary TEXT, category TEXT, status TEXT, image_url TEXT, source_url TEXT NOT NULL, published_at INTEGER NOT NULL, verified_at INTEGER, source_name TEXT NOT NULL, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL)`);
   db.exec(`CREATE TABLE IF NOT EXISTS analytics_events (id TEXT PRIMARY KEY, user_id TEXT, event_type TEXT NOT NULL, intent TEXT, text_hash TEXT, event_text TEXT, created_at INTEGER NOT NULL)`);
 }
@@ -762,6 +841,9 @@ function applyPluginDbMigrations(db: any): void {
   try { db.exec("ALTER TABLE documents ADD COLUMN meta TEXT"); } catch {}
   try { db.exec("ALTER TABLE profile ADD COLUMN role TEXT NOT NULL DEFAULT 'public'"); } catch {}
   try { db.exec("ALTER TABLE notification_push_devices ADD COLUMN subscription_json TEXT"); } catch {}
+  try { db.exec("ALTER TABLE news_items ADD COLUMN status TEXT NOT NULL DEFAULT 'PUBLISHED'"); } catch {}
+  try { db.exec("ALTER TABLE news_items ADD COLUMN archived_at INTEGER"); } catch {}
+  try { db.exec("UPDATE news_items SET status = CASE WHEN is_published = 1 THEN 'PUBLISHED' ELSE 'DRAFT' END WHERE status = 'PUBLISHED'"); } catch {}
 }
 
 function seedPluginDbDefaults(db: any): void {

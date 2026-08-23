@@ -7,9 +7,7 @@
  * Boundary: إعلانات التطويع (military recruitment) is never managed here.
  */
 import { civilianOpportunitySeed, civilianOpportunitySources } from "./civilian-jobs.seed.js";
-import {
-  listCivilianOpportunityApplications as _listApplications,
-} from "./civilian-jobs.service.js";
+import { updateCivilianOpportunityApplicationStatus } from "./civilian-jobs.service.js";
 import type {
   CivilianOpportunity,
   OpportunityApplicationRecord,
@@ -19,6 +17,7 @@ import type {
   OpportunityType,
   OpportunityAudience,
 } from "./civilian-jobs.types.js";
+import type { CivilianJobsRepository } from "./civilian-jobs.repository.js";
 
 // Re-export public reads so admin routes can use a single import
 export { listCivilianOpportunityApplications, listCivilianOpportunitySources } from "./civilian-jobs.service.js";
@@ -146,18 +145,12 @@ const VALID_APPLICATION_STATUSES = new Set<OpportunityApplicationStatus>([
 export async function adminUpdateApplicationStatus(
   id: string,
   status: string,
+  repository?: CivilianJobsRepository,
 ): Promise<OpportunityApplicationRecord | undefined> {
   if (!VALID_APPLICATION_STATUSES.has(status as OpportunityApplicationStatus)) {
     throw new Error(`Invalid status: ${status}`);
   }
-  // Applications are held in the service module's private array.
-  // Access via the exported list and mutate by reference.
-  const all = await _listApplications();
-  const app = all.find((a) => a.id === id);
-  if (!app) return undefined;
-  app.status = status as OpportunityApplicationStatus;
-  app.updatedAt = new Date().toISOString();
-  return app;
+  return updateCivilianOpportunityApplicationStatus(id, status as OpportunityApplicationStatus, repository);
 }
 
 // ── Sources admin ─────────────────────────────────────────────────────

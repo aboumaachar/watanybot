@@ -1,0 +1,9 @@
+{
+  "authoritySha256": "7CABC7C6EAA3F29FEF8C98442D0DDCED42AAA08ED8EF25B66F4AC22A023B12DA",
+  "head": "d7eb802b7b9563d61e64aa8cadce34805a9d8dae",
+  "baselinePreserved": true,
+  "protectedOwners": {
+    "apps/gateway-api/src/routes/documents.ts": "5AF4525E2573E6312718FB9CB5630CD0EB8E57F54FAB9AD6C9546BF97997F4B1",
+    "apps/web-user/src/pages/DocumentsPage.tsx": "FE72D77379AF866ED04FDC18648ECB250F4737D771666830857C390DCDACF5CD"
+  }
+}

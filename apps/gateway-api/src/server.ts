@@ -1,5 +1,5 @@
 /**
- * WatanyBot Gateway API â€” Thin bootstrap server.
+ * WatanyBot Gateway API — Thin bootstrap server.
  *
  * This file contains only:
  *   1. Fastify instantiation
@@ -79,6 +79,7 @@ if (_apexBootTrace) console.log('APEX_BOOT_MARKER:BOOT_AI_DONE');
 // 5. KB store, vNext nodes, RAG chunks, plugin DB
 if (_apexBootTrace) console.log('APEX_BOOT_MARKER:BOOT_KB_START');
 const kb = await bootstrapKb(app);
+app.addHook("onClose", async () => { await kb.cleanupRuntimeRag(); });
 if (_apexBootTrace) console.log('APEX_BOOT_MARKER:BOOT_KB_DONE');
 
 // 6. Circuit breakers

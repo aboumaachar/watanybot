@@ -1,0 +1,16 @@
+{
+  "status": "PASS",
+  "executedAt": "2026-08-21T13:37:39Z",
+  "results": {
+    "gatewayTypecheck": "PASS",
+    "proceduresSearch": "PASS: 1 file, 6 tests",
+    "webAdminTypecheck": "PASS",
+    "webAdminBuild": "PASS"
+  },
+  "requiredCommands": [
+    "gateway typecheck",
+    "procedures-search",
+    "web-admin typecheck",
+    "web-admin build"
+  ]
+}

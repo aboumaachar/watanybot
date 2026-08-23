@@ -1,5 +1,5 @@
 ﻿import { civilianOpportunitySeed, civilianOpportunitySources } from "./civilian-jobs.seed";
-import type { CivilianOpportunity, OpportunityApplicationInput, OpportunityApplicationRecord, OpportunitySource, OpportunityType } from "./civilian-jobs.types";
+import type { CivilianOpportunity, OpportunityApplicationInput, OpportunityApplicationRecord, OpportunityApplicationStatus, OpportunitySource, OpportunityType } from "./civilian-jobs.types";
 import type { CivilianJobsRepository } from "./civilian-jobs.repository";
 import { civilianJobsRepository } from "./civilian-jobs.repository";
 
@@ -71,4 +71,12 @@ export async function createCivilianOpportunityApplication(input: OpportunityApp
 
 export async function listCivilianOpportunityApplications(repository: CivilianJobsRepository = civilianJobsRepository): Promise<OpportunityApplicationRecord[]> {
   return repository.listApplications();
+}
+
+export async function updateCivilianOpportunityApplicationStatus(
+  id: string,
+  status: OpportunityApplicationStatus,
+  repository: CivilianJobsRepository = civilianJobsRepository,
+): Promise<OpportunityApplicationRecord | undefined> {
+  return repository.updateApplicationStatus(id, status);
 }

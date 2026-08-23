@@ -1,0 +1,9 @@
+{
+  "shell": "CONVERGE apps/web-admin with /superadmin/* routes and server authority probe",
+  "rbac": "PRESERVE requireRole and add named superadmin.* permission namespace",
+  "audit": "WIRE feature-control PUT to existing immutable PostgreSQL audit writer",
+  "featureControls": "PRESERVE existing UI and API behavior; add mutation audit record",
+  "childDashboards": "BOUNDARY_ONLY; CMS, CRM, and ERM are explicitly not claimed implemented",
+  "database": "NO_SCHEMA_CHANGE",
+  "protectedData": "NO_MUTATION"
+}
