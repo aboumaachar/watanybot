@@ -87,7 +87,7 @@ async function recordMutation(request: FastifyRequest, action: string, id: strin
 }
 
 export async function cmsRoutes(app: FastifyInstance): Promise<void> {
-  registerDocumentsCmsRoutes(app, (app as any).pluginDb);
+  registerDocumentsCmsRoutes(app);
   registerFormsCmsRoutes(app);
   registerAnnouncementsCmsRoutes(app);
   app.get("/api/admin/cms/registry", cmsPolicy("cms.read"), async () => ({

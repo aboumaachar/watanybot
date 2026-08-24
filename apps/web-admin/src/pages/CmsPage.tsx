@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { getAdminErrorMessage, getCmsAnnouncements, getCmsDocuments, getCmsForms, getCmsProcedures, getCmsFormPublicUrl, runCmsAnnouncementAction, runCmsDocumentAction, runCmsFormAction, runCmsProcedureAction, type CmsFormItem, type CmsItem, type CmsStatus } from "../lib/api";
+import { getAdminErrorMessage, getCmsAnnouncements, getCmsForms, getCmsProcedures, getCmsFormPublicUrl, runCmsAnnouncementAction, runCmsDocumentAction, runCmsFormAction, runCmsProcedureAction, type CmsFormItem, type CmsItem, type CmsStatus } from "../lib/api";
+import CmsDocumentsPage from "./CmsDocumentsPage";
 
 const statuses: CmsStatus[] = ["DRAFT", "REVIEW_READY", "PUBLISHED", "UNPUBLISHED", "ARCHIVED"];
 const labels: Record<CmsStatus, string> = { DRAFT: "مسودة", REVIEW_READY: "جاهز للمراجعة", PUBLISHED: "منشور", UNPUBLISHED: "غير منشور", ARCHIVED: "مؤرشف" };
@@ -15,9 +16,10 @@ export default function CmsPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (domain === "documents") return;
     let active = true;
     setLoading(true);
-    const load = domain === "documents" ? getCmsDocuments : domain === "forms" ? getCmsForms : domain === "announcements" ? getCmsAnnouncements : getCmsProcedures;
+    const load = domain === "forms" ? getCmsForms : domain === "announcements" ? getCmsAnnouncements : getCmsProcedures;
     void load({ q: query, status: status || undefined, page, pageSize: 20 })
       .then((data) => { if (active) { setItems(data.items); setCounts(data.statusCounts); setError(null); } })
       .catch((reason: unknown) => { if (active) setError(getAdminErrorMessage(reason, "تعذر تحميل محتوى الإجراءات.")); })
@@ -32,6 +34,10 @@ export default function CmsPage() {
         : domain === "forms" ? await runCmsFormAction(item.id, next as "publish" | "unpublish" | "archive") : domain === "announcements" ? await runCmsAnnouncementAction(item.id, next as "publish" | "unpublish" | "archive") : await runCmsProcedureAction(item.id, next);
       setItems((current) => current.map((candidate) => candidate.id === updated.id ? updated as CmsItem : candidate));
     } catch (reason) { setError(getAdminErrorMessage(reason, "تعذر تنفيذ دورة حياة المحتوى.")); }
+  }
+
+  if (domain === "documents") {
+    return <CmsDocumentsPage onBack={() => setDomain("procedures")} />;
   }
 
   function openFormPreview(item: CmsItem) {
@@ -61,8 +67,8 @@ export default function CmsPage() {
   }
 
   return <section className="superadmin-surface card">
-    <div className="page-header"><span className="eyebrow">CMS Core / {domain === "documents" ? "Documents" : domain === "forms" ? "Forms" : domain === "announcements" ? "Announcements" : "Procedures"}</span><h2>إدارة {domain === "documents" ? "الوثائق" : domain === "forms" ? "النماذج" : domain === "announcements" ? "التعاميم" : "الإجراءات"}</h2><p className="muted">لوحة فرعية قابلة لإعادة الاستخدام مع دورة حياة وتدقيق مركزيين.</p></div>
-    <div className="superadmin-shortcuts"><button type="button" className={domain === "procedures" ? "accent" : "ghost"} onClick={() => { setDomain("procedures"); setPage(1); }}>الإجراءات</button><button type="button" className={domain === "documents" ? "accent" : "ghost"} onClick={() => { setDomain("documents"); setPage(1); }}>الوثائق</button><button type="button" className={domain === "forms" ? "accent" : "ghost"} onClick={() => { setDomain("forms"); setPage(1); }}>النماذج</button><button type="button" className={domain === "announcements" ? "accent" : "ghost"} onClick={() => { setDomain("announcements"); setPage(1); }}>التعاميم</button></div>
+    <div className="page-header"><span className="eyebrow">CMS Core / {domain === "forms" ? "Forms" : domain === "announcements" ? "Announcements" : "Procedures"}</span><h2>إدارة {domain === "forms" ? "النماذج" : domain === "announcements" ? "التعاميم" : "الإجراءات"}</h2><p className="muted">لوحة فرعية قابلة لإعادة الاستخدام مع دورة حياة وتدقيق مركزيين.</p></div>
+    <div className="superadmin-shortcuts"><button type="button" className={domain === "procedures" ? "accent" : "ghost"} onClick={() => { setDomain("procedures"); setPage(1); }}>الإجراءات</button><button type="button" className="ghost" onClick={() => { setDomain("documents"); setPage(1); }}>الوثائق</button><button type="button" className={domain === "forms" ? "accent" : "ghost"} onClick={() => { setDomain("forms"); setPage(1); }}>النماذج</button><button type="button" className={domain === "announcements" ? "accent" : "ghost"} onClick={() => { setDomain("announcements"); setPage(1); }}>التعاميم</button></div>
     <div className="superadmin-kpis">{statuses.map((value) => <div className="superadmin-kpi card" key={value}><span className="eyebrow">{labels[value]}</span><strong>{counts[value] ?? 0}</strong></div>)}</div>
     <div className="superadmin-shortcuts"><input aria-label="بحث في الإجراءات" placeholder="بحث..." value={query} onChange={(event) => { setQuery(event.target.value); setPage(1); }} /><select aria-label="تصفية حسب الحالة" value={status} onChange={(event) => { setStatus(event.target.value as CmsStatus | ""); setPage(1); }}><option value="">كل الحالات</option>{statuses.map((value) => <option key={value} value={value}>{labels[value]}</option>)}</select></div>
     {error && <p role="alert" className="error-text">{error}</p>}

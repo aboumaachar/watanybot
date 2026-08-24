@@ -1674,7 +1674,7 @@ export async function registerOfficialSourcesRoutes(app: FastifyLike) {
 
   function startAlWafiyatAutoSyncJob() {
     if (process.env.NODE_ENV === "test" || process.env.VITEST === "true") return;
-    if (process.env.AL_WAFIYAT_AUTO_SYNC === "false") return;
+    if (process.env.AL_WAFIYAT_AUTO_SYNC !== "true") return;
     if (alWafiyatAutoSyncTimer) return;
 
     const runCycle = async () => {

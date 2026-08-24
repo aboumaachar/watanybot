@@ -1,0 +1,20 @@
+{
+  "status": "PASS",
+  "gate": "C9_4A_RUNTIME_SIDE_EFFECT_CONTAINMENT_AND_DOCUMENT_DELETE_BOUNDARY",
+  "predecessor": "pma/evidence/cms/C9_4_CMS_RUNTIME_BROWSER_AND_READ_WRITE_CANARY_VALIDATION",
+  "requiredArtifactCount": 12,
+  "verifiedArtifactCount": 12,
+  "requiredStatus": {
+    "FINAL_STATUS": "BLOCKED",
+    "TASK_STATUS": "BLOCKED",
+    "C9_4_RUNTIME_VALIDATION": "BLOCKED",
+    "CANARY_CREATE": "NOT_EXECUTED",
+    "CANARY_RESIDUAL": "NONE_CANARY_NOT_CREATED"
+  },
+  "predecessorFinalStatusSha256": "63227C4C9B61871D31D0C4C4866F074645B982DCC89C2FD9F0C418CD82836D17",
+  "predecessorPostRuntimeSourceFreezeSha256": "3D4DEADBD9FC7C150A290E2AC6FF23BB3A3299A5D537C91D2EDB883ECF8508F8",
+  "predecessorImplementationHashMatchCount": 12,
+  "predecessorImplementationHashMismatchCount": 0,
+  "credentialMaterialRecorded": false,
+  "bindingResult": "PASS"
+}

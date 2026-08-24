@@ -1,0 +1,63 @@
+{
+  "status": "PASS",
+  "capturedAtUtc": "2026-08-24T06:36:16.9841164Z",
+  "commands": [
+    {
+      "command": "pnpm --dir apps/gateway-api exec vitest run src/tests/documents-cms-boundary.test.ts",
+      "result": "PASS",
+      "detail": "1 file, 3 tests passed"
+    },
+    {
+      "command": "pnpm --dir apps/gateway-api exec vitest run src/tests/documents-metadata-regression.test.ts",
+      "result": "PASS",
+      "detail": "1 file, 2 tests passed"
+    },
+    {
+      "command": "pnpm --dir apps/gateway-api exec vitest run src/tests/admin-authority-negative-auth.test.ts src/tests/admin-auth-hardening.test.ts src/tests/auth-rbac.test.ts",
+      "result": "PASS",
+      "detail": "3 files, 57 tests passed"
+    },
+    {
+      "command": "pnpm --dir apps/gateway-api typecheck",
+      "result": "PASS"
+    },
+    {
+      "command": "pnpm --dir apps/gateway-api build",
+      "result": "PASS",
+      "detail": "tsc -p tsconfig.json --noEmit"
+    },
+    {
+      "command": "pnpm --dir apps/web-admin typecheck",
+      "result": "PASS"
+    },
+    {
+      "command": "pnpm --dir apps/web-admin build",
+      "result": "PASS"
+    },
+    {
+      "command": "git diff --check",
+      "result": "PASS"
+    },
+    {
+      "command": "VS Code diagnostics for all 12 implementation files",
+      "result": "PASS",
+      "detail": "No errors found"
+    }
+  ],
+  "aggregate": {
+    "sourceTests": "PASS",
+    "sourceBuild": "PASS",
+    "editorDiagnostics": "PASS",
+    "prohibitedPathMatchCount": 0
+  },
+  "warnings": [
+    "Vite reported existing dynamic/static import chunk warnings for DashboardPage, AuditPage, and FeatureControlsPage; the build completed successfully."
+  ],
+  "notExecuted": [
+    "browser proof",
+    "live database mutation",
+    "migration",
+    "container lifecycle",
+    "deployment"
+  ]
+}

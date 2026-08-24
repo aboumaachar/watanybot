@@ -1,0 +1,32 @@
+{
+  "status": "PASS",
+  "runtime": {
+    "environment": "local development",
+    "RUN_PG_MIGRATIONS": "false",
+    "AL_WAFIYAT_AUTO_SYNC": "unset",
+    "productionUsed": false,
+    "gatewayStartedByGate": true,
+    "gatewayStoppedByGate": true,
+    "containerLifecycleExecuted": false
+  },
+  "before": {
+    "sha256": "B56AC12D68C8A2A1C49509021160EF3ED116DD3A43934E3C2EA82EC1118221CA",
+    "sizeBytes": 558206,
+    "lineCount": 411,
+    "gitNumstat": "8 0 apps/gateway-api/data/death-notices.jsonl"
+  },
+  "after": {
+    "sha256": "B56AC12D68C8A2A1C49509021160EF3ED116DD3A43934E3C2EA82EC1118221CA",
+    "sizeBytes": 558206,
+    "lineCount": 411,
+    "gitNumstat": "8 0 apps/gateway-api/data/death-notices.jsonl"
+  },
+  "formerWarmupWindowCovered": true,
+  "DEATH_NOTICES_STARTUP_HASH_UNCHANGED": "PASS",
+  "DEATH_NOTICES_STARTUP_SIZE_UNCHANGED": "PASS",
+  "DEATH_NOTICES_STARTUP_LINE_COUNT_UNCHANGED": "PASS",
+  "GATEWAY_STARTUP_UNRELATED_DATA_MUTATION_COUNT": 0,
+  "DEATH_NOTICES_PREEXISTING_MUTATION_PRESERVED": "PASS",
+  "fileReverted": false,
+  "recordsDeleted": false
+}

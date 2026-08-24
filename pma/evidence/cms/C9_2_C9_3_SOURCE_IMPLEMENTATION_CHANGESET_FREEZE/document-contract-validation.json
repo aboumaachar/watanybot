@@ -1,0 +1,35 @@
+{
+  "status": "PASS",
+  "gate": "CURRENT_DOCUMENT_MODEL_COMPATIBILITY",
+  "capturedAtUtc": "2026-08-24T06:47:09.8787790Z",
+  "authority": "public.documents",
+  "provenPersistenceContract": ["id", "user_id", "name", "kind", "status", "tags", "file_path", "updated_at"],
+  "provenKindValues": ["image", "pdf", "doc", "file"],
+  "provenStorageStatusValues": ["pending", "verified", "rejected"],
+  "checks": {
+    "createsDefaultToPending": "PASS",
+    "unsupportedClientPersistenceFields": "DROPPED_OR_REJECTED",
+    "nullableFilePath": "PASS",
+    "repositoryOwnsPersistence": "PASS",
+    "serviceOwnsNormalizationAndBusinessRules": "PASS",
+    "routesContainNoRawPersistenceLogic": "PASS",
+    "adminClientUsesOnlyProvenDocumentFields": "PASS",
+    "legacyApiDocumentsPreserved": "PASS",
+    "adminAuthorizationBoundaryPreserved": "PASS",
+    "auditAndVersioningPreserved": "PASS"
+  },
+  "evidence": {
+    "repository": "apps/gateway-api/src/cms/documents/documents-repository.ts",
+    "service": "apps/gateway-api/src/cms/documents/documents-service.ts",
+    "adapter": "apps/gateway-api/src/cms/documents/documents-cms-adapter.ts",
+    "adminClient": "apps/web-admin/src/lib/api.ts",
+    "adminWorkspace": "apps/web-admin/src/pages/CmsDocumentsPage.tsx",
+    "focusedBoundaryTests": "3 passed",
+    "legacyRegression": "2 passed",
+    "authRbacRegression": "57 passed"
+  },
+  "deferredProof": {
+    "browserProof": "NOT_REQUIRED_FOR_THIS_FREEZE_GATE",
+    "liveWriteProof": "NOT_REQUIRED_FOR_THIS_FREEZE_GATE"
+  }
+}

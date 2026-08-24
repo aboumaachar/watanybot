@@ -1,0 +1,46 @@
+{
+  "status": "PASS_FOR_NON_MUTATING_PROOF",
+  "runtimeOrigin": "http://127.0.0.1:5173",
+  "surfaces": [
+    {
+      "route": "/admin/kb-studio",
+      "KB_STUDIO_BROWSER_RENDER": "PASS",
+      "documentHeading": true,
+      "searchSurface": true,
+      "createFormAction": true,
+      "emptyState": true
+    },
+    {
+      "route": "/admin/documents",
+      "ADMIN_DOCUMENTS_BROWSER_RENDER": "PASS",
+      "documentHeading": true,
+      "searchSurface": true,
+      "createFormAction": true,
+      "emptyState": true
+    },
+    {
+      "route": "/superadmin/cms document domain",
+      "SUPERADMIN_CMS_DOCUMENT_BROWSER_RENDER": "PASS",
+      "documentHeading": true,
+      "searchSurface": true,
+      "filters": 3,
+      "emptyState": true
+    }
+  ],
+  "filterInteraction": {
+    "search": "APEX-C9-4-PROBE",
+    "kind": "pdf",
+    "status": "DRAFT",
+    "tag": "apex-c9-4-probe",
+    "result": "PASS"
+  },
+  "existingCmsSurface": {
+    "proceduresCms": "PASS",
+    "formsCmsReachable": "PASS"
+  },
+  "CMS_BROWSER_CONSOLE_BLOCKING_ERROR_COUNT": 0,
+  "browserScreenshotCapture": "CAPTURED_VIA_BROWSER_TOOL",
+  "selectorScreenshotNote": "Selector capture timed out during unstable re-render; DOM proof remained successful.",
+  "credentialMaterialRecorded": false,
+  "mutatingBrowserActions": false
+}

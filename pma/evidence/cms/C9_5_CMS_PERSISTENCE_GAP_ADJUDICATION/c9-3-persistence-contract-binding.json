@@ -1,0 +1,17 @@
+{
+    "boundaryEvidence":  "pma/evidence/cms/C9_2_C9_3_SOURCE_IMPLEMENTATION/c9-3-backend-service-boundary-implementation.json",
+    "compatibilityEvidence":  "pma/evidence/cms/C9_2_C9_3_SOURCE_IMPLEMENTATION/current-document-model-compatibility.json",
+    "acceptedStoredFields":  [
+                                 "id",
+                                 "user_id",
+                                 "name",
+                                 "kind",
+                                 "status",
+                                 "tags",
+                                 "file_path",
+                                 "updated_at"
+                             ],
+    "unsupportedFieldsStored":  false,
+    "authority":  "public.documents",
+    "binding":  "PASS"
+}

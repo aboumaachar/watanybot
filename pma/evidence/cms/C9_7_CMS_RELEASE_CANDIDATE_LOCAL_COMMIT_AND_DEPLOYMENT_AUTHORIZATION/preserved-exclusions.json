@@ -1,0 +1,16 @@
+{
+    "deathNotices":  {
+                         "path":  "apps/gateway-api/data/death-notices.jsonl",
+                         "classification":  "PREEXISTING_UNRELATED_CHANGE",
+                         "sha256":  "B56AC12D68C8A2A1C49509021160EF3ED116DD3A43934E3C2EA82EC1118221CA",
+                         "sizeBytes":  558206,
+                         "lineCount":  411,
+                         "gitNumstat":  "8\t0\tapps/gateway-api/data/death-notices.jsonl",
+                         "stageAuthorized":  false,
+                         "revertAuthorized":  false
+                     },
+    "tmpPaths":  {
+                     "classification":  "DISPOSABLE_OR_UNRELATED_NOT_PART_OF_RELEASE_CANDIDATE",
+                     "stageAuthorized":  false
+                 }
+}

@@ -1,0 +1,32 @@
+{
+    "implementationFileCount":  13,
+    "implementationPaths":  [
+                                "apps/gateway-api/src/cms/cms-routes.ts",
+                                "apps/gateway-api/src/cms/documents/documents-cms-adapter.ts",
+                                "apps/gateway-api/src/cms/documents/documents-repository.ts",
+                                "apps/gateway-api/src/cms/documents/documents-service.ts",
+                                "apps/gateway-api/src/tests/documents-cms-boundary.test.ts",
+                                "apps/gateway-api/src/routes/official-sources.ts",
+                                "apps/web-admin/src/components/AdminFluentIcon.tsx",
+                                "apps/web-admin/src/lib/api.ts",
+                                "apps/web-admin/src/pages/AdminDocumentsPage.tsx",
+                                "apps/web-admin/src/pages/AdminKBStudioPage.tsx",
+                                "apps/web-admin/src/pages/CmsDocumentsPage.tsx",
+                                "apps/web-admin/src/pages/CmsPage.tsx",
+                                "apps/web-admin/src/styles.css"
+                            ],
+    "implementationHashMatchCount":  13,
+    "implementationHashMismatchCount":  0,
+    "unexpectedWorktreePathCount":  0,
+    "prohibitedWorktreePathCount":  0,
+    "gitDiffCheck":  "PASS",
+    "currentRuntimeSchemaMigrationNecessary":  false,
+    "richerCmsPersistenceExpansion":  "DEFERRED",
+    "sourceMutationExecuted":  false,
+    "databaseSchemaMutationExecuted":  false,
+    "databaseDataMutationExecuted":  false,
+    "databaseMigrationExecuted":  false,
+    "commitExecuted":  false,
+    "pushExecuted":  false,
+    "productionDeploymentExecuted":  false
+}

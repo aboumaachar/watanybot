@@ -1,0 +1,9 @@
+{
+    "localReleaseCandidateCommitAuthorized":  true,
+    "pushAuthorized":  false,
+    "productionDeploymentAuthorized":  false,
+    "databaseSchemaMutationAuthorized":  false,
+    "databaseMigrationAuthorized":  false,
+    "decision":  "LOCAL_RC_COMMIT_ONLY",
+    "nextRequiredGate":  "C9_8_CMS_RELEASE_CANDIDATE_PUSH_AND_PRODUCTION_DEPLOYMENT_AUTHORIZATION"
+}

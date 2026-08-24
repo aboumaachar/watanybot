@@ -1,0 +1,8 @@
+{
+    "evidence":  "pma/evidence/cms/C9_4A_RUNTIME_SIDE_EFFECT_CONTAINMENT_AND_DOCUMENT_DELETE_BOUNDARY",
+    "successorManifestSha256":  "3D7264800504A799E1BB886DF2BE1588972A65E154A7B96B84D6E99DA41444EF",
+    "implementationFileCount":  13,
+    "hashMatchCount":  13,
+    "hashMismatchCount":  0,
+    "binding":  "PASS"
+}

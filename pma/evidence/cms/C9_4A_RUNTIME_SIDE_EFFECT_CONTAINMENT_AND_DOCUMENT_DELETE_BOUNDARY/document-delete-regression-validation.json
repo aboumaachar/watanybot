@@ -1,0 +1,28 @@
+{
+  "status": "PASS",
+  "testSource": "apps/gateway-api/src/tests/documents-cms-boundary.test.ts",
+  "suiteResult": "PASS: 4 tests",
+  "checks": {
+    "CMS_DOCUMENT_EXACT_DELETE": "PASS",
+    "CMS_DOCUMENT_DELETE_NOT_FOUND": "PASS",
+    "CMS_DOCUMENT_DELETE_AUTHORITY": "PASS",
+    "CMS_DOCUMENT_DELETE_NEIGHBOR_PRESERVATION": "PASS",
+    "CMS_DOCUMENT_DELETE_BULK_BOUNDARY_ABSENT": "PASS"
+  },
+  "fixture": {
+    "storage": "in-memory disposable repository mock",
+    "rowA": "exact disposable UUID A",
+    "rowB": "neighbor disposable UUID B",
+    "deleteSequence": ["A through authorized admin route", "B through authorized superadmin route"],
+    "AAbsentAfterDelete": true,
+    "BPresentAfterADelete": true,
+    "BAbsentAfterCleanup": true,
+    "realPublicDocumentsRowsTouched": false
+  },
+  "additionalAssertions": {
+    "invalidConcreteId": "400",
+    "secondDeleteOfA": "404",
+    "bulkQueryDelete": "404 and no repository delete call",
+    "repositorySqlExactId": true
+  }
+}

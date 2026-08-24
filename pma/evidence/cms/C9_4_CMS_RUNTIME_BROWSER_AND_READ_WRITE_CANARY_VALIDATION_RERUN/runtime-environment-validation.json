@@ -1,0 +1,11 @@
+{
+    "productionRuntimeUsed":  false,
+    "gatewayAvailable":  true,
+    "webAdminAvailable":  true,
+    "runtimeStartRequired":  true,
+    "runtimeDbContainer":  "watanbot-postgres",
+    "runtimeDbEngine":  "postgresql",
+    "runtimeDbName":  "watanbot",
+    "runtimeDbUser":  "watanbot",
+    "migrationsExecuted":  false
+}

@@ -1,0 +1,41 @@
+{
+  "status": "PASS",
+  "gate": "C9_2_INFORMATION_ARCHITECTURE_IMPLEMENTATION",
+  "capturedAtUtc": "2026-08-24T06:36:16.9841164Z",
+  "authority": "public.documents",
+  "entryPoints": [
+    "apps/web-admin/src/pages/CmsDocumentsPage.tsx",
+    "apps/web-admin/src/pages/AdminDocumentsPage.tsx",
+    "apps/web-admin/src/pages/AdminKBStudioPage.tsx",
+    "apps/web-admin/src/pages/CmsPage.tsx"
+  ],
+  "workflow": [
+    "search",
+    "kind_filter",
+    "status_filter",
+    "tag_filter",
+    "pagination",
+    "detail_selection",
+    "create",
+    "update",
+    "preview_policy",
+    "status_transitions",
+    "dirty_form_protection",
+    "loading_empty_error_success_states"
+  ],
+  "clientBoundary": {
+    "typedApi": "apps/web-admin/src/lib/api.ts",
+    "supportedKinds": ["file", "pdf", "doc", "image"],
+    "supportedStorageStatuses": ["pending", "verified", "rejected"],
+    "unsupportedFieldsPersisted": false
+  },
+  "validation": {
+    "webAdminTypecheck": "PASS",
+    "webAdminBuild": "PASS",
+    "editorDiagnostics": "PASS"
+  },
+  "runtimeProof": {
+    "browserProof": "NOT_EXECUTED",
+    "liveDatabaseMutation": "NOT_EXECUTED"
+  }
+}

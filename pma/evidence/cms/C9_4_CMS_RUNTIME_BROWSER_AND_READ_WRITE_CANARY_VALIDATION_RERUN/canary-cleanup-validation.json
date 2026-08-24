@@ -1,0 +1,6 @@
+{
+    "cleanup":  "PASS",
+    "exactIdDeleteBoundary":  "PASS",
+    "postCleanupRowCount":  0,
+    "residualCanary":  false
+}

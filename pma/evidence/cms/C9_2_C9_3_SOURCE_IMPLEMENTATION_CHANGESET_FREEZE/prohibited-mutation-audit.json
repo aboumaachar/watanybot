@@ -1,0 +1,38 @@
+{
+  "status": "PASS",
+  "gate": "PROHIBITED_MUTATION_AUDIT",
+  "capturedAtUtc": "2026-08-24T06:47:09.8787790Z",
+  "scope": "12 authorized implementation files only; evidence references are excluded from implementation mutation counts.",
+  "counts": {
+    "databaseSchemaChangePathCount": 0,
+    "databaseMigrationChangePathCount": 0,
+    "containerConfigChangePathCount": 0,
+    "deploymentChangePathCount": 0
+  },
+  "forbiddenPatternsAudited": [
+    "**/migrations/**",
+    "**/alembic/**",
+    "**/prisma/migrations/**",
+    "*.sql",
+    "schema.prisma",
+    "docker-compose*",
+    "Dockerfile*",
+    ".env",
+    ".env.*",
+    "database bootstrap files",
+    "deployment files"
+  ],
+  "operations": {
+    "databaseSchemaMutationExecuted": "NO",
+    "databaseDataMutationExecuted": "NO",
+    "databaseMigrationExecuted": "NO",
+    "containerStartStopExecuted": "NO",
+    "productionDeploymentExecuted": "NO",
+    "commitExecuted": "NO",
+    "pushExecuted": "NO",
+    "resetExecuted": "NO",
+    "cleanExecuted": "NO",
+    "checkoutExecuted": "NO"
+  },
+  "auditResult": "PASS"
+}

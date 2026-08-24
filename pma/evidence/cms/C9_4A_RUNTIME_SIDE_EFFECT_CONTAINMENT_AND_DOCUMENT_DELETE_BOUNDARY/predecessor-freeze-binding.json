@@ -1,0 +1,15 @@
+{
+  "status": "PASS",
+  "predecessor": "pma/evidence/cms/C9_2_C9_3_SOURCE_IMPLEMENTATION_CHANGESET_FREEZE",
+  "requiredArtifactCount": 8,
+  "verifiedArtifactCount": 8,
+  "predecessorFinalStatus": "PASS",
+  "originalFrozenImplementationFileCount": 12,
+  "originalFrozenImplementationHashMatchCount": 12,
+  "originalFrozenImplementationHashMismatchCount": 0,
+  "predecessorFrozenManifestSha256": "562A8EBAF395C3514655B5D974BEC09FB7288093C78F601B8AA9BD3159473F4C",
+  "predecessorChangedFileManifestSha256": "0684825BD8564EF07A4722FA42DAD90541272F6959E57F260D8DCC0E663C4BCB",
+  "sourceHashesVerifiedBeforeRepair": true,
+  "credentialMaterialRecorded": false,
+  "bindingResult": "PASS"
+}

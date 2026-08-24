@@ -1,0 +1,39 @@
+{
+  "status": "PASS",
+  "CMS_DOCUMENT_DELETE_BOUNDARY_IMPLEMENTED": "PASS",
+  "route": "DELETE /api/admin/cms/documents/:id",
+  "authorityPolicy": "cms.edit",
+  "architecture": [
+    "HTTP route",
+    "CMS adapter",
+    "DocumentService.delete",
+    "DocumentRepository.delete"
+  ],
+  "repository": {
+    "path": "apps/gateway-api/src/cms/documents/documents-repository.ts",
+    "operation": "delete(id: string): Promise<boolean>",
+    "sql": "DELETE FROM public.documents WHERE id = $1::uuid",
+    "parameter": "exact route UUID only",
+    "result": "rowCount === 1 distinguishes deleted from not found"
+  },
+  "service": {
+    "path": "apps/gateway-api/src/cms/documents/documents-service.ts",
+    "concreteIdValidation": true,
+    "invalidIdStatus": 400,
+    "bulkFiltersAccepted": false
+  },
+  "adapter": {
+    "path": "apps/gateway-api/src/cms/documents/documents-cms-adapter.ts",
+    "rawSqlPresent": false,
+    "notFoundStatus": 404,
+    "auditAndVersioningPreserved": true
+  },
+  "safety": {
+    "deleteByTag": false,
+    "deleteByStatus": false,
+    "deleteByKind": false,
+    "deleteAll": false,
+    "unrelatedCascade": false,
+    "schemaChanged": false
+  }
+}

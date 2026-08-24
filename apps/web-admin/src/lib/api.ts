@@ -430,7 +430,39 @@ export async function saveFeatureFlags(flags: Record<string, boolean>): Promise<
 export type CmsStatus = "DRAFT" | "REVIEW_READY" | "PUBLISHED" | "UNPUBLISHED" | "ARCHIVED";
 export type CmsItem = { id: string; title: string; status: CmsStatus; version: string; updatedAt: string | null; record: Record<string, unknown> };
 export type CmsListResponse = { items: CmsItem[]; total: number; page: number; pageSize: number; statusCounts: Record<CmsStatus, number> };
-export type CmsDocumentListResponse = Omit<CmsListResponse, "statusCounts"> & { statusCounts: Partial<Record<CmsStatus, number>> };
+export type CmsDocumentKind = "image" | "pdf" | "doc" | "file";
+export type CmsDocumentStorageStatus = "pending" | "verified" | "rejected";
+export type CmsDocumentRecord = {
+  id: string;
+  userId: string | null;
+  name: string;
+  kind: CmsDocumentKind;
+  status: CmsDocumentStorageStatus;
+  tags: string[];
+  filePath: string | null;
+  updatedAt: string;
+};
+export type CmsDocumentItem = CmsItem & {
+  status: Extract<CmsStatus, "DRAFT" | "PUBLISHED" | "ARCHIVED">;
+  document: CmsDocumentRecord;
+};
+export type CmsDocumentListResponse = Omit<CmsListResponse, "items" | "statusCounts"> & {
+  items: CmsDocumentItem[];
+  statusCounts: Partial<Record<CmsStatus, number>>;
+};
+export type CmsDocumentDetailResponse = {
+  ok: boolean;
+  item: CmsDocumentItem;
+  preview: { supported: boolean; url?: string; reason?: string };
+  attachments: { supported: false; reason: string };
+};
+export type CmsDocumentWrite = {
+  name: string;
+  kind: CmsDocumentKind;
+  status?: CmsDocumentStorageStatus;
+  tags: string[];
+  file_path?: string | null;
+};
 export type CmsFormItem = CmsItem & { publicId: string; publicCode: string | null; sourceId: string | null };
 
 export async function getCmsAnnouncements(params: { q?: string; status?: CmsStatus; page?: number; pageSize?: number } = {}): Promise<CmsListResponse> {
@@ -474,7 +506,7 @@ export async function runCmsProcedureAction(id: string, action: "publish" | "unp
   return data.item;
 }
 
-export async function getCmsDocuments(params: { q?: string; status?: CmsStatus; page?: number; pageSize?: number } = {}): Promise<CmsDocumentListResponse> {
+export async function getCmsDocuments(params: { q?: string; status?: CmsStatus; kind?: CmsDocumentKind; tag?: string; page?: number; pageSize?: number } = {}): Promise<CmsDocumentListResponse> {
   const query = new URLSearchParams();
   Object.entries(params).forEach(([key, value]) => { if (value) query.set(key, String(value)); });
   const queryString = query.toString();
@@ -482,7 +514,33 @@ export async function getCmsDocuments(params: { q?: string; status?: CmsStatus; 
   return res.json();
 }
 
-export async function runCmsDocumentAction(id: string, action: "publish" | "unpublish" | "archive"): Promise<CmsItem> {
+export async function getCmsDocument(id: string): Promise<CmsDocumentDetailResponse> {
+  const res = await adminFetch(`/api/admin/cms/documents/${encodeURIComponent(id)}`);
+  return res.json();
+}
+
+export async function createCmsDocument(payload: CmsDocumentWrite): Promise<CmsDocumentItem> {
+  const res = await adminFetch("/api/admin/cms/documents", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+  return ((await res.json()) as { item: CmsDocumentItem }).item;
+}
+
+export async function updateCmsDocument(id: string, payload: Partial<CmsDocumentWrite>): Promise<CmsDocumentItem> {
+  const res = await adminFetch(`/api/admin/cms/documents/${encodeURIComponent(id)}`, {
+    method: "PATCH",
+    body: JSON.stringify(payload),
+  });
+  return ((await res.json()) as { item: CmsDocumentItem }).item;
+}
+
+export async function getCmsDocumentPreview(id: string): Promise<CmsDocumentDetailResponse["preview"]> {
+  const res = await adminFetch(`/api/admin/cms/documents/${encodeURIComponent(id)}/preview`);
+  return ((await res.json()) as { preview: CmsDocumentDetailResponse["preview"] }).preview;
+}
+
+export async function runCmsDocumentAction(id: string, action: "publish" | "unpublish" | "archive"): Promise<CmsDocumentItem> {
   const res = await adminFetch(`/api/admin/cms/documents/${encodeURIComponent(id)}/actions/${action}`, { method: "POST" });
   const data = await res.json();
   return data.item;

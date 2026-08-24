@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "legacyEndpoint": "/api/documents",
+  "runtimeRead": "GET /api/documents?page=1 with authenticated local admin -> non-error response",
+  "LEGACY_DOCUMENT_RUNTIME_REGRESSION": "PASS",
+  "sourceRegression": "documents-metadata-regression.test.ts: 2 tests passed",
+  "legacyPersistenceModelMutated": false,
+  "cmsCanaryOccurred": false,
+  "credentialMaterialRecorded": false
+}
