@@ -1,4 +1,4 @@
-﻿import { lazy, Suspense, useState, useCallback, useEffect } from "react";
+import { lazy, Suspense, useState, useCallback, useEffect } from "react";
 import { BrowserRouter, Routes, Route, NavLink, Navigate, useLocation } from "react-router-dom";
 import { defaultLocale, dirForLocale } from "@watany/i18n";
 import { ErrorBoundary } from "./ErrorBoundary";
@@ -55,6 +55,10 @@ function Loading() {
   return <div className="page-loading">Loading...</div>;
 }
 
+const routerBasename =
+  import.meta.env.BASE_URL === "/"
+    ? "/"
+    : import.meta.env.BASE_URL.replace(/\/+$/, "");
 export default function App() {
   const dir = dirForLocale(defaultLocale);
   const [token, setToken] = useState(() => localStorage.getItem("admin_token"));
@@ -76,7 +80,7 @@ export default function App() {
 
   return (
     <ErrorBoundary>
-      <BrowserRouter>
+      <BrowserRouter basename={routerBasename}>
         {isAuthenticated ? (
           <div className="admin-app" dir={dir}>
             {/* Sidebar */}
