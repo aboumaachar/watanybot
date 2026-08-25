@@ -2,7 +2,7 @@ node_modules
 .venv
 __pycache__
 
-# Environment files (contain secrets — use .env.example as template)
+# Environment files (contain secrets â€” use .env.example as template)
 .env
 .env.local
 .env.*.local
@@ -125,3 +125,5 @@ apps/web-user/.env.development
 *.msi
 *.iso
 # END APEX LOCAL PUBLICATION QUARANTINE
+pma/evidence/cms/
+tmp/rag-test-runtime-*.jsonl
