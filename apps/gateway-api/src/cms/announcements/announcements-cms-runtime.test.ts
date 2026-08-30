@@ -26,6 +26,10 @@ describe("C5 Announcements CMS runtime", () => {
   const admin = token("admin", "apex-c5-admin");
 
   beforeAll(async () => {
+    process.env.JWT_SECRET ||= "announcements-cms-focused-test-secret-0123456789";
+    process.env.DISABLE_PLUGIN_DB = "true";
+    process.env.DISABLE_KB_NODES = "true";
+    process.env.DISABLE_CHAT_PERSIST = "true";
     const server = await import("../../server.js");
     app = server.app as typeof app;
     await app.ready();
@@ -46,6 +50,27 @@ describe("C5 Announcements CMS runtime", () => {
     const created = await request("/api/admin/cms/announcements", { method: "POST", headers: headers(superadmin), body: JSON.stringify({ publicId: canaryId, title, sourceId: `synthetic-${canaryId}`, payload: { summary: "Synthetic acceptance row" } }) });
     expect(created.status).toBe(201);
     expect(created.body.item.publicId).toBe(canaryId);
+
+    const secondId = `${canaryId}-second`;
+    const second = await request("/api/admin/cms/announcements", { method: "POST", headers: headers(superadmin), body: JSON.stringify({ publicId: secondId, title: `${title} second` }) });
+    expect(second.status).toBe(201);
+    const unauthorizedEdit = await request("/api/admin/cms/announcements/bulk-actions/edit", { method: "POST", headers: headers(admin), body: JSON.stringify({ ids: [canaryId, secondId], patch: { title: "Denied" } }) });
+    expect([401, 403]).toContain(unauthorizedEdit.status);
+    const forbiddenEdit = await request("/api/admin/cms/announcements/bulk-actions/edit", { method: "POST", headers: headers(superadmin), body: JSON.stringify({ ids: [canaryId, secondId], patch: { publicId: "forbidden" } }) });
+    expect(forbiddenEdit.status).toBe(400);
+    const invalidEdit = await request("/api/admin/cms/announcements/bulk-actions/edit", { method: "POST", headers: headers(superadmin), body: JSON.stringify({ ids: [canaryId, `${canaryId}-missing`], patch: { title: "No partial edit" } }) });
+    expect(invalidEdit.status).toBe(404);
+    const bulkEdit = await request("/api/admin/cms/announcements/bulk-actions/edit", { method: "POST", headers: headers(superadmin), body: JSON.stringify({ ids: [canaryId, secondId], patch: { title: "Bulk edited" } }) });
+    expect(bulkEdit.status).toBe(200);
+    expect(bulkEdit.body.items).toHaveLength(2);
+    expect(bulkEdit.body.items.every((item: { title: string }) => item.title === "Bulk edited")).toBe(true);
+    const unauthorizedBulk = await request("/api/admin/cms/announcements/bulk-actions/archive", { method: "POST", headers: headers(admin), body: JSON.stringify({ ids: [canaryId, secondId] }) });
+    expect([401, 403]).toContain(unauthorizedBulk.status);
+    const invalidBulk = await request("/api/admin/cms/announcements/bulk-actions/archive", { method: "POST", headers: headers(superadmin), body: JSON.stringify({ ids: [canaryId, `${canaryId}-missing`] }) });
+    expect(invalidBulk.status).toBe(404);
+    const bulk = await request("/api/admin/cms/announcements/bulk-actions/archive", { method: "POST", headers: headers(superadmin), body: JSON.stringify({ ids: [canaryId, secondId] }) });
+    expect(bulk.status).toBe(200);
+    expect(bulk.body.items).toHaveLength(2);
 
     const updated = await request(`/api/admin/cms/announcements/${canaryId}`, { method: "PATCH", headers: headers(superadmin), body: JSON.stringify({ title: `${title} updated` }) });
     expect(updated.status).toBe(200);

@@ -41,6 +41,37 @@ export function registerAnnouncementsCmsRoutes(app: FastifyInstance): void {
     await recordMutation(request, "updated", request.params.id, before, item);
     return { ok: true, item: toItem(item) };
   });
+  app.post<{ Body: { ids?: string[] } }>("/api/admin/cms/announcements/bulk-actions/archive", cmsPolicy("cms.archive"), async (request, reply) => {
+    const ids = Array.isArray(request.body?.ids) ? request.body.ids.filter((id): id is string => typeof id === "string") : [];
+    if (ids.length === 0) return reply.code(400).send({ ok: false, error: "VALIDATION_FAILED" });
+    const selected = await Promise.all(ids.map(async (id) => ({ id, item: await getGenericCmsEntity(DOMAIN, id) })));
+    const missingId = selected.find(({ item }) => !item)?.id;
+    if (missingId) return reply.code(404).send({ ok: false, error: "CMS_ITEM_NOT_FOUND", id: missingId });
+    const items = [];
+    for (const { id, item: before } of selected) {
+      const item = await updateGenericCmsEntity(DOMAIN, id, { status: "ARCHIVED", updatedBy: actorId(request) });
+      if (!item) return reply.code(404).send({ ok: false, error: "CMS_ITEM_NOT_FOUND", id });
+      await recordMutation(request, "bulk_archive", id, before, item);
+      items.push(toItem(item));
+    }
+    return { ok: true, items };
+  });
+  app.post<{ Body: { ids?: string[]; patch?: { title?: string; payload?: Record<string, unknown>; sourceMeta?: Record<string, unknown> } } }>("/api/admin/cms/announcements/bulk-actions/edit", cmsPolicy("cms.edit"), async (request, reply) => {
+    const ids = Array.isArray(request.body?.ids) ? request.body.ids.filter((id): id is string => typeof id === "string") : [];
+    const patch = request.body?.patch;
+    if (ids.length === 0 || !patch || Object.keys(patch).some((key) => !["title", "payload", "sourceMeta"].includes(key))) return reply.code(400).send({ ok: false, error: "VALIDATION_FAILED" });
+    const selected = await Promise.all(ids.map(async (id) => ({ id, item: await getGenericCmsEntity(DOMAIN, id) })));
+    const missingId = selected.find(({ item }) => !item)?.id;
+    if (missingId) return reply.code(404).send({ ok: false, error: "CMS_ITEM_NOT_FOUND", id: missingId });
+    const items = [];
+    for (const { id, item: before } of selected) {
+      const item = await updateGenericCmsEntity(DOMAIN, id, { ...patch, updatedBy: actorId(request) });
+      if (!item) return reply.code(404).send({ ok: false, error: "CMS_ITEM_NOT_FOUND", id });
+      await recordMutation(request, "bulk_edit", id, before, item);
+      items.push(toItem(item));
+    }
+    return { ok: true, items };
+  });
   for (const action of ["publish", "unpublish", "archive"] as const) app.post<{ Params: { id: string } }>(`/api/admin/cms/announcements/:id/actions/${action}`, cmsPolicy(`cms.${action}`), async (request, reply) => {
     const before = await getGenericCmsEntity(DOMAIN, request.params.id);
     if (!before) return reply.code(404).send({ ok: false, error: "CMS_ITEM_NOT_FOUND" });

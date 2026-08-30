@@ -30,7 +30,7 @@ body {
 }
 
 .shell {
-  width: min(1200px, 100%);
+  width: 100%;
   display: grid;
   gap: 24px;
   animation: float-in 0.6s ease;
@@ -169,7 +169,7 @@ button:disabled,
 }
 
 .superadmin-layout {
-  grid-template-columns: 220px minmax(0, 1fr);
+  grid-template-columns: 240px minmax(0, 1fr);
   align-items: start;
 }
 
@@ -764,6 +764,12 @@ button:disabled,
 
 .admin-content {
   animation: float-in 0.5s ease;
+}
+
+.admin-content > * {
+  width: 100%;
+  min-width: 0;
+  grid-column: 1 / -1;
 }
 
 /* ── Page-level styles ── */

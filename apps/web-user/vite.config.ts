@@ -50,7 +50,7 @@ function getNodeModulePackageName(id: string): string | null {
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
-  const devProxyTarget = env.VITE_DEV_PROXY_TARGET || env.VITE_API_URL || "http://127.0.0.1:8010";
+  const devProxyTarget = env.VITE_DEV_PROXY_TARGET || env.VITE_API_URL || "http://127.0.0.1:4000";
   const repoRoot = fileURLToPath(new URL("../..", import.meta.url));
 
   return {

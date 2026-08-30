@@ -6,7 +6,12 @@ const LOCAL_URL = SERVERS[0].url;
 const PROD_URL = SERVERS[1].url;
 
 function getInitialServer(): string {
-  return localStorage.getItem("admin_api_url") || LOCAL_URL;
+  const storedUrl = localStorage.getItem("admin_api_url");
+  if (storedUrl === "http://localhost:8010") {
+    localStorage.setItem("admin_api_url", LOCAL_URL);
+    return LOCAL_URL;
+  }
+  return storedUrl || LOCAL_URL;
 }
 
 const inputStyle: React.CSSProperties = {

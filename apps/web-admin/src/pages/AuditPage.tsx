@@ -3,7 +3,7 @@ import { adminFetch } from "../lib/api";
 
 type AuditEntry = {
   id: string;
-  user_id: string;
+  user_id: string | null;
   action: string;
   resource: string;
   details: Record<string, unknown>;
@@ -43,7 +43,7 @@ export default function AuditPage() {
       !search ||
       e.action.toLowerCase().includes(search.toLowerCase()) ||
       e.resource.toLowerCase().includes(search.toLowerCase()) ||
-      e.user_id.includes(search)
+      e.user_id?.includes(search)
   );
 
   const actions = [...new Set(entries.map((e) => e.action))];
@@ -108,7 +108,7 @@ export default function AuditPage() {
                   <td className="mono">{new Date(e.created_at).toLocaleString()}</td>
                   <td><span className="action-tag">{e.action}</span></td>
                   <td>{e.resource || "—"}</td>
-                  <td className="mono truncate">{e.user_id.slice(0, 8)}…</td>
+                  <td className="mono truncate">{e.user_id ? `${e.user_id.slice(0, 8)}…` : "System"}</td>
                   <td className="muted">{e.ip || "—"}</td>
                   <td>
                     <details>

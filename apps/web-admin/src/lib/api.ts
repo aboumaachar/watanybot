@@ -1,13 +1,22 @@
 /** Static fallback (used by legacy imports). Live code should call getApiUrl() instead. */
-export const API = import.meta.env.VITE_API_URL || "http://localhost:8010";
+export const API = import.meta.env.VITE_API_URL || "http://localhost:8015";
+const LOCAL_ADMIN_API_URL = "http://localhost:8015";
 
 /** Returns the currently active admin API base URL (respects runtime server switch). */
 export function getApiUrl(): string {
-  return localStorage.getItem("admin_api_url") || API;
+  const storedUrl = localStorage.getItem("admin_api_url");
+  if (storedUrl === "http://localhost:8010") {
+    localStorage.setItem("admin_api_url", LOCAL_ADMIN_API_URL);
+    return LOCAL_ADMIN_API_URL;
+  }
+  if (import.meta.env.DEV && storedUrl?.startsWith("https://koudama.com/")) {
+    return API;
+  }
+  return storedUrl || API;
 }
 
 export const SERVERS = [
-  { label: "Local", url: "http://localhost:8010" },
+  { label: "Local", url: LOCAL_ADMIN_API_URL },
   { label: "Production (koudama.com)", url: "https://koudama.com/mcp" },
 ] as const;
 
@@ -321,7 +330,7 @@ async function readJsonSafe(res: Response): Promise<any> {
   }
 }
 
-async function refreshAdminAccessToken(): Promise<boolean> {
+export async function refreshAdminAccessToken(): Promise<boolean> {
   const csrfToken = getCsrfToken();
   const headers = new Headers({ "Content-Type": "application/json" });
   if (csrfToken) {
@@ -355,7 +364,7 @@ export function getAdminErrorMessage(error: unknown, fallback: string): string {
   }
 
   if (error.kind === "network") {
-    return "تعذر الوصول إلى الخادم. تأكد من تشغيل gateway على المنفذ 8010 أو حدّد خادماً مخصّصاً.";
+    return "تعذر الوصول إلى الخادم. تأكد من تشغيل gateway على المنفذ 8015 أو حدّد خادماً مخصّصاً.";
   }
 
   if (error.status === 401) {
@@ -487,6 +496,18 @@ export async function getCmsAnnouncements(params: { q?: string; status?: CmsStat
 export async function runCmsAnnouncementAction(id: string, action: "publish" | "unpublish" | "archive"): Promise<CmsItem> {
   const res = await adminFetch(`/api/admin/cms/announcements/${encodeURIComponent(id)}/actions/${action}`, { method: "POST" });
   return ((await res.json()) as { item: CmsItem }).item;
+}
+
+export async function runCmsAnnouncementBulkArchive(ids: readonly string[]): Promise<CmsItem[]> {
+  const res = await adminFetch("/api/admin/cms/announcements/bulk-actions/archive", { method: "POST", body: JSON.stringify({ ids }) });
+  const data = await res.json() as { items: CmsItem[] };
+  return data.items;
+}
+
+export async function runCmsAnnouncementBulkEdit(ids: readonly string[], patch: { title?: string; payload?: Record<string, unknown>; sourceMeta?: Record<string, unknown> }): Promise<CmsItem[]> {
+  const res = await adminFetch("/api/admin/cms/announcements/bulk-actions/edit", { method: "POST", body: JSON.stringify({ ids, patch }) });
+  const data = await res.json() as { items: CmsItem[] };
+  return data.items;
 }
 
 export function getCmsFormPublicUrl(form: CmsFormItem): string {

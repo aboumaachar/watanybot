@@ -2,7 +2,7 @@
  * Admin user management API — list, update role/status, audit log.
  */
 import type { FastifyInstance } from "fastify";
-import { query } from "../lib/db.js";
+import { getClient, query } from "../lib/db.js";
 import { requireRole } from "../auth/rbac.js";
 import { broadcastToAdmins } from "../ws/admin-ws.js";
 import { createWSEvent } from "../ws/events.js";
@@ -75,8 +75,31 @@ export async function adminUsersRoutes(app: FastifyInstance): Promise<void> {
       return reply.code(403).send({ error: "فقط المشرف العام يمكنه ترقية المستخدمين إلى مشرف" });
     }
 
+    if (adminUser?.id === id && role !== "admin" && role !== "superadmin") {
+      return reply.code(409).send({ error: "CANNOT_REMOVE_OWN_ADMIN_AUTHORITY" });
+    }
+
+    const client = await getClient();
     try {
-      const result = await query(
+      await client.query("BEGIN");
+      await client.query("SELECT pg_advisory_xact_lock(2147483647)");
+      const target = await client.query("SELECT role, status FROM users WHERE id = $1", [id]);
+      if (target.rows.length === 0) {
+        return reply.code(404).send({ error: "المستخدم غير موجود" });
+      }
+      const targetIsActiveAdministrator =
+        target.rows[0].status === "active" && ["admin", "superadmin"].includes(target.rows[0].role);
+      const retainsAdministrativeAuthority = role === "admin" || role === "superadmin";
+      if (targetIsActiveAdministrator && !retainsAdministrativeAuthority) {
+        const remaining = await client.query(
+          "SELECT id FROM users WHERE id <> $1 AND status = 'active' AND role IN ('admin', 'superadmin') ORDER BY id FOR UPDATE",
+          [id],
+        );
+        if (remaining.rows.length === 0) {
+          return reply.code(409).send({ error: "CANNOT_DEMOTE_LAST_ACTIVE_ADMINISTRATOR" });
+        }
+      }
+      const result = await client.query(
         "UPDATE users SET role = $1, updated_at = NOW() WHERE id = $2 RETURNING id, email, name, role, status",
         [role, id],
       );
@@ -85,16 +108,21 @@ export async function adminUsersRoutes(app: FastifyInstance): Promise<void> {
       }
 
       // Audit log
-      await query(
+      await client.query(
         "INSERT INTO audit_log (user_id, action, resource, details) VALUES ($1, $2, $3, $4)",
         [adminUser?.id ?? null, "user.role_change", "users", JSON.stringify({ targetUserId: id, newRole: role })],
       );
+
+      await client.query("COMMIT");
 
       broadcastToAdmins(createWSEvent("user", { action: "role_change", userId: id, newRole: role }));
 
       return reply.send({ user: result.rows[0] });
     } catch (err: any) {
+      try { await client.query("ROLLBACK"); } catch { /* preserve original error */ }
       return reply.code(500).send({ error: err.message });
+    } finally {
+      client.release();
     }
   });
 
@@ -109,8 +137,30 @@ export async function adminUsersRoutes(app: FastifyInstance): Promise<void> {
       return reply.code(400).send({ error: "حالة غير صالحة" });
     }
 
+    if (adminUser?.id === id && status !== "active") {
+      return reply.code(409).send({ error: "CANNOT_DISABLE_OWN_ACCOUNT" });
+    }
+
+    const client = await getClient();
     try {
-      const result = await query(
+      await client.query("BEGIN");
+      await client.query("SELECT pg_advisory_xact_lock(2147483647)");
+      const target = await client.query("SELECT role, status FROM users WHERE id = $1", [id]);
+      if (target.rows.length === 0) {
+        return reply.code(404).send({ error: "المستخدم غير موجود" });
+      }
+      const targetIsActiveAdministrator =
+        target.rows[0].status === "active" && ["admin", "superadmin"].includes(target.rows[0].role);
+      if (targetIsActiveAdministrator && status !== "active") {
+        const remaining = await client.query(
+          "SELECT id FROM users WHERE id <> $1 AND status = 'active' AND role IN ('admin', 'superadmin') ORDER BY id FOR UPDATE",
+          [id],
+        );
+        if (remaining.rows.length === 0) {
+          return reply.code(409).send({ error: "CANNOT_DISABLE_LAST_ACTIVE_ADMINISTRATOR" });
+        }
+      }
+      const result = await client.query(
         "UPDATE users SET status = $1, updated_at = NOW() WHERE id = $2 RETURNING id, email, name, role, status",
         [status, id],
       );
@@ -118,16 +168,21 @@ export async function adminUsersRoutes(app: FastifyInstance): Promise<void> {
         return reply.code(404).send({ error: "المستخدم غير موجود" });
       }
 
-      await query(
+      await client.query(
         "INSERT INTO audit_log (user_id, action, resource, details) VALUES ($1, $2, $3, $4)",
         [adminUser?.id ?? null, "user.status_change", "users", JSON.stringify({ targetUserId: id, newStatus: status })],
       );
+
+      await client.query("COMMIT");
 
       broadcastToAdmins(createWSEvent("user", { action: "status_change", userId: id, newStatus: status }));
 
       return reply.send({ user: result.rows[0] });
     } catch (err: any) {
+      try { await client.query("ROLLBACK"); } catch { /* preserve original error */ }
       return reply.code(500).send({ error: err.message });
+    } finally {
+      client.release();
     }
   });
 

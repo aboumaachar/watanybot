@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
-import { getAdminErrorMessage, getCmsAnnouncements, getCmsForms, getCmsProcedures, getCmsFormPublicUrl, runCmsAnnouncementAction, runCmsDocumentAction, runCmsFormAction, runCmsProcedureAction, type CmsFormItem, type CmsItem, type CmsStatus } from "../lib/api";
+import { getAdminErrorMessage, getCmsAnnouncements, getCmsForms, getCmsProcedures, getCmsFormPublicUrl, runCmsAnnouncementAction, runCmsAnnouncementBulkArchive, runCmsAnnouncementBulkEdit, runCmsDocumentAction, runCmsFormAction, runCmsProcedureAction, type CmsFormItem, type CmsItem, type CmsStatus } from "../lib/api";
+import { BulkMutationToolbar } from "../components/BulkMutationToolbar";
+import { SelectableDataGrid } from "../components/SelectableDataGrid";
+import { useRowSelection } from "../hooks/useRowSelection";
 import CmsDocumentsPage from "./CmsDocumentsPage";
 
 const statuses: CmsStatus[] = ["DRAFT", "REVIEW_READY", "PUBLISHED", "UNPUBLISHED", "ARCHIVED"];
@@ -14,6 +17,7 @@ export default function CmsPage() {
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const selection = useRowSelection(items.map((item) => item.id));
 
   useEffect(() => {
     if (domain === "documents") return;
@@ -26,6 +30,13 @@ export default function CmsPage() {
       .finally(() => { if (active) setLoading(false); });
     return () => { active = false; };
   }, [query, status, page, domain]);
+
+  async function dispatchBulk(mutation: "bulk_archive" | "bulk_delete" | "bulk_edit", ids: readonly string[]) {
+    if (domain !== "announcements" || mutation !== "bulk_archive") throw new Error("This action is not available for the selected CMS domain.");
+    const updated = mutation === "bulk_archive" ? await runCmsAnnouncementBulkArchive(ids) : await runCmsAnnouncementBulkEdit(ids, { payload: { bulkEdited: true } });
+    setItems((current) => current.map((item) => updated.find((next) => next.id === item.id) || item));
+    selection.clear();
+  }
 
   async function action(item: CmsItem, next: "publish" | "unpublish" | "archive" | "restore") {
     try {
@@ -63,7 +74,7 @@ export default function CmsPage() {
   } else if (items.length === 0) {
     content = <p className="muted">لا توجد نتائج.</p>;
   } else {
-    content = <div className="table-responsive"><table><thead><tr><th>المعرف</th><th>العنوان</th><th>الحالة</th><th>الإصدار</th><th>الإجراء</th></tr></thead><tbody>{items.map((item) => <tr key={item.id}><td>{item.id}</td><td>{item.title}</td><td>{labels[item.status]}</td><td>{item.version}</td><td>{domain === "forms" ? <><button type="button" onClick={() => openFormPreview(item)}>معاينة / فتح</button><button type="button" onClick={() => downloadForm(item)}>تنزيل</button></> : null}{item.status === "DRAFT" || item.status === "UNPUBLISHED" ? <button type="button" onClick={() => void action(item, "publish")}>نشر</button> : null}{item.status === "PUBLISHED" ? <button type="button" onClick={() => void action(item, "unpublish")}>إلغاء النشر</button> : null}{item.status !== "ARCHIVED" ? <button type="button" onClick={() => void action(item, "archive")}>أرشفة</button> : <button type="button" onClick={() => void action(item, "restore")}>استعادة</button>}</td></tr>)}</tbody></table></div>;
+    content = <><BulkMutationToolbar selectedIds={selection.selectedVisibleIds} capabilities={{ bulk_archive: domain === "announcements" ? "SUPPORTED" : "NOT_APPLICABLE", bulk_delete: "MISSING", bulk_edit: "MISSING" }} dispatch={dispatchBulk} /><div className="table-responsive"><SelectableDataGrid rowIds={items.map((item) => item.id)} selectedIds={selection.selectedVisibleIds} allVisibleSelected={selection.allVisibleSelected} onToggle={selection.toggle} onToggleAll={selection.toggleAll} renderRow={(id) => { const item = items.find((candidate) => candidate.id === id); if (!item) return null; return <><td className="mono" dir="ltr">{item.id}</td><td>{item.title}</td><td><span className={`status-badge ${item.status.toLowerCase()}`}>{labels[item.status]}</span></td><td>{item.version}</td><td>{domain === "forms" ? <><button type="button" onClick={() => openFormPreview(item)}>معاينة / فتح</button><button type="button" onClick={() => downloadForm(item)}>تنزيل</button></> : null}{item.status === "DRAFT" || item.status === "UNPUBLISHED" ? <button type="button" onClick={() => void action(item, "publish")}>نشر</button> : null}{item.status === "PUBLISHED" ? <button type="button" onClick={() => void action(item, "unpublish")}>إلغاء النشر</button> : null}{item.status !== "ARCHIVED" ? <button type="button" onClick={() => void action(item, "archive")}>أرشفة</button> : <button type="button" onClick={() => void action(item, "restore")}>استعادة</button>}</td></>; }} /></div></>;
   }
 
   return <section className="superadmin-surface card">

@@ -5,22 +5,33 @@ import { getAdminErrorMessage, getAdminAuthorityMe, type AdminAuthority } from "
 import AuditPage from "./AuditPage";
 import FeatureControlsPage from "./FeatureControlsPage";
 import CmsPage from "./CmsPage";
+import CommunityPage from "./CommunityPage";
+import UniversalCollectionPage from "./UniversalCollectionPage";
 
 const SHELL_ITEMS = [
   { path: "/superadmin", label: "الرئيسية", icon: "dashboard", end: true },
   { path: "/superadmin/cms", label: "CMS", icon: "documents", end: false },
   { path: "/superadmin/crm", label: "CRM", icon: "users", end: false },
   { path: "/superadmin/erm", label: "ERM", icon: "briefcase", end: false },
+  { path: "/superadmin/operations", label: "Operations", icon: "briefcase", end: false },
   { path: "/superadmin/system", label: "النظام", icon: "settings", end: false },
 ] as const;
 
 function ChildSurface({ title, description }: Readonly<{ title: string; description: string }>) {
   return (
     <section className="superadmin-surface card">
-      <span className="eyebrow">Wave 1 boundary</span>
+      <span className="eyebrow">Universal Admin module index</span>
       <h2>{title}</h2>
       <p className="muted">{description}</p>
-      <span className="superadmin-status">Not implemented in this wave</span>
+      <div className="superadmin-kpis">
+        <div className="superadmin-kpi card"><span className="eyebrow">Navigation</span><strong>Ready</strong><span>Canonical shell route</span></div>
+        <div className="superadmin-kpi card"><span className="eyebrow">Ownership</span><strong>Preserved</strong><span>Existing owner chains remain authoritative</span></div>
+        <div className="superadmin-kpi card"><span className="eyebrow">Capabilities</span><strong>Gated</strong><span>Actions require frozen capability evidence</span></div>
+      </div>
+      <div className="superadmin-module-index" aria-label={`${title} management index`}>
+        <span className="eyebrow">Management surfaces</span>
+        <p className="muted">Select a registered feature from the module navigation when its canonical admin surface is available.</p>
+      </div>
     </section>
   );
 }
@@ -84,9 +95,23 @@ export default function SuperadminShellPage() {
   let content = <ShellHome authority={authority} />;
   if (path === "/superadmin/audit") content = <AuditPage />;
   else if (path === "/superadmin/features") content = <FeatureControlsPage />;
+  else if (path === "/superadmin/cms/community") content = <CommunityPage />;
   else if (path === "/superadmin/cms" || path === "/superadmin/cms/procedures") content = <CmsPage />;
+  else if (path === "/superadmin/system/official-services") content = <UniversalCollectionPage kind="official-services" />;
+  else if (path === "/superadmin/system/ticker") content = <UniversalCollectionPage kind="ticker" />;
+  else if (path === "/superadmin/system/features") content = <FeatureControlsPage />;
+  else if (path === "/superadmin/cms/ai-training") content = <UniversalCollectionPage kind="ai-training" />;
+  else if (path === "/superadmin/cms/abusive-events") content = <UniversalCollectionPage kind="abusive-events" />;
+  else if (path === "/superadmin/cms/chat-inputs") content = <UniversalCollectionPage kind="chat-inputs" />;
+  else if (path === "/superadmin/cms/answer-overrides") content = <UniversalCollectionPage kind="answer-overrides" />;
+  else if (path === "/superadmin/cms/chat-sessions") content = <UniversalCollectionPage kind="chat-sessions" />;
+  else if (path === "/superadmin/crm/contacts") content = <UniversalCollectionPage kind="crm-contacts" />;
+  else if (path === "/superadmin/erm/assets") content = <UniversalCollectionPage kind="erm-assets" />;
+  else if (path === "/superadmin/cms/rules") content = <UniversalCollectionPage kind="rules" />;
+  else if (path === "/superadmin/cms/news") content = <UniversalCollectionPage kind="news" />;
   else if (path === "/superadmin/crm") content = <ChildSurface title="CRM" description="مسار CRM محجوز ومحمى، ولم يتم ادعاء تنفيذ لوحة CRM في Wave 1." />;
   else if (path === "/superadmin/erm") content = <ChildSurface title="ERM" description="مسار ERM محجوز ومحمى، ولم يتم ادعاء تنفيذ لوحة ERM في Wave 1." />;
+  else if (path === "/superadmin/operations") content = <ChildSurface title="Operations" description="مسار Operations الموحد لإدارة التشغيل والعمليات." />;
   else if (path === "/superadmin/system") content = <ChildSurface title="System" description="حالة النظام وصلاحياته ضمن حدود منصة Superadmin الحالية." />;
 
   return (
@@ -112,6 +137,24 @@ export default function SuperadminShellPage() {
           <NavLink to="/superadmin/features" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}>
             <AdminFluentIcon name="settings" /><span>التحكم في الميزات</span>
           </NavLink>
+          <NavLink to="/superadmin/system/official-services" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}>
+            <AdminFluentIcon name="documents" /><span>Official Services</span>
+          </NavLink>
+          <NavLink to="/superadmin/system/ticker" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}>
+            <AdminFluentIcon name="news" /><span>Ticker Items</span>
+          </NavLink>
+          <NavLink to="/superadmin/system/features" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}>
+            <AdminFluentIcon name="settings" /><span>Feature Controls</span>
+          </NavLink>
+          <NavLink to="/superadmin/cms/ai-training" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}><AdminFluentIcon name="knowledge" /><span>AI Training</span></NavLink>
+          <NavLink to="/superadmin/cms/abusive-events" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}><AdminFluentIcon name="shield" /><span>Abusive Events</span></NavLink>
+          <NavLink to="/superadmin/cms/chat-inputs" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}><AdminFluentIcon name="chat" /><span>Chat Inputs</span></NavLink>
+          <NavLink to="/superadmin/cms/answer-overrides" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}><AdminFluentIcon name="chat" /><span>Answer Overrides</span></NavLink>
+          <NavLink to="/superadmin/cms/chat-sessions" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}><AdminFluentIcon name="chat" /><span>Chat Sessions</span></NavLink>
+          <NavLink to="/superadmin/crm/contacts" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}><AdminFluentIcon name="users" /><span>CRM Contacts</span></NavLink>
+          <NavLink to="/superadmin/erm/assets" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}><AdminFluentIcon name="documents" /><span>ERM Assets</span></NavLink>
+          <NavLink to="/superadmin/cms/rules" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}><AdminFluentIcon name="shield" /><span>Filter Rules</span></NavLink>
+          <NavLink to="/superadmin/cms/news" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}><AdminFluentIcon name="news" /><span>News</span></NavLink>
           <NavLink to="/superadmin/audit" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}>
             <AdminFluentIcon name="audit" /><span>سجل التدقيق</span>
           </NavLink>

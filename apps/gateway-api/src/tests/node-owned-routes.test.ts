@@ -150,6 +150,24 @@ describe("GET /api/v2/files", () => {
   });
 });
 
+describe("GET /api/admin/erm/assets", () => {
+  it("rejects unauthenticated requests", async () => {
+    const res = await app.inject({ method: "GET", url: "/api/admin/erm/assets" });
+    expect([401, 403]).toContain(res.statusCode);
+  });
+
+  it("returns a bounded admin asset collection with stable IDs", async () => {
+    const res = await app.inject({ method: "GET", url: "/api/admin/erm/assets?limit=2", headers: adminHeaders() });
+    expect(res.statusCode).toBe(200);
+    const body = res.json() as { items: Array<{ id?: string }>; total: number; bounded: boolean };
+    expect(body.bounded).toBe(true);
+    expect(Array.isArray(body.items)).toBe(true);
+    expect(body.items.length).toBeLessThanOrEqual(2);
+    expect(body.items.every((item) => typeof item.id === "string" && item.id.length > 0)).toBe(true);
+    expect(typeof body.total).toBe("number");
+  });
+});
+
 // ─────────────────────────────────────────────────────────────────────────────
 // KB vNext (FTS5 nodes)
 // ─────────────────────────────────────────────────────────────────────────────

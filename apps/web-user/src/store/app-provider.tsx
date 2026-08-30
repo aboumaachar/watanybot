@@ -50,7 +50,7 @@ function hasMinimumRole(currentRole: UserProfile["role"], requiredRole: UserRole
 const API_BASE_STORAGE_KEY = "watany_api_base_url";
 const DEFAULT_API = getCandidateApiBaseUrls()[0] || getDefaultApiBaseUrl();
 const DEFAULT_UPLOAD = import.meta.env.VITE_UPLOAD_URL || "https://koudama.com/data/pictures";
-const AUTH_BYPASS_FOR_TESTING = (import.meta.env.VITE_DISABLE_AUTH ?? "false").toLowerCase() === "true";
+const AUTH_BYPASS_FOR_TESTING = import.meta.env.DEV && (import.meta.env.VITE_DISABLE_AUTH ?? "false").toLowerCase() === "true";
 const AUTH_BYPASS_LOGGED_OUT_KEY = "watany_auth_bypass_logged_out";
 const DEV_SUPERADMIN_PROFILE: UserProfile = {
   name: "مدير النظام المحلي",

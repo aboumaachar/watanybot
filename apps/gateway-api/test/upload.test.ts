@@ -1,34 +1,38 @@
-import http from 'http';
-import { describe, it, expect } from 'vitest';
+import type { FastifyInstance } from 'fastify';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
-function requestJson(options: any, body?: any) {
-  return new Promise<{ status: number; body: any }>((resolve, reject) => {
-    const data = body ? JSON.stringify(body) : null;
-    const req = http.request(options, (res) => {
-      let raw = '';
-      res.setEncoding('utf8');
-      res.on('data', (chunk) => { raw += chunk; });
-      res.on('end', () => {
-        try {
-          const json = JSON.parse(raw || '{}');
-          resolve({ status: res.statusCode || 0, body: json });
-        } catch (e) {
-          resolve({ status: res.statusCode || 0, body: raw });
-        }
-      });
-    });
-    req.on('error', (e) => reject(e));
-    if (data) req.write(data);
-    req.end();
-  });
-}
+let app: FastifyInstance | undefined;
+
+beforeAll(async () => {
+  const server = await import('../src/server.js');
+  app = server.default;
+  await app.ready();
+}, 120_000);
+
+afterAll(async () => {
+  if (app) {
+    await app.close();
+  }
+});
 
 describe('upload endpoint', () => {
   it('accepts small png dataurl', async () => {
-    const tinyPng = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNgYAAAAAMAASsJTYQAAAAASUVORK5CYII=';
-    const res = await requestJson({ hostname: '127.0.0.1', port: 8010, path: '/api/files/upload', method: 'POST', headers: { 'Content-Type': 'application/json' } }, { dataUrl: tinyPng });
-    expect(res.status).toBe(200);
-    expect(res.body).toHaveProperty('ok', true);
-    expect(res.body).toHaveProperty('url');
+    if (!app) throw new Error('Gateway app was not initialized');
+
+    const tinyPng =
+      'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNgYAAAAAMAASsJTYQAAAAASUVORK5CYII=';
+
+    const response = await app.inject({
+      method: 'POST',
+      url: '/api/files/upload',
+      headers: { 'content-type': 'application/json' },
+      payload: { dataUrl: tinyPng },
+    });
+
+    expect(response.statusCode).toBe(200);
+
+    const body = response.json();
+    expect(body).toHaveProperty('ok', true);
+    expect(body).toHaveProperty('url');
   });
 });

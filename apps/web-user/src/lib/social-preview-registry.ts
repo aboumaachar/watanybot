@@ -22,6 +22,17 @@ export const SOCIAL_PREVIEWS: readonly SocialPreview[] = [
     imageAlt: "إعلان عين الحفة عبر موطني",
     type: "article",
   },
+  {
+    route: "/salary",
+    title: "حاسبة المعاش",
+    description: "احسب معاشك ومستحقاتك عبر حاسبة المعاش في موطني.",
+    image: "/logo.png?v=20260827-1",
+    imageType: "image/png",
+    imageWidth: 1024,
+    imageHeight: 1024,
+    imageAlt: "شعار موطني لحاسبة المعاش",
+    type: "website",
+  },
 ];
 
 export function getSocialPreview(route: string): SocialPreview | undefined {

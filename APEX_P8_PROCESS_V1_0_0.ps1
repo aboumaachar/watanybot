@@ -100,6 +100,15 @@ function Invoke-P8ProcessCommand([string]$Name, [string]$WorkingDirectory, [stri
 	}
 }
 
+function Invoke-RequiredP8ProcessCommand([string]$Name, [string]$WorkingDirectory, [string]$FilePath, [string[]]$CommandArgs, [string]$OutputDirectory) {
+	$result = Invoke-P8ProcessCommand -Name $Name -WorkingDirectory $WorkingDirectory -FilePath $FilePath -CommandArgs $CommandArgs -OutputDirectory $OutputDirectory
+	$stderr = if (Test-Path -LiteralPath $result.stderrPath) { [IO.File]::ReadAllText($result.stderrPath) } else { '' }
+	if ($result.status -ne 'PASS' -or $result.exitCode -ne 0 -or $result.exitObserved -ne 'YES' -or $stderr -match '(?i)\b(error|failed|failure|exception)\b') {
+		throw ('Required Process gate failed: ' + $Name)
+	}
+	return $result
+}
+
 function Invoke-P8Process {
 	param(
 		[string]$ProcessValidationRoot = 'C:\APEX\P8-post-repair-validation',
@@ -114,13 +123,13 @@ function Invoke-P8Process {
 	$workspace = 'C:\xampp\htdocs\projectx\watanybot'
 	$rows = @()
 	if ($ProcessGateway) {
-		$rows += Invoke-P8ProcessCommand -Name 'gateway-typecheck' -WorkingDirectory (Join-Path $workspace 'apps\gateway-api') -FilePath 'node.exe' -CommandArgs @('C:\Users\User\AppData\Roaming\npm\node_modules\pnpm\bin\pnpm.cjs', 'typecheck') -OutputDirectory $logs
-		$rows += Invoke-P8ProcessCommand -Name 'gateway-tests' -WorkingDirectory (Join-Path $workspace 'apps\gateway-api') -FilePath 'node.exe' -CommandArgs @('C:\Users\User\AppData\Roaming\npm\node_modules\pnpm\bin\pnpm.cjs', 'test', '--', '--run', '--pool=forks', '--poolOptions.forks.singleFork=true') -OutputDirectory $logs
+		$rows += Invoke-RequiredP8ProcessCommand -Name 'gateway-typecheck' -WorkingDirectory (Join-Path $workspace 'apps\gateway-api') -FilePath 'node.exe' -CommandArgs @('C:\Users\User\AppData\Roaming\npm\node_modules\pnpm\bin\pnpm.cjs', 'typecheck') -OutputDirectory $logs
+		$rows += Invoke-RequiredP8ProcessCommand -Name 'gateway-tests' -WorkingDirectory (Join-Path $workspace 'apps\gateway-api') -FilePath 'node.exe' -CommandArgs @('C:\Users\User\AppData\Roaming\npm\node_modules\pnpm\bin\pnpm.cjs', 'test', '--', '--run', '--pool=forks', '--poolOptions.forks.singleFork=true') -OutputDirectory $logs
 	}
 	if ($ProcessWeb) {
-		$rows += Invoke-P8ProcessCommand -Name 'web-user-typecheck' -WorkingDirectory (Join-Path $workspace 'apps\web-user') -FilePath 'node.exe' -CommandArgs @('C:\Users\User\AppData\Roaming\npm\node_modules\pnpm\bin\pnpm.cjs', 'typecheck') -OutputDirectory $logs
-		$rows += Invoke-P8ProcessCommand -Name 'web-user-build' -WorkingDirectory (Join-Path $workspace 'apps\web-user') -FilePath 'node.exe' -CommandArgs @('C:\Users\User\AppData\Roaming\npm\node_modules\pnpm\bin\pnpm.cjs', 'build') -OutputDirectory $logs
-		$rows += Invoke-P8ProcessCommand -Name 'web-user-tests' -WorkingDirectory (Join-Path $workspace 'apps\web-user') -FilePath 'node.exe' -CommandArgs @('C:\Users\User\AppData\Roaming\npm\node_modules\pnpm\bin\pnpm.cjs', 'test:run') -OutputDirectory $logs
+		$rows += Invoke-RequiredP8ProcessCommand -Name 'web-user-typecheck' -WorkingDirectory (Join-Path $workspace 'apps\web-user') -FilePath 'node.exe' -CommandArgs @('C:\Users\User\AppData\Roaming\npm\node_modules\pnpm\bin\pnpm.cjs', 'typecheck') -OutputDirectory $logs
+		$rows += Invoke-RequiredP8ProcessCommand -Name 'web-user-build' -WorkingDirectory (Join-Path $workspace 'apps\web-user') -FilePath 'node.exe' -CommandArgs @('C:\Users\User\AppData\Roaming\npm\node_modules\pnpm\bin\pnpm.cjs', 'build') -OutputDirectory $logs
+		$rows += Invoke-RequiredP8ProcessCommand -Name 'web-user-tests' -WorkingDirectory (Join-Path $workspace 'apps\web-user') -FilePath 'node.exe' -CommandArgs @('C:\Users\User\AppData\Roaming\npm\node_modules\pnpm\bin\pnpm.cjs', 'test:run') -OutputDirectory $logs
 	}
 	$required = @($rows)
 	$pass = ($required.Count -gt 0 -and @($required | Where-Object { $_.status -ne 'PASS' }).Count -eq 0)
