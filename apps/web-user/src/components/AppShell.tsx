@@ -120,18 +120,6 @@ export function AppShell() {
           </div>
         }
       />
-      <Route
-        path="/superadmin/*"
-        element={
-          <div
-            data-apex-shell="superadmin"
-            data-apex-foundation="v4-phase-b"
-            className="watany-mobile-shell watany-superadmin-shell"
-          >
-            <RequireAdmin><SuperAdminPage /></RequireAdmin>
-          </div>
-        }
-      />
       <Route path="/mobile-os" element={<Navigate to="/" replace />} />
       <Route path="/mobile-os/*" element={<Navigate to="/" replace />} />
       <Route path="/mcp" element={<Navigate to="/home" replace />} />
