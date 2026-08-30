@@ -26,6 +26,19 @@ export type AdminAuthority = {
   permissions: string[];
 };
 
+export type CommunityGroup = {
+  id: string;
+  name: string;
+  description?: string | null;
+  memberCount?: number;
+};
+
+export async function listCommunityGroups(): Promise<CommunityGroup[]> {
+  const response = await adminFetch("/api/community/groups");
+  const data = await response.json() as { groups?: CommunityGroup[] };
+  return Array.isArray(data.groups) ? data.groups : [];
+}
+
 export type NetworkVisibilityLevel = "VISIBLE_PUBLIC" | "VISIBLE_NETWORK_ONLY" | "VISIBLE_CAZA_ONLY" | "VISIBLE_VILLAGE_ONLY" | "HIDDEN";
 export type NetworkApprovalStatus = "PENDING" | "APPROVED" | "SUSPENDED" | "HIDDEN_BY_ADMIN";
 export type NetworkFamilyTier = "BASIC_FAMILY_MEMBER" | "VERIFIED_FAMILY_MEMBER" | "CONTRIBUTOR" | "COMMUNITY_STEWARD";
