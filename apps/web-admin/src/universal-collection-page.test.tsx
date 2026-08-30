@@ -53,6 +53,15 @@ describe("universal collection owner adapters", () => {
     act(() => view.root.unmount());
   });
 
+  it("uses the canonical CRM gateway endpoint and items response", async () => {
+    adminFetch.mockResolvedValue(response([{ id: "contact-1", name: "Ada", email_id: "ada@example.test" }]));
+    const view = await mount(<UniversalCollectionPage kind="crm-contacts" />);
+    await settleLoad();
+    expect(adminFetch).toHaveBeenCalledWith("/api/admin-authority/crm/contacts");
+    expect(view.container.textContent).toContain("Ada");
+    act(() => view.root.unmount());
+  });
+
   it("propagates selected ticker IDs to the exact delete executor", async () => {
     adminFetch.mockResolvedValue(response([{ id: "ticker-1", title: "Notice", type: "announce", priority: 80 }]));
     const view = await mount(<UniversalCollectionPage kind="ticker" />);

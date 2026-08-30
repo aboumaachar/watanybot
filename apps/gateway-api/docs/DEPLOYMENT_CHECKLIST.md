@@ -10,6 +10,11 @@ This checklist is the safest default path for deploying the gateway to productio
   - [ecosystem.config.cjs](../ecosystem.config.cjs)
   - [start.sh](../start.sh)
 - Confirm `.env` contains the expected production DB settings and JWT secret.
+- Confirm ERPNext CRM configuration without placing secrets in the release tree:
+  - Source default is `ERPNEXT_BASE_URL=http://127.0.0.1:18080`; this production host must explicitly use `ERPNEXT_BASE_URL=http://127.0.0.1:18081` because port `18080` belongs to another Node service.
+  - `ERPNEXT_SITE_NAME=frontend`
+  - `ERPNEXT_CREDENTIAL_FILE` points to the protected `/opt/watany/secrets/erpnext-gateway.production.json` JSON file containing `apiKey`, `apiSecret`, and `principal`.
+  - Never print, commit, copy, or place credential values in `.env`.
 
 ### NNA signed-news env note
 

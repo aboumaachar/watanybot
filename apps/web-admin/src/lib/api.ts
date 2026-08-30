@@ -1,6 +1,6 @@
 /** Static fallback (used by legacy imports). Live code should call getApiUrl() instead. */
-export const API = import.meta.env.VITE_API_URL || "http://localhost:8015";
-const LOCAL_ADMIN_API_URL = "http://localhost:8015";
+export const API = import.meta.env.VITE_API_URL || "http://localhost:4000";
+const LOCAL_ADMIN_API_URL = "http://localhost:4000";
 
 /** Returns the currently active admin API base URL (respects runtime server switch). */
 export function getApiUrl(): string {
