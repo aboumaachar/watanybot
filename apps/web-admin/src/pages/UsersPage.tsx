@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { adminFetch } from "../lib/api";
 import { ManageableList, type ManageableListAdapter } from "../components/ManageableList";
 import { executeBulkAction } from "../components/BulkActionFramework";
+import { AdminSearchInput, AdminStatusBadge } from "../components/admin/AdminPrimitives";
 
 type User = {
   id: string;
@@ -92,13 +93,7 @@ export default function UsersPage() {
       </div>
 
       <div className="toolbar">
-        <input
-          type="text"
-          placeholder="Search users by name or email…"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="search-input"
-        />
+        <AdminSearchInput value={search} onChange={setSearch} placeholder="Search users by name or email" />
         <button type="button" className="ghost" onClick={load}>
           Refresh
         </button>
@@ -134,7 +129,7 @@ export default function UsersPage() {
                     </select>
                   </td>
                   <td>
-                    <span className={`status-badge ${u.status}`}>{u.status}</span>
+                    <AdminStatusBadge status={u.status} />
                   </td>
                   <td className="muted">{new Date(u.created_at).toLocaleDateString()}</td>
                   <td className="muted">{u.last_login ? new Date(u.last_login).toLocaleString() : "Never"}</td>

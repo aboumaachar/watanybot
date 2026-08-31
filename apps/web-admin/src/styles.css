@@ -809,6 +809,57 @@ button:disabled,
   grid-column: 1 / -1;
 }
 
+.dashboard-home { display: grid; gap: 18px; }
+.admin-section { background: var(--surface); border: 1px solid var(--stroke); border-radius: 10px; padding: 20px; min-width: 0; }
+.admin-section-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 16px; }
+.admin-section-header h2 { margin: 0; font-size: 18px; }
+.admin-section-header p { margin: 5px 0 0; }
+.admin-stat-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.admin-stat-link { color: inherit; text-decoration: none; }
+.admin-stat-card { min-height: 108px; display: flex; flex-direction: column; justify-content: space-between; gap: 8px; padding: 16px; border: 1px solid var(--stroke); border-radius: 8px; background: var(--bg); }
+.admin-stat-card:hover { border-color: var(--accent); }
+.admin-stat-card strong { font-size: 26px; line-height: 1; }
+.admin-stat-label, .admin-stat-detail { color: var(--muted); font-size: 12px; }
+.admin-stat-detail { min-height: 16px; }
+.state-error { border-color: #dc2626; }
+.admin-queue-grid, .admin-action-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.admin-queue-item, .admin-action-card { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px; border: 1px solid var(--stroke); border-radius: 8px; color: var(--ink); text-decoration: none; background: var(--bg); }
+.admin-queue-item:hover, .admin-action-card:hover { border-color: var(--accent); }
+.admin-queue-item span { font-size: 20px; font-weight: 700; }
+.admin-action-card { min-height: 70px; }
+.admin-action-card small, .admin-health-row span { display: block; color: var(--muted); font-size: 12px; margin-top: 4px; }
+.admin-action-icon { color: var(--accent); font-weight: 700; }
+.admin-health-list { display: grid; gap: 8px; }
+.admin-health-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px; border-bottom: 1px solid var(--stroke); }
+.admin-health-row:last-child { border-bottom: 0; }
+.admin-status-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; }
+.status-dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+.status-healthy, .status-available { color: #15803d; }
+.status-degraded { color: #b45309; }
+.status-unavailable { color: var(--muted); }
+.admin-runtime { margin: 12px 0 0; }
+.admin-table-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+.admin-toolbar-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.admin-search input { min-width: 220px; min-height: 40px; padding: 8px 12px; border: 1px solid var(--stroke); border-radius: 8px; background: var(--surface); color: var(--ink); }
+.admin-result-count { color: var(--muted); font-size: 12px; }
+.admin-data-table-wrap { overflow-x: auto; max-width: 100%; }
+.admin-data-table { width: 100%; min-width: 640px; border-collapse: collapse; }
+.admin-data-table th, .admin-data-table td { padding: 11px 12px; border-bottom: 1px solid var(--stroke); text-align: start; vertical-align: middle; }
+.admin-data-table th { color: var(--muted); font-size: 12px; font-weight: 700; }
+.admin-state { padding: 28px 12px; text-align: center; color: var(--muted); }
+.admin-state-error { color: #b91c1c; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+
+@media (max-width: 1100px) {
+  .admin-stat-grid, .admin-action-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 600px) {
+  .admin-section { padding: 15px; }
+  .admin-stat-grid, .admin-queue-grid, .admin-action-grid { grid-template-columns: 1fr; }
+  .admin-section-header { flex-direction: column; }
+  .admin-search, .admin-search input { width: 100%; min-width: 0; }
+}
+
 /* ── Page-level styles ── */
 .page-header { margin-bottom: 20px; }
 .page-header h2 { margin: 0 0 4px; }

@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { adminFetch, getAdminErrorMessage } from "../lib/api";
 import { AdminFluentIcon } from "../components/AdminFluentIcon";
+import { AdminEmptyState, AdminErrorState, AdminLoadingState } from "../components/admin/AdminPrimitives";
 
 interface NewsItem {
   id: string;
@@ -186,10 +187,10 @@ export default function NewsAdminPage() {
       </div>
 
       {/* ── List ── */}
-      {loading && <p style={{ color: "#94a3b8" }}>جارٍ التحميل…</p>}
-      {error && <p style={{ color: "#f87171" }}>{error}</p>}
+      {loading && <AdminLoadingState message="جارٍ التحميل…" />}
+      {error && <AdminErrorState message={error} />}
       {!loading && !error && items.length === 0 && (
-        <p style={{ color: "#64748b" }}>لا توجد أخبار بعد. أضف أول خبر أعلاه.</p>
+        <AdminEmptyState message="لا توجد أخبار بعد. أضف أول خبر أعلاه." />
       )}
 
       {items.map((item) => (
