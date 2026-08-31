@@ -38,18 +38,36 @@ function RedirectToWebUser() {
   return <div className="page-loading">Redirecting...</div>;
 }
 
-const NAV_ITEMS = [
-  { path: "/", label: "Dashboard", icon: "dashboard" },
-  { path: "/features", label: "Feature Controls", icon: "settings" },
-  { path: "/users", label: "Users", icon: "users" },
-  { path: "/chat", label: "Chat Monitor", icon: "chat" },
-  { path: "/rules", label: "Content Rules", icon: "shield" },
-  { path: "/audit", label: "Audit Log", icon: "audit" },
-  { path: "/kb", label: "KB Editor", icon: "knowledge" },
-  { path: "/news", label: "News", icon: "news" },
-  { path: "/network", label: "Network", icon: "location" },
-  { path: "/jobs", label: "Jobs & Applications", icon: "briefcase" },
+const NAV_SECTIONS = [
+  { id: "overview", label: "Overview", items: [{ path: "/", label: "Dashboard", icon: "dashboard" }] },
+  { id: "cms", label: "CMS & Knowledge", items: [
+    { path: "/kb", label: "Knowledge Base", icon: "knowledge" },
+    { path: "/news", label: "News", icon: "news" },
+    { path: "/rules", label: "Content Rules", icon: "shield" },
+    { path: "/admin/documents", label: "Documents", icon: "document" },
+    { path: "/admin/procedures", label: "Procedures", icon: "folder" },
+  ] },
+  { id: "operations", label: "Operations", items: [
+    { path: "/chat", label: "Chat Monitor", icon: "chat" },
+    { path: "/jobs", label: "Jobs & Applications", icon: "briefcase" },
+    { path: "/market", label: "Marketplace", icon: "apps" },
+    { path: "/network", label: "Network", icon: "location" },
+  ] },
+  { id: "system", label: "System", items: [
+    { path: "/users", label: "Users", icon: "users" },
+    { path: "/features", label: "Feature Controls", icon: "settings" },
+    { path: "/audit", label: "Audit Log", icon: "audit" },
+  ] },
 ];
+
+const ROUTE_META: Record<string, { title: string; section: string }> = {
+  "/": { title: "Dashboard", section: "Overview" }, "/users": { title: "Users", section: "System" },
+  "/news": { title: "News", section: "CMS & Knowledge" }, "/jobs": { title: "Jobs & Applications", section: "Operations" },
+  "/market": { title: "Marketplace", section: "Operations" }, "/chat": { title: "Chat Monitor", section: "Operations" },
+  "/kb": { title: "Knowledge Base", section: "CMS & Knowledge" }, "/rules": { title: "Content Rules", section: "CMS & Knowledge" },
+  "/audit": { title: "Audit Log", section: "System" }, "/features": { title: "Feature Controls", section: "System" },
+  "/network": { title: "Network", section: "Operations" },
+};
 
 function Loading() {
   return <div className="page-loading">Loading...</div>;
@@ -62,6 +80,15 @@ const routerBasename =
 export default function App() {
   const dir = dirForLocale(defaultLocale);
   const [token, setToken] = useState(() => localStorage.getItem("admin_token"));
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => localStorage.getItem("admin_sidebar_collapsed") === "true");
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>({ cms: true, operations: true, system: true });
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const closeOnEscape = (event: KeyboardEvent) => { if (event.key === "Escape") setMobileOpen(false); };
+    document.addEventListener("keydown", closeOnEscape);
+    return () => document.removeEventListener("keydown", closeOnEscape);
+  }, [mobileOpen]);
   const isAuthenticated = Boolean(token);
   const { connected, messages } = useAdminWS(token);
 
@@ -82,9 +109,10 @@ export default function App() {
     <ErrorBoundary>
       <BrowserRouter basename={routerBasename}>
         {isAuthenticated ? (
-          <div className="admin-app" dir={dir}>
+          <div className={`admin-app ${sidebarCollapsed ? "sidebar-collapsed" : ""}`} dir={dir}>
             {/* Sidebar */}
-            <aside className="admin-sidebar">
+            {mobileOpen && <button aria-label="Close navigation" className="drawer-backdrop" onClick={() => setMobileOpen(false)} />}
+            <aside className={`admin-sidebar ${mobileOpen ? "mobile-open" : ""}`}>
               <div className="sidebar-brand">
                 <div className="brand-icon">W</div>
                 <div className="brand-text">
@@ -93,20 +121,15 @@ export default function App() {
                 </div>
               </div>
 
-              <nav className="sidebar-nav">
-                {NAV_ITEMS.map((item) => (
-                  <NavLink
-                    key={item.path}
-                    to={item.path}
-                    end={item.path === "/"}
-                    className={({ isActive }) =>
-                      `nav-item ${isActive ? "active" : ""}`
-                    }
-                  >
-                    <span className="nav-icon"><AdminFluentIcon name={item.icon} /></span>
-                    <span className="nav-label">{item.label}</span>
-                  </NavLink>
-                ))}
+              <nav className="sidebar-nav" aria-label="Primary navigation">
+                {NAV_SECTIONS.map((section) => <div className="nav-section" key={section.id}>
+                  <button className="nav-section-title" aria-expanded={openSections[section.id] !== false} onClick={() => setOpenSections((current) => ({ ...current, [section.id]: current[section.id] === false }))}>
+                    <span>{section.label}</span><span aria-hidden="true">{openSections[section.id] === false ? "+" : "−"}</span>
+                  </button>
+                  {openSections[section.id] !== false && section.items.map((item) => <NavLink key={item.path} to={item.path} end={item.path === "/"} onClick={() => setMobileOpen(false)} className={({ isActive }) => `nav-item ${isActive ? "active" : ""}`}>
+                    <span className="nav-icon"><AdminFluentIcon name={item.icon} /></span><span className="nav-label">{item.label}</span>
+                  </NavLink>)}
+                </div>)}
               </nav>
 
               <div className="sidebar-footer">
@@ -134,15 +157,9 @@ export default function App() {
             {/* Main content */}
             <main className="admin-main">
               <header className="admin-topbar">
-                <div>
-                  <div className="eyebrow">Watany Ops</div>
-                  <p className="subtle">Unified view of runtime health, queues, and knowledge.</p>
-                </div>
-                <div className="top-actions">
-                  <button type="button" className="ghost">Create Incident</button>
-                  <button type="button" className="ghost">Sync KB</button>
-                  <button type="button" className="accent">Export Report</button>
-                </div>
+                <button type="button" className="menu-toggle" aria-label="Open navigation" onClick={() => setMobileOpen(true)}>☰</button>
+                <button type="button" className="collapse-toggle" aria-label={sidebarCollapsed ? "Expand navigation" : "Collapse navigation"} onClick={() => { const next = !sidebarCollapsed; setSidebarCollapsed(next); localStorage.setItem("admin_sidebar_collapsed", String(next)); }}>‹</button>
+                <RouteContext />
               </header>
 
               <section className="admin-content grid">
@@ -184,5 +201,11 @@ export default function App() {
       </BrowserRouter>
     </ErrorBoundary>
   );
+}
+
+function RouteContext() {
+  const location = useLocation();
+  const meta = ROUTE_META[location.pathname] ?? { title: "Superadmin", section: "Superadmin" };
+  return <div className="page-context"><div className="breadcrumbs"><span>Watany Ops</span><span aria-hidden="true">/</span><span>{meta.section}</span><span aria-hidden="true">/</span><span aria-current="page">{meta.title}</span></div><h1>{meta.title}</h1></div>;
 }
 
