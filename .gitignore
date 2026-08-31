@@ -20,6 +20,8 @@ apps/gateway-api/data/plugins.sqlite
 apps/gateway-api/data/plugins.sqlite-shm
 apps/gateway-api/data/plugins.sqlite-wal
 apps/gateway-api/data/unrecognized_inputs.jsonl
+apps/gateway-api/data/chat-inputs.jsonl
+apps/gateway-api/data/question-clusters.json
 apps/gateway-api/data/voice_e2e_alerts.json
 apps/gateway-api/data/voice_e2e_history.json
 apps/gateway-api/runtime_kb.json
@@ -71,6 +73,7 @@ scripts/.env.ollama-deepseek
 *.bak-*
 data/*.sqlite-shm
 data/*.sqlite-wal
+data/plugins.sqlite
 _tmp_ignore.txt
 
 # Local runtime and generated publish outputs
@@ -127,3 +130,7 @@ apps/web-user/.env.development
 # END APEX LOCAL PUBLICATION QUARANTINE
 pma/evidence/cms/
 tmp/rag-test-runtime-*.jsonl
+# Phase B Release Integration
+tmp/admin-cms-gate-repair/
+PUBLISHED_DOMAINS_HTTP_200.csv
+apps/gateway-api/runtime/webpush-vapid.json
