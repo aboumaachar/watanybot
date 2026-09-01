@@ -1,7 +1,9 @@
 {
-  "schema_version": "wave4a-integration-flow-v1",
+  "schema_version": "wave4a-integration-flow-v2-reconciled",
   "content_type_count": 15,
-  "payload_owned_types": [],
+  "payload_owned_types": ["procedures", "documents"],
+  "payload_to_gateway_flow_count": 0,
+  "future_payload_to_gateway_convergence_count": 2,
   "bidirectional_editor_authority_count": 0,
   "flows": [
     {
@@ -49,30 +51,36 @@
     {
       "feature_id": "documents",
       "content_type": "Document assets and uploads",
-      "direction": "Gateway upload/document routes -> GATEWAY_POSTGRES_SPECIALIZED public.documents -> GATEWAY_API",
-      "importer": "Authenticated document upload",
-      "normalizer_validator": "DocumentService kind/status/tag/path validation",
-      "canonical_id_owner": "Gateway document UUID",
-      "revision_owner": "Gateway cms.documents version snapshots",
-      "publication_owner": "Document verification status mapping",
-      "archive_owner": "Rejected/delete operational state",
-      "provenance_owner": "user/file/path/tag metadata",
-      "delivery_owner": "Gateway document API",
-      "bidirectional_editor_authority": false
+      "direction": "KB_STUDIO source -> PAYLOAD canonical Documents; current Gateway upload/CMS planes remain separate -> GATEWAY_API delivery",
+      "importer": "KB Studio documents.jsonl through guarded Payload importer; authenticated Gateway uploads are operational",
+      "normalizer_validator": "Payload collection validation plus KB normalization; DocumentService validates operational uploads",
+      "canonical_id_owner": "Payload Documents businessIdentifier; Gateway upload UUIDs are separate",
+      "revision_owner": "Payload versions/revisionNumber/audit-events",
+      "publication_owner": "Payload workflowStatus/_status",
+      "archive_owner": "Payload ARCHIVED workflow; Gateway rejected/delete is operational",
+      "provenance_owner": "Payload sourceSystem/sourcePrimaryKey/sourceHash/contentHash/migration fields",
+      "delivery_owner": "Gateway API/file delivery",
+      "bidirectional_editor_authority": false,
+      "current_dual_write": true,
+      "noncanonical_writer_disposition": "LEGACY_TO_REMOVE_FOR_SOURCE_BACKED_OVERLAP",
+      "payload_to_gateway_contract": "REQUIRED_WAVE4B_ONE_WAY_DERIVED_READ_MODEL"
     },
     {
       "feature_id": "procedures",
       "content_type": "Procedures",
-      "direction": "KB_STUDIO source/import -> WEB_ADMIN_GATEWAY_CMS canonical procedure dataset -> GATEWAY_API",
-      "importer": "KB Studio import and normalization; bounded Gateway CMS create",
-      "normalizer_validator": "procedure indexer and CMS route validation",
-      "canonical_id_owner": "Existing procedure ID at Gateway canonical boundary",
-      "revision_owner": "Gateway CMS entity version/audit service",
-      "publication_owner": "Gateway procedure status routes",
-      "archive_owner": "Gateway procedure archive/restore routes",
-      "provenance_owner": "source/source_refs and procedure-document mappings",
+      "direction": "KB_STUDIO source -> PAYLOAD canonical Procedures; current Gateway JSONL writer remains legacy -> GATEWAY_API delivery",
+      "importer": "KB Studio procedures.jsonl through guarded Payload importer",
+      "normalizer_validator": "Payload collection validation plus KB normalization; Gateway indexer is a current read path",
+      "canonical_id_owner": "Payload Procedures businessIdentifier",
+      "revision_owner": "Payload versions/revisionNumber/audit-events",
+      "publication_owner": "Payload workflowStatus/_status",
+      "archive_owner": "Payload ARCHIVED workflow",
+      "provenance_owner": "Payload sourceSystem/sourcePrimaryKey/sourceHash/contentHash/migration fields and source relationships",
       "delivery_owner": "Gateway procedure API",
-      "bidirectional_editor_authority": false
+      "bidirectional_editor_authority": false,
+      "current_dual_write": true,
+      "noncanonical_writer_disposition": "LEGACY_TO_REMOVE",
+      "payload_to_gateway_contract": "REQUIRED_WAVE4B_ONE_WAY_DERIVED_READ_MODEL"
     },
     {
       "feature_id": "knowledge-base",
@@ -220,6 +228,7 @@
     "FLOW_ROW_COUNT": 15,
     "DUPLICATE_FLOW_ROW_COUNT": 0,
     "BIDIRECTIONAL_EDITOR_AUTHORITY_COUNT": 0,
-    "PAYLOAD_FLOW_COUNT": 0
+    "PAYLOAD_FLOW_COUNT": 2,
+    "PAYLOAD_TO_GATEWAY_FLOW_COUNT": 0
   }
 }

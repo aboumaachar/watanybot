@@ -1,5 +1,5 @@
 {
-  "schema_version": "wave4a-lifecycle-matrix-v1",
+  "schema_version": "wave4a-lifecycle-matrix-v2-reconciled",
   "content_type_count": 15,
   "capability_values": ["REQUIRED", "NOT_APPLICABLE", "EXTERNAL", "ALREADY_SUPPORTED"],
   "capabilities": ["CREATE", "EDIT", "VIEW", "PREVIEW", "DRAFT", "REVIEW", "PUBLISH", "UNPUBLISH", "ARCHIVE", "RESTORE", "VERSION_HISTORY", "ROLLBACK", "SEO", "MEDIA", "ATTACHMENTS", "SOURCE_PROVENANCE"],
@@ -32,17 +32,17 @@
       "feature_id": "documents",
       "content_type": "Document assets and uploads",
       "capabilities": {
-        "CREATE": "ALREADY_SUPPORTED", "EDIT": "ALREADY_SUPPORTED", "VIEW": "ALREADY_SUPPORTED", "PREVIEW": "EXTERNAL", "DRAFT": "EXTERNAL", "REVIEW": "EXTERNAL", "PUBLISH": "EXTERNAL", "UNPUBLISH": "EXTERNAL", "ARCHIVE": "EXTERNAL", "RESTORE": "NOT_APPLICABLE", "VERSION_HISTORY": "ALREADY_SUPPORTED", "ROLLBACK": "ALREADY_SUPPORTED", "SEO": "NOT_APPLICABLE", "MEDIA": "ALREADY_SUPPORTED", "ATTACHMENTS": "EXTERNAL", "SOURCE_PROVENANCE": "ALREADY_SUPPORTED"
+        "CREATE": "ALREADY_SUPPORTED", "EDIT": "ALREADY_SUPPORTED", "VIEW": "ALREADY_SUPPORTED", "PREVIEW": "REQUIRED", "DRAFT": "ALREADY_SUPPORTED", "REVIEW": "ALREADY_SUPPORTED", "PUBLISH": "ALREADY_SUPPORTED", "UNPUBLISH": "ALREADY_SUPPORTED", "ARCHIVE": "ALREADY_SUPPORTED", "RESTORE": "REQUIRED", "VERSION_HISTORY": "ALREADY_SUPPORTED", "ROLLBACK": "REQUIRED", "SEO": "ALREADY_SUPPORTED", "MEDIA": "REQUIRED", "ATTACHMENTS": "ALREADY_SUPPORTED", "SOURCE_PROVENANCE": "ALREADY_SUPPORTED"
       },
-      "notes": "The CMS adapter is an administrative projection over user/file assets; pending/verified/rejected are storage/verification states."
+      "notes": "Payload Documents has drafts/workflow, versions, source provenance, SEO, and procedure relations; explicit preview, restore, rollback, and media-upload linkage remain convergence requirements. Gateway operational uploads are separate."
     },
     {
       "feature_id": "procedures",
       "content_type": "Procedures",
       "capabilities": {
-        "CREATE": "ALREADY_SUPPORTED", "EDIT": "ALREADY_SUPPORTED", "VIEW": "ALREADY_SUPPORTED", "PREVIEW": "ALREADY_SUPPORTED", "DRAFT": "ALREADY_SUPPORTED", "REVIEW": "ALREADY_SUPPORTED", "PUBLISH": "ALREADY_SUPPORTED", "UNPUBLISH": "ALREADY_SUPPORTED", "ARCHIVE": "ALREADY_SUPPORTED", "RESTORE": "ALREADY_SUPPORTED", "VERSION_HISTORY": "ALREADY_SUPPORTED", "ROLLBACK": "REQUIRED", "SEO": "REQUIRED", "MEDIA": "NOT_APPLICABLE", "ATTACHMENTS": "ALREADY_SUPPORTED", "SOURCE_PROVENANCE": "ALREADY_SUPPORTED"
+        "CREATE": "ALREADY_SUPPORTED", "EDIT": "ALREADY_SUPPORTED", "VIEW": "ALREADY_SUPPORTED", "PREVIEW": "REQUIRED", "DRAFT": "ALREADY_SUPPORTED", "REVIEW": "ALREADY_SUPPORTED", "PUBLISH": "ALREADY_SUPPORTED", "UNPUBLISH": "ALREADY_SUPPORTED", "ARCHIVE": "ALREADY_SUPPORTED", "RESTORE": "REQUIRED", "VERSION_HISTORY": "ALREADY_SUPPORTED", "ROLLBACK": "REQUIRED", "SEO": "ALREADY_SUPPORTED", "MEDIA": "ALREADY_SUPPORTED", "ATTACHMENTS": "ALREADY_SUPPORTED", "SOURCE_PROVENANCE": "ALREADY_SUPPORTED"
       },
-      "notes": "Gateway CMS routes prove the main lifecycle and versions/audit; rollback and SEO remain completion items."
+      "notes": "Payload Procedures has workflow/draft/version, SEO, media attachment, source provenance, and document relations; explicit preview, restore, rollback, and Gateway read-model publication remain convergence requirements."
     },
     {
       "feature_id": "knowledge-base",

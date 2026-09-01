@@ -7,8 +7,8 @@ The machine-readable matrix in `machine/content-authority.json` is binding. Each
 | generic-cms-entities | Generic CMS entities and relationships | WEB_ADMIN_GATEWAY_CMS | GATEWAY_POSTGRES_GENERIC_CMS | GATEWAY_API | COMPLETE_IN_WEB_ADMIN | MEDIUM |
 | news | News | SPECIALIZED_WEB_ADMIN_DOMAIN | OTHER_EXPLICIT: Gateway pluginDb SQLite `news_items` | GATEWAY_API | NO_CHANGE | HIGH |
 | community | Community | SPECIALIZED_WEB_ADMIN_DOMAIN | GATEWAY_POSTGRES_SPECIALIZED | GATEWAY_API | DEFER_NOT_CMS | HIGH |
-| documents | Document assets and uploads | SPECIALIZED_WEB_ADMIN_DOMAIN | GATEWAY_POSTGRES_SPECIALIZED: `public.documents` | GATEWAY_API | DEFER_NOT_CMS | HIGH |
-| procedures | Procedures | WEB_ADMIN_GATEWAY_CMS | FILESYSTEM_DATASET: resolved `procedures.jsonl` | GATEWAY_API | COMPLETE_IN_WEB_ADMIN | HIGH |
+| documents | Source-backed canonical documents; Gateway operational uploads remain separate | PAYLOAD | PAYLOAD_POSTGRES | GATEWAY_API | INTEGRATE_PAYLOAD_WITH_GATEWAY | HIGH |
+| procedures | Procedures | PAYLOAD | PAYLOAD_POSTGRES | GATEWAY_API | INTEGRATE_PAYLOAD_WITH_GATEWAY | HIGH |
 | knowledge-base | Knowledge base | KB_STUDIO | FILESYSTEM_DATASET | GATEWAY_API | KEEP_SPECIALIZED_OWNER | HIGH |
 | ticker | Ticker | SPECIALIZED_WEB_ADMIN_DOMAIN | OTHER_EXPLICIT: Gateway pluginDb SQLite `ticker_items` | GATEWAY_API | NO_CHANGE | HIGH |
 | ai-training | AI training examples | SPECIALIZED_WEB_ADMIN_DOMAIN | FILESYSTEM_DATASET: configured training JSONL | OTHER_EXPLICIT: internal training/admin API | DEFER_NOT_CMS | HIGH |
@@ -22,7 +22,7 @@ The machine-readable matrix in `machine/content-authority.json` is binding. Each
 
 ## Required ownership fields
 
-Every row in the machine matrix also records the importer, validator, canonical ID owner, revision owner, publication owner, archive owner, source provenance owner, evidence paths, and confidence. `OTHER_EXPLICIT` is used only where the observed store is SQLite, an internal-only API, or a proven absence that does not fit the narrower allowed classes.
+Every row in the machine matrix also records the importer, validator, canonical ID owner, revision owner, publication owner, archive owner, source provenance owner, evidence paths, and confidence. The reconciled Procedures/Documents rows also record their current dual-write status, noncanonical writer disposition, and future convergence role. `OTHER_EXPLICIT` is used only where the observed store is SQLite, an internal-only API, or a proven absence that does not fit the narrower allowed classes.
 
 ## Reading the table
 
@@ -30,3 +30,4 @@ Every row in the machine matrix also records the importer, validator, canonical 
 - `KEEP_SPECIALIZED_OWNER` means the current domain authority remains binding; no generic CMS duplicate may be introduced.
 - `NO_CHANGE` means the current specialized owner is already the selected authority for this lock.
 - `COMPLETE_IN_WEB_ADMIN` means the Gateway/Web Admin boundary is the future completion surface; it does not authorize a Payload implementation.
+- `INTEGRATE_PAYLOAD_WITH_GATEWAY` means Payload is canonical and Gateway must become a one-way derived read model/runtime delivery path; it does not authorize implementation in this turn.

@@ -14,14 +14,15 @@
 ## Locked owners
 
 - The `knowledge-base` row is canonical to `KB_STUDIO` and `FILESYSTEM_DATASET`.
-- Procedures are canonical to `WEB_ADMIN_GATEWAY_CMS` at the Gateway procedure CMS boundary, while KB Studio owns upstream source ingestion and normalization.
+- KB Studio owns source ingestion and normalization for Procedures/Documents, but Payload is the canonical editorial authority for those two source-backed rows.
+- Procedures/Documents flow one-way from KB Studio source/normalization into Payload; Gateway is the runtime delivery/read-model boundary, not a second editorial owner.
 - KB Studio is not a second generic editorial CMS for news, community, chat, or operational records.
-- KB Studio does not become a bidirectional editor for procedures. Its source flow is one-way into the canonical procedure dataset.
+- KB Studio does not become a bidirectional editor for procedures or documents. Its source flow is one-way into the Payload canonical collections.
 
 ## Dataset locations
 
-The current resolver in `apps/gateway-api/src/procedures/config.ts` prefers an explicit procedure root or `kb_vnext` when complete, then configured/known KB Studio exports. The local proven export is `kb_studio/runtime/exports/watanybot/`. This resolver behavior is evidence for the dataset boundary, not permission to add another editor.
+The current resolver in `apps/gateway-api/src/procedures/config.ts` prefers an explicit procedure root or `kb_vnext` when complete, then configured/known KB Studio exports. The local proven export is `kb_studio/runtime/exports/watanybot/`. The external Payload importer reads this same source-backed export family. The Gateway resolver is current delivery/read-model evidence, not permission to add another editor.
 
 ## Wave 4B guardrails
 
-Future work must document import job identity, validation failures, canonical ID preservation, provenance, conflict handling, and whether a dataset export is ready for public delivery. It must not turn a normalization/export dataset into an untracked second editorial authority.
+Future work must document import job identity, validation failures, canonical ID preservation, provenance, conflict handling, Payload-to-Gateway read-model publication, and whether a dataset export is ready for public delivery. It must not turn a normalization/export dataset into an untracked second editorial authority.
