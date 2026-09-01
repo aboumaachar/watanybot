@@ -25,12 +25,13 @@ function payloadResponse(body: unknown) {
   };
 }
 
-function publishedProcedure(id: string, documentRelations: unknown[] = []) {
+function publishedProcedure(canonicalId: string, documentRelations: unknown[] = [], businessIdentifier = canonicalId) {
   return {
-    id: `payload-internal-${id}`,
-    businessIdentifier: id,
-    titleAr: `إجراء ${id}`,
-    summaryAr: `ملخص ${id}`,
+    id: `payload-internal-${canonicalId}`,
+    canonicalId,
+    businessIdentifier,
+    titleAr: `إجراء ${canonicalId}`,
+    summaryAr: `ملخص ${canonicalId}`,
     sourceSystem: "P4B",
     publicationState: "published",
     workflowStatus: "PUBLISHED",
@@ -39,11 +40,12 @@ function publishedProcedure(id: string, documentRelations: unknown[] = []) {
   };
 }
 
-function publishedDocument(id: string, procedureRelations: unknown[] = []) {
+function publishedDocument(canonicalId: string, procedureRelations: unknown[] = [], businessIdentifier = canonicalId) {
   return {
-    id: `payload-internal-${id}`,
-    businessIdentifier: id,
-    titleAr: `وثيقة ${id}`,
+    id: `payload-internal-${canonicalId}`,
+    canonicalId,
+    businessIdentifier,
+    titleAr: `وثيقة ${canonicalId}`,
     sourceSystem: "P4B",
     publicationState: "published",
     workflowStatus: "PUBLISHED",
@@ -57,6 +59,27 @@ async function temporaryRuntimeRoot(): Promise<string> {
 }
 
 describe("Payload canonical sync mapping", () => {
+  it("prefers canonicalId over Payload businessIdentifier for records and relations", () => {
+    const procedure = publishedProcedure(
+      "P4B_REAL_PROCEDURE_A",
+      [{ canonicalId: "P4B_REAL_DOCUMENT_A", businessIdentifier: "DOC-0001" }],
+      "PROC-0001",
+    );
+    const document = publishedDocument(
+      "P4B_REAL_DOCUMENT_A",
+      [{ canonicalId: "P4B_REAL_PROCEDURE_A", businessIdentifier: "PROC-0001" }],
+      "DOC-0001",
+    );
+
+    const candidate = buildPayloadRuntimeCandidate([procedure], [document]);
+
+    expect(candidate.procedures.map((row) => row.id)).toEqual(["P4B_REAL_PROCEDURE_A"]);
+    expect(candidate.documents.map((row) => row.id)).toEqual(["P4B_REAL_DOCUMENT_A"]);
+    expect(candidate.mappings).toEqual([
+      expect.objectContaining({ procedure_id: "P4B_REAL_PROCEDURE_A", doc_ids: ["P4B_REAL_DOCUMENT_A"] }),
+    ]);
+  });
+
   it("pages collections, filters lifecycle state, preserves IDs, and maps both relation directions", async () => {
     process.env.PAYLOAD_CMS_BASE_URL = "http://payload.test";
     const runtimeRoot = await temporaryRuntimeRoot();
@@ -124,7 +147,7 @@ describe("Payload canonical sync mapping", () => {
     expect(() => buildPayloadRuntimeCandidate([
       publishedProcedure("P4B_PROCEDURE_A"),
       publishedProcedure("P4B_PROCEDURE_A"),
-    ], [])).toThrowError(/Duplicate Payload procedure businessIdentifier/);
+    ], [])).toThrowError(/Duplicate Payload procedure canonicalId/);
 
     expect(() => buildPayloadRuntimeCandidate([
       publishedProcedure("P4B_PROCEDURE_A", [{ businessIdentifier: "P4B_DOCUMENT_MISSING" }]),

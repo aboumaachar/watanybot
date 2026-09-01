@@ -157,7 +157,7 @@ function relationValues(value: unknown): unknown[] {
 function relationReference(value: unknown): string {
   const record = asRecord(value);
   if (!record) return stringValue(value);
-  return firstString(record, ["businessIdentifier", "canonicalId", "id"]);
+  return firstString(record, ["canonicalId", "businessIdentifier", "id"]);
 }
 
 function normalizedKey(value: string): string {
@@ -180,7 +180,7 @@ function textList(value: unknown, objectKeys: string[] = ["item", "text", "value
 function relationLabels(value: unknown): string[] {
   return Array.from(new Set(relationValues(value).map((item) => {
     const record = asRecord(item);
-    return record ? firstString(record, ["name", "label", "title", "value", "businessIdentifier", "canonicalId", "id"]) : stringValue(item);
+    return record ? firstString(record, ["name", "label", "title", "value", "canonicalId", "businessIdentifier", "id"]) : stringValue(item);
   }).filter(Boolean)));
 }
 
@@ -189,7 +189,7 @@ function mapSourceRefs(value: unknown): SourceRef[] {
     const record = asRecord(item);
     if (!record) return { source_id: stringValue(item) };
     return {
-      source_id: firstString(record, ["businessIdentifier", "canonicalId", "slug", "id"]),
+      source_id: firstString(record, ["canonicalId", "businessIdentifier", "slug", "id"]),
       source_path: firstString(record, ["path", "sourcePath", "url"]),
       anchor: firstString(record, ["anchor", "sourceAnchor"]),
     };
@@ -197,9 +197,9 @@ function mapSourceRefs(value: unknown): SourceRef[] {
 }
 
 function requireCanonicalId(record: PayloadRecord, kind: string): string {
-  const id = firstString(record, ["businessIdentifier", "canonicalId"]);
+  const id = firstString(record, ["canonicalId", "businessIdentifier"]);
   if (!id) {
-    throw new PayloadSyncError("PAYLOAD_SYNC_INVALID_DATASET", `Payload ${kind} is missing businessIdentifier`, 422);
+    throw new PayloadSyncError("PAYLOAD_SYNC_INVALID_DATASET", `Payload ${kind} is missing canonicalId`, 422);
   }
   return id;
 }
@@ -277,7 +277,7 @@ function indexRecords(records: PayloadRecord[], kind: string): Map<string, Paylo
     const canonicalId = requireCanonicalId(record, kind);
     const canonicalKey = normalizedKey(canonicalId);
     if (index.has(canonicalKey)) {
-      throw new PayloadSyncError("PAYLOAD_SYNC_INVALID_DATASET", `Duplicate Payload ${kind} businessIdentifier: ${canonicalId}`, 422);
+      throw new PayloadSyncError("PAYLOAD_SYNC_INVALID_DATASET", `Duplicate Payload ${kind} canonicalId: ${canonicalId}`, 422);
     }
     index.set(canonicalKey, record);
 
