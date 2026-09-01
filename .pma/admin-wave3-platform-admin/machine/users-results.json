@@ -1,1 +1,1 @@
-{"status":"PARTIAL","serverSideQuery":true,"serverSideFilters":true,"serverSidePagination":true,"detailDrawer":true,"mutationBrowserProof":false}
+{"status":"PASS","serverSideQuery":true,"serverSideFilters":true,"serverSidePagination":true,"detailDrawer":true,"mutationBrowserProof":true,"roleMutation":true,"roleMutationAudit":true,"statusMutation":true,"statusMutationAudit":true,"lastActiveAdminDisableGuard":true,"lastActiveAdminDemotionGuard":true}

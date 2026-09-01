@@ -1,1 +1,1 @@
-{"status":"NOT_RUN","wave1Regression":"PASS","wave2Regression":"PASS"}
+{"status":"PASS","wave1Regression":"PASS","wave2Regression":"PASS","wave3CanonicalRouteCount":10,"routeFallbackToDashboardCount":0,"routes":["/superadmin/users","/superadmin/administrators","/superadmin/roles-permissions","/superadmin/sessions","/superadmin/features","/superadmin/audit","/superadmin/approvals","/superadmin/authority-audit","/superadmin/system/health","/superadmin/system/integrations"]}

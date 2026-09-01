@@ -1,1 +1,1 @@
-{"status":"PARTIAL","backendEndpoints":true,"tokenValuesExposed":false,"ui":false,"mutationProof":false}
+{"status":"PASS","backendEndpoints":true,"tokenValuesExposed":false,"ui":true,"detailView":true,"mutationProof":true,"revokeOne":true,"revokeOneAudit":true,"revokeAllUser":true,"revokeAllAudit":true,"unrelatedSessionsPreserved":true}

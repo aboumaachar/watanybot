@@ -1,1 +1,1 @@
-{"status":"PARTIAL","serverSideSearch":true,"serverSidePagination":true,"authorityAuditView":true,"approvalDecisions":false}
+{"status":"PASS","serverSideSearch":true,"serverSidePagination":true,"authorityAuditView":true,"approvalDecisions":true,"userRoleAudit":true,"userStatusAudit":true,"sessionRevocationAudit":true,"approvalAuditSideEffect":true,"approvalVersionSideEffect":true}
