@@ -1,0 +1,9 @@
+id,stage,severity,state,detail
+W001,browser,ADVISORY,ACCEPTED,Disposable Gateway was started with DISABLE_WEBSOCKETS=true and emitted expected /ws/admin 404 console noise
+W002,browser,ADVISORY,ACCEPTED,React Router emitted existing future-flag warnings during browser proof
+W003,web-admin-build,ADVISORY,ACCEPTED,Vite reported existing static and dynamic import chunking overlap
+W004,ide-diagnostics,ADVISORY,ACCEPTED,Workspace diagnostics include existing complexity and style findings; executable typechecks and builds passed
+W005,delivery,INFO,RESOLVED,Commit SHA and push result verified after report freeze; final artifacts rehashed
+W006,real-payload,ADVISORY,ACCEPTED,Payload /healthz was not present in this build; /api/health returned HTTP 200 with degraded optional-service status
+W007,real-payload,ADVISORY,ACCEPTED,Gateway websocket-disabled runtime emitted expected /ws/admin 404 noise; it did not affect REST acceptance
+W008,scope,INFO,RESOLVED,Historical fixture/browser proof was not rerun and Wave 4B.2 was not started

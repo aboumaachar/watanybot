@@ -1,0 +1,21 @@
+APEX_PS1_SKILL_UPDATE_NOT_REQUIRED
+2026-09-01T11:50:29Z BROWSER_AUTH_RECOVERY Valid disposable authority token persisted and direct API check returned 200.
+2026-09-01T11:50:29Z BROWSER_DESKTOP_PASS Procedure ownership, canonical ID, sync counts, and read-only marker observed.
+2026-09-01T11:50:39Z BROWSER_EDITORIAL_PASS Payload editorial document list and detail showed linked procedure and read-only state.
+2026-09-01T12:06:14Z MOBILE_PROBE_FAIL Initial 430px probe found document width 478 and visible RTL drawer clipping.
+2026-09-01T12:06:15Z EDIT_TABLE_WRAP Applied existing table-wrap utility to CMS data grid.
+2026-09-01T12:06:16Z VALIDATION_PASS Web-admin typecheck and build passed after table wrapper repair.
+2026-09-01T12:06:17Z EDIT_RTL_DRAWER Anchored RTL mobile admin drawer at right:0 and left:auto.
+2026-09-01T12:06:18Z MOBILE_PROBE_PASS 430px document width 415 equals viewport width 415; drawer fully off-canvas.
+2026-09-01T12:14:18Z LIVE_READ_PROOF Sanitized Gateway reads returned canonical procedure attachments and editorial IDs.
+2026-09-01T12:15:31Z CLEANUP_PASS Disposable Gateway Payload fixture and Vite listeners stopped; ports clean.
+2026-09-01T12:15:31Z REPORT_FREEZE Credential-free APEX artifact set created.
+2026-09-01T12:15:31Z GIT_CLOSEOUT_PASS Commit c7ca29999b41bf41511abd29429ac448e73b05aa created with the required subject and pushed; remote SHA matches local HEAD.
+2026-09-01T12:15:31Z WORKTREE_ISOLATION_PASS Staged unrelated path count was zero; six unrelated paths remain unstaged.
+2026-09-01T16:52:52Z SOURCE_VALIDATION_PASS Focused canonical sync tests 5/5; Gateway typecheck and build passed.
+2026-09-01T16:53:10Z REAL_PAYLOAD_ACCEPTANCE_PASS REST snapshot recorded 2 procedures and 4 documents with canonical identity fields.
+2026-09-01T16:53:10Z REAL_PAYLOAD_LIFECYCLE_PASS Archive exclusion and republish relationship restoration recorded.
+2026-09-01T16:53:10Z LAST_GOOD_PROTECTION_PASS HTTP 503 UNAVAILABLE left the active pointer SHA256 unchanged.
+2026-09-01T16:53:10Z DISPOSABLE_DATABASE_CLEANUP_PASS Exact isolated databases dropped; protected normal database untouched.
+2026-09-01T16:53:10Z TEMPORARY_ARTIFACT_CLEANUP_PASS Runner snapshots runtime cluster data and logs removed; ports 3001 4001 55434 clear.
+2026-09-01T16:53:10Z SOURCE_COMMIT_PASS fix(cms): correct real Payload bridge contract at 89335a1d4c7a133e6e3f200e77e5943890e40a35.

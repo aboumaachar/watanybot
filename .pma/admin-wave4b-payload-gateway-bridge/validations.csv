@@ -1,0 +1,28 @@
+id,stage,command_or_surface,result,detail
+V001,preflight,APEX PS1 skill load,PASS,APEX_PS1_SKILL_UPDATE_NOT_REQUIRED
+V002,bridge,src/tests/payload-canonical-sync.test.ts,PASS,4 bridge tests passed
+V003,authority,src/tests/payload-cms-boundary.test.ts,PASS,3 authority and writer-boundary tests passed
+V004,regression,procedures-search and Gateway regression suites,PASS,5 suites passed; 17 tests passed; 3 skipped
+V005,gateway,pnpm --dir apps/gateway-api typecheck,PASS,TypeScript noEmit passed
+V006,gateway,pnpm --dir apps/gateway-api build,PASS,Gateway build target passed in prior regression run
+V007,web-admin,pnpm --dir apps/web-admin typecheck,PASS,TypeScript noEmit passed
+V008,web-admin,pnpm --dir apps/web-admin build,PASS_WITH_ADVISORY,Production bundle passed with existing Vite chunk advisories
+V009,runtime,POST /api/admin/cms/payload-sync/sync,PASS,SYNCED run 68721380-5e0c-4bdf-808b-41c4e99a6e34
+V010,runtime,GET Gateway CMS reads,PASS,Canonical procedure and two editorial documents exposed
+V011,browser,1440x900 authenticated CMS proof,PASS,Payload owner and read-only editorial surfaces visible
+V012,browser,430x932 authenticated CMS proof,PASS,No horizontal overflow and RTL drawer fully off-canvas
+V013,browser,430x932 media state,PASS,maxTouchPoints=10; any-pointer coarse=true
+V014,safety,External Payload source and database inspection,PASS,No external source or database mutation
+V015,cleanup,Ports 3001 4000 4010 5175,PASS,No listeners after disposable service teardown
+V016,delivery,git rev-parse HEAD versus origin/integration/theme-upgrade-20260728,PASS,Remote SHA matches c7ca29999b41bf41511abd29429ac448e73b05aa; staged unrelated path count was zero
+V017,source,pnpm exec vitest run src/tests/payload-canonical-sync.test.ts,PASS,5 tests passed
+V018,source,pnpm --dir apps/gateway-api typecheck,PASS,TypeScript noEmit passed after source correction
+V019,source,pnpm --dir apps/gateway-api build,PASS,Gateway production target passed after source correction
+V020,real-payload,Final Payload REST snapshot,PASS,2 procedures and 4 documents; canonicalId and businessIdentifier serialized
+V021,real-payload,Enriched Gateway sync,PASS,SYNCED d52f0819-0b3d-4f66-bdef-6c7e6747dd2d; 2 fetched procedures; 1 published; 4 fetched documents; 2 published; 1 mapping
+V022,real-payload,Archive lifecycle sync,PASS,0 procedures published; draft and archived procedure runtime reads returned 404
+V023,real-payload,Republish lifecycle sync,PASS,Canonical procedure and both document relationship directions restored
+V024,real-payload,Unavailable sync protection,PASS,HTTP 503 UNAVAILABLE; FAILED / UNAVAILABLE; active pointer SHA256 unchanged
+V025,cleanup,Disposable database teardown,PASS,Exact isolated Payload and Gateway databases dropped; zero remained; normal database untouched
+V026,cleanup,Temporary acceptance artifact teardown,PASS,Runner snapshots candidate runtime and isolated PostgreSQL data removed; ports 3001 4001 55434 clear
+V027,delivery,Source correction selective staging,PASS,Only the two Gateway source paths were committed; unrelated worktree paths stayed unstaged
