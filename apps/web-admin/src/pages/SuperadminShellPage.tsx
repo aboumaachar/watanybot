@@ -7,6 +7,9 @@ import FeatureControlsPage from "./FeatureControlsPage";
 import CmsPage from "./CmsPage";
 import CommunityPage from "./CommunityPage";
 import UniversalCollectionPage from "./UniversalCollectionPage";
+import PlatformAdminPage from "./PlatformAdminPage";
+import UsersPage from "./UsersPage";
+import SessionsPage from "./SessionsPage";
 
 const SHELL_ITEMS = [
   { path: "/superadmin", label: "الرئيسية", icon: "dashboard", end: true },
@@ -93,26 +96,33 @@ export default function SuperadminShellPage() {
 
   const path = location.pathname;
   let content = <ShellHome authority={authority} />;
-  if (path === "/superadmin/audit") content = <AuditPage />;
-  else if (path === "/superadmin/features") content = <FeatureControlsPage />;
-  else if (path === "/superadmin/cms/community") content = <CommunityPage />;
-  else if (path === "/superadmin/cms" || path === "/superadmin/cms/procedures") content = <CmsPage />;
-  else if (path === "/superadmin/system/official-services") content = <UniversalCollectionPage kind="official-services" />;
-  else if (path === "/superadmin/system/ticker") content = <UniversalCollectionPage kind="ticker" />;
-  else if (path === "/superadmin/system/features") content = <FeatureControlsPage />;
-  else if (path === "/superadmin/cms/ai-training") content = <UniversalCollectionPage kind="ai-training" />;
-  else if (path === "/superadmin/cms/abusive-events") content = <UniversalCollectionPage kind="abusive-events" />;
-  else if (path === "/superadmin/cms/chat-inputs") content = <UniversalCollectionPage kind="chat-inputs" />;
-  else if (path === "/superadmin/cms/answer-overrides") content = <UniversalCollectionPage kind="answer-overrides" />;
-  else if (path === "/superadmin/cms/chat-sessions") content = <UniversalCollectionPage kind="chat-sessions" />;
-  else if (path === "/superadmin/crm/contacts") content = <UniversalCollectionPage kind="crm-contacts" />;
-  else if (path === "/superadmin/erm/assets") content = <UniversalCollectionPage kind="erm-assets" />;
-  else if (path === "/superadmin/cms/rules") content = <UniversalCollectionPage kind="rules" />;
-  else if (path === "/superadmin/cms/news") content = <UniversalCollectionPage kind="news" />;
-  else if (path === "/superadmin/crm") content = <ChildSurface title="CRM" description="مسار CRM محجوز ومحمى، ولم يتم ادعاء تنفيذ لوحة CRM في Wave 1." />;
-  else if (path === "/superadmin/erm") content = <ChildSurface title="ERM" description="مسار ERM محجوز ومحمى، ولم يتم ادعاء تنفيذ لوحة ERM في Wave 1." />;
-  else if (path === "/superadmin/operations") content = <ChildSurface title="Operations" description="مسار Operations الموحد لإدارة التشغيل والعمليات." />;
-  else if (path === "/superadmin/system") content = <ChildSurface title="System" description="حالة النظام وصلاحياته ضمن حدود منصة Superadmin الحالية." />;
+  if (path === "/audit") content = <AuditPage />;
+  else if (path === "/features") content = <FeatureControlsPage />;
+  else if (path === "/cms/community") content = <CommunityPage />;
+  else if (path === "/cms" || path === "/cms/procedures") content = <CmsPage />;
+  else if (path === "/system/official-services") content = <UniversalCollectionPage kind="official-services" />;
+  else if (path === "/system/ticker") content = <UniversalCollectionPage kind="ticker" />;
+  else if (path === "/system/features") content = <FeatureControlsPage />;
+  else if (path === "/cms/ai-training") content = <UniversalCollectionPage kind="ai-training" />;
+  else if (path === "/cms/abusive-events") content = <UniversalCollectionPage kind="abusive-events" />;
+  else if (path === "/cms/chat-inputs") content = <UniversalCollectionPage kind="chat-inputs" />;
+  else if (path === "/cms/answer-overrides") content = <UniversalCollectionPage kind="answer-overrides" />;
+  else if (path === "/cms/chat-sessions") content = <UniversalCollectionPage kind="chat-sessions" />;
+  else if (path === "/crm/contacts") content = <UniversalCollectionPage kind="crm-contacts" />;
+  else if (path === "/erm/assets") content = <UniversalCollectionPage kind="erm-assets" />;
+  else if (path === "/cms/rules") content = <UniversalCollectionPage kind="rules" />;
+  else if (path === "/cms/news") content = <UniversalCollectionPage kind="news" />;
+  else if (path === "/crm") content = <ChildSurface title="CRM" description="مسار CRM محجوز ومحمى، ولم يتم ادعاء تنفيذ لوحة CRM في Wave 1." />;
+  else if (path === "/erm") content = <ChildSurface title="ERM" description="مسار ERM محجوز ومحمى، ولم يتم ادعاء تنفيذ لوحة ERM في Wave 1." />;
+  else if (path === "/operations") content = <ChildSurface title="Operations" description="مسار Operations الموحد لإدارة التشغيل والعمليات." />;
+  else if (path === "/system") content = <ChildSurface title="System" description="حالة النظام وصلاحياته ضمن حدود منصة Superadmin الحالية." />;
+  else if (path === "/administrators") content = <UsersPage />;
+  else if (path === "/sessions") content = <SessionsPage />;
+  else if (path === "/roles-permissions") content = <PlatformAdminPage kind="permissions" />;
+  else if (path === "/approvals") content = <PlatformAdminPage kind="approvals" />;
+  else if (path === "/system/health") content = <PlatformAdminPage kind="health" />;
+  else if (path === "/system/integrations") content = <PlatformAdminPage kind="integrations" />;
+  else if (path === "/authority-audit") content = <PlatformAdminPage kind="authorityAudit" />;
 
   return (
     <div className="superadmin-shell" dir="rtl">
@@ -158,6 +168,13 @@ export default function SuperadminShellPage() {
           <NavLink to="/superadmin/audit" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}>
             <AdminFluentIcon name="audit" /><span>سجل التدقيق</span>
           </NavLink>
+          <NavLink to="/superadmin/administrators" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}><AdminFluentIcon name="users" /><span>Administrators</span></NavLink>
+          <NavLink to="/superadmin/sessions" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}><AdminFluentIcon name="shield" /><span>Sessions</span></NavLink>
+          <NavLink to="/superadmin/roles-permissions" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}><AdminFluentIcon name="shield" /><span>Roles & Permissions</span></NavLink>
+          <NavLink to="/superadmin/approvals" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}><AdminFluentIcon name="audit" /><span>Approval Center</span></NavLink>
+          <NavLink to="/superadmin/system/health" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}><AdminFluentIcon name="settings" /><span>Module Health</span></NavLink>
+          <NavLink to="/superadmin/system/integrations" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}><AdminFluentIcon name="network" /><span>Integrations</span></NavLink>
+          <NavLink to="/superadmin/authority-audit" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}><AdminFluentIcon name="audit" /><span>Authority Audit</span></NavLink>
         </nav>
         <main className="superadmin-main">
           <div className="superadmin-breadcrumb">Superadmin / {path.split("/").filter(Boolean).slice(-1)[0] || "home"}</div>

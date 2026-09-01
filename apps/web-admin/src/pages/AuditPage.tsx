@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
-import { adminFetch } from "../lib/api";
+import { adminFetch, getAdminErrorMessage } from "../lib/api";
+import { AdminDataTable, AdminErrorState, AdminPagination, AdminSearchInput, AdminStatusBadge } from "../components/admin/AdminPrimitives";
 
 type AuditEntry = {
   id: string;
@@ -13,38 +14,33 @@ type AuditEntry = {
 
 export default function AuditPage() {
   const [entries, setEntries] = useState<AuditEntry[]>([]);
+  const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [actionFilter, setActionFilter] = useState("");
   const [search, setSearch] = useState("");
+  const [error, setError] = useState("");
   const [page, setPage] = useState(1);
   const PER_PAGE = 50;
 
   const load = useCallback(async () => {
     setLoading(true);
+    setError("");
     try {
       const params = new URLSearchParams({ limit: String(PER_PAGE), offset: String((page - 1) * PER_PAGE) });
       if (actionFilter) params.set("action", actionFilter);
+      if (search) params.set("search", search);
       const res = await adminFetch(`/api/admin/audit?${params}`);
       const body = await res.json();
       setEntries(body.entries ?? []);
+      setTotal(Number(body.total ?? 0));
     } catch (err) {
-      console.error("Failed to load audit log", err);
+      setError(getAdminErrorMessage(err, "Unable to load audit activity."));
     } finally {
       setLoading(false);
     }
-  }, [page, actionFilter]);
+  }, [page, actionFilter, search]);
 
-  useEffect(() => {
-    load();
-  }, [load]);
-
-  const filtered = entries.filter(
-    (e) =>
-      !search ||
-      e.action.toLowerCase().includes(search.toLowerCase()) ||
-      e.resource.toLowerCase().includes(search.toLowerCase()) ||
-      e.user_id?.includes(search)
-  );
+  useEffect(() => { load(); }, [load]);
 
   const actions = [...new Set(entries.map((e) => e.action))];
 
@@ -56,13 +52,7 @@ export default function AuditPage() {
       </div>
 
       <div className="toolbar">
-        <input
-          type="text"
-          placeholder="Search actions, resources, user ID…"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="search-input"
-        />
+        <AdminSearchInput value={search} onChange={(value) => { setSearch(value); setPage(1); }} placeholder="Search actions, resources, user ID" />
         <select
           value={actionFilter}
           onChange={(e) => {
@@ -81,57 +71,14 @@ export default function AuditPage() {
         </button>
       </div>
 
+      {error ? <AdminErrorState message={error} /> : null}
       <div className="table-wrap">
-        <table className="admin-table">
-          <thead>
-            <tr>
-              <th>Timestamp</th>
-              <th>Action</th>
-              <th>Resource</th>
-              <th>User</th>
-              <th>IP</th>
-              <th>Details</th>
-            </tr>
-          </thead>
-          <tbody>
-            {loading ? (
-              <tr>
-                <td colSpan={6} className="muted center">Loading…</td>
-              </tr>
-            ) : filtered.length === 0 ? (
-              <tr>
-                <td colSpan={6} className="muted center">No audit entries.</td>
-              </tr>
-            ) : (
-              filtered.map((e) => (
-                <tr key={e.id}>
-                  <td className="mono">{new Date(e.created_at).toLocaleString()}</td>
-                  <td><span className="action-tag">{e.action}</span></td>
-                  <td>{e.resource || "—"}</td>
-                  <td className="mono truncate">{e.user_id ? `${e.user_id.slice(0, 8)}…` : "System"}</td>
-                  <td className="muted">{e.ip || "—"}</td>
-                  <td>
-                    <details>
-                      <summary className="ghost sm">View</summary>
-                      <pre className="detail-json">{JSON.stringify(e.details, null, 2)}</pre>
-                    </details>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+        <AdminDataTable rows={entries} columns={["Timestamp", "Action", "Resource", "User", "IP", "Details"]} loading={loading} error={error} empty="No audit entries." renderRow={(e) => <>
+                  <td className="mono">{new Date(e.created_at).toLocaleString()}</td><td><AdminStatusBadge status={e.action} /></td><td>{e.resource || "—"}</td><td className="mono truncate">{e.user_id ? `${e.user_id.slice(0, 8)}…` : "System"}</td><td className="muted">{e.ip || "—"}</td><td><details><summary>View details</summary><pre className="detail-json">{JSON.stringify(e.details, null, 2)}</pre></details></td>
+                </>} />
       </div>
 
-      <div className="pagination">
-        <button className="ghost" disabled={page <= 1} onClick={() => setPage(page - 1)}>
-          ← Previous
-        </button>
-        <span className="muted">Page {page}</span>
-        <button className="ghost" disabled={entries.length < PER_PAGE} onClick={() => setPage(page + 1)}>
-          Next →
-        </button>
-      </div>
+      <AdminPagination page={page} pageSize={PER_PAGE} total={total} onPageChange={setPage} />
     </div>
   );
 }

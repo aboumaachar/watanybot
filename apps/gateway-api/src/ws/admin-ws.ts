@@ -11,6 +11,7 @@ const adminClients = new Set<WebSocket>();
 const adminLastSeen = new WeakMap<WebSocket, number>();
 const ADMIN_HEARTBEAT_INTERVAL_MS = 15_000;
 const ADMIN_HEARTBEAT_TIMEOUT_MS = 45_000;
+const ADMIN_AUTH_TIMEOUT_MS = 5_000;
 
 /**
  * Broadcast a WSEvent to all connected admin clients.
@@ -46,36 +47,43 @@ export async function adminWSRoutes(app: FastifyInstance): Promise<void> {
     globalThis.clearInterval(heartbeatTimer);
   });
 
-  app.get("/ws/admin", { websocket: true }, (socket, request) => {
-    // Authenticate via query param token
-    const url = new URL(request.url, `http://${request.headers.host}`);
-    const token = url.searchParams.get("token");
-
-    if (!token) {
-      socket.close(4001, "Missing token");
-      return;
-    }
-
-    const payload = verifyToken(token);
-    if (!payload || !hasMinRole(payload.role, "admin")) {
-      socket.close(4003, "Forbidden");
-      return;
-    }
-
-    adminClients.add(socket);
-    adminLastSeen.set(socket, Date.now());
-    app.log.info(`[ws] admin connected: ${payload.email} (${adminClients.size} total)`);
+  app.get("/ws/admin", { websocket: true }, (socket) => {
+    let authenticated = false;
+    let authenticatedEmail = "";
+    const authTimer = globalThis.setTimeout(() => {
+      if (!authenticated) socket.close(4001, "Missing auth");
+    }, ADMIN_AUTH_TIMEOUT_MS);
 
     socket.on("close", () => {
+      globalThis.clearTimeout(authTimer);
       adminClients.delete(socket);
-      app.log.info(`[ws] admin disconnected (${adminClients.size} remaining)`);
+      if (authenticated) app.log.info(`[ws] admin disconnected (${adminClients.size} remaining)`);
     });
 
     socket.on("message", (raw: Buffer | string) => {
-      adminLastSeen.set(socket, Date.now());
-      // Admin can send commands: intervention, broadcasts, live activity monitoring
       try {
         const msg = JSON.parse(raw.toString());
+        if (!authenticated) {
+          if (msg.type !== "auth" || typeof msg.token !== "string") {
+            socket.close(4001, "Authentication required");
+            return;
+          }
+          const payload = verifyToken(msg.token);
+          if (!payload || !hasMinRole(payload.role, "admin")) {
+            socket.close(4003, "Forbidden");
+            return;
+          }
+          authenticated = true;
+          authenticatedEmail = payload.email;
+          globalThis.clearTimeout(authTimer);
+          adminClients.add(socket);
+          adminLastSeen.set(socket, Date.now());
+          socket.send(JSON.stringify({ type: "auth:ok" }));
+          app.log.info(`[ws] admin connected: ${authenticatedEmail} (${adminClients.size} total)`);
+          return;
+        }
+
+        adminLastSeen.set(socket, Date.now());
         if (msg.type === "ping") {
           socket.send(JSON.stringify({ type: "pong", timestamp: new Date().toISOString() }));
           return;
@@ -89,7 +97,7 @@ export async function adminWSRoutes(app: FastifyInstance): Promise<void> {
             timestamp: new Date().toISOString(),
           }));
         }
-        app.log.info({ msg }, "[ws] admin message");
+        app.log.info({ type: msg.type }, "[ws] admin message");
       } catch {
         // ignore
       }

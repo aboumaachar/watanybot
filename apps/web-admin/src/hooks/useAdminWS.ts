@@ -50,11 +50,11 @@ export function useAdminWS(token: string | null) {
 
     let ws: ReliableWebSocketClient;
     ws = new ReliableWebSocketClient(() => {
-      const currentToken = localStorage.getItem("admin_token") || wsToken;
-      return `${getWsUrl()}?token=${encodeURIComponent(currentToken)}`;
+      return getWsUrl();
     }, {
       onOpen: () => {
-        if (connectionVersion.current === version) setConnected(true);
+        const currentToken = localStorage.getItem("admin_token") || wsToken;
+        ws.sendJSON({ type: "auth", token: currentToken });
       },
       onClose: (event) => {
         if (connectionVersion.current === version) setConnected(false);
@@ -76,6 +76,9 @@ export function useAdminWS(token: string | null) {
         if (connectionVersion.current !== version) return;
         try {
           const msg = JSON.parse(ev.data as string) as WSMessage;
+          if (msg.type === "auth:ok" && connectionVersion.current === version) {
+            setConnected(true);
+          }
           setMessages((prev) => [msg, ...prev].slice(0, 200));
         } catch {
           // ignore non-JSON

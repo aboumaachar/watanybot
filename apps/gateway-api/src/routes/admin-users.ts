@@ -48,15 +48,47 @@ export async function adminUsersRoutes(app: FastifyInstance): Promise<void> {
 
       const result = await query(sql, params);
 
-      // Get total count
-      const countResult = await query("SELECT COUNT(*) as total FROM users");
+      const countParams = params.slice(0, params.length - 2);
+      let countSql = "SELECT COUNT(*) as total FROM users WHERE 1=1";
+      if (search) countSql += ` AND (name ILIKE $1 OR email ILIKE $1)`;
+      if (role) countSql += ` AND role = $${search ? 2 : 1}`;
+      if (status) countSql += ` AND status = $${[search, role].filter(Boolean).length + 1}`;
+      const countResult = await query(countSql, countParams);
       const total = countResult.rows[0]?.total ?? 0;
 
-      return reply.send({ users: result.rows, total });
+      return reply.send({ users: result.rows, total, limit: Number(limit), offset: Number(offset) });
     } catch (err: any) {
       app.log.warn({ err: err.message }, "admin_users_list_fallback");
       return reply.send({ users: [], total: 0 });
     }
+  });
+
+  app.get("/api/admin/sessions", { preHandler: [requireRole("admin")] }, async (request, reply) => {
+    const { userId, limit = 50, offset = 0 } = request.query as { userId?: string; limit?: number; offset?: number };
+    const params: unknown[] = [];
+    let sql = "SELECT s.id, s.user_id, u.name, u.email, s.ip, s.user_agent, s.created_at, s.expires_at FROM sessions s JOIN users u ON u.id = s.user_id WHERE s.expires_at > NOW()";
+    if (userId) { params.push(userId); sql += ` AND s.user_id = $${params.length}`; }
+    params.push(Number(limit), Number(offset));
+    sql += ` ORDER BY s.created_at DESC LIMIT $${params.length - 1} OFFSET $${params.length}`;
+    const result = await query(sql, params);
+    return reply.send({ sessions: result.rows });
+  });
+
+  app.delete("/api/admin/sessions/:id", { preHandler: [requireRole("admin")] }, async (request, reply) => {
+    const { id } = request.params as { id: string };
+    const adminUser = (request as any).user;
+    const result = await query("DELETE FROM sessions WHERE id = $1 RETURNING id, user_id", [id]);
+    if (!result.rowCount) return reply.code(404).send({ error: "SESSION_NOT_FOUND" });
+    await query("INSERT INTO audit_log (user_id, action, resource, details) VALUES ($1, $2, $3, $4)", [adminUser?.id ?? null, "session.revoke", "sessions", JSON.stringify({ sessionId: id, userId: result.rows[0].user_id })]);
+    return reply.send({ ok: true });
+  });
+
+  app.delete("/api/admin/users/:id/sessions", { preHandler: [requireRole("admin")] }, async (request, reply) => {
+    const { id } = request.params as { id: string };
+    const adminUser = (request as any).user;
+    const result = await query("DELETE FROM sessions WHERE user_id = $1 RETURNING id", [id]);
+    await query("INSERT INTO audit_log (user_id, action, resource, details) VALUES ($1, $2, $3, $4)", [adminUser?.id ?? null, "session.revoke_all", "sessions", JSON.stringify({ userId: id, count: result.rowCount ?? 0 })]);
+    return reply.send({ ok: true, revoked: result.rowCount ?? 0 });
   });
 
   /** PUT /api/admin/users/:id/role — change user role */

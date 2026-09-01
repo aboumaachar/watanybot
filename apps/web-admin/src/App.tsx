@@ -183,6 +183,13 @@ export default function App() {
                     <Route path="/network" element={<NetworkAdminPage />} />
                     <Route path="/jobs" element={<JobsAdminPage />} />
                     <Route path="/market" element={<AdminMarketPage />} />
+                    <Route path="/administrators" element={<SuperadminShellPage />} />
+                    <Route path="/sessions" element={<SuperadminShellPage />} />
+                    <Route path="/roles-permissions" element={<SuperadminShellPage />} />
+                    <Route path="/approvals" element={<SuperadminShellPage />} />
+                    <Route path="/system/health" element={<SuperadminShellPage />} />
+                    <Route path="/system/integrations" element={<SuperadminShellPage />} />
+                    <Route path="/authority-audit" element={<SuperadminShellPage />} />
                     <Route path="/superadmin/*" element={<SuperadminShellPage />} />
                     <Route path="*" element={<Navigate to="/" replace />} />
                   </Routes>

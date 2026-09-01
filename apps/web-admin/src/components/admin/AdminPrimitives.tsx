@@ -31,3 +31,16 @@ export function AdminLoadingState({ message = "Loading..." }: { message?: string
 export function AdminEmptyState({ message = "No results found." }: { message?: string }) { return <div className="admin-state">{message}</div>; }
 export function AdminErrorState({ message = "Unable to load this data." }: { message?: string }) { return <div className="admin-state admin-state-error" role="alert">{message}</div>; }
 export function AdminActionCard({ title, description, to, icon }: { title: string; description: string; to: string; icon: string }) { return <NavLink className="admin-action-card" to={to}><span className="admin-action-icon" aria-hidden="true">{icon}</span><span><strong>{title}</strong><small>{description}</small></span><span aria-hidden="true">→</span></NavLink>; }
+
+export function AdminPagination({ page, pageSize, total, onPageChange }: { page: number; pageSize: number; total: number; onPageChange: (page: number) => void }) {
+  const pageCount = Math.max(1, Math.ceil(total / pageSize));
+  return <div className="pagination" aria-label="Pagination"><button type="button" className="ghost" disabled={page <= 1} onClick={() => onPageChange(page - 1)}>Previous</button><span className="muted">Page {page} of {pageCount} ({total} total)</span><button type="button" className="ghost" disabled={page >= pageCount} onClick={() => onPageChange(page + 1)}>Next</button></div>;
+}
+
+export function AdminConfirmDialog({ title, message, confirmLabel = "Confirm", onConfirm, onCancel }: { title: string; message: string; confirmLabel?: string; onConfirm: () => void; onCancel: () => void }) {
+  return <div className="admin-dialog-backdrop" role="presentation"><section className="admin-dialog" role="dialog" aria-modal="true" aria-labelledby="admin-dialog-title"><h2 id="admin-dialog-title">{title}</h2><p>{message}</p><div className="admin-dialog-actions"><button type="button" className="ghost" onClick={onCancel}>Cancel</button><button type="button" className="accent" onClick={onConfirm}>{confirmLabel}</button></div></section></div>;
+}
+
+export function AdminDetailDrawer({ title, children, onClose }: { title: string; children: ReactNode; onClose: () => void }) {
+  return <div className="admin-drawer-backdrop" role="presentation"><aside className="admin-detail-drawer" role="dialog" aria-modal="true" aria-labelledby="admin-drawer-title"><div className="admin-drawer-header"><h2 id="admin-drawer-title">{title}</h2><button type="button" className="ghost" aria-label="Close details" onClick={onClose}>Close</button></div>{children}</aside></div>;
+}
