@@ -382,6 +382,18 @@ export function getAdminErrorMessage(error: unknown, fallback: string): string {
   return fallback;
 }
 
+export function getAdminErrorCode(error: unknown): string | null {
+  if (!(error instanceof AdminApiError) || !error.details || typeof error.details !== "object") return null;
+  const code = (error.details as { error?: unknown }).error;
+  return typeof code === "string" ? code : null;
+}
+
+export function getAdminCanonicalEditor(error: unknown): string | null {
+  if (!(error instanceof AdminApiError) || !error.details || typeof error.details !== "object") return null;
+  const owner = (error.details as { canonicalEditor?: unknown }).canonicalEditor;
+  return typeof owner === "string" ? owner : null;
+}
+
 /** Wrapper around fetch that injects the admin auth header. */
 export async function adminFetch(
   path: string,
@@ -486,6 +498,52 @@ export type CmsDocumentWrite = {
   file_path?: string | null;
 };
 export type CmsFormItem = CmsItem & { publicId: string; publicCode: string | null; sourceId: string | null };
+export type PayloadSyncCounts = {
+  proceduresFetched: number;
+  proceduresPublished: number;
+  documentsFetched: number;
+  documentsPublished: number;
+  mappings: number;
+};
+export type PayloadSyncRun = {
+  state: "RUNNING" | "COMPLETED" | "FAILED";
+  runId: string;
+  startedAt: string;
+  finishedAt?: string;
+  counts?: PayloadSyncCounts;
+  contentHash?: string;
+  errorCode?: string;
+};
+export type PayloadSyncStatus = {
+  configured: boolean;
+  running: boolean;
+  lastRun: PayloadSyncRun | null;
+  active: { runId: string; activatedAt: string; counts: PayloadSyncCounts; contentHash: string } | null;
+};
+export type PayloadSyncStatusResponse = {
+  ok: boolean;
+  source: "PAYLOAD";
+  configured: boolean;
+  running: boolean;
+  lastRun: PayloadSyncRun | null;
+  active: PayloadSyncStatus["active"];
+};
+export type PayloadEditorialDocumentItem = CmsItem & {
+  status: "PUBLISHED";
+  canonicalEditor: "PAYLOAD";
+  document: Record<string, unknown>;
+};
+export type PayloadEditorialDocumentListResponse = {
+  ok: boolean;
+  source: "PAYLOAD";
+  canonicalEditor: "PAYLOAD";
+  available: boolean;
+  items: PayloadEditorialDocumentItem[];
+  total: number;
+  page: number;
+  pageSize: number;
+  sync: PayloadSyncStatus;
+};
 
 export async function getCmsAnnouncements(params: { q?: string; status?: CmsStatus; page?: number; pageSize?: number } = {}): Promise<CmsListResponse> {
   const queryString = new URLSearchParams(Object.entries(params).filter(([, value]) => value) as string[][]).toString();
@@ -538,6 +596,30 @@ export async function runCmsProcedureAction(id: string, action: "publish" | "unp
   const res = await adminFetch(`/api/admin/cms/procedures/${encodeURIComponent(id)}/actions/${action}`, { method: "POST" });
   const data = await res.json();
   return data.item;
+}
+
+export async function getPayloadSyncStatus(): Promise<PayloadSyncStatusResponse> {
+  const res = await adminFetch("/api/admin/cms/payload-sync/status");
+  return (await res.json()) as PayloadSyncStatusResponse;
+}
+
+export async function triggerPayloadSync(): Promise<PayloadSyncStatus["active"]> {
+  const res = await adminFetch("/api/admin/cms/payload-sync/sync", { method: "POST" });
+  const data = await res.json() as { activatedAt: string; runId: string; counts: PayloadSyncCounts; contentHash: string };
+  return {
+    runId: data.runId,
+    activatedAt: data.activatedAt,
+    counts: data.counts,
+    contentHash: data.contentHash,
+  };
+}
+
+export async function getCmsEditorialDocuments(params: { q?: string; page?: number; pageSize?: number } = {}): Promise<PayloadEditorialDocumentListResponse> {
+  const query = new URLSearchParams();
+  Object.entries(params).forEach(([key, value]) => { if (value) query.set(key, String(value)); });
+  const queryString = query.toString();
+  const res = await adminFetch(`/api/admin/cms/editorial-documents${queryString ? "?" + queryString : ""}`);
+  return (await res.json()) as PayloadEditorialDocumentListResponse;
 }
 
 export async function getCmsDocuments(params: { q?: string; status?: CmsStatus; kind?: CmsDocumentKind; tag?: string; page?: number; pageSize?: number } = {}): Promise<CmsDocumentListResponse> {

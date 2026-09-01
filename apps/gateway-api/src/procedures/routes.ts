@@ -85,22 +85,6 @@ async function readProcedureDocsLinks(): Promise<ProcToDocs[]> {
   return readJsonl<ProcToDocs>(filePath);
 }
 
-function writeProcedureDocsLinks(rows: ProcToDocs[]): void {
-  const filePath = getProcedureDocsLinksPath();
-  const content = rows
-    .map((row) => ({
-      ...row,
-      procedure_id: String(row.procedure_id || "").trim(),
-      doc_ids: normalizeAdminDocIds(row.doc_ids),
-    }))
-    .filter((row) => row.procedure_id && row.doc_ids.length > 0)
-    .sort((left, right) => left.procedure_id.localeCompare(right.procedure_id, "en"))
-    .map((row) => JSON.stringify(row))
-    .join("\n");
-
-  fs.writeFileSync(filePath, content ? `${content}\n` : "", "utf-8");
-}
-
 function sourceRefPaths(doc: StoredDocAsset): string[] {
   const refs = doc.source_refs || [];
   const candidates: Array<string | null> = [];
@@ -1729,148 +1713,22 @@ export async function proceduresRoutes(app: FastifyInstance) {
 
   /* ── Replace document links for one procedure (admin) ─ */
   app.put<{ Params: { id: string }; Body: { doc_ids?: string[]; reason?: string } }>("/api/admin/procedures/:id/doc-links", { preHandler: [requireRole("superadmin")] }, async (req, reply) => {
-    const { id } = req.params;
-    const state = await loadIndex(false);
-    const procedure = state.byId.get(id) || state.byId.get(normalizeAdminProcedureId(id));
-    if (!procedure) {
-      reply.code(404);
-      return { error: "not_found" };
-    }
-
-    const nextDocIds = normalizeAdminDocIds(req.body?.doc_ids);
-    const reason = String(req.body?.reason || "superadmin_manual").trim() || "superadmin_manual";
-    const links = await readProcedureDocsLinks();
-    const existing = links.find((entry) => normalizeAdminProcedureId(entry.procedure_id) === normalizeAdminProcedureId(id));
-    const remaining = links.filter((entry) => normalizeAdminProcedureId(entry.procedure_id) !== normalizeAdminProcedureId(id));
-
-    if (nextDocIds.length > 0) {
-      remaining.push({
-        procedure_id: procedure.id,
-        doc_ids: nextDocIds,
-        confidence: 1,
-        reason,
-        attached_docs: Array.isArray(existing?.attached_docs) ? existing?.attached_docs : [],
-      });
-    }
-
-    try {
-      writeProcedureDocsLinks(remaining);
-      await reloadIndex();
-      return {
-        ok: true,
-        mapping: {
-          procedure_id: procedure.id,
-          doc_ids: nextDocIds,
-          confidence: nextDocIds.length > 0 ? 1 : undefined,
-          reason: nextDocIds.length > 0 ? reason : undefined,
-          attached_docs: Array.isArray(existing?.attached_docs) ? existing?.attached_docs : [],
-        },
-      };
-    } catch (err) {
-      reply.code(500);
-      return { error: err instanceof Error ? err.message : "doc_links_update_failed" };
-    }
+    return reply.code(409).send({ ok: false, error: "CANONICAL_EDITOR_PAYLOAD", canonicalEditor: "PAYLOAD" });
   });
 
   /* ── Create procedure ──────────────────────────────── */
   app.post<{ Body: Partial<Procedure> }>("/api/admin/procedures", { preHandler: [requireRole("superadmin")] }, async (req, reply) => {
-    const body = req.body;
-    if (!body.id || !body.title_ar) {
-      reply.code(400);
-      return { error: "id and title_ar required" };
-    }
-
-    const dataDir = getDataDir();
-    const procPath = path.join(dataDir, "procedures.jsonl");
-
-    // Append to jsonl file
-    const proc: Procedure = {
-      id: body.id,
-      tx_no: body.tx_no,
-      source: body.source || "internal",
-      title_ar: body.title_ar,
-      title_en: body.title_en,
-      summary_lb: body.summary_lb || "",
-      eligibility: body.eligibility,
-      requirements: body.requirements,
-      steps: body.steps,
-      where_to_apply: body.where_to_apply,
-      fees: body.fees,
-      timelines: body.timelines,
-      tags: body.tags,
-      faq_variants: body.faq_variants,
-      version: "3.0.0",
-      last_updated: new Date().toISOString(),
-    };
-
-    try {
-      const line = JSON.stringify(proc);
-      fs.appendFileSync(procPath, line + "\n", "utf-8");
-      await reloadIndex(); // Force reload
-      return { ok: true, procedure: proc };
-    } catch (err) {
-      reply.code(500);
-      return { error: err instanceof Error ? err.message : "Create failed" };
-    }
+    return reply.code(409).send({ ok: false, error: "CANONICAL_EDITOR_PAYLOAD", canonicalEditor: "PAYLOAD" });
   });
 
   /* ── Update procedure ──────────────────────────────── */
   app.put<{ Params: { id: string }; Body: Partial<Procedure> }>("/api/admin/procedures/:id", { preHandler: [requireRole("superadmin")] }, async (req, reply) => {
-    const { id } = req.params;
-    const body = req.body;
-    const state = await loadIndex(false);
-
-    // Find and update in state
-    const idx = state.procedures.findIndex(p => p.id === id);
-    if (idx === -1) {
-      reply.code(404);
-      return { error: "not_found" };
-    }
-
-    const updated: Procedure = {
-      ...state.procedures[idx],
-      ...body,
-      last_updated: new Date().toISOString(),
-    };
-
-    state.procedures[idx] = updated;
-
-    try {
-      // Rewrite jsonl file
-      const dataDir = getDataDir();
-      const procPath = path.join(dataDir, "procedures.jsonl");
-      const content = state.procedures.map(p => JSON.stringify(p)).join("\n");
-      fs.writeFileSync(procPath, content + "\n", "utf-8");
-      await reloadIndex(); // Force reload
-      return { ok: true, procedure: updated };
-    } catch (err) {
-      reply.code(500);
-      return { error: err instanceof Error ? err.message : "Update failed" };
-    }
+    return reply.code(409).send({ ok: false, error: "CANONICAL_EDITOR_PAYLOAD", canonicalEditor: "PAYLOAD" });
   });
 
   /* ── Delete procedure ──────────────────────────────– */
   app.delete<{ Params: { id: string } }>("/api/admin/procedures/:id", { preHandler: [requireRole("superadmin")] }, async (req, reply) => {
-    const { id } = req.params;
-    const state = await loadIndex(false);
-
-    const filtered = state.procedures.filter(p => p.id !== id);
-    if (filtered.length === state.procedures.length) {
-      reply.code(404);
-      return { error: "not_found" };
-    }
-
-    try {
-      const dataDir = getDataDir();
-      const procPath = path.join(dataDir, "procedures.jsonl");
-      const content = filtered.map(p => JSON.stringify(p)).join("\n");
-      fs.writeFileSync(procPath, content + (filtered.length > 0 ? "\n" : ""), "utf-8");
-      await reloadIndex();
-      return { ok: true };
-    } catch (err) {
-      reply.code(500);
-      return { error: err instanceof Error ? err.message : "Delete failed" };
-    }
+    return reply.code(409).send({ ok: false, error: "CANONICAL_EDITOR_PAYLOAD", canonicalEditor: "PAYLOAD" });
   });
 
   /* ── Export to CSV ─────────────────────────────────── */

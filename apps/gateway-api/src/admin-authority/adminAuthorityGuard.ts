@@ -83,6 +83,20 @@ export const DEFAULT_ADMIN_ROUTE_POLICIES: AdminRoutePolicy[] = [
     versioned: true,
   },
   {
+    key: 'cms.payload_sync.read',
+    method: 'GET',
+    path: '/api/admin/cms/payload-sync/status',
+    requiredPermission: 'cms.procedures.read',
+  },
+  {
+    key: 'cms.payload_sync.trigger',
+    method: 'POST',
+    path: '/api/admin/cms/payload-sync/sync',
+    requiredPermission: 'cms.publish',
+    mutating: true,
+    auditEvent: 'cms.payload_sync.requested',
+  },
+  {
     key: 'cms.edit',
     method: 'PATCH',
     path: '/api/admin/cms/:domain/:id',

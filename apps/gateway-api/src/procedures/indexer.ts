@@ -563,7 +563,7 @@ function buildDocsByProc(
 
 function getAttachmentOverlayDataDir(currentDataDir: string): string | null {
   const runtime = getProcedureRuntimeInfo();
-  if (runtime.source === "kb_studio_export") {
+  if (runtime.source === "kb_studio_export" || runtime.source === "payload_sync") {
     return null;
   }
 

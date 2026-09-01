@@ -1,16 +1,16 @@
-import fs from "node:fs";
 import path from "node:path";
 import type { FastifyInstance, FastifyRequest } from "fastify";
 import { buildAdminAuthorityPreHandler, getRoutePolicyByKey } from "../admin-authority/adminAuthorityGuard.js";
-import { appendAdminAuditEvent, createAdminAuditEvent, listRecentAdminAuditEvents } from "../admin-authority/adminAuthorityAudit.js";
-import { createAdminEntityVersion, listAdminEntityVersions } from "../admin-authority/adminAuthorityVersioning.js";
+import { listRecentAdminAuditEvents } from "../admin-authority/adminAuthorityAudit.js";
+import { listAdminEntityVersions } from "../admin-authority/adminAuthorityVersioning.js";
 import { getProcedureRuntimeInfo } from "../procedures/config.js";
-import { loadIndex, reloadIndex } from "../procedures/indexer.js";
+import { loadIndex } from "../procedures/indexer.js";
 import { readJsonl } from "../procedures/jsonl.js";
-import type { Procedure, ProcToDocs } from "../procedures/types.js";
+import type { Procedure, ProcToDocs, StoredDocAsset } from "../procedures/types.js";
 import { registerDocumentsCmsRoutes } from "./documents/documents-cms-adapter.js";
 import { registerFormsCmsRoutes } from "./forms/forms-cms-adapter.js";
 import { registerAnnouncementsCmsRoutes } from "./announcements/announcements-cms-adapter.js";
+import { PayloadSyncError, payloadCanonicalSync } from "./payloadCanonicalSync.js";
 
 type CmsStatus = "DRAFT" | "REVIEW_READY" | "PUBLISHED" | "UNPUBLISHED" | "ARCHIVED";
 type CmsProcedure = Procedure & {
@@ -27,22 +27,16 @@ type CmsProcedure = Procedure & {
 const STATUS_VALUES: CmsStatus[] = ["DRAFT", "REVIEW_READY", "PUBLISHED", "UNPUBLISHED", "ARCHIVED"];
 const cmsPolicy = (key: string) => ({ preHandler: [buildAdminAuthorityPreHandler(getRoutePolicyByKey(key))] });
 
+function payloadCanonicalOwner(reply: any) {
+  return reply.code(409).send({ ok: false, error: "CANONICAL_EDITOR_PAYLOAD", canonicalEditor: "PAYLOAD" });
+}
+
 function dataPath(fileName: string): string {
   return path.join(getProcedureRuntimeInfo().dataDir, fileName);
 }
 
 async function getProcedures(): Promise<CmsProcedure[]> {
   return (await loadIndex(false)).procedures as CmsProcedure[];
-}
-
-function writeProcedures(rows: CmsProcedure[]): void {
-  const body = rows.map((row) => JSON.stringify(row)).join("\n");
-  fs.writeFileSync(dataPath("procedures.jsonl"), body ? `${body}\n` : "", "utf8");
-}
-
-function writeLinks(rows: ProcToDocs[]): void {
-  const body = rows.map((row) => JSON.stringify(row)).join("\n");
-  fs.writeFileSync(dataPath("procedure_to_docs.jsonl"), body ? `${body}\n` : "", "utf8");
 }
 
 function actorId(request: FastifyRequest): string {
@@ -69,27 +63,43 @@ function toCmsItem(row: CmsProcedure) {
   };
 }
 
-async function recordMutation(request: FastifyRequest, action: string, id: string, before: unknown, after: unknown): Promise<void> {
-  const actor = actorId(request);
-  await createAdminEntityVersion({ entityType: "cms.procedures", entityId: id, snapshot: after, createdBy: actor, reason: action });
-  await appendAdminAuditEvent(createAdminAuditEvent({
-    eventType: `cms.procedures.${action}`,
-    actorId: actor,
-    entityType: "procedure",
-    entityId: id,
-    before,
-    after,
-    reason: action,
-    requestId: request.id,
-    ip: request.ip,
-    userAgent: request.headers["user-agent"]?.toString(),
-  }));
+function toEditorialDocumentItem(document: StoredDocAsset, activatedAt: string, runId: string) {
+  return {
+    id: document.id,
+    title: document.title,
+    status: "PUBLISHED" as const,
+    version: runId,
+    updatedAt: activatedAt,
+    record: document,
+    document,
+    canonicalEditor: "PAYLOAD" as const,
+  };
 }
 
 export async function cmsRoutes(app: FastifyInstance): Promise<void> {
   registerDocumentsCmsRoutes(app);
   registerFormsCmsRoutes(app);
   registerAnnouncementsCmsRoutes(app);
+  app.get("/api/admin/cms/payload-sync/status", cmsPolicy("cms.payload_sync.read"), async () => ({
+    ok: true,
+    source: "PAYLOAD",
+    ...payloadCanonicalSync.getStatus(),
+  }));
+  app.post("/api/admin/cms/payload-sync/sync", cmsPolicy("cms.payload_sync.trigger"), async (request, reply) => {
+    try {
+      return await payloadCanonicalSync.sync({
+        actorId: actorId(request),
+        requestId: request.id,
+        ip: request.ip,
+        userAgent: request.headers["user-agent"]?.toString(),
+      });
+    } catch (error) {
+      if (error instanceof PayloadSyncError) {
+        return reply.code(error.statusCode).send({ ok: false, error: error.code });
+      }
+      throw error;
+    }
+  });
   app.get("/api/admin/cms/registry", cmsPolicy("cms.read"), async () => ({
     ok: true,
     children: [{
@@ -123,6 +133,57 @@ export async function cmsRoutes(app: FastifyInstance): Promise<void> {
     }],
   }));
 
+  app.get<{ Querystring: { q?: string; page?: string; pageSize?: string } }>("/api/admin/cms/editorial-documents", cmsPolicy("cms.payload_sync.read"), async (request) => {
+    const syncStatus = payloadCanonicalSync.getStatus();
+    const pageSize = Math.min(Math.max(Number(request.query.pageSize || 25), 1), 100);
+    const page = Math.max(Number(request.query.page || 1), 1);
+    if (getProcedureRuntimeInfo().source !== "payload_sync" || !syncStatus.active) {
+      return {
+        ok: true,
+        source: "PAYLOAD",
+        canonicalEditor: "PAYLOAD",
+        available: false,
+        items: [],
+        total: 0,
+        page,
+        pageSize,
+        sync: syncStatus,
+      };
+    }
+
+    const term = String(request.query.q || "").trim().toLocaleLowerCase();
+    const documents = (await loadIndex(false)).docs.filter((document) => !term || JSON.stringify(document).toLocaleLowerCase().includes(term));
+    const items = documents
+      .slice((page - 1) * pageSize, page * pageSize)
+      .map((document) => toEditorialDocumentItem(document, syncStatus.active?.activatedAt || "", syncStatus.active?.runId || ""));
+    return {
+      ok: true,
+      source: "PAYLOAD",
+      canonicalEditor: "PAYLOAD",
+      available: true,
+      items,
+      total: documents.length,
+      page,
+      pageSize,
+      sync: syncStatus,
+    };
+  });
+
+  app.get<{ Params: { id: string } }>("/api/admin/cms/editorial-documents/:id", cmsPolicy("cms.payload_sync.read"), async (request, reply) => {
+    const syncStatus = payloadCanonicalSync.getStatus();
+    if (getProcedureRuntimeInfo().source !== "payload_sync" || !syncStatus.active) {
+      return reply.code(404).send({ ok: false, error: "PAYLOAD_EDITORIAL_DOCUMENT_NOT_AVAILABLE" });
+    }
+    const document = (await loadIndex(false)).docs.find((candidate) => candidate.id.toLocaleLowerCase() === request.params.id.toLocaleLowerCase());
+    if (!document) return reply.code(404).send({ ok: false, error: "CMS_ITEM_NOT_FOUND" });
+    return {
+      ok: true,
+      source: "PAYLOAD",
+      canonicalEditor: "PAYLOAD",
+      item: toEditorialDocumentItem(document, syncStatus.active.activatedAt, syncStatus.active.runId),
+    };
+  });
+
   app.get<{ Params: { domain: string } }>("/api/admin/cms/:domain", cmsPolicy("cms.read"), async (request, reply) => {
     if (request.params.domain !== "procedures") return reply.code(404).send({ ok: false, error: "CMS_DOMAIN_NOT_FOUND" });
     const query = request.query as { q?: string; status?: CmsStatus; page?: string; pageSize?: string; sort?: string; direction?: string };
@@ -150,79 +211,23 @@ export async function cmsRoutes(app: FastifyInstance): Promise<void> {
 
   app.post<{ Params: { domain: string }; Body: Partial<CmsProcedure> }>("/api/admin/cms/:domain", cmsPolicy("cms.create"), async (request, reply) => {
     if (request.params.domain !== "procedures") return reply.code(404).send({ ok: false, error: "CMS_DOMAIN_NOT_FOUND" });
-    const id = String(request.body?.id || "").trim();
-    const title = String(request.body?.title_ar || "").trim();
-    if (!/^proc-[A-Za-z0-9_-]+$/.test(id) || !title) return reply.code(400).send({ ok: false, error: "VALIDATION_FAILED" });
-    const rows = await getProcedures();
-    if (rows.some((candidate) => candidate.id.toLowerCase() === id.toLowerCase())) return reply.code(409).send({ ok: false, error: "CMS_ID_ALREADY_EXISTS" });
-    const now = new Date().toISOString();
-    const created: CmsProcedure = {
-      ...request.body,
-      id,
-      title_ar: title,
-      summary_lb: String(request.body?.summary_lb || "Synthetic CMS canary"),
-      source: "internal",
-      status: "DRAFT",
-      version: "1",
-      created_at: now,
-      created_by: actorId(request),
-      last_updated: now,
-      updated_by: actorId(request),
-    };
-    rows.push(created);
-    writeProcedures(rows);
-    await reloadIndex();
-    await recordMutation(request, "created", created.id, null, created);
-    return reply.code(201).send({ ok: true, item: toCmsItem(created) });
+    return payloadCanonicalOwner(reply);
   });
 
   app.patch<{ Params: { domain: string; id: string }; Body: Partial<CmsProcedure> }>("/api/admin/cms/:domain/:id", cmsPolicy("cms.edit"), async (request, reply) => {
     if (request.params.domain !== "procedures") return reply.code(404).send({ ok: false, error: "CMS_DOMAIN_NOT_FOUND" });
-    const rows = await getProcedures();
-    const index = rows.findIndex((candidate) => candidate.id.toLowerCase() === request.params.id.toLowerCase());
-    if (index < 0) return reply.code(404).send({ ok: false, error: "CMS_ITEM_NOT_FOUND" });
-    const before = { ...rows[index] };
-    const updated = { ...rows[index], ...request.body, id: rows[index].id, last_updated: new Date().toISOString(), updated_by: actorId(request) };
-    rows[index] = updated;
-    writeProcedures(rows);
-    await reloadIndex();
-    await recordMutation(request, "updated", updated.id, before, updated);
-    return { ok: true, item: toCmsItem(updated) };
+    return payloadCanonicalOwner(reply);
   });
 
   app.put<{ Params: { domain: string; id: string }; Body: { doc_ids?: string[] } }>("/api/admin/cms/:domain/:id/attachments", cmsPolicy("cms.procedures.attachments.manage"), async (request, reply) => {
     if (request.params.domain !== "procedures") return reply.code(404).send({ ok: false, error: "CMS_DOMAIN_NOT_FOUND" });
-    const rows = await getProcedures();
-    const procedure = rows.find((candidate) => candidate.id.toLowerCase() === request.params.id.toLowerCase());
-    if (!procedure) return reply.code(404).send({ ok: false, error: "CMS_ITEM_NOT_FOUND" });
-    const requestedIds = Array.isArray(request.body?.doc_ids) ? request.body.doc_ids.map(String).filter(Boolean) : [];
-    const links = await readJsonl<ProcToDocs>(dataPath("procedure_to_docs.jsonl"));
-    const before = links.find((link) => link.procedure_id === procedure.id)?.doc_ids || [];
-    const nextLinks = links.filter((link) => link.procedure_id !== procedure.id);
-    if (requestedIds.length) nextLinks.push({ procedure_id: procedure.id, doc_ids: requestedIds });
-    writeLinks(nextLinks);
-    await recordMutation(request, "attachments.updated", procedure.id, { doc_ids: before }, { doc_ids: requestedIds });
-    return { ok: true, procedureId: procedure.id, doc_ids: requestedIds };
+    return payloadCanonicalOwner(reply);
   });
 
   for (const action of ["publish", "unpublish", "archive", "restore"] as const) {
     app.post<{ Params: { domain: string; id: string } }>(`/api/admin/cms/:domain/:id/actions/${action}`, cmsPolicy(`cms.${action}`), async (request, reply) => {
       if (request.params.domain !== "procedures") return reply.code(404).send({ ok: false, error: "CMS_DOMAIN_NOT_FOUND" });
-      const rows = await getProcedures();
-      const index = rows.findIndex((candidate) => candidate.id.toLowerCase() === request.params.id.toLowerCase());
-      if (index < 0) return reply.code(404).send({ ok: false, error: "CMS_ITEM_NOT_FOUND" });
-      const before = { ...rows[index] };
-      let status: CmsStatus = "DRAFT";
-      if (action === "publish") status = "PUBLISHED";
-      else if (action === "unpublish") status = "UNPUBLISHED";
-      else if (action === "archive") status = "ARCHIVED";
-      const now = new Date().toISOString();
-      const updated = { ...rows[index], status, last_updated: now, updated_by: actorId(request), ...(action === "publish" ? { published_at: now, published_by: actorId(request) } : {}), ...(action === "archive" ? { archived_at: now, archived_by: actorId(request) } : {}) };
-      rows[index] = updated;
-      writeProcedures(rows);
-      await reloadIndex();
-      await recordMutation(request, action, updated.id, before, updated);
-      return { ok: true, item: toCmsItem(updated) };
+      return payloadCanonicalOwner(reply);
     });
   }
 

@@ -7,7 +7,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 type ProcedureRuntimeInfo = {
   kbRoot: string;
   dataDir: string;
-  source: "proc-env" | "kb_vnext" | "legacy-env" | "kb_studio_export" | "unresolved";
+  source: "proc-env" | "payload_sync" | "kb_vnext" | "legacy-env" | "kb_studio_export" | "unresolved";
 };
 
 function hasProcedureDataset(candidate: string): boolean {
@@ -35,6 +35,36 @@ function getResolvedDataDir(root: string): string {
   return fs.existsSync(nestedDataDir) ? nestedDataDir : root;
 }
 
+export function getPayloadSyncRuntimeRoot(): string {
+  const configuredRoot = process.env.PAYLOAD_SYNC_RUNTIME_ROOT;
+  if (configuredRoot) {
+    return path.isAbsolute(configuredRoot)
+      ? configuredRoot
+      : path.resolve(path.resolve(__dirname, "..", "..", "..", ".."), configuredRoot);
+  }
+  const repoRoot = path.resolve(__dirname, "..", "..", "..", "..");
+  return path.resolve(repoRoot, "apps", "gateway-api", "runtime", "payload-sync");
+}
+
+function getPayloadSyncActiveDataDir(root: string): string | null {
+  const pointerPath = path.join(root, "active.json");
+  if (!fs.existsSync(pointerPath)) return null;
+
+  try {
+    const pointer = JSON.parse(fs.readFileSync(pointerPath, "utf8")) as { activeDirectory?: unknown };
+    const activeDirectory = typeof pointer.activeDirectory === "string" ? pointer.activeDirectory.trim() : "";
+    if (!activeDirectory) return null;
+
+    const resolvedRoot = path.resolve(root);
+    const resolvedDirectory = path.resolve(root, activeDirectory);
+    const relativeDirectory = path.relative(resolvedRoot, resolvedDirectory);
+    if (relativeDirectory.startsWith("..") || path.isAbsolute(relativeDirectory)) return null;
+    return hasProcedureDataset(resolvedDirectory) ? resolvedDirectory : null;
+  } catch {
+    return null;
+  }
+}
+
 function getProcedureRuntimeInfoInternal(): ProcedureRuntimeInfo {
   const repoRoot = path.resolve(__dirname, "..", "..", "..", "..");
   const projectxRoot = path.resolve(repoRoot, "..");
@@ -46,6 +76,16 @@ function getProcedureRuntimeInfoInternal(): ProcedureRuntimeInfo {
       kbRoot: explicitProcedureRoot,
       dataDir: getResolvedDataDir(explicitProcedureRoot),
       source: "proc-env",
+    };
+  }
+
+  const payloadSyncRoot = getPayloadSyncRuntimeRoot();
+  const payloadSyncDataDir = getPayloadSyncActiveDataDir(payloadSyncRoot);
+  if (payloadSyncDataDir) {
+    return {
+      kbRoot: payloadSyncDataDir,
+      dataDir: payloadSyncDataDir,
+      source: "payload_sync",
     };
   }
 

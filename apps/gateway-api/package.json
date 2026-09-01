@@ -4,7 +4,7 @@
     "version": "0.1.0",
     "type": "module",
     "scripts": {
-        "dev": "tsx watch src/server.ts",
+        "dev": "tsx watch --env-file=.env src/server.ts",
         "start": "node --import tsx src/server.ts",
         "start:pm2": "pm2 start ecosystem.config.cjs --only watany-gateway --env production",
         "restart:pm2": "pm2 restart watany-gateway --update-env",

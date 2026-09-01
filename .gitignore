@@ -79,6 +79,7 @@ _tmp_ignore.txt
 # Local runtime and generated publish outputs
 apps/gateway-api/runtime/community-attachments/
 apps/gateway-api/runtime/uploads/
+apps/gateway-api/runtime/payload-sync/
 apps/mobile/android.incomplete-*/
 apps/mobile/android/app/google-services.json
 apps/mobile/www/

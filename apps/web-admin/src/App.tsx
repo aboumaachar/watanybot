@@ -190,7 +190,7 @@ export default function App() {
                     <Route path="/system/health" element={<SuperadminShellPage />} />
                     <Route path="/system/integrations" element={<SuperadminShellPage />} />
                     <Route path="/authority-audit" element={<SuperadminShellPage />} />
-                    <Route path="/superadmin/*" element={<SuperadminShellPage />} />
+                    <Route path="/*" element={<SuperadminShellPage />} />
                     <Route path="*" element={<Navigate to="/" replace />} />
                   </Routes>
                 </Suspense>
