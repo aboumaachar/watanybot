@@ -1,0 +1,135 @@
+{
+  "schema_version": "wave4a-lifecycle-matrix-v1",
+  "content_type_count": 15,
+  "capability_values": ["REQUIRED", "NOT_APPLICABLE", "EXTERNAL", "ALREADY_SUPPORTED"],
+  "capabilities": ["CREATE", "EDIT", "VIEW", "PREVIEW", "DRAFT", "REVIEW", "PUBLISH", "UNPUBLISH", "ARCHIVE", "RESTORE", "VERSION_HISTORY", "ROLLBACK", "SEO", "MEDIA", "ATTACHMENTS", "SOURCE_PROVENANCE"],
+  "rows": [
+    {
+      "feature_id": "generic-cms-entities",
+      "content_type": "Generic CMS entities and relationships",
+      "capabilities": {
+        "CREATE": "ALREADY_SUPPORTED", "EDIT": "ALREADY_SUPPORTED", "VIEW": "ALREADY_SUPPORTED", "PREVIEW": "REQUIRED", "DRAFT": "ALREADY_SUPPORTED", "REVIEW": "REQUIRED", "PUBLISH": "ALREADY_SUPPORTED", "UNPUBLISH": "ALREADY_SUPPORTED", "ARCHIVE": "ALREADY_SUPPORTED", "RESTORE": "REQUIRED", "VERSION_HISTORY": "ALREADY_SUPPORTED", "ROLLBACK": "REQUIRED", "SEO": "REQUIRED", "MEDIA": "REQUIRED", "ATTACHMENTS": "REQUIRED", "SOURCE_PROVENANCE": "ALREADY_SUPPORTED"
+      },
+      "notes": "Generic schema and a concrete announcements adapter exist; a universal preview, restore, rollback, SEO, media, and attachment contract is not proven."
+    },
+    {
+      "feature_id": "news",
+      "content_type": "News",
+      "capabilities": {
+        "CREATE": "ALREADY_SUPPORTED", "EDIT": "ALREADY_SUPPORTED", "VIEW": "ALREADY_SUPPORTED", "PREVIEW": "EXTERNAL", "DRAFT": "ALREADY_SUPPORTED", "REVIEW": "REQUIRED", "PUBLISH": "ALREADY_SUPPORTED", "UNPUBLISH": "ALREADY_SUPPORTED", "ARCHIVE": "ALREADY_SUPPORTED", "RESTORE": "ALREADY_SUPPORTED", "VERSION_HISTORY": "ALREADY_SUPPORTED", "ROLLBACK": "ALREADY_SUPPORTED", "SEO": "REQUIRED", "MEDIA": "ALREADY_SUPPORTED", "ATTACHMENTS": "NOT_APPLICABLE", "SOURCE_PROVENANCE": "ALREADY_SUPPORTED"
+      },
+      "notes": "News has the strongest proven lifecycle, version, audit, and image URL support; a formal review state and SEO contract are not proven."
+    },
+    {
+      "feature_id": "community",
+      "content_type": "Community",
+      "capabilities": {
+        "CREATE": "ALREADY_SUPPORTED", "EDIT": "ALREADY_SUPPORTED", "VIEW": "ALREADY_SUPPORTED", "PREVIEW": "NOT_APPLICABLE", "DRAFT": "NOT_APPLICABLE", "REVIEW": "ALREADY_SUPPORTED", "PUBLISH": "NOT_APPLICABLE", "UNPUBLISH": "NOT_APPLICABLE", "ARCHIVE": "EXTERNAL", "RESTORE": "EXTERNAL", "VERSION_HISTORY": "EXTERNAL", "ROLLBACK": "NOT_APPLICABLE", "SEO": "NOT_APPLICABLE", "MEDIA": "ALREADY_SUPPORTED", "ATTACHMENTS": "ALREADY_SUPPORTED", "SOURCE_PROVENANCE": "ALREADY_SUPPORTED"
+      },
+      "notes": "Moderation review and audit snapshots are operational controls, not an editorial publication lifecycle."
+    },
+    {
+      "feature_id": "documents",
+      "content_type": "Document assets and uploads",
+      "capabilities": {
+        "CREATE": "ALREADY_SUPPORTED", "EDIT": "ALREADY_SUPPORTED", "VIEW": "ALREADY_SUPPORTED", "PREVIEW": "EXTERNAL", "DRAFT": "EXTERNAL", "REVIEW": "EXTERNAL", "PUBLISH": "EXTERNAL", "UNPUBLISH": "EXTERNAL", "ARCHIVE": "EXTERNAL", "RESTORE": "NOT_APPLICABLE", "VERSION_HISTORY": "ALREADY_SUPPORTED", "ROLLBACK": "ALREADY_SUPPORTED", "SEO": "NOT_APPLICABLE", "MEDIA": "ALREADY_SUPPORTED", "ATTACHMENTS": "EXTERNAL", "SOURCE_PROVENANCE": "ALREADY_SUPPORTED"
+      },
+      "notes": "The CMS adapter is an administrative projection over user/file assets; pending/verified/rejected are storage/verification states."
+    },
+    {
+      "feature_id": "procedures",
+      "content_type": "Procedures",
+      "capabilities": {
+        "CREATE": "ALREADY_SUPPORTED", "EDIT": "ALREADY_SUPPORTED", "VIEW": "ALREADY_SUPPORTED", "PREVIEW": "ALREADY_SUPPORTED", "DRAFT": "ALREADY_SUPPORTED", "REVIEW": "ALREADY_SUPPORTED", "PUBLISH": "ALREADY_SUPPORTED", "UNPUBLISH": "ALREADY_SUPPORTED", "ARCHIVE": "ALREADY_SUPPORTED", "RESTORE": "ALREADY_SUPPORTED", "VERSION_HISTORY": "ALREADY_SUPPORTED", "ROLLBACK": "REQUIRED", "SEO": "REQUIRED", "MEDIA": "NOT_APPLICABLE", "ATTACHMENTS": "ALREADY_SUPPORTED", "SOURCE_PROVENANCE": "ALREADY_SUPPORTED"
+      },
+      "notes": "Gateway CMS routes prove the main lifecycle and versions/audit; rollback and SEO remain completion items."
+    },
+    {
+      "feature_id": "knowledge-base",
+      "content_type": "Knowledge base",
+      "capabilities": {
+        "CREATE": "ALREADY_SUPPORTED", "EDIT": "ALREADY_SUPPORTED", "VIEW": "ALREADY_SUPPORTED", "PREVIEW": "ALREADY_SUPPORTED", "DRAFT": "EXTERNAL", "REVIEW": "ALREADY_SUPPORTED", "PUBLISH": "ALREADY_SUPPORTED", "UNPUBLISH": "EXTERNAL", "ARCHIVE": "EXTERNAL", "RESTORE": "ALREADY_SUPPORTED", "VERSION_HISTORY": "ALREADY_SUPPORTED", "ROLLBACK": "ALREADY_SUPPORTED", "SEO": "NOT_APPLICABLE", "MEDIA": "ALREADY_SUPPORTED", "ATTACHMENTS": "ALREADY_SUPPORTED", "SOURCE_PROVENANCE": "ALREADY_SUPPORTED"
+      },
+      "notes": "Dataset and import lifecycle is owned by KB Studio; it is not a generic editorial CMS publication model."
+    },
+    {
+      "feature_id": "ticker",
+      "content_type": "Ticker",
+      "capabilities": {
+        "CREATE": "ALREADY_SUPPORTED", "EDIT": "ALREADY_SUPPORTED", "VIEW": "ALREADY_SUPPORTED", "PREVIEW": "EXTERNAL", "DRAFT": "NOT_APPLICABLE", "REVIEW": "NOT_APPLICABLE", "PUBLISH": "EXTERNAL", "UNPUBLISH": "EXTERNAL", "ARCHIVE": "EXTERNAL", "RESTORE": "NOT_APPLICABLE", "VERSION_HISTORY": "NOT_APPLICABLE", "ROLLBACK": "NOT_APPLICABLE", "SEO": "NOT_APPLICABLE", "MEDIA": "NOT_APPLICABLE", "ATTACHMENTS": "NOT_APPLICABLE", "SOURCE_PROVENANCE": "ALREADY_SUPPORTED"
+      },
+      "notes": "Ticker visibility is controlled by time window, priority, and deletion rather than a CMS publication history."
+    },
+    {
+      "feature_id": "ai-training",
+      "content_type": "AI training examples",
+      "capabilities": {
+        "CREATE": "ALREADY_SUPPORTED", "EDIT": "REQUIRED", "VIEW": "ALREADY_SUPPORTED", "PREVIEW": "NOT_APPLICABLE", "DRAFT": "EXTERNAL", "REVIEW": "ALREADY_SUPPORTED", "PUBLISH": "ALREADY_SUPPORTED", "UNPUBLISH": "NOT_APPLICABLE", "ARCHIVE": "EXTERNAL", "RESTORE": "NOT_APPLICABLE", "VERSION_HISTORY": "ALREADY_SUPPORTED", "ROLLBACK": "EXTERNAL", "SEO": "NOT_APPLICABLE", "MEDIA": "NOT_APPLICABLE", "ATTACHMENTS": "NOT_APPLICABLE", "SOURCE_PROVENANCE": "ALREADY_SUPPORTED"
+      },
+      "notes": "Training examples have pending/approved/rejected review and file version entries, but are internal model data."
+    },
+    {
+      "feature_id": "abusive-events",
+      "content_type": "Abusive chat events",
+      "capabilities": {
+        "CREATE": "ALREADY_SUPPORTED", "EDIT": "NOT_APPLICABLE", "VIEW": "ALREADY_SUPPORTED", "PREVIEW": "NOT_APPLICABLE", "DRAFT": "NOT_APPLICABLE", "REVIEW": "ALREADY_SUPPORTED", "PUBLISH": "NOT_APPLICABLE", "UNPUBLISH": "NOT_APPLICABLE", "ARCHIVE": "EXTERNAL", "RESTORE": "NOT_APPLICABLE", "VERSION_HISTORY": "NOT_APPLICABLE", "ROLLBACK": "NOT_APPLICABLE", "SEO": "NOT_APPLICABLE", "MEDIA": "NOT_APPLICABLE", "ATTACHMENTS": "NOT_APPLICABLE", "SOURCE_PROVENANCE": "ALREADY_SUPPORTED"
+      },
+      "notes": "Events are append-only internal moderation records; retention/archive policy is not proven."
+    },
+    {
+      "feature_id": "chat-inputs",
+      "content_type": "Chat input telemetry",
+      "capabilities": {
+        "CREATE": "ALREADY_SUPPORTED", "EDIT": "NOT_APPLICABLE", "VIEW": "ALREADY_SUPPORTED", "PREVIEW": "NOT_APPLICABLE", "DRAFT": "NOT_APPLICABLE", "REVIEW": "NOT_APPLICABLE", "PUBLISH": "NOT_APPLICABLE", "UNPUBLISH": "NOT_APPLICABLE", "ARCHIVE": "EXTERNAL", "RESTORE": "NOT_APPLICABLE", "VERSION_HISTORY": "NOT_APPLICABLE", "ROLLBACK": "NOT_APPLICABLE", "SEO": "NOT_APPLICABLE", "MEDIA": "NOT_APPLICABLE", "ATTACHMENTS": "NOT_APPLICABLE", "SOURCE_PROVENANCE": "ALREADY_SUPPORTED"
+      },
+      "notes": "Raw input and clusters support analytics/training and have no editorial lifecycle."
+    },
+    {
+      "feature_id": "answer-overrides",
+      "content_type": "Answer overrides",
+      "capabilities": {
+        "CREATE": "ALREADY_SUPPORTED", "EDIT": "ALREADY_SUPPORTED", "VIEW": "ALREADY_SUPPORTED", "PREVIEW": "EXTERNAL", "DRAFT": "NOT_APPLICABLE", "REVIEW": "NOT_APPLICABLE", "PUBLISH": "ALREADY_SUPPORTED", "UNPUBLISH": "ALREADY_SUPPORTED", "ARCHIVE": "EXTERNAL", "RESTORE": "NOT_APPLICABLE", "VERSION_HISTORY": "REQUIRED", "ROLLBACK": "REQUIRED", "SEO": "NOT_APPLICABLE", "MEDIA": "NOT_APPLICABLE", "ATTACHMENTS": "NOT_APPLICABLE", "SOURCE_PROVENANCE": "ALREADY_SUPPORTED"
+      },
+      "notes": "The active flag is a chat behavior switch; per-record version and rollback are not proven."
+    },
+    {
+      "feature_id": "chat-sessions",
+      "content_type": "Chat sessions",
+      "capabilities": {
+        "CREATE": "ALREADY_SUPPORTED", "EDIT": "ALREADY_SUPPORTED", "VIEW": "ALREADY_SUPPORTED", "PREVIEW": "NOT_APPLICABLE", "DRAFT": "NOT_APPLICABLE", "REVIEW": "NOT_APPLICABLE", "PUBLISH": "NOT_APPLICABLE", "UNPUBLISH": "NOT_APPLICABLE", "ARCHIVE": "EXTERNAL", "RESTORE": "NOT_APPLICABLE", "VERSION_HISTORY": "NOT_APPLICABLE", "ROLLBACK": "NOT_APPLICABLE", "SEO": "NOT_APPLICABLE", "MEDIA": "EXTERNAL", "ATTACHMENTS": "EXTERNAL", "SOURCE_PROVENANCE": "ALREADY_SUPPORTED"
+      },
+      "notes": "Open/in_progress/closed is runtime session state, not draft/publish/archive."
+    },
+    {
+      "feature_id": "filter-rules",
+      "content_type": "Chat filter rules",
+      "capabilities": {
+        "CREATE": "ALREADY_SUPPORTED", "EDIT": "ALREADY_SUPPORTED", "VIEW": "ALREADY_SUPPORTED", "PREVIEW": "EXTERNAL", "DRAFT": "NOT_APPLICABLE", "REVIEW": "NOT_APPLICABLE", "PUBLISH": "ALREADY_SUPPORTED", "UNPUBLISH": "ALREADY_SUPPORTED", "ARCHIVE": "EXTERNAL", "RESTORE": "NOT_APPLICABLE", "VERSION_HISTORY": "REQUIRED", "ROLLBACK": "REQUIRED", "SEO": "NOT_APPLICABLE", "MEDIA": "NOT_APPLICABLE", "ATTACHMENTS": "NOT_APPLICABLE", "SOURCE_PROVENANCE": "ALREADY_SUPPORTED"
+      },
+      "notes": "Enabled/disabled is runtime policy activation; rule history and rollback are operational gaps."
+    },
+    {
+      "feature_id": "official-services",
+      "content_type": "Official services",
+      "capabilities": {
+        "CREATE": "EXTERNAL", "EDIT": "ALREADY_SUPPORTED", "VIEW": "ALREADY_SUPPORTED", "PREVIEW": "ALREADY_SUPPORTED", "DRAFT": "EXTERNAL", "REVIEW": "ALREADY_SUPPORTED", "PUBLISH": "ALREADY_SUPPORTED", "UNPUBLISH": "ALREADY_SUPPORTED", "ARCHIVE": "ALREADY_SUPPORTED", "RESTORE": "REQUIRED", "VERSION_HISTORY": "EXTERNAL", "ROLLBACK": "EXTERNAL", "SEO": "NOT_APPLICABLE", "MEDIA": "ALREADY_SUPPORTED", "ATTACHMENTS": "ALREADY_SUPPORTED", "SOURCE_PROVENANCE": "ALREADY_SUPPORTED"
+      },
+      "notes": "External source sync, health state, mode, enabled state, and imported notice approval are specialized lifecycle controls."
+    },
+    {
+      "feature_id": "erm-assets",
+      "content_type": "ERM assets",
+      "capabilities": {
+        "CREATE": "NOT_APPLICABLE", "EDIT": "NOT_APPLICABLE", "VIEW": "NOT_APPLICABLE", "PREVIEW": "NOT_APPLICABLE", "DRAFT": "NOT_APPLICABLE", "REVIEW": "NOT_APPLICABLE", "PUBLISH": "NOT_APPLICABLE", "UNPUBLISH": "NOT_APPLICABLE", "ARCHIVE": "NOT_APPLICABLE", "RESTORE": "NOT_APPLICABLE", "VERSION_HISTORY": "NOT_APPLICABLE", "ROLLBACK": "NOT_APPLICABLE", "SEO": "NOT_APPLICABLE", "MEDIA": "NOT_APPLICABLE", "ATTACHMENTS": "NOT_APPLICABLE", "SOURCE_PROVENANCE": "NOT_APPLICABLE"
+      },
+      "notes": "No concrete ERM asset implementation is present; all lifecycle decisions are intentionally deferred."
+    }
+  ],
+  "gates": {
+    "CONTENT_TYPE_COUNT": 15,
+    "LIFECYCLE_ROW_COUNT": 15,
+    "DUPLICATE_LIFECYCLE_ROW_COUNT": 0,
+    "BLANK_CAPABILITY_VALUE_COUNT": 0,
+    "INVALID_CAPABILITY_VALUE_COUNT": 0
+  }
+}
