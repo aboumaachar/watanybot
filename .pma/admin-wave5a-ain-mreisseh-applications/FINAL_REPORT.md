@@ -2,15 +2,15 @@
 
 ## Commit
 
-Implementation commit `12e3909d62755b7fb08a15fbc02283970de6d101` is accepted and pushed on `integration/theme-upgrade-20260728`. This closeout adds evidence only.
+Final source commit `185ced7b07ba999cf24710370cfb7b4553f9e9af` is accepted and pushed on `integration/theme-upgrade-20260728`. This reconciliation adds evidence consistency only.
 
 ## Proven
 
-Eight focused/integration tests passed. Gateway and both frontend packages passed their recorded typechecks/builds. PostgreSQL integration proved three mutation/history updates and zero partial persistence under forced history failure. Authenticated browser proof rendered the canonical route, 25 synthetic rows, detail, deliberate save, and immutable history. Cleanup stopped local services and dropped the original disposable database.
+Eight focused/integration tests passed. Gateway and both frontend packages passed their recorded typechecks/builds. PostgreSQL integration proved three mutation/history updates, zero partial persistence under forced history failure, and stale-write rejection with zero stale history rows. Authenticated browser proof rendered the canonical route, list/filter/pagination states, detail, immutable history, and the controlled 430x932 drawer. Cleanup stopped local services and dropped the disposable database.
 
-## Not Durable Or Missing
+## Durable Closeout
 
-No durable screenshot package was available. Stale-write runtime, exhaustive runtime filter checks, mobile layout, focused accessibility, and durable negative-auth HTTP breadth were not captured as repository artifacts. They remain explicitly classified rather than inferred.
+Five canonical screenshots and machine results are committed. Search by name, phone, email, and village, server filters, deterministic pagination, summary counts, detail API, negative authorization, mobile containment, drawer history, and accessibility are recorded as PASS. Drawer closure was verified with the explicit accessible `Close details` button.
 
 ## Safety
 

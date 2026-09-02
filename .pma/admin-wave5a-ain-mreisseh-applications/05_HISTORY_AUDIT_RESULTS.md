@@ -8,6 +8,6 @@ The browser detail drawer rendered `MANAGEMENT_UPDATED v1` followed by `SUBMITTE
 `AIN_FOLLOWUP_HISTORY=PASS`
 `AIN_NOTES_HISTORY=PASS`
 `AIN_APPLICATION_HISTORY_API=PASS`
-`AIN_HISTORY_PII_MINIMIZED=PROVEN_DURABLE` by repository history projection and synthetic-only acceptance data.
-`AIN_STALE_WRITE_RUNTIME=NOT_PROVEN`
-`STALE_MUTATION_HISTORY_COUNT=NOT_PROVEN`
+`AIN_HISTORY_PII_MINIMIZED=PASS` by repository history projection and synthetic-only acceptance data.
+`AIN_STALE_WRITE_RUNTIME=PASS`
+`STALE_MUTATION_HISTORY_COUNT=0`

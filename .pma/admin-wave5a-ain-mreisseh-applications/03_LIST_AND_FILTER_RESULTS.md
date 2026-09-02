@@ -7,4 +7,4 @@ Observed on the authenticated canonical Web Admin route:
 - Search, status filter, follow-up filter, refresh, and pagination controls rendered.
 - Page reported `1 of 1 (25 total)`.
 
-Classification: list and summary browser observations are `PROVEN_BUT_NOT_DURABLE`; focused server contract support is `PROVEN_DURABLE` for campaign scoping only. Search/filter/pagination runtime gates remain `NOT_PROVEN` durably.
+Classification: list, search, filters, deterministic pagination, total-pages behavior, and summary counts are `PASS` in the committed runtime evidence. The fixture count of 25 is retained from the Wave 5A.2 proof.
