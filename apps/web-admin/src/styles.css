@@ -871,6 +871,7 @@ button:disabled,
 
 .admin-content {
   animation: float-in 0.5s ease;
+  min-width: 0;
 }
 
 .admin-content > * {
