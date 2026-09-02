@@ -162,7 +162,7 @@ export async function listAinMreissehBuildingAssistantApplications(filters: { q?
   const followUpStatus = clean(filters.followUpStatus).toLowerCase();
   if (q) {
     values.push(`%${q}%`);
-    where.push(`(name ILIKE $${values.length} OR phone ILIKE $${values.length} OR village_ar ILIKE $${values.length})`);
+    where.push(`(name ILIKE $${values.length} OR phone ILIKE $${values.length} OR COALESCE(email, '') ILIKE $${values.length} OR village ILIKE $${values.length} OR COALESCE(village_ar, '') ILIKE $${values.length})`);
   }
   if (status) { values.push(status); where.push(`LOWER(COALESCE(status, 'pending')) = $${values.length}`); }
   if (followUpStatus) { values.push(followUpStatus); where.push(`LOWER(COALESCE(follow_up_status, 'not_contacted')) = $${values.length}`); }
@@ -171,7 +171,7 @@ export async function listAinMreissehBuildingAssistantApplications(filters: { q?
   const page = Math.max(Number(filters.page || 1), 1);
   const pageSize = Math.min(Math.max(Number(filters.pageSize || 25), 1), 100);
   const listValues = [...values, pageSize, (page - 1) * pageSize];
-  const listResult = await query(`SELECT * FROM ain_mreisseh_building_assistant_applications WHERE ${whereSql} ORDER BY created_at DESC LIMIT $${listValues.length - 1} OFFSET $${listValues.length}`, listValues);
+  const listResult = await query(`SELECT * FROM ain_mreisseh_building_assistant_applications WHERE ${whereSql} ORDER BY created_at DESC, id DESC LIMIT $${listValues.length - 1} OFFSET $${listValues.length}`, listValues);
   const summaryResult = await query<{ status: string; count: number }>(`SELECT status, COUNT(*)::int AS count FROM ain_mreisseh_building_assistant_applications WHERE campaign_id = $1 GROUP BY status`, [CAMPAIGN_ID]);
   const summary = { total: 0, pending: 0, approved: 0, rejected: 0 };
   for (const item of summaryResult.rows ?? []) {
@@ -179,7 +179,8 @@ export async function listAinMreissehBuildingAssistantApplications(filters: { q?
     summary.total += count;
     if (item.status in summary) summary[item.status as keyof typeof summary] = count;
   }
-  return { items: (listResult.rows ?? []).map(rowToApplication), total: countResult.rows[0]?.total ?? 0, page, pageSize, summary };
+  const total = countResult.rows[0]?.total ?? 0;
+  return { items: (listResult.rows ?? []).map(rowToApplication), total, page, pageSize, totalPages: Math.ceil(total / pageSize), summary };
 }
 
 function managementSnapshot(item: AinMreissehBuildingAssistantApplication) {

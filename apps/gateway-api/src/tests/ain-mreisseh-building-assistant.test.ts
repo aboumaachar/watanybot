@@ -5,7 +5,7 @@ const { queryMock, getClientMock } = vi.hoisted(() => ({ queryMock: vi.fn(), get
 vi.mock("../lib/db.js", () => ({ query: queryMock, getClient: getClientMock }));
 
 import { registerAinMreissehBuildingAssistantRoutes } from "../koudama/surveys/ain-mreisseh-building-assistant/ainMreissehBuildingAssistant.routes.js";
-import { createAinMreissehBuildingAssistantApplication } from "../koudama/surveys/ain-mreisseh-building-assistant/ainMreissehBuildingAssistant.repository.js";
+import { createAinMreissehBuildingAssistantApplication, listAinMreissehBuildingAssistantApplications } from "../koudama/surveys/ain-mreisseh-building-assistant/ainMreissehBuildingAssistant.repository.js";
 
 const validInput = {
   name: "مستخدم تجريبي",
@@ -74,6 +74,30 @@ describe("Ain Mreisseh building assistant application contract", () => {
   it("rejects invalid optional email values", async () => {
     await expect(createAinMreissehBuildingAssistantApplication({ ...validInput, email: "not-an-email" })).rejects.toThrow("INVALID_EMAIL");
     expect(queryMock).not.toHaveBeenCalled();
+  });
+
+  it("searches the complete list contract and returns deterministic total pages", async () => {
+    queryMock
+      .mockResolvedValueOnce({ rows: [{ total: 25 }] })
+      .mockResolvedValueOnce({ rows: [] })
+      .mockResolvedValueOnce({ rows: [] });
+    const result = await listAinMreissehBuildingAssistantApplications({ q: "wave5a", page: 2, pageSize: 10 });
+    const searchSql = queryMock.mock.calls[0][0] as string;
+    const listSql = queryMock.mock.calls[1][0] as string;
+    expect(searchSql).toContain("name ILIKE $2");
+    expect(searchSql).toContain("phone ILIKE $2");
+    expect(searchSql).toContain("COALESCE(email, '') ILIKE $2");
+    expect(searchSql).toContain("village ILIKE $2");
+    expect(searchSql).toContain("COALESCE(village_ar, '') ILIKE $2");
+    expect(listSql).toContain("ORDER BY created_at DESC, id DESC");
+    expect(result.total).toBe(25);
+    expect(result.pageSize).toBe(10);
+    expect(result.totalPages).toBe(3);
+
+    queryMock.mockReset();
+    queryMock.mockResolvedValueOnce({ rows: [{ total: 0 }] }).mockResolvedValueOnce({ rows: [] }).mockResolvedValueOnce({ rows: [] });
+    const emptyResult = await listAinMreissehBuildingAssistantApplications({ pageSize: 10 });
+    expect(emptyResult.totalPages).toBe(0);
   });
 
   it("preserves the canonical location identity and campaign on create", async () => {
