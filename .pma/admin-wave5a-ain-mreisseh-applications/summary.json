@@ -1,0 +1,18 @@
+{
+  "wave": "5A",
+  "domain": "ain-mreisseh-application-admin",
+  "status": "INCOMPLETE_DURABLE_EVIDENCE",
+  "sourceCommit": "12e3909d62755b7fb08a15fbc02283970de6d101",
+  "sourceBranch": "integration/theme-upgrade-20260728",
+  "sourceCommitPushed": true,
+  "testsPassed": 8,
+  "mutationHistoryConsistency": "PASS",
+  "partialMutationOnHistoryFailureCount": 0,
+  "staleWriteRuntime": "NOT_PROVEN",
+  "screenshotsDurableCount": 0,
+  "productionContacted": false,
+  "productionDataMutated": false,
+  "databaseMigrationRequired": false,
+  "originalDisposableDatabaseAbsent": true,
+  "ports": {"4000": "CLEAR", "5175": "CLEAR"}
+}
