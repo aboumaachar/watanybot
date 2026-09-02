@@ -1,0 +1,58 @@
+{
+  "run": "WAVE_5A_FINAL_EVIDENCE_ONLY",
+  "authMode": "PERSISTED_SYNTHETIC_SUPERADMIN",
+  "recordsRendered": 1,
+  "screenshots": [
+    "wave5a-list-desktop.png",
+    "wave5a-detail-desktop.png",
+    "wave5a-history-desktop.png",
+    "wave5a-mobile-list.png",
+    "wave5a-mobile-detail.png"
+  ],
+  "desktopDetail": {
+    "viewportInnerWidth": 1440,
+    "htmlScrollWidth": 1425,
+    "bodyScrollWidth": 1425,
+    "adminContentMinWidth": "0px",
+    "tableWidth": 1251.33,
+    "tableWrapperOverflowX": "auto"
+  },
+  "tabletDetail": {
+    "viewportInnerWidth": 768,
+    "htmlScrollWidth": 753,
+    "bodyScrollWidth": 753,
+    "adminContentMinWidth": "0px",
+    "tableWidth": 767.55,
+    "tableWrapperWidth": 679.33,
+    "tableWrapperOverflowX": "auto"
+  },
+  "mobileListInitial": {
+    "requestedViewport": "430x932",
+    "viewportInnerWidth": 430,
+    "htmlScrollWidth": 430,
+    "bodyScrollWidth": 430,
+    "bodyHorizontalOverflow": false,
+    "tableWrapperOverflowX": "auto"
+  },
+  "mobileDrawer": {
+    "status": "PASS",
+    "requestedViewport": "430x932",
+    "viewportInnerWidth": 430,
+    "viewportInnerHeight": 932,
+    "htmlScrollWidth": 430,
+    "bodyScrollWidth": 430,
+    "bodyHorizontalOverflow": false,
+    "drawerWidth": 398,
+    "drawerRight": 414,
+    "drawerOpened": true,
+    "historyVisible": true,
+    "dialogRole": "dialog",
+    "ariaModal": "true",
+    "keyboardTraversal": "PASS",
+    "closeControl": "PASS"
+  },
+  "privacy": {
+    "syntheticOnly": true,
+    "realApplicantPiiUsed": false
+  }
+}
