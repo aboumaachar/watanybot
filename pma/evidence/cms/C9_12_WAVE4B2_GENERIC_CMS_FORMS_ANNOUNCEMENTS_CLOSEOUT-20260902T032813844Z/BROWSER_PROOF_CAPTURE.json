@@ -1,0 +1,92 @@
+{
+    "status":  "PASS",
+    "proof":  {
+                  "provenance":  "integrated-vscode-browser",
+                  "capturedAtUtc":  "2026-09-02T02:50:00Z",
+                  "gatewayUrl":  "http://127.0.0.1:4000",
+                  "adminUrl":  "http://127.0.0.1:5175/superadmin/cms",
+                  "actor":  "apex-wave4b2-browser-superadmin",
+                  "authenticated":  true,
+                  "api":  {
+                              "forms":  {
+                                            "path":  "/api/admin/cms/forms?page=1\u0026pageSize=20",
+                                            "status":  200,
+                                            "total":  0,
+                                            "itemCount":  0,
+                                            "statusCounts":  {
+                                                                 "DRAFT":  0,
+                                                                 "REVIEW_READY":  0,
+                                                                 "PUBLISHED":  0,
+                                                                 "UNPUBLISHED":  0,
+                                                                 "ARCHIVED":  0
+                                                             }
+                                        },
+                              "announcements":  {
+                                                    "path":  "/api/admin/cms/announcements?page=1\u0026pageSize=20",
+                                                    "status":  200,
+                                                    "total":  0,
+                                                    "itemCount":  0,
+                                                    "statusCounts":  {
+                                                                         "DRAFT":  0,
+                                                                         "REVIEW_READY":  0,
+                                                                         "PUBLISHED":  0,
+                                                                         "UNPUBLISHED":  0,
+                                                                         "ARCHIVED":  0
+                                                                     }
+                                                }
+                          },
+                  "desktop":  {
+                                  "viewport":  "1440x900",
+                                  "scrollWidth":  1425,
+                                  "clientWidth":  1425,
+                                  "horizontalOverflow":  false,
+                                  "formsTitleVisible":  true,
+                                  "announcementsTitleVisible":  true,
+                                  "historyAndAuditCopyVisible":  true
+                              },
+                  "mobile":  {
+                                 "viewport":  "430x932",
+                                 "scrollWidth":  415,
+                                 "clientWidth":  415,
+                                 "horizontalOverflow":  false,
+                                 "formsTitleVisible":  true,
+                                 "announcementsTitleVisible":  true
+                             },
+                  "media":  {
+                                "maxTouchPoints":  10,
+                                "pointerCoarse":  false,
+                                "anyPointerCoarse":  true,
+                                "hoverNone":  false
+                            },
+                  "screenshots":  [
+                                      "wave4b2-forms-desktop.png",
+                                      "wave4b2-forms-mobile.png",
+                                      "wave4b2-announcements-desktop.png",
+                                      "wave4b2-announcements-mobile.png"
+                                  ]
+              },
+    "screenshots":  [
+                        {
+                            "source":  "C:\\xampp\\htdocs\\projectx\\watanybot\\pma\\evidence\\cms\\C9_12_WAVE4B2_GENERIC_CMS_FORMS_ANNOUNCEMENTS_CLOSEOUT-20260902T032135795Z\\BROWSER_BROWSER_BROWSER_wave4b2-forms-desktop.png",
+                            "evidence":  "C:\\xampp\\htdocs\\projectx\\watanybot\\pma\\evidence\\cms\\C9_12_WAVE4B2_GENERIC_CMS_FORMS_ANNOUNCEMENTS_CLOSEOUT-20260902T032813844Z\\BROWSER_BROWSER_BROWSER_BROWSER_wave4b2-forms-desktop.png",
+                            "sha256":  "842A23EC85682F854CDB97E9DF9C224F3C62B707A729D2F84258A6ECB4494A82"
+                        },
+                        {
+                            "source":  "C:\\xampp\\htdocs\\projectx\\watanybot\\pma\\evidence\\cms\\C9_12_WAVE4B2_GENERIC_CMS_FORMS_ANNOUNCEMENTS_CLOSEOUT-20260902T032135795Z\\BROWSER_BROWSER_BROWSER_wave4b2-forms-mobile.png",
+                            "evidence":  "C:\\xampp\\htdocs\\projectx\\watanybot\\pma\\evidence\\cms\\C9_12_WAVE4B2_GENERIC_CMS_FORMS_ANNOUNCEMENTS_CLOSEOUT-20260902T032813844Z\\BROWSER_BROWSER_BROWSER_BROWSER_wave4b2-forms-mobile.png",
+                            "sha256":  "7BD9644DC4C916853DD100740C48C60AD4A24609760F467FE521D027736F2128"
+                        },
+                        {
+                            "source":  "C:\\xampp\\htdocs\\projectx\\watanybot\\pma\\evidence\\cms\\C9_12_WAVE4B2_GENERIC_CMS_FORMS_ANNOUNCEMENTS_CLOSEOUT-20260902T032135795Z\\BROWSER_BROWSER_BROWSER_wave4b2-announcements-desktop.png",
+                            "evidence":  "C:\\xampp\\htdocs\\projectx\\watanybot\\pma\\evidence\\cms\\C9_12_WAVE4B2_GENERIC_CMS_FORMS_ANNOUNCEMENTS_CLOSEOUT-20260902T032813844Z\\BROWSER_BROWSER_BROWSER_BROWSER_wave4b2-announcements-desktop.png",
+                            "sha256":  "4200D2404F365CB9A2413878B96A4AF7050EAA1DC4D62C7ED33575ED065372E4"
+                        },
+                        {
+                            "source":  "C:\\xampp\\htdocs\\projectx\\watanybot\\pma\\evidence\\cms\\C9_12_WAVE4B2_GENERIC_CMS_FORMS_ANNOUNCEMENTS_CLOSEOUT-20260902T032135795Z\\BROWSER_BROWSER_BROWSER_wave4b2-announcements-mobile.png",
+                            "evidence":  "C:\\xampp\\htdocs\\projectx\\watanybot\\pma\\evidence\\cms\\C9_12_WAVE4B2_GENERIC_CMS_FORMS_ANNOUNCEMENTS_CLOSEOUT-20260902T032813844Z\\BROWSER_BROWSER_BROWSER_BROWSER_wave4b2-announcements-mobile.png",
+                            "sha256":  "C9215B13C75E7CAB7B024CB8F0C6191C79A86B2941DEE1A845F6549CBDAB0DBA"
+                        }
+                    ],
+    "sourcePath":  "C:\\xampp\\htdocs\\projectx\\watanybot\\pma\\evidence\\cms\\C9_12_WAVE4B2_GENERIC_CMS_FORMS_ANNOUNCEMENTS_CLOSEOUT-20260902T032135795Z\\BROWSER_PROOF_CAPTURE.json",
+    "inputWasFallback":  true
+}

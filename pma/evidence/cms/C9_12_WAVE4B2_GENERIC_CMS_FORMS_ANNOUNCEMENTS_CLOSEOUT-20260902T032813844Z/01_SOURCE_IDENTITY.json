@@ -1,0 +1,134 @@
+{
+    "runId":  "20260902T032813844Z",
+    "stage":  "SOURCE_IDENTITY",
+    "status":  "PASS",
+    "reason":  "Selective Wave 4B.2 implementation identity captured.",
+    "implementationCommitSha":  "b34534be98799329f37fcb8fd823e6b771dcf37e",
+    "implementationCommitPushed":  true,
+    "sourceBranch":  "integration/theme-upgrade-20260728",
+    "sourceRemoteMatch":  true,
+    "sourceCommitSubject":  "feat(cms): complete generic CMS management",
+    "data":  {
+                 "status":  "PASS",
+                 "pathCount":  23,
+                 "missingCount":  0,
+                 "paths":  [
+                               {
+                                   "relativePath":  "APEX_WAVE4B2_GENERIC_CMS_FORMS_ANNOUNCEMENTS_CLOSEOUT_PS51.ps1",
+                                   "exists":  true,
+                                   "sha256":  "3517216C5951B3523F8C8E9A00A353F6780B97D9D71A7CC8BDBD9CF95807FB10"
+                               },
+                               {
+                                   "relativePath":  ".github/skills/apex-ps1/SKILL.md",
+                                   "exists":  true,
+                                   "sha256":  "6EC880275693C027C2DFA9D94FFE043DCF92108ED412933A196EFC856755755E"
+                               },
+                               {
+                                   "relativePath":  "pma/feature-gates/04_PROGRAM_FAILURE_AND_REGRESSION_REGISTER.md",
+                                   "exists":  true,
+                                   "sha256":  "D914EA323E59A29773EF37C2DBF536972FEAB860579D8143A497D74ABEE1D9E9"
+                               },
+                               {
+                                   "relativePath":  ".pma/admin-wave4b-payload-gateway-bridge/FINAL_STATUS.txt",
+                                   "exists":  true,
+                                   "sha256":  "2EC1DC2F87B8341EC3B5B74E2CFE6A0B22090B933FFB214C0FF891F5DC0C94E7"
+                               },
+                               {
+                                   "relativePath":  ".pma/admin-wave4b-payload-gateway-bridge/FINAL_REPORT.md",
+                                   "exists":  true,
+                                   "sha256":  "91EA3D19FF08DB12C27CEFF7D229A7698C799C9E0693E2DE5974574D1F9A2444"
+                               },
+                               {
+                                   "relativePath":  ".pma/admin-wave4b-payload-gateway-bridge/summary.json",
+                                   "exists":  true,
+                                   "sha256":  "106CBF0606FCEB14CC63DFBD3B884272114BB8ED750E5B34AA1B69B5F00213CB"
+                               },
+                               {
+                                   "relativePath":  "apps/gateway-api/src/db/migrations/035_generic_cms_content.sql",
+                                   "exists":  true,
+                                   "sha256":  "7AE4E058FA7AC7A57CBDB2B3F0FA20DB7FDDDD704A0DFDD9FE6014097E2A80AC"
+                               },
+                               {
+                                   "relativePath":  "apps/gateway-api/src/db/migrations/037_generic_cms_review_ready.sql",
+                                   "exists":  true,
+                                   "sha256":  "4B75945FFBBCFFD221CDBEC8DCC5FC67040EB89455E6F71B36400C88575965CB"
+                               },
+                               {
+                                   "relativePath":  "apps/gateway-api/src/cms/cms-routes.ts",
+                                   "exists":  true,
+                                   "sha256":  "D9AB5A22866ECF3BAC98FE8EC7C8029D13811DC0BD9AF4EB5AA94F2FCF51FAF7"
+                               },
+                               {
+                                   "relativePath":  "apps/gateway-api/src/cms/storage/genericCmsRepository.ts",
+                                   "exists":  true,
+                                   "sha256":  "958022823C06AA162EC1F547B8CAF2BC5A59576F9FCEC003F84400CD3EE592BE"
+                               },
+                               {
+                                   "relativePath":  "apps/gateway-api/src/cms/storage/genericCmsService.ts",
+                                   "exists":  true,
+                                   "sha256":  "4ECF38EB490CA307CB108D63C96557D36957EA9AFDDBF01E2472F6743EFE92AA"
+                               },
+                               {
+                                   "relativePath":  "apps/gateway-api/src/cms/storage/genericCmsRoutes.ts",
+                                   "exists":  true,
+                                   "sha256":  "59F2AD91B886CECFB1C711B124F9FF8BE68B3E5572AB3062D6C8177A5D3A8983"
+                               },
+                               {
+                                   "relativePath":  "apps/gateway-api/src/cms/storage/genericCmsRoutes.test.ts",
+                                   "exists":  true,
+                                   "sha256":  "98B50C9BC7A705A0FBA943996850A30557919B03EC3102676D4BBD896F673094"
+                               },
+                               {
+                                   "relativePath":  "apps/gateway-api/src/cms/forms/forms-cms-adapter.ts",
+                                   "exists":  true,
+                                   "sha256":  "079D4A44B024C1F021FC2B16A7259484EF9B8C8C8CD8C490871841687F3DCEA4"
+                               },
+                               {
+                                   "relativePath":  "apps/gateway-api/src/cms/forms/forms-cms-runtime.test.ts",
+                                   "exists":  true,
+                                   "sha256":  "49D34752D0CFFC9B6B999D72241A3781CC3CD0877E3AB508FE766B7AFC95B2CE"
+                               },
+                               {
+                                   "relativePath":  "apps/gateway-api/src/cms/announcements/announcements-cms-adapter.ts",
+                                   "exists":  true,
+                                   "sha256":  "98191EE5BD03F73F9AC210A7B0F9B678C71624C9B54D48001C1FABD42F88A627"
+                               },
+                               {
+                                   "relativePath":  "apps/gateway-api/src/cms/announcements/announcements-cms-runtime.test.ts",
+                                   "exists":  true,
+                                   "sha256":  "2D0DC52550EAF8747B45343FC6656BABA6EF3D004F6EA98AE4C9B7E0CE4BDE86"
+                               },
+                               {
+                                   "relativePath":  "apps/gateway-api/src/routes/announcements.ts",
+                                   "exists":  true,
+                                   "sha256":  "36249AB838E4CD6BD532D989A2DB7177FA4E1624370CC67C1E62BDDE67E0FD33"
+                               },
+                               {
+                                   "relativePath":  "apps/web-admin/src/lib/api.ts",
+                                   "exists":  true,
+                                   "sha256":  "009F084F82518FA4E632CCD41A71E2A60090E0E39BACE63AD19920354AD13E52"
+                               },
+                               {
+                                   "relativePath":  "apps/web-admin/src/pages/CmsPage.tsx",
+                                   "exists":  true,
+                                   "sha256":  "A5366608415680A206511D49D56AE63176A993671105FF9FEF37EC0E76678B59"
+                               },
+                               {
+                                   "relativePath":  "apps/web-admin/src/pages/CmsManagedContentPage.tsx",
+                                   "exists":  true,
+                                   "sha256":  "2FA5EDAA955074E947DB94E465F5FA2E4C088A3193A623947CFED3FA2DED4776"
+                               },
+                               {
+                                   "relativePath":  "apps/web-admin/src/styles.css",
+                                   "exists":  true,
+                                   "sha256":  "C94491BBED6172C6A2E2F37C57DFD76D76935A1D2F619EF35A84F6509F8E0671"
+                               },
+                               {
+                                   "relativePath":  "apps/web-admin/vite.config.ts",
+                                   "exists":  true,
+                                   "sha256":  "CFF5575FF9225F4588DE8B55F09044159F6D56CE4F308030522FBF54AD4D4B67"
+                               }
+                           ],
+                 "reason":  "Selective Wave 4B.2 implementation identity captured."
+             }
+}

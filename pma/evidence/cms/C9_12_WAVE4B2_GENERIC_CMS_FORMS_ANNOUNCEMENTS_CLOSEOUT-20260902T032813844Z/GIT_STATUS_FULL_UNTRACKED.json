@@ -1,0 +1,19 @@
+{
+    "name":  "GIT_STATUS_FULL_UNTRACKED",
+    "command":  [
+                    "git",
+                    "status",
+                    "--short",
+                    "--untracked-files=all"
+                ],
+    "workingDirectory":  "C:\\xampp\\htdocs\\projectx\\watanybot",
+    "startUtc":  "2026-09-02T03:30:28.3932365Z",
+    "endUtc":  "2026-09-02T03:30:28.7862682Z",
+    "exitCode":  0,
+    "status":  "PASS",
+    "stdoutPath":  "C:\\xampp\\htdocs\\projectx\\watanybot\\pma\\evidence\\cms\\C9_12_WAVE4B2_GENERIC_CMS_FORMS_ANNOUNCEMENTS_CLOSEOUT-20260902T032813844Z\\GIT_STATUS_FULL_UNTRACKED.stdout.txt",
+    "stderrPath":  "C:\\xampp\\htdocs\\projectx\\watanybot\\pma\\evidence\\cms\\C9_12_WAVE4B2_GENERIC_CMS_FORMS_ANNOUNCEMENTS_CLOSEOUT-20260902T032813844Z\\GIT_STATUS_FULL_UNTRACKED.stderr.txt",
+    "stdoutBytes":  2610,
+    "stderrBytes":  0,
+    "exception":  ""
+}

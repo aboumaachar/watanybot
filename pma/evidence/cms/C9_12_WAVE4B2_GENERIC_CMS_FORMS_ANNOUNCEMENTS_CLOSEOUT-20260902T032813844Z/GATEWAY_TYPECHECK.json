@@ -1,0 +1,19 @@
+{
+    "name":  "GATEWAY_TYPECHECK",
+    "command":  [
+                    "pnpm",
+                    "--dir",
+                    "apps/gateway-api",
+                    "typecheck"
+                ],
+    "workingDirectory":  "C:\\xampp\\htdocs\\projectx\\watanybot",
+    "startUtc":  "2026-09-02T03:28:17.6280786Z",
+    "endUtc":  "2026-09-02T03:28:38.8851905Z",
+    "exitCode":  0,
+    "status":  "PASS",
+    "stdoutPath":  "C:\\xampp\\htdocs\\projectx\\watanybot\\pma\\evidence\\cms\\C9_12_WAVE4B2_GENERIC_CMS_FORMS_ANNOUNCEMENTS_CLOSEOUT-20260902T032813844Z\\GATEWAY_TYPECHECK.stdout.txt",
+    "stderrPath":  "C:\\xampp\\htdocs\\projectx\\watanybot\\pma\\evidence\\cms\\C9_12_WAVE4B2_GENERIC_CMS_FORMS_ANNOUNCEMENTS_CLOSEOUT-20260902T032813844Z\\GATEWAY_TYPECHECK.stderr.txt",
+    "stdoutBytes":  242,
+    "stderrBytes":  0,
+    "exception":  ""
+}

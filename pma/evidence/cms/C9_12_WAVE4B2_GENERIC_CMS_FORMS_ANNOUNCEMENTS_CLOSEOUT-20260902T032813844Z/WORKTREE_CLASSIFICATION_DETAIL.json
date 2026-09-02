@@ -1,0 +1,49 @@
+{
+    "status":  "PASS",
+    "fullUntrackedStatus":  [
+                                " M APEX_WATANY_CONTROL_CENTER_CRM_V119_TERMINAL_CLOSURE_RUNNER_PS51.ps1",
+                                " M APEX_WATANY_CONTROL_CENTER_STAGE_X_CRM_PHASE8_V119_FINAL_RESEAL_PHASE9_PRODUCTION_DEPLOYMENT_FINAL_ACCEPTANCE_TASK_CLOSE_PS51.ps1",
+                                " M APEX_WATANY_CONTROL_CENTER_STAGE_X_ERPNEXT_PHASE5_FRONTEND_WEBSOCKET_LOOPBACK_RUNTIME_RECOVERY_SITE_ROUTING_REALTIME_READ_ONLY_PROOF_AND_FULL_ERPNEXT_LOCAL_RUNTIME_SEAL_V1_0_0.ps1",
+                                " M apps/api-backend/apps/api/FIX_WATANY_CRM.ps1",
+                                " M apps/gateway-api/src/cms/announcements/announcements-cms-adapter.ts",
+                                " M apps/gateway-api/src/cms/announcements/announcements-cms-runtime.test.ts",
+                                " M apps/gateway-api/src/cms/forms/forms-cms-adapter.ts",
+                                " M apps/gateway-api/src/cms/storage/genericCmsRepository.ts",
+                                " M apps/web-admin/src/lib/api.ts",
+                                " M apps/web-admin/src/pages/CmsPage.tsx",
+                                " M apps/web-admin/src/styles.css",
+                                " M pma/feature-gates/04_PROGRAM_FAILURE_AND_REGRESSION_REGISTER.md",
+                                "?? .github/prompts/fix-vscode-problems.prompt.md",
+                                "?? APEX_WAVE4B2_GENERIC_CMS_FORMS_ANNOUNCEMENTS_CLOSEOUT_PS51.ps1",
+                                "?? apps/gateway-api/src/cms/storage/genericCmsRoutes.test.ts",
+                                "?? apps/gateway-api/src/cms/storage/genericCmsRoutes.ts",
+                                "?? apps/gateway-api/src/cms/storage/genericCmsService.ts",
+                                "?? apps/gateway-api/src/db/migrations/037_generic_cms_review_ready.sql",
+                                "?? apps/web-admin/src/pages/CmsManagedContentPage.tsx"
+                            ],
+    "Wave4B2TargetPaths":  [
+                               " M apps/gateway-api/src/cms/announcements/announcements-cms-adapter.ts",
+                               " M apps/gateway-api/src/cms/announcements/announcements-cms-runtime.test.ts",
+                               " M apps/gateway-api/src/cms/forms/forms-cms-adapter.ts",
+                               " M apps/gateway-api/src/cms/storage/genericCmsRepository.ts",
+                               " M apps/web-admin/src/lib/api.ts",
+                               " M apps/web-admin/src/pages/CmsPage.tsx",
+                               " M apps/web-admin/src/styles.css",
+                               "?? APEX_WAVE4B2_GENERIC_CMS_FORMS_ANNOUNCEMENTS_CLOSEOUT_PS51.ps1",
+                               "?? apps/gateway-api/src/cms/storage/genericCmsRoutes.test.ts",
+                               "?? apps/gateway-api/src/cms/storage/genericCmsRoutes.ts",
+                               "?? apps/gateway-api/src/cms/storage/genericCmsService.ts",
+                               "?? apps/web-admin/src/pages/CmsManagedContentPage.tsx"
+                           ],
+    "unrelatedPaths":  [
+                           " M APEX_WATANY_CONTROL_CENTER_CRM_V119_TERMINAL_CLOSURE_RUNNER_PS51.ps1",
+                           " M APEX_WATANY_CONTROL_CENTER_STAGE_X_CRM_PHASE8_V119_FINAL_RESEAL_PHASE9_PRODUCTION_DEPLOYMENT_FINAL_ACCEPTANCE_TASK_CLOSE_PS51.ps1",
+                           " M APEX_WATANY_CONTROL_CENTER_STAGE_X_ERPNEXT_PHASE5_FRONTEND_WEBSOCKET_LOOPBACK_RUNTIME_RECOVERY_SITE_ROUTING_REALTIME_READ_ONLY_PROOF_AND_FULL_ERPNEXT_LOCAL_RUNTIME_SEAL_V1_0_0.ps1",
+                           " M apps/api-backend/apps/api/FIX_WATANY_CRM.ps1",
+                           " M pma/feature-gates/04_PROGRAM_FAILURE_AND_REGRESSION_REGISTER.md",
+                           "?? .github/prompts/fix-vscode-problems.prompt.md",
+                           "?? apps/gateway-api/src/db/migrations/037_generic_cms_review_ready.sql"
+                       ],
+    "unrelatedCount":  7,
+    "mutation":  "NO_STAGE_COMMIT_PUSH_DEPLOY"
+}

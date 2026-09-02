@@ -1,0 +1,27 @@
+{
+    "status":  "PASS",
+    "domains":  [
+                    "forms",
+                    "announcements"
+                ],
+    "gatewayOwned":  true,
+    "covered":  [
+                    "RBAC negative paths",
+                    "create/list/detail/update",
+                    "publish/unpublish/archive/restore routing",
+                    "bulk edit/archive",
+                    "versions and audit",
+                    "relationship route engine",
+                    "relationship delete",
+                    "cleanup"
+                ],
+    "preserved":  [
+                      "Wave 4B.1 historical Payload bridge evidence",
+                      "Payload-owned Procedures and Editorial Documents boundary"
+                  ],
+    "deferredArchitectureDecisions":  [
+                                          "bulk entity writes and authority history transaction boundary",
+                                          "relationship restoration during rollback",
+                                          "internal UUID versus public ID view identifier"
+                                      ]
+}
