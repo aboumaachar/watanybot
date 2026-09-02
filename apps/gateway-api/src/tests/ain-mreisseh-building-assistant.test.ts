@@ -1,8 +1,8 @@
 import Fastify from "fastify";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { queryMock } = vi.hoisted(() => ({ queryMock: vi.fn() }));
-vi.mock("../lib/db.js", () => ({ query: queryMock }));
+const { queryMock, getClientMock } = vi.hoisted(() => ({ queryMock: vi.fn(), getClientMock: vi.fn() }));
+vi.mock("../lib/db.js", () => ({ query: queryMock, getClient: getClientMock }));
 
 import { registerAinMreissehBuildingAssistantRoutes } from "../koudama/surveys/ain-mreisseh-building-assistant/ainMreissehBuildingAssistant.routes.js";
 import { createAinMreissehBuildingAssistantApplication } from "../koudama/surveys/ain-mreisseh-building-assistant/ainMreissehBuildingAssistant.repository.js";
@@ -45,7 +45,21 @@ const row = {
 };
 
 describe("Ain Mreisseh building assistant application contract", () => {
-  beforeEach(() => queryMock.mockReset());
+  beforeEach(() => {
+    queryMock.mockReset();
+    queryMock.mockResolvedValue({ rows: [] });
+    getClientMock.mockReset();
+    getClientMock.mockResolvedValue({
+      query: vi.fn().mockImplementation((sql: string) => {
+        if (sql.includes("FROM ain_mreisseh_building_assistant_applications")) return Promise.resolve({ rows: [row] });
+        if (sql.includes("UPDATE ain_mreisseh_building_assistant_applications")) return Promise.resolve({ rows: [row] });
+        if (sql.includes("COALESCE(MAX(version)")) return Promise.resolve({ rows: [{ next_version: 1 }] });
+        if (sql.includes("RETURNING created_at")) return Promise.resolve({ rows: [{ created_at: "2026-06-30T12:00:00.000Z" }] });
+        return Promise.resolve({ rows: [] });
+      }),
+      release: vi.fn(),
+    });
+  });
 
   it("rejects missing required values before database access", async () => {
     await expect(createAinMreissehBuildingAssistantApplication({ ...validInput, phone: "" })).rejects.toThrow("MISSING_REQUIRED_FIELD");
@@ -105,7 +119,8 @@ describe("Ain Mreisseh building assistant application contract", () => {
     queryMock.mockResolvedValueOnce({ rows: [row], rowCount: 1 });
     const { updateAinMreissehBuildingAssistantApplication } = await import("../koudama/surveys/ain-mreisseh-building-assistant/ainMreissehBuildingAssistant.repository.js");
     await updateAinMreissehBuildingAssistantApplication("AMBA-test", { status: "approved", adminNotes: "تم التواصل" });
-    const sql = queryMock.mock.calls[0][0] as string;
+    const client = getClientMock.mock.results[0].value;
+    const sql = (client.query.mock.calls.find((call: [string]) => call[0].includes("UPDATE ain_mreisseh"))?.[0] ?? "") as string;
     expect(sql).toContain("WHERE id = $1 AND campaign_id = $2");
     expect(sql.toLowerCase()).not.toMatch(/\b(drop|delete|truncate)\b/);
   });

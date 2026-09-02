@@ -1,3 +1,4 @@
+import type { PoolClient } from 'pg';
 import { getClient, query } from '../lib/db.js';
 
 let ensureTablesPromise: Promise<void> | null = null;
@@ -146,4 +147,26 @@ export async function createAdminEntityVersionRow(input: {
   } finally {
     client.release();
   }
+}
+
+export async function createAdminEntityVersionRowInTransaction(client: PoolClient, input: {
+  id: string;
+  entityType: string;
+  entityId: string;
+  snapshot: unknown;
+  createdBy: string;
+  reason?: string;
+}): Promise<{ version: number; createdAt: string }> {
+  await client.query('LOCK TABLE admin_entity_versions IN SHARE ROW EXCLUSIVE MODE');
+  const current = await client.query<{ next_version: number }>(
+    `SELECT COALESCE(MAX(version), 0) + 1 AS next_version FROM admin_entity_versions WHERE entity_type = $1 AND entity_id = $2`,
+    [input.entityType, input.entityId],
+  );
+  const nextVersion = Number(current.rows[0]?.next_version || 1);
+  const inserted = await client.query<{ created_at: string }>(
+    `INSERT INTO admin_entity_versions (id, entity_type, entity_id, version, snapshot, created_by, reason)
+     VALUES ($1, $2, $3, $4, $5::jsonb, $6, $7) RETURNING created_at`,
+    [input.id, input.entityType, input.entityId, nextVersion, JSON.stringify(toJson(input.snapshot)), input.createdBy, input.reason ?? null],
+  );
+  return { version: nextVersion, createdAt: new Date(inserted.rows[0]?.created_at || Date.now()).toISOString() };
 }

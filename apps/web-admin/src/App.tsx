@@ -24,6 +24,7 @@ const FeatureControlsPage = lazy(() => import("./pages/FeatureControlsPage"));
 const NewsAdminPage = lazy(() => import("./pages/NewsAdminPage"));
 const NetworkAdminPage = lazy(() => import("./pages/NetworkAdminPage"));
 const JobsAdminPage = lazy(() => import("./pages/JobsAdminPage"));
+const AinMreissehApplicationsAdminPage = lazy(() => import("./pages/AinMreissehApplicationsAdminPage"));
 
 function RedirectToWebUser() {
   const location = useLocation();
@@ -50,6 +51,7 @@ const NAV_SECTIONS = [
   { id: "operations", label: "Operations", items: [
     { path: "/chat", label: "Chat Monitor", icon: "chat" },
     { path: "/jobs", label: "Jobs & Applications", icon: "briefcase" },
+    { path: "/jobs/ain-mreisseh-building-assistant", label: "Ain Mreisseh Applications", icon: "users" },
     { path: "/market", label: "Marketplace", icon: "apps" },
     { path: "/network", label: "Network", icon: "location" },
   ] },
@@ -62,6 +64,7 @@ const NAV_SECTIONS = [
 
 const ROUTE_META: Record<string, { title: string; section: string }> = {
   "/": { title: "Dashboard", section: "Overview" }, "/users": { title: "Users", section: "System" },
+  "/jobs/ain-mreisseh-building-assistant": { title: "Ain Mreisseh Applications", section: "Operations" },
   "/news": { title: "News", section: "CMS & Knowledge" }, "/jobs": { title: "Jobs & Applications", section: "Operations" },
   "/market": { title: "Marketplace", section: "Operations" }, "/chat": { title: "Chat Monitor", section: "Operations" },
   "/kb": { title: "Knowledge Base", section: "CMS & Knowledge" }, "/rules": { title: "Content Rules", section: "CMS & Knowledge" },
@@ -182,6 +185,7 @@ export default function App() {
                     <Route path="/news" element={<NewsAdminPage />} />
                     <Route path="/network" element={<NetworkAdminPage />} />
                     <Route path="/jobs" element={<JobsAdminPage />} />
+                    <Route path="/jobs/ain-mreisseh-building-assistant" element={<AinMreissehApplicationsAdminPage />} />
                     <Route path="/market" element={<AdminMarketPage />} />
                     <Route path="/administrators" element={<SuperadminShellPage />} />
                     <Route path="/sessions" element={<SuperadminShellPage />} />

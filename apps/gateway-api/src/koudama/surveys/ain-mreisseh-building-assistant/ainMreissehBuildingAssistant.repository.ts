@@ -1,11 +1,15 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
-import { query } from "../../../lib/db.js";
+import { getClient, query } from "../../../lib/db.js";
+import { appendAdminAuditEventInTransaction, createAdminAuditEvent } from "../../../admin-authority/adminAuthorityAudit.js";
+import { createAdminAuthorityId, createAdminEntityVersionRowInTransaction, ensureAdminAuthorityTables } from "../../../admin-authority/adminAuthorityStore.js";
+import { listAdminEntityVersions } from "../../../admin-authority/adminAuthorityVersioning.js";
 import {
   AIN_MREISSEH_BUILDING_ASSISTANT_CAMPAIGN_ID,
   type AinMreissehBuildingAssistantAdminPatch,
   type AinMreissehBuildingAssistantApplication,
   type AinMreissehBuildingAssistantApplicationInput,
+  type AinMreissehBuildingAssistantHistoryEntry,
 } from "./ainMreissehBuildingAssistant.types.js";
 
 const CAMPAIGN_ID = AIN_MREISSEH_BUILDING_ASSISTANT_CAMPAIGN_ID;
@@ -150,7 +154,7 @@ export async function createAinMreissehBuildingAssistantApplication(input: AinMr
   throw new Error("DATABASE_UNAVAILABLE");
 }
 
-export async function listAinMreissehBuildingAssistantApplications(filters: { q?: string; status?: string; followUpStatus?: string } = {}) {
+export async function listAinMreissehBuildingAssistantApplications(filters: { q?: string; status?: string; followUpStatus?: string; page?: string | number; pageSize?: string | number } = {}) {
   const values: unknown[] = [CAMPAIGN_ID];
   const where = ["campaign_id = $1"];
   const q = clean(filters.q);
@@ -164,22 +168,66 @@ export async function listAinMreissehBuildingAssistantApplications(filters: { q?
   if (followUpStatus) { values.push(followUpStatus); where.push(`LOWER(COALESCE(follow_up_status, 'not_contacted')) = $${values.length}`); }
   const whereSql = where.join(" AND ");
   const countResult = await query<{ total: number }>(`SELECT COUNT(*)::int AS total FROM ain_mreisseh_building_assistant_applications WHERE ${whereSql}`, values);
-  const listResult = await query(`SELECT * FROM ain_mreisseh_building_assistant_applications WHERE ${whereSql} ORDER BY created_at DESC`, values);
-  return { items: listResult.rows.map(rowToApplication), total: countResult.rows[0]?.total ?? 0 };
+  const page = Math.max(Number(filters.page || 1), 1);
+  const pageSize = Math.min(Math.max(Number(filters.pageSize || 25), 1), 100);
+  const listValues = [...values, pageSize, (page - 1) * pageSize];
+  const listResult = await query(`SELECT * FROM ain_mreisseh_building_assistant_applications WHERE ${whereSql} ORDER BY created_at DESC LIMIT $${listValues.length - 1} OFFSET $${listValues.length}`, listValues);
+  const summaryResult = await query<{ status: string; count: number }>(`SELECT status, COUNT(*)::int AS count FROM ain_mreisseh_building_assistant_applications WHERE campaign_id = $1 GROUP BY status`, [CAMPAIGN_ID]);
+  const summary = { total: 0, pending: 0, approved: 0, rejected: 0 };
+  for (const item of summaryResult.rows ?? []) {
+    const count = Number(item.count || 0);
+    summary.total += count;
+    if (item.status in summary) summary[item.status as keyof typeof summary] = count;
+  }
+  return { items: (listResult.rows ?? []).map(rowToApplication), total: countResult.rows[0]?.total ?? 0, page, pageSize, summary };
 }
 
-export async function updateAinMreissehBuildingAssistantApplication(id: string, patch: AinMreissehBuildingAssistantAdminPatch) {
+function managementSnapshot(item: AinMreissehBuildingAssistantApplication) {
+  return { status: item.status, followUpStatus: item.followUpStatus, adminNotes: item.adminNotes, updatedAt: item.updatedAt };
+}
+
+export async function getAinMreissehBuildingAssistantApplication(id: string) {
+  const result = await query(`SELECT * FROM ain_mreisseh_building_assistant_applications WHERE id = $1 AND campaign_id = $2`, [id, CAMPAIGN_ID]);
+  return result.rows[0] ? rowToApplication(result.rows[0]) : null;
+}
+
+export async function listAinMreissehBuildingAssistantApplicationHistory(id: string): Promise<AinMreissehBuildingAssistantHistoryEntry[]> {
+  const item = await getAinMreissehBuildingAssistantApplication(id);
+  if (!item) return [];
+  const versions = await listAdminEntityVersions("jobs.ain_mreisseh.application", id);
+  const history: AinMreissehBuildingAssistantHistoryEntry[] = versions.map((version) => ({ version: version.version, eventType: "MANAGEMENT_UPDATED", snapshot: version.snapshot as AinMreissehBuildingAssistantHistoryEntry["snapshot"], actorId: version.createdBy, createdAt: version.createdAt }));
+  history.push({ version: 0, eventType: "SUBMITTED", snapshot: managementSnapshot({ ...item, status: "pending", followUpStatus: "not_contacted", adminNotes: "" }), actorId: "public_submission", createdAt: item.createdAt });
+  return history.sort((left, right) => right.version - left.version);
+}
+
+export async function updateAinMreissehBuildingAssistantApplication(id: string, patch: AinMreissehBuildingAssistantAdminPatch, actorId = "unknown_admin") {
   const updates: string[] = [];
   const values: unknown[] = [id, CAMPAIGN_ID];
   if (patch.status !== undefined) { values.push(patch.status); updates.push(`status = $${values.length}`); }
   if (patch.followUpStatus !== undefined) { values.push(patch.followUpStatus); updates.push(`follow_up_status = $${values.length}`); }
   if (patch.adminNotes !== undefined) { values.push(clean(patch.adminNotes)); updates.push(`admin_notes = $${values.length}`); }
   if (!updates.length) throw new Error("NO_UPDATES");
-  values.push(new Date().toISOString());
-  const result = await query(
-    `UPDATE ain_mreisseh_building_assistant_applications SET ${updates.join(", ")}, updated_at = $${values.length}
-     WHERE id = $1 AND campaign_id = $2 RETURNING *`,
-    values,
-  );
-  return result.rows[0] ? rowToApplication(result.rows[0]) : null;
+  const expectedUpdatedAt = clean(patch.expectedUpdatedAt);
+  const client = await getClient();
+  try {
+    await ensureAdminAuthorityTables();
+    await client.query("BEGIN");
+    const current = await client.query(`SELECT * FROM ain_mreisseh_building_assistant_applications WHERE id = $1 AND campaign_id = $2 FOR UPDATE`, [id, CAMPAIGN_ID]);
+    if (!current.rows[0]) { await client.query("ROLLBACK"); return null; }
+    const currentItem = rowToApplication(current.rows[0]);
+    if (expectedUpdatedAt && currentItem.updatedAt !== expectedUpdatedAt) throw new Error("APPLICATION_STALE_VERSION");
+    values.push(new Date().toISOString());
+    const result = await client.query(`UPDATE ain_mreisseh_building_assistant_applications SET ${updates.join(", ")}, updated_at = $${values.length} WHERE id = $1 AND campaign_id = $2 RETURNING *`, values);
+    const item = rowToApplication(result.rows[0]);
+    const snapshot = managementSnapshot(item);
+    await createAdminEntityVersionRowInTransaction(client, { id: createAdminAuthorityId("version"), entityType: "jobs.ain_mreisseh.application", entityId: id, snapshot, createdBy: actorId, reason: "application_management_update" });
+    await appendAdminAuditEventInTransaction(client, createAdminAuditEvent({ eventType: "jobs.ain_mreisseh.application.updated", actorId, entityType: "jobs.ain_mreisseh.application", entityId: id, after: snapshot }));
+    await client.query("COMMIT");
+    return item;
+  } catch (error) {
+    try { await client.query("ROLLBACK"); } catch { /* Preserve the original mutation failure. */ }
+    throw error;
+  } finally {
+    client.release();
+  }
 }

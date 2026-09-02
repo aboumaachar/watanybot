@@ -41,4 +41,15 @@ export interface AinMreissehBuildingAssistantAdminPatch {
   status?: AinMreissehBuildingAssistantStatus;
   followUpStatus?: AinMreissehBuildingAssistantFollowUpStatus;
   adminNotes?: string;
+  expectedUpdatedAt?: string;
 }
+
+export type AinMreissehBuildingAssistantManagementSnapshot = Pick<AinMreissehBuildingAssistantApplication, "status" | "followUpStatus" | "adminNotes" | "updatedAt">;
+
+export type AinMreissehBuildingAssistantHistoryEntry = {
+  version: number;
+  eventType: "SUBMITTED" | "MANAGEMENT_UPDATED";
+  snapshot: AinMreissehBuildingAssistantManagementSnapshot;
+  actorId: string;
+  createdAt: string;
+};

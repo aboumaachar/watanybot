@@ -1,4 +1,5 @@
 import { createHash } from 'node:crypto';
+import type { PoolClient } from 'pg';
 import { query } from '../lib/db.js';
 import { createAdminAuthorityId, ensureAdminAuthorityTables } from './adminAuthorityStore.js';
 
@@ -94,6 +95,16 @@ export async function appendAdminAuditEvent(event: AdminAuditEvent): Promise<Adm
     ],
   );
 
+  event.createdAt = new Date(inserted.rows[0]?.created_at || event.createdAt).toISOString();
+  return event;
+}
+
+export async function appendAdminAuditEventInTransaction(client: PoolClient, event: AdminAuditEvent): Promise<AdminAuditEvent> {
+  const inserted = await client.query<{ created_at: string }>(
+    `INSERT INTO admin_audit_events (id, event_type, actor_id, entity_type, entity_id, before_state, after_state, reason, approval_id, request_id, ip, user_agent, immutable_hash, created_at)
+     VALUES ($1, $2, $3, $4, $5, $6::jsonb, $7::jsonb, $8, $9, $10, $11, $12, $13, $14::timestamptz) RETURNING created_at`,
+    [event.id, event.eventType, event.actorId, event.entityType, event.entityId ?? null, JSON.stringify(event.before ?? null), JSON.stringify(event.after ?? null), event.reason ?? null, event.approvalId ?? null, event.requestId ?? null, event.ip ?? null, event.userAgent ?? null, event.immutableHash ?? null, event.createdAt],
+  );
   event.createdAt = new Date(inserted.rows[0]?.created_at || event.createdAt).toISOString();
   return event;
 }
