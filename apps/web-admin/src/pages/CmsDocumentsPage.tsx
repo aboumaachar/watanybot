@@ -222,8 +222,8 @@ export default function CmsDocumentsPage({ onBack }: Readonly<{ onBack?: () => v
       <header className="cms-documents-header">
         <div>
           <span className="eyebrow">CMS / KB Studio</span>
-          <h2>مكتبة الوثائق</h2>
-          <p className="muted">إدارة الوثائق الحالية المرتبطة بعقد public.documents.</p>
+          <h2>مكتبة بيانات الملفات التشغيلية</h2>
+          <p className="muted">هذه مساحة بيانات تشغيلية مرتبطة بعقد public.documents وليست محرر الوثائق التحريرية. الوثائق التحريرية الرسمية تُدار في Payload.</p>
         </div>
         <div className="cms-document-header-actions">
           {onBack && <button type="button" className="ghost" onClick={goBack}>العودة إلى CMS</button>}
@@ -292,7 +292,7 @@ export default function CmsDocumentsPage({ onBack }: Readonly<{ onBack?: () => v
               <label><span>الوسوم</span><input value={editor.tags} onChange={(event) => updateEditor("tags", event.target.value)} placeholder="افصل الوسوم بفاصلة" /></label>
               <label><span>مسار الملف</span><input value={editor.file_path} onChange={(event) => updateEditor("file_path", event.target.value)} placeholder="اختياري" /></label>
             </div>
-            <div className="cms-document-contract-note"><AdminFluentIcon name="shield" /><span>الحقول المحفوظة: الاسم، النوع، الحالة، الوسوم، مسار الملف. الحقول الإضافية مؤجلة إلى بوابة الترحيل.</span></div>
+            <div className="cms-document-contract-note"><AdminFluentIcon name="shield" /><span>هذه الشاشة تدير بيانات الملفات التشغيلية فقط: الاسم، النوع، الحالة، الوسوم، ومسار الملف. لا تنشئ أو تستبدل الوثائق التحريرية الرسمية؛ مرجعها المعتمد هو Payload.</span></div>
             <div className="cms-document-actions"><button type="button" className="accent" onClick={() => void save()} disabled={saving}>{saving ? "جار الحفظ..." : "حفظ"}</button>{selected && <><button type="button" className="ghost" onClick={() => void showPreview()} disabled={saving}><AdminFluentIcon name="document" /> معاينة</button>{canPublish && <button type="button" className="ghost" onClick={() => void transition("publish")} disabled={saving}>نشر</button>}{canUnpublish && <button type="button" className="ghost" onClick={() => void transition("unpublish")} disabled={saving}>إلغاء النشر</button>}{canArchive && <button type="button" className="ghost danger" onClick={() => void transition("archive")} disabled={saving}>رفض</button>}</>}</div>
             {preview && <div className="cms-document-preview" role="status">{preview.supported && preview.url ? <a href={preview.url} target="_blank" rel="noreferrer">فتح المعاينة</a> : <span>المعاينة غير متاحة: {preview.reason}</span>}</div>}
           </>}

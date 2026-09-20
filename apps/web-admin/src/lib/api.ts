@@ -1,6 +1,6 @@
 /** Static fallback (used by legacy imports). Live code should call getApiUrl() instead. */
-export const API = import.meta.env.VITE_API_URL || "http://localhost:4000";
-const LOCAL_ADMIN_API_URL = "http://localhost:4000";
+const LOCAL_ADMIN_API_URL = import.meta.env.VITE_LOCAL_ADMIN_API_URL || "http://127.0.0.1:8099";
+export const API = import.meta.env.VITE_API_URL || LOCAL_ADMIN_API_URL;
 
 /** Returns the currently active admin API base URL (respects runtime server switch). */
 export function getApiUrl(): string {
@@ -34,6 +34,24 @@ export type AdminAuthority = {
   isSuperadmin: boolean;
   permissions: string[];
 };
+
+export type AdminProfile = {
+  id: string;
+  email: string;
+  role: string;
+  status: string;
+};
+
+export type AdminSession = {
+  authenticated: boolean;
+  actorId: string;
+  roles: readonly string[];
+  capabilities: readonly string[];
+};
+
+export function hasAdminCapability(session: AdminSession | null, capability: string): boolean {
+  return !!session?.authenticated && session.capabilities.includes(capability);
+}
 
 export type CommunityGroup = {
   id: string;
@@ -105,6 +123,42 @@ export async function getAdminAuthorityMe(): Promise<AdminAuthority> {
     throw new AdminApiError("Authority response is missing", { kind: "http", status: 502 });
   }
   return data.authority;
+}
+
+export function getPayloadCmsOrigin(): string {
+  const configured = String(import.meta.env.VITE_PAYLOAD_CMS_URL || "").trim().replace(/\/+$/u, "");
+  if (configured) return configured;
+  const hostname = typeof globalThis.location === "undefined" ? "" : globalThis.location.hostname;
+  if (hostname === "koudama.com" || hostname.endsWith(".koudama.com")) return "https://payload.koudama.com";
+  return "http://127.0.0.1:4100";
+}
+
+export async function openPayloadContentStudio(): Promise<void> {
+  const response = await adminFetch("/api/admin/payload-sso", { method: "POST" });
+  const data = await response.json() as { assertion?: string };
+  if (!data.assertion) throw new AdminApiError("Payload SSO assertion is missing", { kind: "http", status: 502 });
+
+  const payloadOrigin = getPayloadCmsOrigin();
+  const exchange = await fetch(`${payloadOrigin}/api/gateway-sso/exchange`, {
+    method: "POST",
+    redirect: "manual",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${data.assertion}` },
+    credentials: "include",
+    body: JSON.stringify({ assertion: data.assertion }),
+  });
+  const acceptedManualRedirect = exchange.status === 0 && exchange.type === "opaqueredirect";
+  if (!exchange.ok && !acceptedManualRedirect && (exchange.status < 300 || exchange.status >= 400)) throw new AdminApiError(`Payload SSO exchange failed: HTTP ${exchange.status}`, { kind: "http", status: exchange.status });
+
+  globalThis.location.assign(`${payloadOrigin}/admin`);
+}
+
+export async function getAdminProfile(): Promise<AdminProfile> {
+  const res = await adminFetch("/api/auth/me");
+  const data = await res.json() as { user?: AdminProfile };
+  if (!data.user) {
+    throw new AdminApiError("Profile response is missing", { kind: "http", status: 502 });
+  }
+  return data.user;
 }
 
 export type WebUserSettingsResponse = {
@@ -544,7 +598,6 @@ export type CmsGenericItem = CmsItem & {
   sourceMeta: Record<string, unknown>;
   relationships?: CmsRelationship[];
 };
-export type CmsFormItem = CmsGenericItem;
 export type CmsGenericListResponse = Omit<CmsListResponse, "items"> & {
   ok?: boolean;
   domain?: ManagedCmsDomain;
@@ -583,6 +636,7 @@ export type PayloadSyncRun = {
   errorCode?: string;
 };
 export type PayloadSyncStatus = {
+  state: "NOT_CONFIGURED" | "UNREACHABLE" | "AUTH_FAILED" | "SCHEMA_INVALID" | "READY" | "SYNC_FAILED" | "ACTIVE" | "OUT_OF_SYNC";
   configured: boolean;
   running: boolean;
   lastRun: PayloadSyncRun | null;
@@ -591,6 +645,7 @@ export type PayloadSyncStatus = {
 export type PayloadSyncStatusResponse = {
   ok: boolean;
   source: "PAYLOAD";
+  state: PayloadSyncStatus["state"];
   configured: boolean;
   running: boolean;
   lastRun: PayloadSyncRun | null;
@@ -619,7 +674,10 @@ export async function getCmsAnnouncements(params: { q?: string; status?: CmsStat
   return (await res.json()) as CmsListResponse;
 }
 
-export async function runCmsAnnouncementAction(id: string, action: "publish" | "unpublish" | "archive"): Promise<CmsItem> {
+type CmsAction = "publish" | "unpublish" | "archive";
+type CmsGenericAction = CmsAction | "restore";
+
+export async function runCmsAnnouncementAction(id: string, action: CmsAction): Promise<CmsItem> {
   const res = await adminFetch(`/api/admin/cms/announcements/${encodeURIComponent(id)}/actions/${action}`, { method: "POST" });
   return ((await res.json()) as { item: CmsItem }).item;
 }
@@ -636,7 +694,7 @@ export async function runCmsAnnouncementBulkEdit(ids: readonly string[], patch: 
   return data.items;
 }
 
-export function getCmsFormPublicUrl(form: CmsFormItem): string {
+export function getCmsFormPublicUrl(form: CmsGenericItem): string {
   const sourceId = form.sourceId?.trim();
   if (!sourceId) return "/forms";
   return `/forms/${encodeURIComponent(sourceId)}`;
@@ -647,9 +705,9 @@ export async function getCmsForms(params: { q?: string; status?: CmsStatus; page
   const res = await adminFetch(`/api/admin/cms/forms${queryString ? "?" + queryString : ""}`);
   return (await res.json()) as CmsListResponse;
 }
-export async function runCmsFormAction(id: string, action: "publish" | "unpublish" | "archive"): Promise<CmsFormItem> {
+export async function runCmsFormAction(id: string, action: CmsAction): Promise<CmsGenericItem> {
   const res = await adminFetch(`/api/admin/cms/forms/${encodeURIComponent(id)}/actions/${action}`, { method: "POST" });
-  return ((await res.json()) as { item: CmsFormItem }).item;
+  return ((await res.json()) as { item: CmsGenericItem }).item;
 }
 
 export async function getCmsProcedures(params: { q?: string; status?: CmsStatus; page?: number; pageSize?: number } = {}): Promise<CmsListResponse> {
@@ -660,10 +718,125 @@ export async function getCmsProcedures(params: { q?: string; status?: CmsStatus;
   return res.json();
 }
 
-export async function runCmsProcedureAction(id: string, action: "publish" | "unpublish" | "archive" | "restore"): Promise<CmsItem> {
-  const res = await adminFetch(`/api/admin/cms/procedures/${encodeURIComponent(id)}/actions/${action}`, { method: "POST" });
-  const data = await res.json();
-  return data.item;
+export async function exportCmsProcedures(params: { q?: string; status?: CmsStatus } = {}): Promise<unknown> {
+  const query = new URLSearchParams();
+  if (params.q) query.set("q", params.q);
+  if (params.status) query.set("status", params.status);
+  const suffix = query.toString() ? `?${query.toString()}` : "";
+  const res = await adminFetch(`/api/admin/cms/procedures/export${suffix}`);
+  return res.json();
+}
+
+export async function previewCmsProceduresExport(): Promise<string> {
+  const res = await adminFetch("/api/admin/cms/procedures/export?format=html");
+  return res.text();
+}
+
+export async function getCmsProcedure(id: string): Promise<CmsItem> {
+  const res = await adminFetch(`/api/admin/cms/procedures/${encodeURIComponent(id)}`);
+  return ((await res.json()) as { item: CmsItem }).item;
+}
+
+export async function getCmsProcedureVersions(id: string): Promise<CmsEntityVersion[]> {
+  const res = await adminFetch(`/api/admin/cms/procedures/${encodeURIComponent(id)}/versions`);
+  return ((await res.json()) as { versions: CmsEntityVersion[] }).versions;
+}
+
+export async function getCmsProcedureAudit(id: string): Promise<CmsAuditEvent[]> {
+  const res = await adminFetch(`/api/admin/cms/procedures/${encodeURIComponent(id)}/audit`);
+  return ((await res.json()) as { events: CmsAuditEvent[] }).events;
+}
+
+export type ProcedureImportSummary = {
+  valid_count: number | null;
+  warning_count: number | null;
+  invalid_count: number | null;
+  new_count: number | null;
+  update_count: number | null;
+  conflict_count: number | null;
+  requested_count?: number | null;
+  validated_count?: number | null;
+  success_count?: number | null;
+  failed_count?: number | null;
+  skipped_count?: number | null;
+  errors?: string[];
+};
+
+type ProcedureImportResponse = {
+  state?: string;
+  plan?: { planId?: string };
+  validation?: { validRows?: number; invalidRows?: number; localizationDefects?: string[]; duplicateIds?: string[] };
+  validRows?: number;
+  invalidRows?: number;
+  newRows?: number;
+  updatedRows?: number;
+  duplicateIds?: string[];
+  result?: { requested_count?: number; validated_count?: number; success_count?: number; failed_count?: number; skipped_count?: number; errors?: Array<{ id?: string; reason?: string }> };
+};
+
+function asCount(value: unknown): number | null {
+  return typeof value === "number" && Number.isFinite(value) ? value : null;
+}
+
+function importResultSummary(data: ProcedureImportResponse): ProcedureImportSummary {
+  const validation = data.validation || {};
+  const result = data.result;
+  return {
+    valid_count: asCount(data.validRows ?? validation.validRows),
+    warning_count: Array.isArray(validation.localizationDefects) ? validation.localizationDefects.length : null,
+    invalid_count: asCount(data.invalidRows ?? validation.invalidRows),
+    new_count: asCount(data.newRows),
+    update_count: asCount(data.updatedRows),
+    conflict_count: Array.isArray(data.duplicateIds ?? validation.duplicateIds) ? (data.duplicateIds ?? validation.duplicateIds)?.length || 0 : null,
+    requested_count: asCount(result?.requested_count),
+    validated_count: asCount(result?.validated_count),
+    success_count: asCount(result?.success_count),
+    failed_count: asCount(result?.failed_count),
+    skipped_count: asCount(result?.skipped_count),
+    errors: Array.isArray(result?.errors) ? result.errors.map((entry) => `${entry.id || "unknown"}: ${entry.reason || "unknown failure"}`) : [],
+  };
+}
+
+export async function dryRunCmsProceduresImport(payload: unknown): Promise<{ planId: string; summary: ProcedureImportSummary }> {
+  try {
+    const res = await adminFetch("/api/admin/cms/procedures/import/dry-run", { method: "POST", body: JSON.stringify(payload) });
+    const data = await res.json() as ProcedureImportResponse;
+    return { planId: String(data.plan?.planId || ""), summary: importResultSummary(data) };
+  } catch (reason: unknown) {
+    if (reason instanceof AdminApiError && reason.details && typeof reason.details === "object" && "validation" in reason.details) {
+      const data = reason.details as ProcedureImportResponse;
+      return { planId: "", summary: importResultSummary(data) };
+    }
+    throw reason;
+  }
+}
+
+export async function applyCmsProceduresImport(planId: string): Promise<{ state: string; summary: ProcedureImportSummary }> {
+  try {
+    const res = await adminFetch("/api/admin/cms/procedures/import/apply", { method: "POST", body: JSON.stringify({ planId }) });
+    const data = await res.json() as ProcedureImportResponse;
+    return { state: String(data.state || "APPLIED"), summary: importResultSummary(data) };
+  } catch (reason: unknown) {
+    if (reason instanceof AdminApiError && reason.details && typeof reason.details === "object" && "result" in reason.details) {
+      const data = reason.details as ProcedureImportResponse;
+      return { state: String(data.state || "RECOVERY_REQUIRED"), summary: importResultSummary(data) };
+    }
+    throw reason;
+  }
+}
+
+export async function publishCmsProceduresImport(planId: string): Promise<{ state: string; summary: ProcedureImportSummary }> {
+  try {
+    const res = await adminFetch("/api/admin/cms/procedures/import/publish", { method: "POST", body: JSON.stringify({ planId }) });
+    const data = await res.json() as ProcedureImportResponse;
+    return { state: String(data.state || "PUBLISHED"), summary: importResultSummary(data) };
+  } catch (reason: unknown) {
+    if (reason instanceof AdminApiError && reason.details && typeof reason.details === "object" && "result" in reason.details) {
+      const data = reason.details as ProcedureImportResponse;
+      return { state: String(data.state || "PUBLISH_RECOVERY_REQUIRED"), summary: importResultSummary(data) };
+    }
+    throw reason;
+  }
 }
 
 export async function getPayloadSyncStatus(): Promise<PayloadSyncStatusResponse> {
@@ -685,7 +858,8 @@ export async function triggerPayloadSync(): Promise<PayloadSyncStatus["active"]>
 type CmsGenericListParams = { q?: string; status?: CmsStatus; page?: number; pageSize?: number };
 
 function cmsGenericPath(domain: ManagedCmsDomain, id?: string): string {
-  return `/api/admin/cms/${domain}${id === undefined ? "" : `/${encodeURIComponent(id)}`}`;
+  const suffix = id === undefined ? "" : `/${encodeURIComponent(id)}`;
+  return `/api/admin/cms/${domain}${suffix}`;
 }
 
 function cmsGenericQuery(params: CmsGenericListParams): string {
@@ -717,7 +891,7 @@ export async function updateCmsGenericEntity(domain: ManagedCmsDomain, id: strin
   return ((await res.json()) as CmsGenericDetailResponse).item;
 }
 
-export async function runCmsGenericAction(domain: ManagedCmsDomain, id: string, action: "publish" | "unpublish" | "archive" | "restore"): Promise<CmsGenericItem> {
+export async function runCmsGenericAction(domain: ManagedCmsDomain, id: string, action: CmsGenericAction): Promise<CmsGenericItem> {
   const res = await adminFetch(`${cmsGenericPath(domain, id)}/actions/${action}`, { method: "POST" });
   return ((await res.json()) as CmsGenericDetailResponse).item;
 }

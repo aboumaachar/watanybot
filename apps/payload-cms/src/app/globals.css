@@ -1,0 +1,6 @@
+@import "@payloadcms/next/css";
+
+.nav__link {
+	position: relative;
+	z-index: 2;
+}

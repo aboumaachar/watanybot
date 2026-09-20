@@ -8,6 +8,7 @@ import type { FormGovernance } from "../data/forms-catalog";
 import { getFormsSourceRegistry } from "../data/forms-catalog";
 import { buildFormsGovernanceReport } from "../lib/forms-governance-report";
 import { loadIndex, mapStoredDocAssetToDocRef } from "../procedures/indexer";
+import { listGenericCmsEntitiesPage, type GenericCmsEntity } from "../cms/storage/genericCmsRepository.js";
 
 type FormLike = {
   id: string;
@@ -25,7 +26,7 @@ type FormLike = {
   previewUrl?: string;
   downloadUrl?: string;
   shareUrl?: string;
-  origin?: "forms_catalog" | "procedure_doc" | "document_asset" | "official_file" | "kb_node";
+  origin?: "forms_catalog" | "procedure_doc" | "document_asset" | "official_file" | "kb_node" | "cms";
 };
 
 type FormSource = {
@@ -247,7 +248,82 @@ async function loadProcedureFormCandidates(): Promise<FormLike[]> {
     });
 }
 
-  function getFormIdentity(form: FormLike): string {
+  function cmsPayloadString(payload: Record<string, unknown>, keys: string[]): string | undefined {
+  for (const key of keys) {
+    const value = payload[key];
+    if (typeof value === "string" && value.trim()) return value.trim();
+  }
+  return undefined;
+}
+
+function cmsPayloadStrings(payload: Record<string, unknown>, key: string): string[] {
+  const value = payload[key];
+  return Array.isArray(value)
+    ? value.filter((item): item is string => typeof item === "string").map((item) => item.trim()).filter(Boolean)
+    : [];
+}
+
+function cmsPayloadNumbers(payload: Record<string, unknown>, key: string): number[] {
+  const value = payload[key];
+  return Array.isArray(value)
+    ? value.map(Number).filter((item) => Number.isFinite(item))
+    : [];
+}
+
+function mapCmsForm(entity: GenericCmsEntity): FormLike {
+  const payload = entity.payload || {};
+  return {
+    id: entity.publicId,
+    code: entity.publicCode || cmsPayloadString(payload, ["code", "formCode"]),
+    title_ar: entity.title,
+    description_ar: cmsPayloadString(payload, ["description_ar", "descriptionAr", "description", "summary"]),
+    category: cmsPayloadString(payload, ["category"]),
+    authority: cmsPayloadString(payload, ["authority", "sourceAuthority"]),
+    instructions_ar: cmsPayloadString(payload, ["instructions_ar", "instructionsAr", "instructions"]),
+    updatedAt: entity.updatedAt,
+    related_tx: cmsPayloadNumbers(payload, "related_tx"),
+    tags: cmsPayloadStrings(payload, "tags"),
+    sourceId: entity.sourceId || cmsPayloadString(payload, ["sourceId", "source_id"]),
+    previewUrl: cmsPayloadString(payload, ["previewUrl", "preview_url"]),
+    downloadUrl: cmsPayloadString(payload, ["downloadUrl", "download_url"]),
+    shareUrl: cmsPayloadString(payload, ["shareUrl", "share_url"]),
+    origin: "cms",
+  };
+}
+
+async function loadPublishedCmsForms(): Promise<FormLike[]> {
+  try {
+    const pageSize = 100;
+    const rows: GenericCmsEntity[] = [];
+    for (let page = 1; page <= 1000; page += 1) {
+      const result = await listGenericCmsEntitiesPage("forms", { status: "PUBLISHED", page, pageSize });
+      rows.push(...result.items);
+      if (rows.length >= result.total || result.items.length === 0) break;
+    }
+    return rows.map(mapCmsForm);
+  } catch {
+    return [];
+  }
+}
+
+function mergeFormsWithPrecedence(groups: FormLike[][]): FormLike[] {
+  const result: FormLike[] = [];
+  const ids = new Set<string>();
+  const identities = new Set<string>();
+  for (const group of groups) {
+    for (const form of group) {
+      const id = form.id.trim();
+      const identity = getFormIdentity(form);
+      if ((id && ids.has(id)) || (identity && identities.has(identity))) continue;
+      result.push(form);
+      if (id) ids.add(id);
+      if (identity) identities.add(identity);
+    }
+  }
+  return result;
+}
+
+function getFormIdentity(form: FormLike): string {
     const title = normalizeArabic((form.title_ar || "").replace(/[\u200B-\u200D\uFEFF]/g, ""))
       .replace(/\.(jpg|jpeg|png|pdf|docx?)\b/gi, "")
       .replace(/[^\p{L}\p{N}]+/gu, "")
@@ -261,14 +337,11 @@ async function loadProcedureFormCandidates(): Promise<FormLike[]> {
 
 async function getCombinedCatalog(getFormsCatalog: () => FormLike[]): Promise<FormLike[]> {
   const catalog = getFormsCatalog();
-  const procedureForms = await loadProcedureFormCandidates();
-  const ids = new Set(catalog.map((form) => form.id));
-    const identities = new Set(catalog.map(getFormIdentity).filter(Boolean));
-    const uniqueProcedureForms = procedureForms.filter((form) => {
-      if (ids.has(form.id)) return false;
-      return !identities.has(getFormIdentity(form));
-    });
-  return [...catalog, ...uniqueProcedureForms];
+  const [cmsForms, procedureForms] = await Promise.all([
+    loadPublishedCmsForms(),
+    loadProcedureFormCandidates(),
+  ]);
+  return mergeFormsWithPrecedence([cmsForms, catalog, procedureForms]);
 }
 
 function buildSources(forms: EnrichedForm[]): FormSource[] {
@@ -435,10 +508,15 @@ export const formsInlineRoutes: FastifyPluginAsync<FormsInlineRoutesOptions> = a
     const text = (req.body?.text || "").trim();
     const matchedIds = detectFormIntent(text);
     const isGeneric = isGenericFormRequest(text);
-    const matchedForms = matchedIds
-      .map((id) => getFormById(id))
+    const combined = await getCombinedCatalog(getFormsCatalog);
+    const byId = new Map(combined.map((form) => [form.id, form]));
+    let matchedForms = matchedIds
+      .map((id) => byId.get(id) || getFormById(id))
       .filter((item): item is FormLike => Boolean(item))
       .map(toEnrichedForm);
+    if (matchedForms.length === 0 && text) {
+      matchedForms = combined.map(toEnrichedForm).filter((form) => matchesQuery(form, text)).slice(0, 10);
+    }
     return {
       matched: matchedForms,
       isGenericFormRequest: isGeneric,

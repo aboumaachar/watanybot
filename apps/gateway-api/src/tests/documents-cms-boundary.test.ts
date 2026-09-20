@@ -113,7 +113,7 @@ describe("C9.2/C9.3 document boundary", () => {
 
     const app = Fastify();
     app.addHook("onRequest", async (request) => {
-      (request as any).user = { id: "cms-superadmin", role: "superadmin" };
+      (request as any).user = { id: "cms-superadmin", role: "superadmin", email: "cms-superadmin@watany.test" };
     });
     registerDocumentsCmsRoutes(app, { documentService: service });
     await app.ready();
@@ -151,7 +151,7 @@ describe("C9.2/C9.3 document boundary", () => {
 
     const adminApp = Fastify();
     adminApp.addHook("onRequest", async (request) => {
-      (request as any).user = { id: "cms-admin", role: "admin", permissions: ["cms.edit"] };
+      (request as any).user = { id: "cms-superadmin-delete", role: "superadmin", email: "cms-superadmin-delete@watany.test" };
     });
     registerDocumentsCmsRoutes(adminApp, { documentService: service });
     await adminApp.ready();
@@ -181,7 +181,7 @@ describe("C9.2/C9.3 document boundary", () => {
 
     const forbiddenApp = Fastify();
     forbiddenApp.addHook("onRequest", async (request) => {
-      (request as any).user = { id: "cms-admin-without-delete", role: "admin" };
+      (request as any).user = { id: "cms-admin-without-delete", role: "admin", email: "cms-admin-without-delete@watany.test" };
     });
     registerDocumentsCmsRoutes(forbiddenApp, { documentService: service });
     await forbiddenApp.ready();
@@ -191,7 +191,7 @@ describe("C9.2/C9.3 document boundary", () => {
 
     const superadminApp = Fastify();
     superadminApp.addHook("onRequest", async (request) => {
-      (request as any).user = { id: "cms-superadmin", role: "superadmin" };
+      (request as any).user = { id: "cms-superadmin", role: "superadmin", email: "cms-superadmin@watany.test" };
     });
     registerDocumentsCmsRoutes(superadminApp, { documentService: service });
     await superadminApp.ready();

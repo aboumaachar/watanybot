@@ -9,6 +9,7 @@ import type { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
 import jwt from "jsonwebtoken";
 import type { UserRole, JWTPayload } from "@watany/types";
 import { requireRole } from "./rbac.js";
+import { query } from "../lib/db.js";
 
 const JWT_EXPIRES_IN_SEC = Number(process.env.JWT_EXPIRES_IN_SEC || "86400"); // 24h
 const JWT_REFRESH_EXPIRES_IN_SEC = Number(process.env.JWT_REFRESH_EXPIRES_IN_SEC || "604800"); // 7d
@@ -19,6 +20,14 @@ const SUPERADMIN_ROUTE_PREFIXES = [
   "/api/admin/procedures",
   "/api/admin/recruitment",
   "/api/admin-authority",
+] as const;
+
+const ADMIN_AUTH_ROUTE_PREFIXES = [
+  "/api/admin",
+  "/api/superadmin",
+  "/api/admin-authority",
+  "/admin",
+  "/admin-authority",
 ] as const;
 
 function resolveDefaultProtectedRole(url: string): UserRole | null {
@@ -47,10 +56,57 @@ function getJwtSecret(): string | null {
   return jwtSecret || null;
 }
 
+function isAdministrativePath(url: string): boolean {
+  return ADMIN_AUTH_ROUTE_PREFIXES.some((prefix) => url === prefix || url.startsWith(`${prefix}/`));
+}
+
+async function resolveFreshAdminUser(payload: JWTPayload): Promise<AuthUser | null> {
+  try {
+    if (typeof payload.sid !== "string" || !payload.sid.trim()) {
+      return null;
+    }
+
+    const result = await query<{ id: string; email: string; role: UserRole }>(
+      "SELECT id, email, role FROM users WHERE id = $1 AND status = 'active'",
+      [payload.sub],
+    );
+    const user = result.rows[0];
+    if (!user) return null;
+
+    const session = await query<{ id: string }>(
+      "SELECT id FROM sessions WHERE id = $1 AND user_id = $2 AND expires_at > now()",
+      [payload.sid, user.id],
+    );
+    if (!session.rows[0]) return null;
+
+    return { id: user.id, email: user.email, role: user.role, sessionId: payload.sid };
+  } catch {
+    return null;
+  }
+}
+
 export interface AuthUser {
   id: string;
   role: UserRole;
   email: string;
+  sessionId?: string;
+}
+
+export async function createAuthSession(input: {
+  userId: string;
+  refreshToken: string;
+  ip?: string;
+  userAgent?: string;
+}): Promise<string> {
+  const result = await query<{ id: string }>(
+    "INSERT INTO sessions (user_id, token, ip, user_agent, expires_at) VALUES ($1, $2, $3, $4, now() + interval '7 days') RETURNING id",
+    [input.userId, input.refreshToken, input.ip ?? null, input.userAgent ?? ""],
+  );
+  const sessionId = result.rows[0]?.id;
+  if (!sessionId) {
+    throw new Error("AUTH_SESSION_CREATION_FAILED");
+  }
+  return sessionId;
 }
 
 declare module "fastify" {
@@ -60,7 +116,7 @@ declare module "fastify" {
 }
 
 /** Sign a JWT access token. */
-export function signAccessToken(payload: { sub: string; role: UserRole; email: string }): string {
+export function signAccessToken(payload: { sub: string; role: UserRole; email: string; sid?: string }): string {
   return jwt.sign(payload, requireJwtSecret(), { expiresIn: JWT_EXPIRES_IN_SEC });
 }
 
@@ -148,11 +204,16 @@ export function registerAuthHook(app: FastifyInstance): void {
       }
     })();
     if (payload) {
-      request.user = {
-        id: payload.sub,
-        role: payload.role,
-        email: payload.email,
-      };
+      if (isAdministrativePath(request.url)) {
+        const freshUser = await resolveFreshAdminUser(payload);
+        if (freshUser) request.user = freshUser;
+      } else {
+        request.user = {
+          id: payload.sub,
+          role: payload.role,
+          email: payload.email,
+        };
+      }
     }
   });
 }

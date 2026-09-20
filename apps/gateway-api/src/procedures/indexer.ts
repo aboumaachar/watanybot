@@ -53,6 +53,13 @@ function hasProcedureDataset(candidate: string): boolean {
   );
 }
 
+function hasReferenceDocumentDataset(candidate: string): boolean {
+  const dataDir = fs.existsSync(path.join(candidate, "data"))
+    ? path.join(candidate, "data")
+    : candidate;
+  return fs.existsSync(path.join(dataDir, "documents.jsonl"));
+}
+
 function getResolvedDataDir(root: string): string {
   const nestedDataDir = path.join(root, "data");
   return fs.existsSync(nestedDataDir) ? nestedDataDir : root;
@@ -563,12 +570,22 @@ function buildDocsByProc(
 
 function getAttachmentOverlayDataDir(currentDataDir: string): string | null {
   const runtime = getProcedureRuntimeInfo();
-  if (runtime.source === "kb_studio_export" || runtime.source === "payload_sync") {
+  if (runtime.source === "kb_studio_export") {
     return null;
   }
 
+  // Payload remains canonical for procedure/editorial records, but official LAF/MOF
+  // reference assets live in the sibling KB Studio export and must remain available.
+  // Missing-only merge semantics below guarantee Payload-owned document IDs win.
+  const deploymentParent = path.resolve(process.cwd(), "..", "..", "..");
   const candidates = [
     process.env.KB_STUDIO_EXPORT_ROOT,
+    path.resolve(process.cwd(), "reference-assets", "watanybot"),
+    path.resolve(deploymentParent, "kb-studio", "runtime", "exports", "watanybot"),
+    path.resolve(deploymentParent, "kb_studio", "runtime", "exports", "watanybot"),
+    "/opt/watany/releases/kb-studio/runtime/exports/watanybot",
+    "/home/koudama/kb-studio/runtime/exports/watanybot",
+    "/home/koudama/repositories/kb-studio/runtime/exports/watanybot",
     path.resolve(currentDataDir, "..", "..", "kb_studio", "runtime", "exports", "watanybot"),
     path.resolve(currentDataDir, "..", "..", "..", "kb-studio", "watany", "runtime", "exports", "watanybot"),
     path.resolve(currentDataDir, "..", "..", "..", "kb-studio", "runtime", "exports", "watanybot"),
@@ -576,7 +593,7 @@ function getAttachmentOverlayDataDir(currentDataDir: string): string | null {
 
   const normalizedCurrentDataDir = path.normalize(currentDataDir);
   for (const candidate of candidates) {
-    if (!candidate || !hasProcedureDataset(candidate)) continue;
+    if (!candidate || !hasReferenceDocumentDataset(candidate)) continue;
     const resolvedDataDir = getResolvedDataDir(candidate);
     if (path.normalize(resolvedDataDir) === normalizedCurrentDataDir) continue;
     return resolvedDataDir;
@@ -600,6 +617,13 @@ async function mergeMissingReferenceDocs(baseDocs: StoredDocAsset[], currentData
   const missingDocs = overlayDocs.filter((doc) => {
     const normalizedDocId = normalizeProcedureKey(doc.id);
     return normalizedDocId && shouldOverlayExportDoc(doc) && !existingDocIds.has(normalizedDocId);
+  }).map((doc) => {
+    const exportedFilePath = String(doc.exported_file_path || "").trim();
+    if (!exportedFilePath) return doc;
+    const bundledPath = path.resolve(overlayDataDir, "docs", exportedFilePath);
+    return fs.existsSync(bundledPath)
+      ? { ...doc, resolved_path: bundledPath }
+      : doc;
   });
 
   return missingDocs.length > 0 ? [...baseDocs, ...missingDocs] : baseDocs;

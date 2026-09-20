@@ -6,6 +6,15 @@
   RewriteCond %{REQUEST_FILENAME}/index.html -f
   RewriteRule ^(.+?)/?$ $1/index.html [L]
 
+  # Keep the canonical React JobsPage from being shadowed by the static jobs directory.
+  RewriteRule ^jobs/?$ index.html [L]
+
+  # Keep the canonical React Announcements page from being shadowed by the legacy static announcements directory.
+  RewriteRule ^announcements/?$ index.html [L]
+
+  RewriteCond %{REQUEST_URI} ^/share/jobs/middle-east-security/
+  RewriteRule ^ - [E=MES_SHARE_DOCUMENT:1]
+
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
   RewriteRule . index.html [L]
@@ -19,7 +28,16 @@
   </FilesMatch>
 </IfModule>
 
+<IfModule mod_setenvif.c>
+  SetEnvIf Request_URI "^/share/jobs/middle-east-security/" MES_SHARE_DOCUMENT=1
+</IfModule>
+
 <IfModule mod_headers.c>
+  Header always set Cache-Control "no-store" env=MES_SHARE_DOCUMENT
+  Header always set Referrer-Policy "no-referrer" env=MES_SHARE_DOCUMENT
+  Header always set X-Robots-Tag "noindex, nofollow" env=MES_SHARE_DOCUMENT
+  Header always set Referrer-Policy "no-referrer" "expr=%{THE_REQUEST} =~ m#\s/+share/jobs/middle-east-security/#"
+  Header always set X-Robots-Tag "noindex, nofollow" "expr=%{THE_REQUEST} =~ m#\s/+share/jobs/middle-east-security/#"
   <FilesMatch "\.(?:css|js|mjs|json|png|jpe?g|gif|webp|svg|ico|woff2?)$">
     Header set Cache-Control "public, max-age=31536000, immutable"
   </FilesMatch>

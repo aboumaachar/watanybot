@@ -3,6 +3,8 @@ import type { PoolClient } from 'pg';
 import { query } from '../lib/db.js';
 import { createAdminAuthorityId, ensureAdminAuthorityTables } from './adminAuthorityStore.js';
 
+export const ADMIN_AUDIT_ANONYMOUS_ACTOR = 'anonymous';
+
 export type AdminAuditEvent = {
   id: string;
   eventType: string;

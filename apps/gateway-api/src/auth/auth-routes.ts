@@ -5,9 +5,14 @@ import { randomUUID } from "node:crypto";
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { query } from "../lib/db.js";
 import { hashPassword, verifyPassword } from "./password.js";
-import { signAccessToken, signRefreshToken, verifyToken } from "./auth-middleware.js";
+import { createAuthSession, signAccessToken, signRefreshToken, verifyToken } from "./auth-middleware.js";
 import type { UserRole } from "@watany/types";
 import { effectiveUserRole, isConfiguredAdminEmail } from "./admin-policy.js";
+import {
+  ADMIN_AUDIT_ANONYMOUS_ACTOR,
+  appendAdminAuditEvent,
+  createAdminAuditEvent,
+} from "../admin-authority/adminAuthorityAudit.js";
 
 const REFRESH_COOKIE_NAME = "watany_refresh";
 const CSRF_COOKIE_NAME = "watany_csrf";
@@ -296,15 +301,15 @@ export async function authRoutes(app: FastifyInstance): Promise<void> {
     );
 
     const user = result.rows[0];
-    const accessToken = signAccessToken({ sub: user.id, role: user.role as UserRole, email });
     const refreshToken = signRefreshToken({ sub: user.id });
+    const sessionId = await createAuthSession({
+      userId: user.id,
+      refreshToken,
+      ip: request.ip,
+      userAgent: request.headers["user-agent"] || "",
+    });
+    const accessToken = signAccessToken({ sub: user.id, role: user.role as UserRole, email, sid: sessionId });
     setSessionCookies(reply, request, refreshToken, rememberMe);
-
-    // Store session
-    await query(
-      "INSERT INTO sessions (user_id, token, ip, user_agent, expires_at) VALUES ($1, $2, $3, $4, now() + interval '7 days')",
-      [user.id, refreshToken, request.ip, request.headers["user-agent"] || ""],
-    );
 
     // Audit
     await query(
@@ -369,17 +374,43 @@ export async function authRoutes(app: FastifyInstance): Promise<void> {
       );
 
       if ((result.rowCount ?? 0) === 0) {
+        await appendAdminAuditEvent(createAdminAuditEvent({
+          eventType: "ADMIN_LOGIN_FAILURE",
+          actorId: ADMIN_AUDIT_ANONYMOUS_ACTOR,
+          entityType: "authentication",
+          reason: "invalid_credentials",
+          ip: request.ip,
+          userAgent: request.headers["user-agent"] || "",
+        }));
         return reply.code(401).send({ error: "بريد إلكتروني أو كلمة مرور خاطئة" });
       }
 
       const user = result.rows[0];
 
       if (user.status === "banned") {
+        await appendAdminAuditEvent(createAdminAuditEvent({
+          eventType: "ADMIN_LOGIN_FAILURE",
+          actorId: ADMIN_AUDIT_ANONYMOUS_ACTOR,
+          entityType: "authentication",
+          entityId: user.id,
+          reason: "banned_account",
+          ip: request.ip,
+          userAgent: request.headers["user-agent"] || "",
+        }));
         return reply.code(403).send({ error: "تم حظر هذا الحساب" });
       }
 
       const valid = await verifyPassword(password, user.password_hash);
       if (!valid) {
+        await appendAdminAuditEvent(createAdminAuditEvent({
+          eventType: "ADMIN_LOGIN_FAILURE",
+          actorId: ADMIN_AUDIT_ANONYMOUS_ACTOR,
+          entityType: "authentication",
+          entityId: user.id,
+          reason: "invalid_credentials",
+          ip: request.ip,
+          userAgent: request.headers["user-agent"] || "",
+        }));
         return reply.code(401).send({ error: "بريد إلكتروني أو كلمة مرور خاطئة" });
       }
 
@@ -387,14 +418,15 @@ export async function authRoutes(app: FastifyInstance): Promise<void> {
       if (role !== user.role) {
         await query("UPDATE users SET role = $1 WHERE id = $2", [role, user.id]);
       }
-      const accessToken = signAccessToken({ sub: user.id, role, email: user.email });
       const refreshToken = signRefreshToken({ sub: user.id });
+      const sessionId = await createAuthSession({
+        userId: user.id,
+        refreshToken,
+        ip: request.ip,
+        userAgent: request.headers["user-agent"] || "",
+      });
+      const accessToken = signAccessToken({ sub: user.id, role, email: user.email, sid: sessionId });
       setSessionCookies(reply, request, refreshToken, rememberMe);
-
-      await query(
-        "INSERT INTO sessions (user_id, token, ip, user_agent, expires_at) VALUES ($1, $2, $3, $4, now() + interval '7 days')",
-        [user.id, refreshToken, request.ip, request.headers["user-agent"] || ""],
-      );
 
       await query("UPDATE users SET last_login = now(), last_login_ip = $2 WHERE id = $1", [user.id, request.ip]);
 
@@ -402,6 +434,19 @@ export async function authRoutes(app: FastifyInstance): Promise<void> {
         "INSERT INTO audit_log (user_id, action, resource, ip, user_agent) VALUES ($1, $2, $3, $4, $5)",
         [user.id, "auth.login", "sessions", request.ip, request.headers["user-agent"] || ""],
       );
+
+      if (role === "admin" || role === "superadmin") {
+        await appendAdminAuditEvent(createAdminAuditEvent({
+          eventType: "ADMIN_LOGIN_SUCCESS",
+          actorId: user.id,
+          entityType: "session",
+          entityId: sessionId,
+          after: { role },
+          reason: "password_login",
+          ip: request.ip,
+          userAgent: request.headers["user-agent"] || "",
+        }));
+      }
 
       return reply.send({
         accessToken,
@@ -509,20 +554,34 @@ export async function authRoutes(app: FastifyInstance): Promise<void> {
         user = createdUserResult.rows[0];
       }
 
-      const role = effectiveUserRole(user.email, user.role);
-      const accessToken = signAccessToken({ sub: user.id, role, email: user.email });
       const refreshToken = signRefreshToken({ sub: user.id });
+      const role = effectiveUserRole(user.email, user.role);
+      const sessionId = await createAuthSession({
+        userId: user.id,
+        refreshToken,
+        ip: request.ip,
+        userAgent: request.headers["user-agent"] || "",
+      });
+      const accessToken = signAccessToken({ sub: user.id, role, email: user.email, sid: sessionId });
       setSessionCookies(reply, request, refreshToken, rememberMe);
-
-      await query(
-        "INSERT INTO public.sessions (user_id, token, ip, user_agent, expires_at) VALUES ($1, $2, $3, $4, now() + interval '7 days')",
-        [user.id, refreshToken, request.ip, request.headers["user-agent"] || ""],
-      );
 
       await query(
         "INSERT INTO audit_log (user_id, action, resource, details, ip, user_agent) VALUES ($1, $2, $3, $4, $5, $6)",
         [user.id, "auth.login.google", "sessions", { googleSub: googleIdentity.sub }, request.ip, request.headers["user-agent"] || ""],
       );
+
+      if (role === "admin" || role === "superadmin") {
+        await appendAdminAuditEvent(createAdminAuditEvent({
+          eventType: "ADMIN_LOGIN_SUCCESS",
+          actorId: user.id,
+          entityType: "session",
+          entityId: sessionId,
+          after: { role },
+          reason: "google_login",
+          ip: request.ip,
+          userAgent: request.headers["user-agent"] || "",
+        }));
+      }
 
       const responsePayload = {
         accessToken,
@@ -573,14 +632,20 @@ export async function authRoutes(app: FastifyInstance): Promise<void> {
 
     const isDevAdminSession = isDevAdminFallbackEnabled(request) && payload.sub === DEV_ADMIN_ID;
 
+    let sessionId: string | undefined;
     if (!isDevAdminSession) {
-      const session = await query(
+      const session = await query<{ id: string }>(
         "SELECT id FROM sessions WHERE token = $1 AND expires_at > now()",
         [refreshToken],
       );
       if ((session.rowCount ?? 0) === 0) {
         clearSessionCookies(reply, request);
         return reply.code(401).send({ error: "الجلسة منتهية" });
+      }
+      sessionId = session.rows[0]?.id;
+      if (!sessionId) {
+        clearSessionCookies(reply, request);
+        return reply.code(401).send({ error: "الجلسة غير صالحة" });
       }
     }
 
@@ -597,7 +662,12 @@ export async function authRoutes(app: FastifyInstance): Promise<void> {
       u.role = effectiveUserRole(u.email, u.role);
     }
 
-    const newAccess = signAccessToken({ sub: u.id, role: u.role, email: u.email });
+    const newAccess = signAccessToken({
+      sub: u.id,
+      role: u.role,
+      email: u.email,
+      ...(sessionId ? { sid: sessionId } : {}),
+    });
     const newRefresh = signRefreshToken({ sub: u.id });
     setSessionCookies(reply, request, newRefresh, true);
 
@@ -631,6 +701,15 @@ export async function authRoutes(app: FastifyInstance): Promise<void> {
         "INSERT INTO audit_log (user_id, action, resource, ip) VALUES ($1, $2, $3, $4)",
         [userId, "auth.logout", "sessions", request.ip],
       );
+
+      await appendAdminAuditEvent(createAdminAuditEvent({
+        eventType: "ADMIN_LOGOUT",
+        actorId: userId,
+        entityType: "session",
+        reason: "logout",
+        ip: request.ip,
+        userAgent: request.headers["user-agent"] || "",
+      }));
     }
 
     clearSessionCookies(reply, request);

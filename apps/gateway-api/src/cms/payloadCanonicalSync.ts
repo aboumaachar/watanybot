@@ -4,7 +4,7 @@ import { mkdir, readFile, rename, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { appendAdminAuditEvent, createAdminAuditEvent, type AdminAuditEvent } from "../admin-authority/adminAuthorityAudit.js";
 import { getPayloadSyncRuntimeRoot } from "../procedures/config.js";
-import { reloadIndex } from "../procedures/indexer.js";
+import { loadIndex, reloadIndex } from "../procedures/indexer.js";
 import type { Procedure, ProcToDocs, SourceRef, StoredDocAsset } from "../procedures/types.js";
 
 type PayloadRecord = Record<string, unknown>;
@@ -36,6 +36,7 @@ export type PayloadSyncCounts = {
 };
 
 export type PayloadSyncStatus = {
+  state: "NOT_CONFIGURED" | "UNREACHABLE" | "AUTH_FAILED" | "SCHEMA_INVALID" | "READY" | "SYNC_FAILED" | "ACTIVE" | "OUT_OF_SYNC";
   configured: boolean;
   running: boolean;
   lastRun: {
@@ -67,6 +68,7 @@ export type PayloadSyncResult = {
 export type PayloadSyncErrorCode =
   | "NOT_CONFIGURED"
   | "UNAVAILABLE"
+  | "AUTH_FAILED"
   | "PAYLOAD_SYNC_ALREADY_RUNNING"
   | "PAYLOAD_SYNC_INVALID_DATASET"
   | "PAYLOAD_SYNC_ACTIVATION_FAILED";
@@ -89,6 +91,11 @@ export type PayloadSyncOptions = {
   reload?: () => Promise<unknown>;
   audit?: (event: AdminAuditEvent) => Promise<unknown>;
   now?: () => Date;
+  runtimeCoverage?: () => Promise<{
+    procedures: Procedure[];
+    documents: StoredDocAsset[];
+    mappings: ProcToDocs[];
+  }>;
 };
 
 export type PayloadSyncContext = {
@@ -148,6 +155,21 @@ function firstString(record: PayloadRecord, keys: string[]): string {
   return "";
 }
 
+function localizedString(record: PayloadRecord, keys: string[], locale: "ar" | "en"): string {
+  for (const key of keys) {
+    const value = record[key];
+    const localized = asRecord(value);
+    if (localized) {
+      const localizedValue = stringValue(localized[locale]);
+      if (localizedValue) return localizedValue;
+      continue;
+    }
+    const text = stringValue(value);
+    if (text) return text;
+  }
+  return "";
+}
+
 function relationValues(value: unknown): unknown[] {
   if (Array.isArray(value)) return value;
   if (value === null || value === undefined || value === "") return [];
@@ -165,7 +187,13 @@ function normalizedKey(value: string): string {
 }
 
 function textList(value: unknown, objectKeys: string[] = ["item", "text", "value", "title", "details"]): string[] {
-  const values = Array.isArray(value) ? value : value === undefined || value === null ? [] : [value];
+  const localized = asRecord(value);
+  const selectedValue = localized && (localized.ar !== undefined || localized.en !== undefined)
+    ? localized.ar ?? localized.en
+    : value;
+  let values: unknown[] = [];
+  if (Array.isArray(selectedValue)) values = selectedValue;
+  else if (selectedValue !== undefined && selectedValue !== null) values = [selectedValue];
   const result: string[] = [];
   for (const item of values) {
     const record = asRecord(item);
@@ -215,7 +243,7 @@ function isPublished(record: PayloadRecord): boolean {
 
 export function mapPayloadProcedure(record: PayloadRecord): Procedure {
   const id = requireCanonicalId(record, "procedure");
-  const title = firstString(record, ["titleAr", "title", "name"]);
+  const title = localizedString(record, ["titleAr", "title", "name"], "ar");
   if (!title) {
     throw new PayloadSyncError("PAYLOAD_SYNC_INVALID_DATASET", `Payload procedure ${id} is missing titleAr`, 422);
   }
@@ -223,11 +251,11 @@ export function mapPayloadProcedure(record: PayloadRecord): Procedure {
   const updatedAt = firstString(record, ["updatedAt", "publishedAt", "createdAt"]);
   return {
     id,
-    source: firstString(record, ["sourceSystem", "source"]) || undefined,
+    source: firstString(record, ["sourceAuthority", "sourceSystem", "source"]) || undefined,
     source_label: firstString(record, ["category"]),
     title_ar: title,
-    title_en: firstString(record, ["titleEn"]),
-    summary_lb: firstString(record, ["summaryAr", "summaryLb", "summaryEn"]),
+    title_en: localizedString(record, ["titleEn", "title"], "en"),
+    summary_lb: localizedString(record, ["summaryAr", "summaryLb", "summary", "summaryEn"], "ar"),
     section_path: [firstString(record, ["category"]), firstString(record, ["subcategory"])].filter(Boolean),
     eligibility: textList(record.eligibility),
     requirements: textList(record.requirements),
@@ -342,6 +370,9 @@ export function buildPayloadRuntimeCandidate(
     }
   }
 
+  if (publishedProcedures.length < 1) {
+    throw new PayloadSyncError("PAYLOAD_SYNC_INVALID_DATASET", "Payload canonical sync requires at least one published procedure", 422);
+  }
   const procedures = publishedProcedures.map(mapPayloadProcedure);
   const documents = publishedDocuments.map((record) => {
     const documentId = requireCanonicalId(record, "document");
@@ -375,6 +406,46 @@ export function buildPayloadRuntimeCandidate(
   };
 }
 
+function normalizedIdentitySet(values: string[]): Set<string> {
+  return new Set(values.map((value) => normalizedKey(value)).filter(Boolean));
+}
+
+function mappingPairSet(mappings: ProcToDocs[]): Set<string> {
+  return normalizedIdentitySet(mappings.flatMap((mapping) =>
+    (mapping.doc_ids || []).map((documentId) => `${mapping.procedure_id}\u0000${documentId}`),
+  ));
+}
+
+function setDifferenceSize(left: Set<string>, right: Set<string>): number {
+  let count = 0;
+  for (const value of left) if (!right.has(value)) count += 1;
+  return count;
+}
+
+export function assertInitialActivationCoverage(
+  candidate: Pick<Candidate, "procedures" | "documents" | "mappings">,
+  runtime: { procedures: Procedure[]; documents: StoredDocAsset[]; mappings: ProcToDocs[] },
+): void {
+  if (runtime.procedures.length === 0 && runtime.documents.length === 0 && runtime.mappings.length === 0) return;
+  const runtimeProcedures = normalizedIdentitySet(runtime.procedures.map((row) => row.id));
+  const candidateProcedures = normalizedIdentitySet(candidate.procedures.map((row) => row.id));
+  const runtimeDocuments = normalizedIdentitySet(runtime.documents.map((row) => row.id));
+  const candidateDocuments = normalizedIdentitySet(candidate.documents.map((row) => row.id));
+  const runtimePairs = mappingPairSet(runtime.mappings);
+  const candidatePairs = mappingPairSet(candidate.mappings);
+  const gaps = {
+    proceduresMissing: setDifferenceSize(runtimeProcedures, candidateProcedures),
+    proceduresExtra: setDifferenceSize(candidateProcedures, runtimeProcedures),
+    documentsMissing: setDifferenceSize(runtimeDocuments, candidateDocuments),
+    documentsExtra: setDifferenceSize(candidateDocuments, runtimeDocuments),
+    mappingsMissing: setDifferenceSize(runtimePairs, candidatePairs),
+    mappingsExtra: setDifferenceSize(candidatePairs, runtimePairs),
+  };
+  if (Object.values(gaps).some((value) => value !== 0)) {
+    throw new PayloadSyncError("PAYLOAD_SYNC_INVALID_DATASET", `Initial Payload activation coverage mismatch: ${JSON.stringify(gaps)}`, 422);
+  }
+}
+
 function pageDocs(value: unknown): PayloadRecord[] {
   const page = asRecord(value) as PayloadPage | null;
   if (!page || !Array.isArray(page.docs)) {
@@ -400,12 +471,16 @@ async function fetchCollection(
   let complete = false;
 
   for (let pageCount = 0; pageCount < MAX_PAGES; pageCount += 1) {
-    const url = `${baseUrl}/api/${collection}?limit=${PAGE_SIZE}&page=${pageNumber}&depth=1`;
+    const localeQuery = collection === "procedures" ? "&locale=all" : "";
+    const url = `${baseUrl}/api/${collection}?limit=${PAGE_SIZE}&page=${pageNumber}&depth=1${localeQuery}`;
     let response: PayloadHttpResponse;
     try {
       response = await fetcher(url, { headers });
     } catch {
       throw new PayloadSyncError("UNAVAILABLE", `Payload ${collection} endpoint is unavailable`, 503);
+    }
+    if (response.status === 401 || response.status === 403) {
+      throw new PayloadSyncError("AUTH_FAILED", `Payload ${collection} endpoint rejected service authority`, 502);
     }
     if (!response.ok) {
       throw new PayloadSyncError("UNAVAILABLE", `Payload ${collection} endpoint returned ${response.status}`, 503);
@@ -519,12 +594,25 @@ function statusFromError(error: unknown): { code: PayloadSyncErrorCode; statusCo
   return { code: "PAYLOAD_SYNC_ACTIVATION_FAILED", statusCode: 500 };
 }
 
+export function deriveCanonicalSyncState(configured: boolean, running: boolean, lastRun: PayloadSyncStatus["lastRun"], active: PayloadSyncStatus["active"]): PayloadSyncStatus["state"] {
+  if (!configured) return "NOT_CONFIGURED";
+  if (lastRun?.state === "FAILED") {
+    if (lastRun.errorCode === "AUTH_FAILED") return "AUTH_FAILED";
+    if (lastRun.errorCode === "UNAVAILABLE") return "UNREACHABLE";
+    if (lastRun.errorCode === "PAYLOAD_SYNC_INVALID_DATASET") return "SCHEMA_INVALID";
+    return "SYNC_FAILED";
+  }
+  if (running) return "READY";
+  return active ? "ACTIVE" : "READY";
+}
+
 export class PayloadCanonicalSyncService {
   private readonly fetcher: PayloadHttpClient;
   private readonly runtimeRoot: string;
   private readonly reload: () => Promise<unknown>;
   private readonly audit: (event: AdminAuditEvent) => Promise<unknown>;
   private readonly now: () => Date;
+  private readonly runtimeCoverage: () => Promise<{ procedures: Procedure[]; documents: StoredDocAsset[]; mappings: ProcToDocs[] }>;
   private running = false;
   private lastRun: PayloadSyncStatus["lastRun"] = null;
 
@@ -534,6 +622,10 @@ export class PayloadCanonicalSyncService {
     this.reload = options.reload || reloadIndex;
     this.audit = options.audit || appendAdminAuditEvent;
     this.now = options.now || (() => new Date());
+    this.runtimeCoverage = options.runtimeCoverage || (async () => {
+      const runtime = await loadIndex(false);
+      return { procedures: runtime.procedures, documents: runtime.docs, mappings: runtime.map };
+    });
   }
 
   getStatus(): PayloadSyncStatus {
@@ -554,12 +646,38 @@ export class PayloadCanonicalSyncService {
         active = null;
       }
     }
+    const configured = Boolean(configuredBaseUrl());
     return {
-      configured: Boolean(configuredBaseUrl()),
+      state: deriveCanonicalSyncState(configured, this.running, this.lastRun, active),
+      configured,
       running: this.running,
       lastRun: this.lastRun,
       active,
     };
+  }
+
+  async inspectStatus(): Promise<PayloadSyncStatus> {
+    const current = this.getStatus();
+    if (!current.configured || current.running || !current.active) return current;
+    const baseUrl = configuredBaseUrl();
+    if (!baseUrl) return current;
+    try {
+      const [procedureRecords, documentRecords] = await Promise.all([
+        fetchCollection("procedures", baseUrl, this.fetcher),
+        fetchCollection("documents", baseUrl, this.fetcher),
+      ]);
+      const candidate = buildPayloadRuntimeCandidate(procedureRecords, documentRecords);
+      return {
+        ...current,
+        state: candidate.contentHash === current.active.contentHash ? "ACTIVE" : "OUT_OF_SYNC",
+      };
+    } catch (error) {
+      const failure = statusFromError(error);
+      if (failure.code === "AUTH_FAILED") return { ...current, state: "AUTH_FAILED" };
+      if (failure.code === "UNAVAILABLE") return { ...current, state: "UNREACHABLE" };
+      if (failure.code === "PAYLOAD_SYNC_INVALID_DATASET") return { ...current, state: "SCHEMA_INVALID" };
+      return { ...current, state: "SYNC_FAILED" };
+    }
   }
 
   async sync(context: PayloadSyncContext = {}): Promise<PayloadSyncResult> {
@@ -597,9 +715,12 @@ export class PayloadCanonicalSyncService {
         fetchCollection("documents", baseUrl, this.fetcher),
       ]);
       const candidate = buildPayloadRuntimeCandidate(procedureRecords, documentRecords);
+      previousPointer = await readPointer(this.runtimeRoot);
+      if (!previousPointer.value) {
+        assertInitialActivationCoverage(candidate, await this.runtimeCoverage());
+      }
       const activatedAt = this.now().toISOString();
       const directoryName = await writeCandidate(this.runtimeRoot, candidate, runId, activatedAt);
-      previousPointer = await readPointer(this.runtimeRoot);
       await replacePointer(this.runtimeRoot, {
         version: 1,
         activeDirectory: directoryName,

@@ -1,6 +1,10 @@
 import type { ReactNode } from "react";
 import { NavLink } from "react-router-dom";
 
+export function AdminPageHeader({ eyebrow = "إدارة موطني", title, description, actions }: { eyebrow?: string; title: string; description?: string; actions?: ReactNode }) {
+  return <header className="admin-page-header"><div><span className="admin-eyebrow">{eyebrow}</span><h1>{title}</h1>{description && <p className="muted">{description}</p>}</div>{actions && <div className="admin-page-actions">{actions}</div>}</header>;
+}
+
 export function AdminPageSection({ title, description, children, action }: { title: string; description?: string; children: ReactNode; action?: ReactNode }) {
   return <section className="admin-section"><div className="admin-section-header"><div><h2>{title}</h2>{description && <p className="muted">{description}</p>}</div>{action}</div>{children}</section>;
 }

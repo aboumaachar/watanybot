@@ -1,17 +1,33 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
+import { randomUUID } from "node:crypto";
 import { signAccessToken } from "../../auth/auth-middleware.js";
 import { query, closePool } from "../../lib/db.js";
 
 const marker = `apex-c4-forms-acceptance-${Date.now()}`;
-const syntheticActor = `superadmin-${marker}`;
+const superadminUserId = randomUUID();
+const adminUserId = randomUUID();
+const superadminSessionId = randomUUID();
+const adminSessionId = randomUUID();
+const syntheticActor = superadminUserId;
 let app: typeof import("../../server.js").app;
 
-function token(role: "admin" | "superadmin", permissions: string[] = []) {
-  return `Bearer ${signAccessToken({ sub: `${role}-${marker}`, role, email: `${role}@watany.test` })}`;
+function token(role: "admin" | "superadmin", _permissions: string[] = []) {
+  const sub = role === "superadmin" ? superadminUserId : adminUserId;
+  const sid = role === "superadmin" ? superadminSessionId : adminSessionId;
+  return `Bearer ${signAccessToken({ sub, role, email: `${role}-${marker}@watany.test`, sid })}`;
 }
 
 const headers = (authorization: string) => ({ authorization, "content-type": "application/json" });
 
+async function setupAuth(): Promise<void> {
+  await query("INSERT INTO users (id, email, username, role, status, name, full_name) VALUES ($1::uuid, $2, $3, 'superadmin', 'active', $4, $4), ($5::uuid, $6, $7, 'admin', 'active', $8, $8)", [superadminUserId, `superadmin-${marker}@watany.test`, `superadmin-${marker}`, "CMS Forms Superadmin", adminUserId, `admin-${marker}@watany.test`, `admin-${marker}`, "CMS Forms Admin"]);
+  await query("INSERT INTO sessions (id, user_id, token, expires_at) VALUES ($1::uuid, $2::uuid, $3, now() + interval '1 hour'), ($4::uuid, $5::uuid, $6, now() + interval '1 hour')", [superadminSessionId, superadminUserId, `session-${superadminSessionId}`, adminSessionId, adminUserId, `session-${adminSessionId}`]);
+}
+
+async function cleanupAuth(): Promise<void> {
+  await query("DELETE FROM sessions WHERE id = ANY($1::uuid[])", [[superadminSessionId, adminSessionId]]);
+  await query("DELETE FROM users WHERE id = ANY($1::uuid[])", [[superadminUserId, adminUserId]]);
+}
 async function cleanup(): Promise<void> {
   await query("DELETE FROM cms_content_relationships WHERE entity_id IN (SELECT id FROM cms_content_entities WHERE public_id = $1)", [marker]);
   await query("DELETE FROM cms_content_entities WHERE public_id = $1", [marker]);
@@ -52,6 +68,7 @@ describe("Forms CMS focused runtime acceptance", () => {
     process.env.DISABLE_PLUGIN_DB = "true";
     process.env.DISABLE_KB_NODES = "true";
     process.env.DISABLE_CHAT_PERSIST = "true";
+    await setupAuth();
     app = (await import("../../server.js")).app;
     await cleanup();
   }, 60000);
@@ -59,6 +76,7 @@ describe("Forms CMS focused runtime acceptance", () => {
   afterEach(async () => cleanup());
   afterAll(async () => {
     await cleanup();
+    await cleanupAuth();
     await app.close();
     await closePool();
   });
@@ -96,6 +114,19 @@ describe("Forms CMS focused runtime acceptance", () => {
     const published = await app.inject({ method: "POST", url: `/api/admin/cms/forms/${marker}/actions/publish`, headers: { authorization } });
     expect(published.statusCode).toBe(200);
     expect(published.json().item.status).toBe("PUBLISHED");
+
+    const publicVisible = await app.inject({ method: "GET", url: `/api/forms?q=${encodeURIComponent(marker)}` });
+    expect(publicVisible.statusCode).toBe(200);
+    expect(publicVisible.json().items.some((item: { id: string; origin?: string }) => item.id === marker && item.origin === "cms")).toBe(true);
+
+    const unpublished = await app.inject({ method: "POST", url: `/api/admin/cms/forms/${marker}/actions/unpublish`, headers: { authorization } });
+    expect(unpublished.statusCode).toBe(200);
+    const publicHidden = await app.inject({ method: "GET", url: `/api/forms?q=${encodeURIComponent(marker)}` });
+    expect(publicHidden.statusCode).toBe(200);
+    expect(publicHidden.json().items.some((item: { id: string }) => item.id === marker)).toBe(false);
+
+    const republished = await app.inject({ method: "POST", url: `/api/admin/cms/forms/${marker}/actions/publish`, headers: { authorization } });
+    expect(republished.statusCode).toBe(200);
 
     const audit = await app.inject({ method: "GET", url: `/api/admin/cms/forms/${marker}/audit`, headers: { authorization } });
     const version = await app.inject({ method: "GET", url: `/api/admin/cms/forms/${marker}/versions`, headers: { authorization } });

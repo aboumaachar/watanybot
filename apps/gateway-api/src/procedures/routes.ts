@@ -618,6 +618,7 @@ function getReferenceSourceFile(sourceId: string): string | null {
   const fileName = `${sourceId.toLowerCase()}.html`;
 
   const candidates = uniquePaths([
+    path.resolve(process.cwd(), "reference-assets", "watanybot", "docs", "sources", fileName),
     path.join(docsDir, "sources", fileName),
     path.join(kbRoot, "docs", "sources", fileName),
     path.resolve(kbRoot, "..", "kb_studio", "runtime", "exports", "watanybot", "docs", "sources", fileName),

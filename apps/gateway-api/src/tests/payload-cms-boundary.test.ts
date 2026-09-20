@@ -23,6 +23,7 @@ vi.mock("../cms/payloadCanonicalSync.js", () => ({
   },
   payloadCanonicalSync: {
     getStatus: payloadStatusMock,
+    inspectStatus: payloadStatusMock,
     sync: payloadSyncMock,
   },
 }));
@@ -49,6 +50,7 @@ import { cmsRoutes } from "../cms/cms-routes.js";
 import { proceduresRoutes } from "../procedures/routes.js";
 
 const activeSync = {
+  state: "ACTIVE" as const,
   configured: true,
   running: false,
   lastRun: null,
@@ -84,9 +86,9 @@ function addTestActor(app: ReturnType<typeof Fastify>): void {
   app.addHook("onRequest", async (request) => {
     const role = String(request.headers["x-test-role"] || "");
     if (role === "admin") {
-      (request as any).user = { id: "admin-1", role: "admin", permissions: ["cms.procedures.read"] };
+      (request as any).user = { id: "admin-1", role: "admin", email: "admin-1@test.local", permissions: ["cms.procedures.read"] };
     } else if (role === "superadmin") {
-      (request as any).user = { id: "superadmin-1", role: "superadmin" };
+      (request as any).user = { id: "superadmin-1", role: "superadmin", email: "superadmin-1@test.local" };
     }
   });
 }

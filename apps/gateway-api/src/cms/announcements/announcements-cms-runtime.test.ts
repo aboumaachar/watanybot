@@ -1,17 +1,19 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { createRequire } from "node:module";
+import { randomUUID } from "node:crypto";
+import { signAccessToken } from "../../auth/auth-middleware.js";
 import { closePool, query } from "../../lib/db.js";
 
-const require = createRequire(import.meta.url);
-const jwt = require("jsonwebtoken") as { sign: (payload: object, secret: string, options: object) => string };
-const secret = process.env.JWT_SECRET || "apex-cms-runtime-acceptance-local-secret-2026";
 const canaryId = `apex-c5-announcement-${Date.now()}`;
 const secondCanaryId = `${canaryId}-second`;
 const title = `Synthetic C5 ${canaryId}`;
+const superadminUserId = randomUUID();
+const adminUserId = randomUUID();
+const superadminSessionId = randomUUID();
+const adminSessionId = randomUUID();
 let app: { ready: () => Promise<void>; close: () => Promise<void>; inject: (options: { method: string; url: string; headers?: Record<string, string>; payload?: string }) => Promise<{ statusCode: number; body: string }> };
 
-function token(role: string, id: string): string {
-  return jwt.sign({ sub: id, role, email: `${role}@apex-c5.local` }, secret, { expiresIn: 3600 });
+function token(role: "admin" | "superadmin", id: string, sid: string): string {
+  return signAccessToken({ sub: id, role, email: `${role}@apex-c5.local`, sid });
 }
 
 async function request(route: string, init: RequestInit = {}): Promise<{ status: number; body: any }> {
@@ -22,17 +24,26 @@ async function request(route: string, init: RequestInit = {}): Promise<{ status:
 
 const headers = (tokenValue: string) => ({ Authorization: `Bearer ${tokenValue}`, "Content-Type": "application/json" });
 
+async function setupAuth(): Promise<void> {
+  await query("INSERT INTO users (id, email, username, role, status, name, full_name) VALUES ($1::uuid, $2, $3, 'superadmin', 'active', $4, $4), ($5::uuid, $6, $7, 'admin', 'active', $8, $8)", [superadminUserId, `c5-superadmin-${canaryId}@watany.test`, `c5-superadmin-${canaryId}`, "CMS Announcement Superadmin", adminUserId, `c5-admin-${canaryId}@watany.test`, `c5-admin-${canaryId}`, "CMS Announcement Admin"]);
+  await query("INSERT INTO sessions (id, user_id, token, expires_at) VALUES ($1::uuid, $2::uuid, $3, now() + interval '1 hour'), ($4::uuid, $5::uuid, $6, now() + interval '1 hour')", [superadminSessionId, superadminUserId, `session-${superadminSessionId}`, adminSessionId, adminUserId, `session-${adminSessionId}`]);
+}
+
+async function cleanupAuth(): Promise<void> {
+  await query("DELETE FROM sessions WHERE id = ANY($1::uuid[])", [[superadminSessionId, adminSessionId]]);
+  await query("DELETE FROM users WHERE id = ANY($1::uuid[])", [[superadminUserId, adminUserId]]);
+}
 async function cleanup(): Promise<void> {
   const ids = [canaryId, secondCanaryId];
   await query("DELETE FROM cms_content_relationships WHERE entity_id IN (SELECT id FROM cms_content_entities WHERE domain = $1 AND public_id = ANY($2::text[]))", ["announcements", ids]);
   await query("DELETE FROM cms_content_entities WHERE domain = $1 AND public_id = ANY($2::text[])", ["announcements", ids]);
   const auditTable = await query<{ relation: string | null }>("SELECT to_regclass('public.admin_audit_events') AS relation");
   if (auditTable.rows[0]?.relation) {
-    await query("DELETE FROM admin_audit_events WHERE entity_type = $1 AND entity_id = ANY($2::text[]) AND actor_id = $3", ["announcement", ids, "apex-c5-superadmin"]);
+    await query("DELETE FROM admin_audit_events WHERE entity_type = $1 AND entity_id = ANY($2::text[]) AND actor_id = $3", ["announcement", ids, superadminUserId]);
   }
   const versionTable = await query<{ relation: string | null }>("SELECT to_regclass('public.admin_entity_versions') AS relation");
   if (versionTable.rows[0]?.relation) {
-    await query("DELETE FROM admin_entity_versions WHERE entity_type = $1 AND entity_id = ANY($2::text[]) AND created_by = $3", ["cms.announcements", ids, "apex-c5-superadmin"]);
+    await query("DELETE FROM admin_entity_versions WHERE entity_type = $1 AND entity_id = ANY($2::text[]) AND created_by = $3", ["cms.announcements", ids, superadminUserId]);
   }
 }
 
@@ -46,25 +57,28 @@ async function assertZeroResidue(): Promise<void> {
   expect(residue.rows[0]).toEqual({ entities: 0, relationships: 0 });
   const auditTable = await query<{ relation: string | null }>("SELECT to_regclass('public.admin_audit_events') AS relation");
   if (auditTable.rows[0]?.relation) {
-    const audit = await query<{ count: number }>("SELECT count(*)::int AS count FROM admin_audit_events WHERE entity_type = $1 AND entity_id = ANY($2::text[]) AND actor_id = $3", ["announcement", [canaryId, secondCanaryId], "apex-c5-superadmin"]);
+    const audit = await query<{ count: number }>("SELECT count(*)::int AS count FROM admin_audit_events WHERE entity_type = $1 AND entity_id = ANY($2::text[]) AND actor_id = $3", ["announcement", [canaryId, secondCanaryId], superadminUserId]);
     expect(audit.rows[0].count).toBe(0);
   }
   const versionTable = await query<{ relation: string | null }>("SELECT to_regclass('public.admin_entity_versions') AS relation");
   if (versionTable.rows[0]?.relation) {
-    const versions = await query<{ count: number }>("SELECT count(*)::int AS count FROM admin_entity_versions WHERE entity_type = $1 AND entity_id = ANY($2::text[]) AND created_by = $3", ["cms.announcements", [canaryId, secondCanaryId], "apex-c5-superadmin"]);
+    const versions = await query<{ count: number }>("SELECT count(*)::int AS count FROM admin_entity_versions WHERE entity_type = $1 AND entity_id = ANY($2::text[]) AND created_by = $3", ["cms.announcements", [canaryId, secondCanaryId], superadminUserId]);
     expect(versions.rows[0].count).toBe(0);
   }
 }
 
 describe("C5 Announcements CMS runtime", () => {
-  const superadmin = token("superadmin", "apex-c5-superadmin");
-  const admin = token("admin", "apex-c5-admin");
+  let superadmin = "";
+  let admin = "";
 
   beforeAll(async () => {
     process.env.JWT_SECRET ||= "announcements-cms-focused-test-secret-0123456789";
     process.env.DISABLE_PLUGIN_DB = "true";
     process.env.DISABLE_KB_NODES = "true";
     process.env.DISABLE_CHAT_PERSIST = "true";
+    await setupAuth();
+    superadmin = token("superadmin", superadminUserId, superadminSessionId);
+    admin = token("admin", adminUserId, adminSessionId);
     const server = await import("../../server.js");
     app = server.app as typeof app;
     await app.ready();
@@ -72,6 +86,7 @@ describe("C5 Announcements CMS runtime", () => {
 
   afterAll(async () => {
     await cleanup();
+    await cleanupAuth();
     if (app) await app.close();
     await closePool();
   });
@@ -112,13 +127,13 @@ describe("C5 Announcements CMS runtime", () => {
 
     const published = await request(`/api/admin/cms/announcements/${canaryId}/actions/publish`, { method: "POST", headers: headers(superadmin) });
     expect(published.status).toBe(200);
-    const publicRead = await request("/announcements");
+    const publicRead = await request("/api/announcements");
     expect(publicRead.status).toBe(200);
     expect(publicRead.body.announcements.some((item: { id: string }) => item.id === canaryId)).toBe(true);
 
     const unpublished = await request(`/api/admin/cms/announcements/${canaryId}/actions/unpublish`, { method: "POST", headers: headers(superadmin) });
     expect(unpublished.status).toBe(200);
-    const publicHidden = await request("/announcements");
+    const publicHidden = await request("/api/announcements");
     expect(publicHidden.body.announcements.some((item: { id: string }) => item.id === canaryId)).toBe(false);
 
     const archived = await request(`/api/admin/cms/announcements/${canaryId}/actions/archive`, { method: "POST", headers: headers(superadmin) });

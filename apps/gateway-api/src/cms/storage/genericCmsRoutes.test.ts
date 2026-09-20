@@ -75,7 +75,7 @@ const listResult = {
 function addTestActor(app: ReturnType<typeof Fastify>): void {
   app.addHook("onRequest", async (request) => {
     if (request.headers["x-test-role"] === "superadmin") {
-      (request as any).user = { id: "superadmin-1", role: "superadmin" };
+      (request as any).user = { id: "superadmin-1", role: "superadmin", email: "superadmin-1@watany.test" };
     }
   });
 }

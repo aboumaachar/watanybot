@@ -1,3 +1,6 @@
+import type { FastifyRequest } from 'fastify';
+import { authorizePrincipal, getCanonicalAdminPrincipal } from '../auth/rbac.js';
+
 export type AdminActor = {
   id: string;
   roles?: string[];
@@ -95,6 +98,28 @@ export const DEFAULT_ADMIN_ROUTE_POLICIES: AdminRoutePolicy[] = [
     requiredPermission: 'cms.publish',
     mutating: true,
     auditEvent: 'cms.payload_sync.requested',
+  },
+  {
+    key: 'cms.payload_bootstrap.read',
+    method: 'GET',
+    path: '/api/admin/cms/payload-bootstrap/status',
+    requiredPermission: 'cms.procedures.read',
+  },
+  {
+    key: 'cms.payload_bootstrap.apply',
+    method: 'POST',
+    path: '/api/admin/cms/payload-bootstrap/documents/apply',
+    requiredPermission: 'cms.edit',
+    mutating: true,
+    auditEvent: 'cms.payload_bootstrap.documents_applied',
+  },
+  {
+    key: 'cms.payload_bootstrap.publish',
+    method: 'POST',
+    path: '/api/admin/cms/payload-bootstrap/documents/publish',
+    requiredPermission: 'cms.publish',
+    mutating: true,
+    auditEvent: 'cms.payload_bootstrap.documents_published',
   },
   {
     key: 'cms.edit',
@@ -258,60 +283,34 @@ function listFromUnknown(value: unknown): string[] {
 }
 
 export function resolveAdminActorFromRequest(request: any): AdminActor | null {
-  const candidate = request?.adminUser ?? request?.admin ?? request?.user ?? request?.auth?.user ?? request?.session?.user ?? null;
-  if (!candidate) {
-    return null;
-  }
-
-  const id = String(candidate.id ?? candidate.userId ?? candidate.sub ?? candidate.email ?? '');
-  if (!id) {
-    return null;
-  }
-
-  const roles = listFromUnknown(candidate.roles ?? candidate.roleNames ?? candidate.adminRoles);
-  const role = typeof candidate.role === 'string' ? candidate.role : undefined;
-  if (role) {
-    roles.push(role);
-  }
-
-  const permissions = listFromUnknown(candidate.permissions ?? candidate.permissionNames ?? candidate.adminPermissions);
-  const permission = typeof candidate.permission === 'string' ? candidate.permission : undefined;
-  if (permission) {
-    permissions.push(permission);
-  }
-  const isSuperadmin = candidate.isSuperadmin === true || roles.includes('superadmin') || roles.includes('SUPERADMIN');
-
-  return { id, roles, permissions, isSuperadmin };
-}
-
-export function hasAdminPermission(actor: AdminActor | null, requiredPermission: string): boolean {
-  if (!actor) {
-    return false;
-  }
-  if (actor.isSuperadmin === true) {
-    return true;
-  }
-  return (actor.permissions ?? []).includes(requiredPermission);
-}
-
-export function evaluateAdminAuthority(request: any, policy: AdminRoutePolicy): AdminAuthorityDecision {
-  const actor = resolveAdminActorFromRequest(request);
-  if (!actor) {
+  const principal = request && getCanonicalAdminPrincipal(request as FastifyRequest);
+  if (principal) {
     return {
-      allowed: false,
-      statusCode: 401,
-      reason: 'NO_AUTHENTICATED_ADMIN_ACTOR',
-      requiredPermission: policy.requiredPermission,
+      id: principal.id,
+      roles: [principal.role],
+      permissions: [...principal.capabilities],
+      isSuperadmin: principal.role === 'superadmin',
     };
   }
 
-  if (!hasAdminPermission(actor, policy.requiredPermission)) {
+  return null;
+}
+
+export function hasAdminPermission(actor: AdminActor | null, requiredPermission: string): boolean {
+  return !!actor && (actor.isSuperadmin === true || (actor.permissions ?? []).includes(requiredPermission));
+}
+
+export function evaluateAdminAuthority(request: any, policy: AdminRoutePolicy): AdminAuthorityDecision {
+  const decision = authorizePrincipal(request as FastifyRequest, { capability: policy.requiredPermission });
+  if (!decision.allowed) {
     return {
       allowed: false,
-      statusCode: 403,
-      reason: 'MISSING_ADMIN_PERMISSION',
+      statusCode: decision.statusCode,
+      reason: decision.reason === 'NO_AUTHENTICATED_PRINCIPAL'
+        ? 'NO_AUTHENTICATED_ADMIN_ACTOR'
+        : 'MISSING_ADMIN_PERMISSION',
       requiredPermission: policy.requiredPermission,
-      actorId: actor.id,
+      ...(decision.principal ? { actorId: decision.principal.id } : {}),
     };
   }
 
@@ -320,7 +319,7 @@ export function evaluateAdminAuthority(request: any, policy: AdminRoutePolicy): 
     statusCode: 200,
     reason: 'ALLOWED',
     requiredPermission: policy.requiredPermission,
-    actorId: actor.id,
+    actorId: decision.principal?.id,
   };
 }
 

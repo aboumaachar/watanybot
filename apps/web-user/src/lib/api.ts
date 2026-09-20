@@ -4558,7 +4558,7 @@ export const api = {
 
   async getAnnouncements(baseUrl = API_URL): Promise<{ announcements: Array<{ id: string; title: string; body?: string; timestamp?: number; source?: string; url?: string; }> }> {
     try {
-      const res = await fetch(`${baseUrl}/announcements`);
+      const res = await fetch(`${baseUrl}/api/announcements`);
       if (!res.ok) throw new Error("announcements fetch failed");
       return (await res.json()) as { announcements: Array<{ id: string; title: string; body?: string; timestamp?: number; source?: string; url?: string; }> };
     } catch {

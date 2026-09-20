@@ -8,6 +8,7 @@ export type Procedure = {
   title_ar: string;
   title_en?: string;
   summary_lb: string;
+  summary_en?: string;
 
   section_path?: string[];
   section_label?: string;

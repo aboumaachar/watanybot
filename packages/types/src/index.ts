@@ -737,6 +737,7 @@ export interface JWTPayload {
   sub: string;
   role: UserRole;
   email: string;
+  sid?: string;
   iat: number;
   exp: number;
 }
