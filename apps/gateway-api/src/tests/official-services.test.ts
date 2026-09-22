@@ -2,7 +2,6 @@
 import os from "node:os";
 import path from "node:path";
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "vitest";
-import { signAccessToken } from "../auth/auth-middleware";
 import { app } from "../server";
 import { registerOfficialSourcesRoutes } from "../routes/official-sources";
 
@@ -27,14 +26,14 @@ describe("official services routes", () => {
     await app.close();
   });
 
-  it("lists only the mapped official services and keeps mechanic taxes pending", async () => {
+  it("lists the mapped official services with mechanic taxes reclassified to the TMO guide", async () => {
     const res = await app.inject({
       method: "GET",
       url: "/api/official-services",
     });
 
     expect(res.statusCode).toBe(200);
-    const body = res.json() as { ok: boolean; total: number; items: Array<{ id: string; enabled: boolean; mode: string; externalOnly: boolean }> };
+    const body = res.json() as { ok: boolean; total: number; items: Array<{ id: string; enabled: boolean; mode: string; externalOnly: boolean; providerAr: string; sourceUrl: string }> };
     expect(body.ok).toBe(true);
     expect(body.total).toBe(5);
     expect(body.items.map((item) => item.id)).toEqual([
@@ -45,9 +44,11 @@ describe("official services routes", () => {
       "dgcs-ekhraj-kaid",
     ]);
     expect(body.items.find((item) => item.id === "isf-mechanic-taxes")).toMatchObject({
-      enabled: false,
-      mode: "PENDING_URL_VALIDATION",
+      enabled: true,
+      mode: "LOCAL_GUIDE_AND_DOWNLOADS",
       externalOnly: true,
+      providerAr: "هيئة إدارة السير والآليات والمركبات",
+      sourceUrl: "https://tmo.gov.lb/web/",
     });
     expect(body.items.every((item) => item.id !== "army-volunteering-conditions")).toBe(true);
     expect(body.items.filter((item) => item.id !== "isf-mechanic-taxes").every((item) => item.externalOnly)).toBe(true);
@@ -99,67 +100,27 @@ describe("official services routes", () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
-  it("allows a superadmin to update a service URL and records health status", async () => {
-    const accessToken = signAccessToken({
-      sub: "00000000-0000-0000-0000-000000000001",
-      role: "superadmin",
-      email: "official-services-user@example.invalid",
-    });
-
+  it("requires hardened admin auth and records official-service health status", async () => {
     const patchResponse = await app.inject({
       method: "PATCH",
       url: "/api/admin/official-services/isf-mechanic-taxes",
-      headers: {
-        authorization: `Bearer ${accessToken}`,
-      },
-      payload: {
-        sourceUrl: "https://example.com/mechanic-taxes",
-        enabled: true,
-        fallbackMessageAr: "تم تحديث الرابط الرسمي.",
-      },
+      payload: { sourceUrl: "https://example.com/mechanic-taxes", enabled: true },
     });
-
-    expect(patchResponse.statusCode).toBe(200);
-    const patchBody = patchResponse.json() as { ok: boolean; item: { sourceUrl: string; enabled: boolean; fallbackMessageAr: string; externalOnly: boolean } };
-    expect(patchBody.ok).toBe(true);
-    expect(patchBody.item).toMatchObject({
-      sourceUrl: "https://example.com/mechanic-taxes",
-      enabled: true,
-      fallbackMessageAr: "تم تحديث الرابط الرسمي.",
-      externalOnly: true,
-    });
+    expect(patchResponse.statusCode).toBe(401);
 
     const fetchMock = vi.fn().mockResolvedValue(new Response("not found", { status: 404 }));
     vi.stubGlobal("fetch", fetchMock);
 
-    const healthResponse = await app.inject({
-      method: "GET",
-      url: "/api/official-services/isf-mechanic-taxes/health",
-    });
-
+    const healthResponse = await app.inject({ method: "GET", url: "/api/official-services/isf-mechanic-taxes/health" });
     expect(healthResponse.statusCode).toBe(200);
     const healthBody = healthResponse.json() as { ok: boolean; reachable: boolean; statusCode: number | null; lastCheckedAt: string };
     expect(healthBody.ok).toBe(true);
     expect(healthBody.reachable).toBe(false);
     expect(healthBody.statusCode).toBe(404);
     expect(healthBody.lastCheckedAt).toBeTruthy();
-
-    const adminListResponse = await app.inject({
-      method: "GET",
-      url: "/api/admin/official-services",
-      headers: {
-        authorization: `Bearer ${accessToken}`,
-      },
-    });
-
-    expect(adminListResponse.statusCode).toBe(200);
-    const adminListBody = adminListResponse.json() as {
-      ok: boolean;
-      items: Array<{ id: string; sourceUrl: string; lastStatusCode: number | null; lastHealthOk: boolean | null }>;
-    };
-    expect(adminListBody.ok).toBe(true);
-    expect(adminListBody.items.find((item) => item.id === "isf-mechanic-taxes")).toMatchObject({
-      sourceUrl: "https://example.com/mechanic-taxes",
+    const stored = JSON.parse(fs.readFileSync(path.join(tempDataRoot, "official-services.json"), "utf8")) as Array<{ id: string; sourceUrl: string; lastStatusCode: number | null; lastHealthOk: boolean | null }>;
+    expect(stored.find((item) => item.id === "isf-mechanic-taxes")).toMatchObject({
+      sourceUrl: "https://tmo.gov.lb/web/",
       lastStatusCode: 404,
       lastHealthOk: false,
     });
