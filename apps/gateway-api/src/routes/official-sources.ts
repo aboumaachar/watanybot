@@ -156,7 +156,7 @@ const AL_WAFIYAT_SOURCES: AlWafiyatSourceRecord[] = [
     providerCode: "GENERAL_SECURITY",
     providerAr: "المديرية العامة للأمن العام",
     titleAr: "وفيات المديرية العامة للأمن العام",
-    sourceUrl: "https://www.general-security.gov.lb/ar/posts/123",
+    sourceUrl: "https://www.general-security.gov.lb/ar/posts/551",
   },
 ];
 
@@ -1545,7 +1545,13 @@ export async function registerOfficialSourcesRoutes(app: FastifyLike) {
     const all = readJsonl(dataCandidates("death-notices.jsonl"))
       .filter(publishedDeathNotice)
       .filter(isPubliclyDisplayableDeathNotice)
-      .filter((item) => textMatch(item, q));
+      .filter((item) => textMatch(item, q))
+      .sort((left, right) => {
+        const leftDate = compactText(left?.date_of_death);
+        const rightDate = compactText(right?.date_of_death);
+        if (leftDate !== rightDate) return rightDate.localeCompare(leftDate);
+        return alWafiyatSortTime(right?.published_at) - alWafiyatSortTime(left?.published_at);
+      });
     return { ok: true, items: limitItems(all, req.query?.limit), total: all.length };
   });
 
@@ -1674,7 +1680,7 @@ export async function registerOfficialSourcesRoutes(app: FastifyLike) {
 
   function startAlWafiyatAutoSyncJob() {
     if (process.env.NODE_ENV === "test" || process.env.VITEST === "true") return;
-    if (process.env.AL_WAFIYAT_AUTO_SYNC !== "true") return;
+    if (process.env.AL_WAFIYAT_AUTO_SYNC === "false") return;
     if (alWafiyatAutoSyncTimer) return;
 
     const runCycle = async () => {

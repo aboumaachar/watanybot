@@ -14,6 +14,10 @@ function getBrowserGatewayOrigin(port = DEFAULT_GATEWAY_PORT): string {
     return `http://127.0.0.1:${port}`;
   }
 
+  if (!isLoopbackHost(globalThis.location.hostname)) {
+    return globalThis.location.origin;
+  }
+
   return `${globalThis.location.protocol}//${globalThis.location.hostname}:${port}`;
 }
 
@@ -87,10 +91,7 @@ function getConfiguredApiBaseUrl(port = DEFAULT_GATEWAY_PORT): string | null {
     return trimTrailingSlash(resolved.toString());
   }
 
-  resolved.protocol = globalThis.location.protocol;
-  resolved.hostname = currentHost;
-  resolved.port = resolved.port || port;
-  return trimTrailingSlash(resolved.toString());
+  return trimTrailingSlash(globalThis.location.origin);
 }
 
 function getStoredApiBaseUrl(): string | null {

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 // APEX_CSS_FREEZE_DISABLED_IMPORT import "../../styles/watany-superadmin-crm-command-center.css";
 import ProceduresAdminDashboard from "../ProceduresAdminDashboard";
 import { getSuperadminContacts, type SuperadminContact } from "../../lib/api";
+import { getDefaultApiBaseUrl } from "../../lib/api-base";
 
 const SuperadminUsersPage = lazy(() => import("../../features/superadmin-users/SuperadminUsersPage"));
 
@@ -26,7 +27,7 @@ type DashboardSummary = {
 
 type GateRow = { label: string; status: string; value: string; detail: string };
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL ?? "http://127.0.0.1:8010";
+const API_BASE = getDefaultApiBaseUrl();
 
 function getToken(): string | null {
   try {

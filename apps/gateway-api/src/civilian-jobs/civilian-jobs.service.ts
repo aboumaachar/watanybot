@@ -16,7 +16,10 @@ export interface ListOpportunityFilters {
   q?: string;
 }
 
+const allowSeedOpportunities = process.env.NODE_ENV !== "production" || process.env.CIVILIAN_JOBS_ALLOW_SEED_DATA === "true";
+
 export function listCivilianOpportunities(filters: ListOpportunityFilters = {}): CivilianOpportunity[] {
+  if (!allowSeedOpportunities) return [];
   return civilianOpportunitySeed.filter((item) => {
     if (item.status !== "PUBLISHED") return false;
     if (filters.type && item.type !== filters.type) return false;
@@ -32,6 +35,7 @@ export function listCivilianOpportunities(filters: ListOpportunityFilters = {}):
 }
 
 export function getCivilianOpportunity(id: string): CivilianOpportunity | undefined {
+  if (!allowSeedOpportunities) return undefined;
   return civilianOpportunitySeed.find((item) => item.id === id && item.status === "PUBLISHED");
 }
 

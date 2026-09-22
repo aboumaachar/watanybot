@@ -2,6 +2,7 @@ import { registerCivilianJobsFreelancerMarketplaceRoutes } from '../civilian-job
 import { smsapiOtpRoutes } from '../integrations/smsapi/smsapi-otp.routes';
 import { taxiRoutes } from '../features/taxi/taxi-routes';
 import { registerCivilianJobsEmployerPortalRoutes } from '../civilian-jobs/civilian-jobs.employer-portal.routes';
+import { registerCivilianJobsFreelancerSkillRoutes } from '../civilian-jobs/civilian-jobs.freelancer-skill.routes';
 import watanyEndpointCompatibilityRoutes from '../routes/watanyEndpointCompatibilityRoutes';
 import { notificationBadgeCountsRoutes } from "../features/notification-badges/notification-badge-counts-routes";
 /**
@@ -401,6 +402,7 @@ export async function registerRoutes(
   app.register(registerCivilianJobsMatchingRoutes);
   app.register(registerCivilianJobsPersistenceRoutes);
   app.register(registerCivilianJobsEmployerPortalRoutes);
+  app.register(registerCivilianJobsFreelancerSkillRoutes);
   app.register(marketRoutes, { prefix: "/api" });
   app.register(reviewRoutes, { prefix: "/api" });
   app.register(theNetworkRoutes);
