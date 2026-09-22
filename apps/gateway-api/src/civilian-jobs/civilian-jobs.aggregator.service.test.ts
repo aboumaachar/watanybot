@@ -14,6 +14,7 @@ import {
   processImportReview,
   listCrawlItems,
 } from "./civilian-jobs.aggregator.service.js";
+import { InMemoryCivilianJobsRepository } from "./civilian-jobs.repository.js";
 
 // Unique source id per test file run to avoid cross-test state collisions
 const SRC_ID = `test-src-wave03-${Date.now()}`;
@@ -183,43 +184,33 @@ describe("civilian jobs wave 03 aggregator service", () => {
     expect(Array.isArray(listImportQueue("NEEDS_ADMIN_REVIEW"))).toBe(true);
   });
 
-  it("approves an import and creates a published opportunity", () => {
+  it("approves an import and creates a published opportunity", async () => {
+    const repository = new InMemoryCivilianJobsRepository();
     const { imported } = ingestRawJob({
       crawlRunId: runId, sourceId: SRC_ID, sourceName: "Test Source",
       rawTitle: "Approved Import Job", rawUrl: `https://example.com/jobs/approve-${Date.now()}`,
     });
     expect(imported).toBeDefined();
-    const reviewed = processImportReview({
-      importedOpportunityId: imported!.id,
-      decision: "APPROVE",
-      adminNote: "Looks legitimate",
-    });
+    const reviewed = await processImportReview({ importedOpportunityId: imported!.id, decision: "APPROVE", adminNote: "Looks legitimate" }, "admin", repository);
     expect(reviewed.importStatus).toBe("APPROVED_FOR_PUBLICATION");
     expect(reviewed.publishedOpportunityId).toBeDefined();
   });
 
-  it("rejects an import", () => {
+  it("rejects an import", async () => {
+    const repository = new InMemoryCivilianJobsRepository();
     const { imported } = ingestRawJob({
       crawlRunId: runId, sourceId: SRC_ID, sourceName: "Test Source",
       rawTitle: "Rejected Import Job", rawUrl: `https://example.com/jobs/reject-${Date.now()}`,
     });
-    const reviewed = processImportReview({
-      importedOpportunityId: imported!.id,
-      decision: "REJECT",
-      adminNote: "Duplicate or low quality",
-    });
+    const reviewed = await processImportReview({ importedOpportunityId: imported!.id, decision: "REJECT", adminNote: "Duplicate or low quality" }, "admin", repository);
     expect(reviewed.importStatus).toBe("REJECTED");
     expect(reviewed.publishedOpportunityId).toBeUndefined();
   });
 
-  it("throws when reviewing a non-pending item twice", () => {
-    const { imported } = ingestRawJob({
-      crawlRunId: runId, sourceId: SRC_ID, sourceName: "Test Source",
-      rawTitle: "Double Review Job", rawUrl: `https://example.com/jobs/double-${Date.now()}`,
-    });
-    processImportReview({ importedOpportunityId: imported!.id, decision: "APPROVE" });
-    expect(() =>
-      processImportReview({ importedOpportunityId: imported!.id, decision: "REJECT" }),
-    ).toThrow();
+  it("throws when reviewing a non-pending item twice", async () => {
+    const repository = new InMemoryCivilianJobsRepository();
+    const { imported } = ingestRawJob({ crawlRunId: runId, sourceId: SRC_ID, sourceName: "Test Source", rawTitle: "Double Review Job", rawUrl: `https://example.com/jobs/double-${Date.now()}` });
+    await processImportReview({ importedOpportunityId: imported!.id, decision: "APPROVE" }, "admin", repository);
+    await expect(processImportReview({ importedOpportunityId: imported!.id, decision: "REJECT" }, "admin", repository)).rejects.toThrow();
   });
 });
