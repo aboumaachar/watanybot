@@ -222,10 +222,16 @@ export type SalaryMeta = {
 
 export type PensionCalcResult = {
   ok: boolean;
-  input: { rank: string; degree: number; category: string; married: boolean; kidsCount: number; selectedOrnaments: string[] };
+  input: { rank: string; degree: number; category: string; married: boolean; kidsCount: number; selectedOrnaments: string[]; exactVetSalary?: number };
   breakdown: {
     basicSalary: number;
+    canonicalVetSalary: number;
     vetSalary: number;
+    veteranSalaryAdjustment: number;
+    maxSingleDegreeVeteranAdjustment: number;
+    fractionOfDegree: number;
+    veteranSalaryAdjustmentStatus: "canonical" | "explicit_below_canonical" | "within_one_degree" | "explicit_above_one_degree";
+    eligibleBase: number;
     deduction15Pct: number;
     equipment: number;
     driver: number;
@@ -435,6 +441,7 @@ export type UserProfile = {
   phoneVerified?: boolean;
   phoneVerifiedAt?: string;
   profileCompleted?: boolean;
+  mustChangePassword?: boolean;
 };
 
 /* â”€â”€ Documents â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */

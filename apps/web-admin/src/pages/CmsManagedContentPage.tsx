@@ -18,7 +18,6 @@ import {
   runCmsGenericBulkEdit,
   updateCmsGenericEntity,
   type CmsAuditEvent,
-  type CmsFormItem,
   type CmsGenericItem,
   type CmsGenericPatch,
   type CmsRelationship,
@@ -28,7 +27,7 @@ import {
   type ManagedCmsDomain,
 } from "../lib/api";
 
-type CmsWorkspaceDomain = "procedures" | "documents" | "editorial-documents" | ManagedCmsDomain;
+type CmsWorkspaceDomain = "procedures" | "editorial-documents" | ManagedCmsDomain;
 
 type CmsManagedContentPageProps = Readonly<{
   domain: ManagedCmsDomain;
@@ -283,11 +282,12 @@ export default function CmsManagedContentPage({ domain, onDomainChange }: CmsMan
         payload: payload.payload,
         sourceMeta: payload.sourceMeta,
       };
-      const saved = creating
-        ? await createCmsGenericEntity(domain, payload)
-        : selected
-          ? await updateCmsGenericEntity(domain, selected.id, patch)
-          : null;
+      let saved: CmsGenericItem | null = null;
+      if (creating) {
+        saved = await createCmsGenericEntity(domain, payload);
+      } else if (selected) {
+        saved = await updateCmsGenericEntity(domain, selected.id, patch);
+      }
       if (!saved) throw new Error("لم يتم تحديد محتوى للحفظ.");
       setCreating(false);
       setDirty(false);
@@ -341,7 +341,7 @@ export default function CmsManagedContentPage({ domain, onDomainChange }: CmsMan
     if (mutation === "bulk_delete") throw new Error("الحذف غير متاح لهذا السطح.");
     if (mutation === "bulk_archive") {
       const updated = await runCmsGenericBulkArchive(domain, ids);
-      setItems((current) => current.map((item) => updated.find((next) => next.id === item.id) || item));
+      setItems((current) => current.map((item) => updated.find((next) => next.id === item.id) ?? item));
       setNotice(`تمت أرشفة ${updated.length} عناصر.`);
       selection.clear();
       setRefreshToken((value) => value + 1);
@@ -353,7 +353,7 @@ export default function CmsManagedContentPage({ domain, onDomainChange }: CmsMan
     if (bulkPayloadText.trim()) patch.payload = parseJsonObject(bulkPayloadText, "بيانات التعديل الجماعي");
     if (Object.keys(patch).length === 0) throw new Error("أدخل عنواناً أو بيانات لتطبيق التعديل الجماعي.");
     const updated = await runCmsGenericBulkEdit(domain, ids, patch);
-    setItems((current) => current.map((item) => updated.find((next) => next.id === item.id) || item));
+    setItems((current) => current.map((item) => updated.find((next) => next.id === item.id) ?? item));
     setNotice(`تم تعديل ${updated.length} عناصر.`);
     selection.clear();
     setRefreshToken((value) => value + 1);
@@ -403,13 +403,13 @@ export default function CmsManagedContentPage({ domain, onDomainChange }: CmsMan
 
   function openFormPreview() {
     if (!selected || domain !== "forms") return;
-    globalThis.open(getCmsFormPublicUrl(selected as CmsFormItem), "_blank", "noopener,noreferrer");
+    globalThis.open(getCmsFormPublicUrl(selected), "_blank", "noopener,noreferrer");
   }
 
   function downloadForm() {
     if (!selected || domain !== "forms") return;
     const link = document.createElement("a");
-    link.href = getCmsFormPublicUrl(selected as CmsFormItem);
+    link.href = getCmsFormPublicUrl(selected);
     link.target = "_blank";
     link.rel = "noopener noreferrer";
     link.download = selected.publicCode || selected.publicId || "form";
@@ -435,7 +435,7 @@ export default function CmsManagedContentPage({ domain, onDomainChange }: CmsMan
 
       <div className="cms-managed-tabs" role="tablist" aria-label="أقسام CMS">
         <button type="button" className="ghost" onClick={() => navigateTo("procedures")}><AdminFluentIcon name="document" /> الإجراءات · Payload</button>
-        <button type="button" className="ghost" onClick={() => navigateTo("documents")}><AdminFluentIcon name="folder" /> الوثائق التشغيلية</button>
+
         <button type="button" className="ghost" onClick={() => navigateTo("editorial-documents")}><AdminFluentIcon name="document" /> وثائق Payload</button>
         <button type="button" className={domain === "forms" ? "accent" : "ghost"} onClick={() => navigateTo("forms")}><AdminFluentIcon name="form" /> النماذج</button>
         <button type="button" className={domain === "announcements" ? "accent" : "ghost"} onClick={() => navigateTo("announcements")}><AdminFluentIcon name="news" /> التعاميم</button>

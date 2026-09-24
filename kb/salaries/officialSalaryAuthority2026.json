@@ -1,0 +1,2423 @@
+{
+  "sourceVersion": "official-tables-18-22-2026-09-22",
+  "sourceRule": "vetSalary = basicSalary * 0.85",
+  "entryCount": 302,
+  "entries": {
+    "جندي||1": {
+      "category": "الأفراد",
+      "rank": "جندي",
+      "degree": 1,
+      "basicSalary": 982000,
+      "degreeValue": 32000,
+      "vetSalary": 834700
+    },
+    "جندي||2": {
+      "category": "الأفراد",
+      "rank": "جندي",
+      "degree": 2,
+      "basicSalary": 1014000,
+      "degreeValue": 32000,
+      "vetSalary": 861900
+    },
+    "جندي||3": {
+      "category": "الأفراد",
+      "rank": "جندي",
+      "degree": 3,
+      "basicSalary": 1046000,
+      "degreeValue": 32000,
+      "vetSalary": 889100
+    },
+    "جندي||4": {
+      "category": "الأفراد",
+      "rank": "جندي",
+      "degree": 4,
+      "basicSalary": 1078000,
+      "degreeValue": 37000,
+      "vetSalary": 916300
+    },
+    "جندي||5": {
+      "category": "الأفراد",
+      "rank": "جندي",
+      "degree": 5,
+      "basicSalary": 1115000,
+      "degreeValue": 37000,
+      "vetSalary": 947750
+    },
+    "جندي||6": {
+      "category": "الأفراد",
+      "rank": "جندي",
+      "degree": 6,
+      "basicSalary": 1152000,
+      "degreeValue": 37000,
+      "vetSalary": 979200
+    },
+    "جندي||7": {
+      "category": "الأفراد",
+      "rank": "جندي",
+      "degree": 7,
+      "basicSalary": 1189000,
+      "degreeValue": 42000,
+      "vetSalary": 1010650
+    },
+    "جندي||8": {
+      "category": "الأفراد",
+      "rank": "جندي",
+      "degree": 8,
+      "basicSalary": 1231000,
+      "degreeValue": 42000,
+      "vetSalary": 1046350
+    },
+    "جندي||9": {
+      "category": "الأفراد",
+      "rank": "جندي",
+      "degree": 9,
+      "basicSalary": 1273000,
+      "degreeValue": 42000,
+      "vetSalary": 1082050
+    },
+    "جندي||10": {
+      "category": "الأفراد",
+      "rank": "جندي",
+      "degree": 10,
+      "basicSalary": 1315000,
+      "degreeValue": 49000,
+      "vetSalary": 1117750
+    },
+    "جندي||11": {
+      "category": "الأفراد",
+      "rank": "جندي",
+      "degree": 11,
+      "basicSalary": 1364000,
+      "degreeValue": 49000,
+      "vetSalary": 1159400
+    },
+    "جندي||12": {
+      "category": "الأفراد",
+      "rank": "جندي",
+      "degree": 12,
+      "basicSalary": 1413000,
+      "degreeValue": 49000,
+      "vetSalary": 1201050
+    },
+    "جندي||13": {
+      "category": "الأفراد",
+      "rank": "جندي",
+      "degree": 13,
+      "basicSalary": 1462000,
+      "degreeValue": 55000,
+      "vetSalary": 1242700
+    },
+    "جندي||14": {
+      "category": "الأفراد",
+      "rank": "جندي",
+      "degree": 14,
+      "basicSalary": 1517000,
+      "degreeValue": 55000,
+      "vetSalary": 1289450
+    },
+    "جندي||15": {
+      "category": "الأفراد",
+      "rank": "جندي",
+      "degree": 15,
+      "basicSalary": 1572000,
+      "degreeValue": 55000,
+      "vetSalary": 1336200
+    },
+    "جندي||16": {
+      "category": "الأفراد",
+      "rank": "جندي",
+      "degree": 16,
+      "basicSalary": 1627000,
+      "degreeValue": 62000,
+      "vetSalary": 1382950
+    },
+    "جندي||17": {
+      "category": "الأفراد",
+      "rank": "جندي",
+      "degree": 17,
+      "basicSalary": 1689000,
+      "degreeValue": 62000,
+      "vetSalary": 1435650
+    },
+    "جندي||18": {
+      "category": "الأفراد",
+      "rank": "جندي",
+      "degree": 18,
+      "basicSalary": 1751000,
+      "degreeValue": 62000,
+      "vetSalary": 1488350
+    },
+    "جندي||19": {
+      "category": "الأفراد",
+      "rank": "جندي",
+      "degree": 19,
+      "basicSalary": 1813000,
+      "degreeValue": 71000,
+      "vetSalary": 1541050
+    },
+    "جندي||20": {
+      "category": "الأفراد",
+      "rank": "جندي",
+      "degree": 20,
+      "basicSalary": 1884000,
+      "degreeValue": 71000,
+      "vetSalary": 1601400
+    },
+    "جندي اول||1": {
+      "category": "الأفراد",
+      "rank": "جندي اول",
+      "degree": 1,
+      "basicSalary": 1014000,
+      "degreeValue": 32000,
+      "vetSalary": 861900
+    },
+    "جندي اول||2": {
+      "category": "الأفراد",
+      "rank": "جندي اول",
+      "degree": 2,
+      "basicSalary": 1046000,
+      "degreeValue": 32000,
+      "vetSalary": 889100
+    },
+    "جندي اول||3": {
+      "category": "الأفراد",
+      "rank": "جندي اول",
+      "degree": 3,
+      "basicSalary": 1078000,
+      "degreeValue": 37000,
+      "vetSalary": 916300
+    },
+    "جندي اول||4": {
+      "category": "الأفراد",
+      "rank": "جندي اول",
+      "degree": 4,
+      "basicSalary": 1115000,
+      "degreeValue": 37000,
+      "vetSalary": 947750
+    },
+    "جندي اول||5": {
+      "category": "الأفراد",
+      "rank": "جندي اول",
+      "degree": 5,
+      "basicSalary": 1152000,
+      "degreeValue": 37000,
+      "vetSalary": 979200
+    },
+    "جندي اول||6": {
+      "category": "الأفراد",
+      "rank": "جندي اول",
+      "degree": 6,
+      "basicSalary": 1189000,
+      "degreeValue": 42000,
+      "vetSalary": 1010650
+    },
+    "جندي اول||7": {
+      "category": "الأفراد",
+      "rank": "جندي اول",
+      "degree": 7,
+      "basicSalary": 1231000,
+      "degreeValue": 42000,
+      "vetSalary": 1046350
+    },
+    "جندي اول||8": {
+      "category": "الأفراد",
+      "rank": "جندي اول",
+      "degree": 8,
+      "basicSalary": 1273000,
+      "degreeValue": 42000,
+      "vetSalary": 1082050
+    },
+    "جندي اول||9": {
+      "category": "الأفراد",
+      "rank": "جندي اول",
+      "degree": 9,
+      "basicSalary": 1315000,
+      "degreeValue": 49000,
+      "vetSalary": 1117750
+    },
+    "جندي اول||10": {
+      "category": "الأفراد",
+      "rank": "جندي اول",
+      "degree": 10,
+      "basicSalary": 1364000,
+      "degreeValue": 49000,
+      "vetSalary": 1159400
+    },
+    "جندي اول||11": {
+      "category": "الأفراد",
+      "rank": "جندي اول",
+      "degree": 11,
+      "basicSalary": 1413000,
+      "degreeValue": 49000,
+      "vetSalary": 1201050
+    },
+    "جندي اول||12": {
+      "category": "الأفراد",
+      "rank": "جندي اول",
+      "degree": 12,
+      "basicSalary": 1462000,
+      "degreeValue": 55000,
+      "vetSalary": 1242700
+    },
+    "جندي اول||13": {
+      "category": "الأفراد",
+      "rank": "جندي اول",
+      "degree": 13,
+      "basicSalary": 1517000,
+      "degreeValue": 55000,
+      "vetSalary": 1289450
+    },
+    "جندي اول||14": {
+      "category": "الأفراد",
+      "rank": "جندي اول",
+      "degree": 14,
+      "basicSalary": 1572000,
+      "degreeValue": 55000,
+      "vetSalary": 1336200
+    },
+    "جندي اول||15": {
+      "category": "الأفراد",
+      "rank": "جندي اول",
+      "degree": 15,
+      "basicSalary": 1627000,
+      "degreeValue": 62000,
+      "vetSalary": 1382950
+    },
+    "جندي اول||16": {
+      "category": "الأفراد",
+      "rank": "جندي اول",
+      "degree": 16,
+      "basicSalary": 1689000,
+      "degreeValue": 62000,
+      "vetSalary": 1435650
+    },
+    "جندي اول||17": {
+      "category": "الأفراد",
+      "rank": "جندي اول",
+      "degree": 17,
+      "basicSalary": 1751000,
+      "degreeValue": 62000,
+      "vetSalary": 1488350
+    },
+    "جندي اول||18": {
+      "category": "الأفراد",
+      "rank": "جندي اول",
+      "degree": 18,
+      "basicSalary": 1813000,
+      "degreeValue": 71000,
+      "vetSalary": 1541050
+    },
+    "جندي اول||19": {
+      "category": "الأفراد",
+      "rank": "جندي اول",
+      "degree": 19,
+      "basicSalary": 1884000,
+      "degreeValue": 71000,
+      "vetSalary": 1601400
+    },
+    "جندي اول||20": {
+      "category": "الأفراد",
+      "rank": "جندي اول",
+      "degree": 20,
+      "basicSalary": 1955000,
+      "degreeValue": 71000,
+      "vetSalary": 1661750
+    },
+    "عريف||1": {
+      "category": "الأفراد",
+      "rank": "عريف",
+      "degree": 1,
+      "basicSalary": 1046000,
+      "degreeValue": 32000,
+      "vetSalary": 889100
+    },
+    "عريف||2": {
+      "category": "الأفراد",
+      "rank": "عريف",
+      "degree": 2,
+      "basicSalary": 1078000,
+      "degreeValue": 37000,
+      "vetSalary": 916300
+    },
+    "عريف||3": {
+      "category": "الأفراد",
+      "rank": "عريف",
+      "degree": 3,
+      "basicSalary": 1115000,
+      "degreeValue": 37000,
+      "vetSalary": 947750
+    },
+    "عريف||4": {
+      "category": "الأفراد",
+      "rank": "عريف",
+      "degree": 4,
+      "basicSalary": 1152000,
+      "degreeValue": 37000,
+      "vetSalary": 979200
+    },
+    "عريف||5": {
+      "category": "الأفراد",
+      "rank": "عريف",
+      "degree": 5,
+      "basicSalary": 1189000,
+      "degreeValue": 42000,
+      "vetSalary": 1010650
+    },
+    "عريف||6": {
+      "category": "الأفراد",
+      "rank": "عريف",
+      "degree": 6,
+      "basicSalary": 1231000,
+      "degreeValue": 42000,
+      "vetSalary": 1046350
+    },
+    "عريف||7": {
+      "category": "الأفراد",
+      "rank": "عريف",
+      "degree": 7,
+      "basicSalary": 1273000,
+      "degreeValue": 42000,
+      "vetSalary": 1082050
+    },
+    "عريف||8": {
+      "category": "الأفراد",
+      "rank": "عريف",
+      "degree": 8,
+      "basicSalary": 1315000,
+      "degreeValue": 49000,
+      "vetSalary": 1117750
+    },
+    "عريف||9": {
+      "category": "الأفراد",
+      "rank": "عريف",
+      "degree": 9,
+      "basicSalary": 1364000,
+      "degreeValue": 49000,
+      "vetSalary": 1159400
+    },
+    "عريف||10": {
+      "category": "الأفراد",
+      "rank": "عريف",
+      "degree": 10,
+      "basicSalary": 1413000,
+      "degreeValue": 49000,
+      "vetSalary": 1201050
+    },
+    "عريف||11": {
+      "category": "الأفراد",
+      "rank": "عريف",
+      "degree": 11,
+      "basicSalary": 1462000,
+      "degreeValue": 55000,
+      "vetSalary": 1242700
+    },
+    "عريف||12": {
+      "category": "الأفراد",
+      "rank": "عريف",
+      "degree": 12,
+      "basicSalary": 1517000,
+      "degreeValue": 55000,
+      "vetSalary": 1289450
+    },
+    "عريف||13": {
+      "category": "الأفراد",
+      "rank": "عريف",
+      "degree": 13,
+      "basicSalary": 1572000,
+      "degreeValue": 55000,
+      "vetSalary": 1336200
+    },
+    "عريف||14": {
+      "category": "الأفراد",
+      "rank": "عريف",
+      "degree": 14,
+      "basicSalary": 1627000,
+      "degreeValue": 62000,
+      "vetSalary": 1382950
+    },
+    "عريف||15": {
+      "category": "الأفراد",
+      "rank": "عريف",
+      "degree": 15,
+      "basicSalary": 1689000,
+      "degreeValue": 62000,
+      "vetSalary": 1435650
+    },
+    "عريف||16": {
+      "category": "الأفراد",
+      "rank": "عريف",
+      "degree": 16,
+      "basicSalary": 1751000,
+      "degreeValue": 62000,
+      "vetSalary": 1488350
+    },
+    "عريف||17": {
+      "category": "الأفراد",
+      "rank": "عريف",
+      "degree": 17,
+      "basicSalary": 1813000,
+      "degreeValue": 71000,
+      "vetSalary": 1541050
+    },
+    "عريف||18": {
+      "category": "الأفراد",
+      "rank": "عريف",
+      "degree": 18,
+      "basicSalary": 1884000,
+      "degreeValue": 71000,
+      "vetSalary": 1601400
+    },
+    "عريف||19": {
+      "category": "الأفراد",
+      "rank": "عريف",
+      "degree": 19,
+      "basicSalary": 1955000,
+      "degreeValue": 71000,
+      "vetSalary": 1661750
+    },
+    "عريف||20": {
+      "category": "الأفراد",
+      "rank": "عريف",
+      "degree": 20,
+      "basicSalary": 2026000,
+      "degreeValue": 78000,
+      "vetSalary": 1722100
+    },
+    "عريف اول||1": {
+      "category": "الأفراد",
+      "rank": "عريف اول",
+      "degree": 1,
+      "basicSalary": 1078000,
+      "degreeValue": 37000,
+      "vetSalary": 916300
+    },
+    "عريف اول||2": {
+      "category": "الأفراد",
+      "rank": "عريف اول",
+      "degree": 2,
+      "basicSalary": 1115000,
+      "degreeValue": 37000,
+      "vetSalary": 947750
+    },
+    "عريف اول||3": {
+      "category": "الأفراد",
+      "rank": "عريف اول",
+      "degree": 3,
+      "basicSalary": 1152000,
+      "degreeValue": 37000,
+      "vetSalary": 979200
+    },
+    "عريف اول||4": {
+      "category": "الأفراد",
+      "rank": "عريف اول",
+      "degree": 4,
+      "basicSalary": 1189000,
+      "degreeValue": 42000,
+      "vetSalary": 1010650
+    },
+    "عريف اول||5": {
+      "category": "الأفراد",
+      "rank": "عريف اول",
+      "degree": 5,
+      "basicSalary": 1231000,
+      "degreeValue": 42000,
+      "vetSalary": 1046350
+    },
+    "عريف اول||6": {
+      "category": "الأفراد",
+      "rank": "عريف اول",
+      "degree": 6,
+      "basicSalary": 1273000,
+      "degreeValue": 42000,
+      "vetSalary": 1082050
+    },
+    "عريف اول||7": {
+      "category": "الأفراد",
+      "rank": "عريف اول",
+      "degree": 7,
+      "basicSalary": 1315000,
+      "degreeValue": 49000,
+      "vetSalary": 1117750
+    },
+    "عريف اول||8": {
+      "category": "الأفراد",
+      "rank": "عريف اول",
+      "degree": 8,
+      "basicSalary": 1364000,
+      "degreeValue": 49000,
+      "vetSalary": 1159400
+    },
+    "عريف اول||9": {
+      "category": "الأفراد",
+      "rank": "عريف اول",
+      "degree": 9,
+      "basicSalary": 1413000,
+      "degreeValue": 49000,
+      "vetSalary": 1201050
+    },
+    "عريف اول||10": {
+      "category": "الأفراد",
+      "rank": "عريف اول",
+      "degree": 10,
+      "basicSalary": 1462000,
+      "degreeValue": 55000,
+      "vetSalary": 1242700
+    },
+    "عريف اول||11": {
+      "category": "الأفراد",
+      "rank": "عريف اول",
+      "degree": 11,
+      "basicSalary": 1517000,
+      "degreeValue": 55000,
+      "vetSalary": 1289450
+    },
+    "عريف اول||12": {
+      "category": "الأفراد",
+      "rank": "عريف اول",
+      "degree": 12,
+      "basicSalary": 1572000,
+      "degreeValue": 55000,
+      "vetSalary": 1336200
+    },
+    "عريف اول||13": {
+      "category": "الأفراد",
+      "rank": "عريف اول",
+      "degree": 13,
+      "basicSalary": 1627000,
+      "degreeValue": 62000,
+      "vetSalary": 1382950
+    },
+    "عريف اول||14": {
+      "category": "الأفراد",
+      "rank": "عريف اول",
+      "degree": 14,
+      "basicSalary": 1689000,
+      "degreeValue": 62000,
+      "vetSalary": 1435650
+    },
+    "عريف اول||15": {
+      "category": "الأفراد",
+      "rank": "عريف اول",
+      "degree": 15,
+      "basicSalary": 1751000,
+      "degreeValue": 62000,
+      "vetSalary": 1488350
+    },
+    "عريف اول||16": {
+      "category": "الأفراد",
+      "rank": "عريف اول",
+      "degree": 16,
+      "basicSalary": 1813000,
+      "degreeValue": 71000,
+      "vetSalary": 1541050
+    },
+    "عريف اول||17": {
+      "category": "الأفراد",
+      "rank": "عريف اول",
+      "degree": 17,
+      "basicSalary": 1884000,
+      "degreeValue": 71000,
+      "vetSalary": 1601400
+    },
+    "عريف اول||18": {
+      "category": "الأفراد",
+      "rank": "عريف اول",
+      "degree": 18,
+      "basicSalary": 1955000,
+      "degreeValue": 71000,
+      "vetSalary": 1661750
+    },
+    "عريف اول||19": {
+      "category": "الأفراد",
+      "rank": "عريف اول",
+      "degree": 19,
+      "basicSalary": 2026000,
+      "degreeValue": 78000,
+      "vetSalary": 1722100
+    },
+    "عريف اول||20": {
+      "category": "الأفراد",
+      "rank": "عريف اول",
+      "degree": 20,
+      "basicSalary": 2104000,
+      "degreeValue": 78000,
+      "vetSalary": 1788400
+    },
+    "رقيب||1": {
+      "category": "الرتباء",
+      "rank": "رقيب",
+      "degree": 1,
+      "basicSalary": 1187000,
+      "degreeValue": 37000,
+      "vetSalary": 1008950
+    },
+    "رقيب||2": {
+      "category": "الرتباء",
+      "rank": "رقيب",
+      "degree": 2,
+      "basicSalary": 1224000,
+      "degreeValue": 37000,
+      "vetSalary": 1040400
+    },
+    "رقيب||3": {
+      "category": "الرتباء",
+      "rank": "رقيب",
+      "degree": 3,
+      "basicSalary": 1261000,
+      "degreeValue": 42000,
+      "vetSalary": 1071850
+    },
+    "رقيب||4": {
+      "category": "الرتباء",
+      "rank": "رقيب",
+      "degree": 4,
+      "basicSalary": 1303000,
+      "degreeValue": 42000,
+      "vetSalary": 1107550
+    },
+    "رقيب||5": {
+      "category": "الرتباء",
+      "rank": "رقيب",
+      "degree": 5,
+      "basicSalary": 1345000,
+      "degreeValue": 42000,
+      "vetSalary": 1143250
+    },
+    "رقيب||6": {
+      "category": "الرتباء",
+      "rank": "رقيب",
+      "degree": 6,
+      "basicSalary": 1387000,
+      "degreeValue": 49000,
+      "vetSalary": 1178950
+    },
+    "رقيب||7": {
+      "category": "الرتباء",
+      "rank": "رقيب",
+      "degree": 7,
+      "basicSalary": 1436000,
+      "degreeValue": 49000,
+      "vetSalary": 1220600
+    },
+    "رقيب||8": {
+      "category": "الرتباء",
+      "rank": "رقيب",
+      "degree": 8,
+      "basicSalary": 1485000,
+      "degreeValue": 49000,
+      "vetSalary": 1262250
+    },
+    "رقيب||9": {
+      "category": "الرتباء",
+      "rank": "رقيب",
+      "degree": 9,
+      "basicSalary": 1534000,
+      "degreeValue": 55000,
+      "vetSalary": 1303900
+    },
+    "رقيب||10": {
+      "category": "الرتباء",
+      "rank": "رقيب",
+      "degree": 10,
+      "basicSalary": 1589000,
+      "degreeValue": 55000,
+      "vetSalary": 1350650
+    },
+    "رقيب||11": {
+      "category": "الرتباء",
+      "rank": "رقيب",
+      "degree": 11,
+      "basicSalary": 1644000,
+      "degreeValue": 55000,
+      "vetSalary": 1397400
+    },
+    "رقيب||12": {
+      "category": "الرتباء",
+      "rank": "رقيب",
+      "degree": 12,
+      "basicSalary": 1699000,
+      "degreeValue": 62000,
+      "vetSalary": 1444150
+    },
+    "رقيب||13": {
+      "category": "الرتباء",
+      "rank": "رقيب",
+      "degree": 13,
+      "basicSalary": 1761000,
+      "degreeValue": 62000,
+      "vetSalary": 1496850
+    },
+    "رقيب||14": {
+      "category": "الرتباء",
+      "rank": "رقيب",
+      "degree": 14,
+      "basicSalary": 1823000,
+      "degreeValue": 62000,
+      "vetSalary": 1549550
+    },
+    "رقيب||15": {
+      "category": "الرتباء",
+      "rank": "رقيب",
+      "degree": 15,
+      "basicSalary": 1885000,
+      "degreeValue": 71000,
+      "vetSalary": 1602250
+    },
+    "رقيب||16": {
+      "category": "الرتباء",
+      "rank": "رقيب",
+      "degree": 16,
+      "basicSalary": 1956000,
+      "degreeValue": 71000,
+      "vetSalary": 1662600
+    },
+    "رقيب||17": {
+      "category": "الرتباء",
+      "rank": "رقيب",
+      "degree": 17,
+      "basicSalary": 2027000,
+      "degreeValue": 71000,
+      "vetSalary": 1722950
+    },
+    "رقيب||18": {
+      "category": "الرتباء",
+      "rank": "رقيب",
+      "degree": 18,
+      "basicSalary": 2098000,
+      "degreeValue": 78000,
+      "vetSalary": 1783300
+    },
+    "رقيب||19": {
+      "category": "الرتباء",
+      "rank": "رقيب",
+      "degree": 19,
+      "basicSalary": 2176000,
+      "degreeValue": 78000,
+      "vetSalary": 1849600
+    },
+    "رقيب||20": {
+      "category": "الرتباء",
+      "rank": "رقيب",
+      "degree": 20,
+      "basicSalary": 2254000,
+      "degreeValue": 78000,
+      "vetSalary": 1915900
+    },
+    "رقيب اول||1": {
+      "category": "الرتباء",
+      "rank": "رقيب اول",
+      "degree": 1,
+      "basicSalary": 1224000,
+      "degreeValue": 37000,
+      "vetSalary": 1040400
+    },
+    "رقيب اول||2": {
+      "category": "الرتباء",
+      "rank": "رقيب اول",
+      "degree": 2,
+      "basicSalary": 1261000,
+      "degreeValue": 42000,
+      "vetSalary": 1071850
+    },
+    "رقيب اول||3": {
+      "category": "الرتباء",
+      "rank": "رقيب اول",
+      "degree": 3,
+      "basicSalary": 1303000,
+      "degreeValue": 42000,
+      "vetSalary": 1107550
+    },
+    "رقيب اول||4": {
+      "category": "الرتباء",
+      "rank": "رقيب اول",
+      "degree": 4,
+      "basicSalary": 1345000,
+      "degreeValue": 42000,
+      "vetSalary": 1143250
+    },
+    "رقيب اول||5": {
+      "category": "الرتباء",
+      "rank": "رقيب اول",
+      "degree": 5,
+      "basicSalary": 1387000,
+      "degreeValue": 49000,
+      "vetSalary": 1178950
+    },
+    "رقيب اول||6": {
+      "category": "الرتباء",
+      "rank": "رقيب اول",
+      "degree": 6,
+      "basicSalary": 1436000,
+      "degreeValue": 49000,
+      "vetSalary": 1220600
+    },
+    "رقيب اول||7": {
+      "category": "الرتباء",
+      "rank": "رقيب اول",
+      "degree": 7,
+      "basicSalary": 1485000,
+      "degreeValue": 49000,
+      "vetSalary": 1262250
+    },
+    "رقيب اول||8": {
+      "category": "الرتباء",
+      "rank": "رقيب اول",
+      "degree": 8,
+      "basicSalary": 1534000,
+      "degreeValue": 55000,
+      "vetSalary": 1303900
+    },
+    "رقيب اول||9": {
+      "category": "الرتباء",
+      "rank": "رقيب اول",
+      "degree": 9,
+      "basicSalary": 1589000,
+      "degreeValue": 55000,
+      "vetSalary": 1350650
+    },
+    "رقيب اول||10": {
+      "category": "الرتباء",
+      "rank": "رقيب اول",
+      "degree": 10,
+      "basicSalary": 1644000,
+      "degreeValue": 55000,
+      "vetSalary": 1397400
+    },
+    "رقيب اول||11": {
+      "category": "الرتباء",
+      "rank": "رقيب اول",
+      "degree": 11,
+      "basicSalary": 1699000,
+      "degreeValue": 62000,
+      "vetSalary": 1444150
+    },
+    "رقيب اول||12": {
+      "category": "الرتباء",
+      "rank": "رقيب اول",
+      "degree": 12,
+      "basicSalary": 1761000,
+      "degreeValue": 62000,
+      "vetSalary": 1496850
+    },
+    "رقيب اول||13": {
+      "category": "الرتباء",
+      "rank": "رقيب اول",
+      "degree": 13,
+      "basicSalary": 1823000,
+      "degreeValue": 62000,
+      "vetSalary": 1549550
+    },
+    "رقيب اول||14": {
+      "category": "الرتباء",
+      "rank": "رقيب اول",
+      "degree": 14,
+      "basicSalary": 1885000,
+      "degreeValue": 71000,
+      "vetSalary": 1602250
+    },
+    "رقيب اول||15": {
+      "category": "الرتباء",
+      "rank": "رقيب اول",
+      "degree": 15,
+      "basicSalary": 1956000,
+      "degreeValue": 71000,
+      "vetSalary": 1662600
+    },
+    "رقيب اول||16": {
+      "category": "الرتباء",
+      "rank": "رقيب اول",
+      "degree": 16,
+      "basicSalary": 2027000,
+      "degreeValue": 71000,
+      "vetSalary": 1722950
+    },
+    "رقيب اول||17": {
+      "category": "الرتباء",
+      "rank": "رقيب اول",
+      "degree": 17,
+      "basicSalary": 2098000,
+      "degreeValue": 78000,
+      "vetSalary": 1783300
+    },
+    "رقيب اول||18": {
+      "category": "الرتباء",
+      "rank": "رقيب اول",
+      "degree": 18,
+      "basicSalary": 2176000,
+      "degreeValue": 78000,
+      "vetSalary": 1849600
+    },
+    "رقيب اول||19": {
+      "category": "الرتباء",
+      "rank": "رقيب اول",
+      "degree": 19,
+      "basicSalary": 2254000,
+      "degreeValue": 78000,
+      "vetSalary": 1915900
+    },
+    "رقيب اول||20": {
+      "category": "الرتباء",
+      "rank": "رقيب اول",
+      "degree": 20,
+      "basicSalary": 2332000,
+      "degreeValue": 88000,
+      "vetSalary": 1982200
+    },
+    "معاون||1": {
+      "category": "الرتباء",
+      "rank": "معاون",
+      "degree": 1,
+      "basicSalary": 1261000,
+      "degreeValue": 42000,
+      "vetSalary": 1071850
+    },
+    "معاون||2": {
+      "category": "الرتباء",
+      "rank": "معاون",
+      "degree": 2,
+      "basicSalary": 1303000,
+      "degreeValue": 42000,
+      "vetSalary": 1107550
+    },
+    "معاون||3": {
+      "category": "الرتباء",
+      "rank": "معاون",
+      "degree": 3,
+      "basicSalary": 1345000,
+      "degreeValue": 42000,
+      "vetSalary": 1143250
+    },
+    "معاون||4": {
+      "category": "الرتباء",
+      "rank": "معاون",
+      "degree": 4,
+      "basicSalary": 1387000,
+      "degreeValue": 49000,
+      "vetSalary": 1178950
+    },
+    "معاون||5": {
+      "category": "الرتباء",
+      "rank": "معاون",
+      "degree": 5,
+      "basicSalary": 1436000,
+      "degreeValue": 49000,
+      "vetSalary": 1220600
+    },
+    "معاون||6": {
+      "category": "الرتباء",
+      "rank": "معاون",
+      "degree": 6,
+      "basicSalary": 1485000,
+      "degreeValue": 49000,
+      "vetSalary": 1262250
+    },
+    "معاون||7": {
+      "category": "الرتباء",
+      "rank": "معاون",
+      "degree": 7,
+      "basicSalary": 1534000,
+      "degreeValue": 55000,
+      "vetSalary": 1303900
+    },
+    "معاون||8": {
+      "category": "الرتباء",
+      "rank": "معاون",
+      "degree": 8,
+      "basicSalary": 1589000,
+      "degreeValue": 55000,
+      "vetSalary": 1350650
+    },
+    "معاون||9": {
+      "category": "الرتباء",
+      "rank": "معاون",
+      "degree": 9,
+      "basicSalary": 1644000,
+      "degreeValue": 55000,
+      "vetSalary": 1397400
+    },
+    "معاون||10": {
+      "category": "الرتباء",
+      "rank": "معاون",
+      "degree": 10,
+      "basicSalary": 1699000,
+      "degreeValue": 62000,
+      "vetSalary": 1444150
+    },
+    "معاون||11": {
+      "category": "الرتباء",
+      "rank": "معاون",
+      "degree": 11,
+      "basicSalary": 1761000,
+      "degreeValue": 62000,
+      "vetSalary": 1496850
+    },
+    "معاون||12": {
+      "category": "الرتباء",
+      "rank": "معاون",
+      "degree": 12,
+      "basicSalary": 1823000,
+      "degreeValue": 62000,
+      "vetSalary": 1549550
+    },
+    "معاون||13": {
+      "category": "الرتباء",
+      "rank": "معاون",
+      "degree": 13,
+      "basicSalary": 1885000,
+      "degreeValue": 71000,
+      "vetSalary": 1602250
+    },
+    "معاون||14": {
+      "category": "الرتباء",
+      "rank": "معاون",
+      "degree": 14,
+      "basicSalary": 1956000,
+      "degreeValue": 71000,
+      "vetSalary": 1662600
+    },
+    "معاون||15": {
+      "category": "الرتباء",
+      "rank": "معاون",
+      "degree": 15,
+      "basicSalary": 2027000,
+      "degreeValue": 71000,
+      "vetSalary": 1722950
+    },
+    "معاون||16": {
+      "category": "الرتباء",
+      "rank": "معاون",
+      "degree": 16,
+      "basicSalary": 2098000,
+      "degreeValue": 78000,
+      "vetSalary": 1783300
+    },
+    "معاون||17": {
+      "category": "الرتباء",
+      "rank": "معاون",
+      "degree": 17,
+      "basicSalary": 2176000,
+      "degreeValue": 78000,
+      "vetSalary": 1849600
+    },
+    "معاون||18": {
+      "category": "الرتباء",
+      "rank": "معاون",
+      "degree": 18,
+      "basicSalary": 2254000,
+      "degreeValue": 78000,
+      "vetSalary": 1915900
+    },
+    "معاون||19": {
+      "category": "الرتباء",
+      "rank": "معاون",
+      "degree": 19,
+      "basicSalary": 2332000,
+      "degreeValue": 88000,
+      "vetSalary": 1982200
+    },
+    "معاون||20": {
+      "category": "الرتباء",
+      "rank": "معاون",
+      "degree": 20,
+      "basicSalary": 2420000,
+      "degreeValue": 88000,
+      "vetSalary": 2057000
+    },
+    "معاون اول||1": {
+      "category": "الرتباء",
+      "rank": "معاون اول",
+      "degree": 1,
+      "basicSalary": 1303000,
+      "degreeValue": 42000,
+      "vetSalary": 1107550
+    },
+    "معاون اول||2": {
+      "category": "الرتباء",
+      "rank": "معاون اول",
+      "degree": 2,
+      "basicSalary": 1345000,
+      "degreeValue": 42000,
+      "vetSalary": 1143250
+    },
+    "معاون اول||3": {
+      "category": "الرتباء",
+      "rank": "معاون اول",
+      "degree": 3,
+      "basicSalary": 1387000,
+      "degreeValue": 49000,
+      "vetSalary": 1178950
+    },
+    "معاون اول||4": {
+      "category": "الرتباء",
+      "rank": "معاون اول",
+      "degree": 4,
+      "basicSalary": 1436000,
+      "degreeValue": 49000,
+      "vetSalary": 1220600
+    },
+    "معاون اول||5": {
+      "category": "الرتباء",
+      "rank": "معاون اول",
+      "degree": 5,
+      "basicSalary": 1485000,
+      "degreeValue": 49000,
+      "vetSalary": 1262250
+    },
+    "معاون اول||6": {
+      "category": "الرتباء",
+      "rank": "معاون اول",
+      "degree": 6,
+      "basicSalary": 1534000,
+      "degreeValue": 55000,
+      "vetSalary": 1303900
+    },
+    "معاون اول||7": {
+      "category": "الرتباء",
+      "rank": "معاون اول",
+      "degree": 7,
+      "basicSalary": 1589000,
+      "degreeValue": 55000,
+      "vetSalary": 1350650
+    },
+    "معاون اول||8": {
+      "category": "الرتباء",
+      "rank": "معاون اول",
+      "degree": 8,
+      "basicSalary": 1644000,
+      "degreeValue": 55000,
+      "vetSalary": 1397400
+    },
+    "معاون اول||9": {
+      "category": "الرتباء",
+      "rank": "معاون اول",
+      "degree": 9,
+      "basicSalary": 1699000,
+      "degreeValue": 62000,
+      "vetSalary": 1444150
+    },
+    "معاون اول||10": {
+      "category": "الرتباء",
+      "rank": "معاون اول",
+      "degree": 10,
+      "basicSalary": 1761000,
+      "degreeValue": 62000,
+      "vetSalary": 1496850
+    },
+    "معاون اول||11": {
+      "category": "الرتباء",
+      "rank": "معاون اول",
+      "degree": 11,
+      "basicSalary": 1823000,
+      "degreeValue": 62000,
+      "vetSalary": 1549550
+    },
+    "معاون اول||12": {
+      "category": "الرتباء",
+      "rank": "معاون اول",
+      "degree": 12,
+      "basicSalary": 1885000,
+      "degreeValue": 71000,
+      "vetSalary": 1602250
+    },
+    "معاون اول||13": {
+      "category": "الرتباء",
+      "rank": "معاون اول",
+      "degree": 13,
+      "basicSalary": 1956000,
+      "degreeValue": 71000,
+      "vetSalary": 1662600
+    },
+    "معاون اول||14": {
+      "category": "الرتباء",
+      "rank": "معاون اول",
+      "degree": 14,
+      "basicSalary": 2027000,
+      "degreeValue": 71000,
+      "vetSalary": 1722950
+    },
+    "معاون اول||15": {
+      "category": "الرتباء",
+      "rank": "معاون اول",
+      "degree": 15,
+      "basicSalary": 2098000,
+      "degreeValue": 78000,
+      "vetSalary": 1783300
+    },
+    "معاون اول||16": {
+      "category": "الرتباء",
+      "rank": "معاون اول",
+      "degree": 16,
+      "basicSalary": 2176000,
+      "degreeValue": 78000,
+      "vetSalary": 1849600
+    },
+    "معاون اول||17": {
+      "category": "الرتباء",
+      "rank": "معاون اول",
+      "degree": 17,
+      "basicSalary": 2254000,
+      "degreeValue": 78000,
+      "vetSalary": 1915900
+    },
+    "معاون اول||18": {
+      "category": "الرتباء",
+      "rank": "معاون اول",
+      "degree": 18,
+      "basicSalary": 2332000,
+      "degreeValue": 88000,
+      "vetSalary": 1982200
+    },
+    "معاون اول||19": {
+      "category": "الرتباء",
+      "rank": "معاون اول",
+      "degree": 19,
+      "basicSalary": 2420000,
+      "degreeValue": 88000,
+      "vetSalary": 2057000
+    },
+    "معاون اول||20": {
+      "category": "الرتباء",
+      "rank": "معاون اول",
+      "degree": 20,
+      "basicSalary": 2508000,
+      "degreeValue": 88000,
+      "vetSalary": 2131800
+    },
+    "مؤهل||1": {
+      "category": "الرتباء",
+      "rank": "مؤهل",
+      "degree": 1,
+      "basicSalary": 1345000,
+      "degreeValue": 42000,
+      "vetSalary": 1143250
+    },
+    "مؤهل||2": {
+      "category": "الرتباء",
+      "rank": "مؤهل",
+      "degree": 2,
+      "basicSalary": 1387000,
+      "degreeValue": 49000,
+      "vetSalary": 1178950
+    },
+    "مؤهل||3": {
+      "category": "الرتباء",
+      "rank": "مؤهل",
+      "degree": 3,
+      "basicSalary": 1436000,
+      "degreeValue": 49000,
+      "vetSalary": 1220600
+    },
+    "مؤهل||4": {
+      "category": "الرتباء",
+      "rank": "مؤهل",
+      "degree": 4,
+      "basicSalary": 1485000,
+      "degreeValue": 49000,
+      "vetSalary": 1262250
+    },
+    "مؤهل||5": {
+      "category": "الرتباء",
+      "rank": "مؤهل",
+      "degree": 5,
+      "basicSalary": 1534000,
+      "degreeValue": 55000,
+      "vetSalary": 1303900
+    },
+    "مؤهل||6": {
+      "category": "الرتباء",
+      "rank": "مؤهل",
+      "degree": 6,
+      "basicSalary": 1589000,
+      "degreeValue": 55000,
+      "vetSalary": 1350650
+    },
+    "مؤهل||7": {
+      "category": "الرتباء",
+      "rank": "مؤهل",
+      "degree": 7,
+      "basicSalary": 1644000,
+      "degreeValue": 55000,
+      "vetSalary": 1397400
+    },
+    "مؤهل||8": {
+      "category": "الرتباء",
+      "rank": "مؤهل",
+      "degree": 8,
+      "basicSalary": 1699000,
+      "degreeValue": 62000,
+      "vetSalary": 1444150
+    },
+    "مؤهل||9": {
+      "category": "الرتباء",
+      "rank": "مؤهل",
+      "degree": 9,
+      "basicSalary": 1761000,
+      "degreeValue": 62000,
+      "vetSalary": 1496850
+    },
+    "مؤهل||10": {
+      "category": "الرتباء",
+      "rank": "مؤهل",
+      "degree": 10,
+      "basicSalary": 1823000,
+      "degreeValue": 62000,
+      "vetSalary": 1549550
+    },
+    "مؤهل||11": {
+      "category": "الرتباء",
+      "rank": "مؤهل",
+      "degree": 11,
+      "basicSalary": 1885000,
+      "degreeValue": 71000,
+      "vetSalary": 1602250
+    },
+    "مؤهل||12": {
+      "category": "الرتباء",
+      "rank": "مؤهل",
+      "degree": 12,
+      "basicSalary": 1956000,
+      "degreeValue": 71000,
+      "vetSalary": 1662600
+    },
+    "مؤهل||13": {
+      "category": "الرتباء",
+      "rank": "مؤهل",
+      "degree": 13,
+      "basicSalary": 2027000,
+      "degreeValue": 71000,
+      "vetSalary": 1722950
+    },
+    "مؤهل||14": {
+      "category": "الرتباء",
+      "rank": "مؤهل",
+      "degree": 14,
+      "basicSalary": 2098000,
+      "degreeValue": 78000,
+      "vetSalary": 1783300
+    },
+    "مؤهل||15": {
+      "category": "الرتباء",
+      "rank": "مؤهل",
+      "degree": 15,
+      "basicSalary": 2176000,
+      "degreeValue": 78000,
+      "vetSalary": 1849600
+    },
+    "مؤهل||16": {
+      "category": "الرتباء",
+      "rank": "مؤهل",
+      "degree": 16,
+      "basicSalary": 2254000,
+      "degreeValue": 78000,
+      "vetSalary": 1915900
+    },
+    "مؤهل||17": {
+      "category": "الرتباء",
+      "rank": "مؤهل",
+      "degree": 17,
+      "basicSalary": 2332000,
+      "degreeValue": 88000,
+      "vetSalary": 1982200
+    },
+    "مؤهل||18": {
+      "category": "الرتباء",
+      "rank": "مؤهل",
+      "degree": 18,
+      "basicSalary": 2420000,
+      "degreeValue": 88000,
+      "vetSalary": 2057000
+    },
+    "مؤهل||19": {
+      "category": "الرتباء",
+      "rank": "مؤهل",
+      "degree": 19,
+      "basicSalary": 2508000,
+      "degreeValue": 88000,
+      "vetSalary": 2131800
+    },
+    "مؤهل||20": {
+      "category": "الرتباء",
+      "rank": "مؤهل",
+      "degree": 20,
+      "basicSalary": 2596000,
+      "degreeValue": 100000,
+      "vetSalary": 2206600
+    },
+    "مؤهل اول||1": {
+      "category": "الرتباء",
+      "rank": "مؤهل اول",
+      "degree": 1,
+      "basicSalary": 1387000,
+      "degreeValue": 49000,
+      "vetSalary": 1178950
+    },
+    "مؤهل اول||2": {
+      "category": "الرتباء",
+      "rank": "مؤهل اول",
+      "degree": 2,
+      "basicSalary": 1436000,
+      "degreeValue": 49000,
+      "vetSalary": 1220600
+    },
+    "مؤهل اول||3": {
+      "category": "الرتباء",
+      "rank": "مؤهل اول",
+      "degree": 3,
+      "basicSalary": 1485000,
+      "degreeValue": 49000,
+      "vetSalary": 1262250
+    },
+    "مؤهل اول||4": {
+      "category": "الرتباء",
+      "rank": "مؤهل اول",
+      "degree": 4,
+      "basicSalary": 1534000,
+      "degreeValue": 55000,
+      "vetSalary": 1303900
+    },
+    "مؤهل اول||5": {
+      "category": "الرتباء",
+      "rank": "مؤهل اول",
+      "degree": 5,
+      "basicSalary": 1589000,
+      "degreeValue": 55000,
+      "vetSalary": 1350650
+    },
+    "مؤهل اول||6": {
+      "category": "الرتباء",
+      "rank": "مؤهل اول",
+      "degree": 6,
+      "basicSalary": 1644000,
+      "degreeValue": 55000,
+      "vetSalary": 1397400
+    },
+    "مؤهل اول||7": {
+      "category": "الرتباء",
+      "rank": "مؤهل اول",
+      "degree": 7,
+      "basicSalary": 1699000,
+      "degreeValue": 62000,
+      "vetSalary": 1444150
+    },
+    "مؤهل اول||8": {
+      "category": "الرتباء",
+      "rank": "مؤهل اول",
+      "degree": 8,
+      "basicSalary": 1761000,
+      "degreeValue": 62000,
+      "vetSalary": 1496850
+    },
+    "مؤهل اول||9": {
+      "category": "الرتباء",
+      "rank": "مؤهل اول",
+      "degree": 9,
+      "basicSalary": 1823000,
+      "degreeValue": 62000,
+      "vetSalary": 1549550
+    },
+    "مؤهل اول||10": {
+      "category": "الرتباء",
+      "rank": "مؤهل اول",
+      "degree": 10,
+      "basicSalary": 1885000,
+      "degreeValue": 71000,
+      "vetSalary": 1602250
+    },
+    "مؤهل اول||11": {
+      "category": "الرتباء",
+      "rank": "مؤهل اول",
+      "degree": 11,
+      "basicSalary": 1956000,
+      "degreeValue": 71000,
+      "vetSalary": 1662600
+    },
+    "مؤهل اول||12": {
+      "category": "الرتباء",
+      "rank": "مؤهل اول",
+      "degree": 12,
+      "basicSalary": 2027000,
+      "degreeValue": 71000,
+      "vetSalary": 1722950
+    },
+    "مؤهل اول||13": {
+      "category": "الرتباء",
+      "rank": "مؤهل اول",
+      "degree": 13,
+      "basicSalary": 2098000,
+      "degreeValue": 78000,
+      "vetSalary": 1783300
+    },
+    "مؤهل اول||14": {
+      "category": "الرتباء",
+      "rank": "مؤهل اول",
+      "degree": 14,
+      "basicSalary": 2176000,
+      "degreeValue": 78000,
+      "vetSalary": 1849600
+    },
+    "مؤهل اول||15": {
+      "category": "الرتباء",
+      "rank": "مؤهل اول",
+      "degree": 15,
+      "basicSalary": 2254000,
+      "degreeValue": 78000,
+      "vetSalary": 1915900
+    },
+    "مؤهل اول||16": {
+      "category": "الرتباء",
+      "rank": "مؤهل اول",
+      "degree": 16,
+      "basicSalary": 2332000,
+      "degreeValue": 88000,
+      "vetSalary": 1982200
+    },
+    "مؤهل اول||17": {
+      "category": "الرتباء",
+      "rank": "مؤهل اول",
+      "degree": 17,
+      "basicSalary": 2420000,
+      "degreeValue": 88000,
+      "vetSalary": 2057000
+    },
+    "مؤهل اول||18": {
+      "category": "الرتباء",
+      "rank": "مؤهل اول",
+      "degree": 18,
+      "basicSalary": 2508000,
+      "degreeValue": 88000,
+      "vetSalary": 2131800
+    },
+    "مؤهل اول||19": {
+      "category": "الرتباء",
+      "rank": "مؤهل اول",
+      "degree": 19,
+      "basicSalary": 2596000,
+      "degreeValue": 100000,
+      "vetSalary": 2206600
+    },
+    "مؤهل اول||20": {
+      "category": "الرتباء",
+      "rank": "مؤهل اول",
+      "degree": 20,
+      "basicSalary": 2696000,
+      "degreeValue": 100000,
+      "vetSalary": 2291600
+    },
+    "ملازم||1": {
+      "category": "الضباط الأعوان",
+      "rank": "ملازم",
+      "degree": 1,
+      "basicSalary": 1500000,
+      "degreeValue": 67000,
+      "vetSalary": 1275000
+    },
+    "ملازم||2": {
+      "category": "الضباط الأعوان",
+      "rank": "ملازم",
+      "degree": 2,
+      "basicSalary": 1567000,
+      "degreeValue": 67000,
+      "vetSalary": 1331950
+    },
+    "ملازم||3": {
+      "category": "الضباط الأعوان",
+      "rank": "ملازم",
+      "degree": 3,
+      "basicSalary": 1634000,
+      "degreeValue": 67000,
+      "vetSalary": 1388900
+    },
+    "ملازم||4": {
+      "category": "الضباط الأعوان",
+      "rank": "ملازم",
+      "degree": 4,
+      "basicSalary": 1701000,
+      "degreeValue": 75000,
+      "vetSalary": 1445850
+    },
+    "ملازم||5": {
+      "category": "الضباط الأعوان",
+      "rank": "ملازم",
+      "degree": 5,
+      "basicSalary": 1776000,
+      "degreeValue": 75000,
+      "vetSalary": 1509600
+    },
+    "ملازم||6": {
+      "category": "الضباط الأعوان",
+      "rank": "ملازم",
+      "degree": 6,
+      "basicSalary": 1851000,
+      "degreeValue": 75000,
+      "vetSalary": 1573350
+    },
+    "ملازم||7": {
+      "category": "الضباط الأعوان",
+      "rank": "ملازم",
+      "degree": 7,
+      "basicSalary": 1926000,
+      "degreeValue": 75000,
+      "vetSalary": 1637100
+    },
+    "ملازم||8": {
+      "category": "الضباط الأعوان",
+      "rank": "ملازم",
+      "degree": 8,
+      "basicSalary": 2001000,
+      "degreeValue": 90000,
+      "vetSalary": 1700850
+    },
+    "ملازم||9": {
+      "category": "الضباط الأعوان",
+      "rank": "ملازم",
+      "degree": 9,
+      "basicSalary": 2091000,
+      "degreeValue": 90000,
+      "vetSalary": 1777350
+    },
+    "ملازم||10": {
+      "category": "الضباط الأعوان",
+      "rank": "ملازم",
+      "degree": 10,
+      "basicSalary": 2181000,
+      "degreeValue": 90000,
+      "vetSalary": 1853850
+    },
+    "ملازم||11": {
+      "category": "الضباط الأعوان",
+      "rank": "ملازم",
+      "degree": 11,
+      "basicSalary": 2271000,
+      "degreeValue": 90000,
+      "vetSalary": 1930350
+    },
+    "ملازم||12": {
+      "category": "الضباط الأعوان",
+      "rank": "ملازم",
+      "degree": 12,
+      "basicSalary": 2361000,
+      "degreeValue": 100000,
+      "vetSalary": 2006850
+    },
+    "ملازم||13": {
+      "category": "الضباط الأعوان",
+      "rank": "ملازم",
+      "degree": 13,
+      "basicSalary": 2461000,
+      "degreeValue": 100000,
+      "vetSalary": 2091850
+    },
+    "ملازم اول||1": {
+      "category": "الضباط الأعوان",
+      "rank": "ملازم اول",
+      "degree": 1,
+      "basicSalary": 1634000,
+      "degreeValue": 67000,
+      "vetSalary": 1388900
+    },
+    "ملازم اول||2": {
+      "category": "الضباط الأعوان",
+      "rank": "ملازم اول",
+      "degree": 2,
+      "basicSalary": 1701000,
+      "degreeValue": 75000,
+      "vetSalary": 1445850
+    },
+    "ملازم اول||3": {
+      "category": "الضباط الأعوان",
+      "rank": "ملازم اول",
+      "degree": 3,
+      "basicSalary": 1776000,
+      "degreeValue": 75000,
+      "vetSalary": 1509600
+    },
+    "ملازم اول||4": {
+      "category": "الضباط الأعوان",
+      "rank": "ملازم اول",
+      "degree": 4,
+      "basicSalary": 1851000,
+      "degreeValue": 75000,
+      "vetSalary": 1573350
+    },
+    "ملازم اول||5": {
+      "category": "الضباط الأعوان",
+      "rank": "ملازم اول",
+      "degree": 5,
+      "basicSalary": 1926000,
+      "degreeValue": 75000,
+      "vetSalary": 1637100
+    },
+    "ملازم اول||6": {
+      "category": "الضباط الأعوان",
+      "rank": "ملازم اول",
+      "degree": 6,
+      "basicSalary": 2001000,
+      "degreeValue": 90000,
+      "vetSalary": 1700850
+    },
+    "ملازم اول||7": {
+      "category": "الضباط الأعوان",
+      "rank": "ملازم اول",
+      "degree": 7,
+      "basicSalary": 2091000,
+      "degreeValue": 90000,
+      "vetSalary": 1777350
+    },
+    "ملازم اول||8": {
+      "category": "الضباط الأعوان",
+      "rank": "ملازم اول",
+      "degree": 8,
+      "basicSalary": 2181000,
+      "degreeValue": 90000,
+      "vetSalary": 1853850
+    },
+    "ملازم اول||9": {
+      "category": "الضباط الأعوان",
+      "rank": "ملازم اول",
+      "degree": 9,
+      "basicSalary": 2271000,
+      "degreeValue": 90000,
+      "vetSalary": 1930350
+    },
+    "ملازم اول||10": {
+      "category": "الضباط الأعوان",
+      "rank": "ملازم اول",
+      "degree": 10,
+      "basicSalary": 2361000,
+      "degreeValue": 100000,
+      "vetSalary": 2006850
+    },
+    "ملازم اول||11": {
+      "category": "الضباط الأعوان",
+      "rank": "ملازم اول",
+      "degree": 11,
+      "basicSalary": 2461000,
+      "degreeValue": 100000,
+      "vetSalary": 2091850
+    },
+    "ملازم اول||12": {
+      "category": "الضباط الأعوان",
+      "rank": "ملازم اول",
+      "degree": 12,
+      "basicSalary": 2561000,
+      "degreeValue": 100000,
+      "vetSalary": 2176850
+    },
+    "ملازم اول||13": {
+      "category": "الضباط الأعوان",
+      "rank": "ملازم اول",
+      "degree": 13,
+      "basicSalary": 2661000,
+      "degreeValue": 100000,
+      "vetSalary": 2261850
+    },
+    "ملازم اول||14": {
+      "category": "الضباط الأعوان",
+      "rank": "ملازم اول",
+      "degree": 14,
+      "basicSalary": 2761000,
+      "degreeValue": 115000,
+      "vetSalary": 2346850
+    },
+    "نقيب||1": {
+      "category": "الضباط الأعوان",
+      "rank": "نقيب",
+      "degree": 1,
+      "basicSalary": 1776000,
+      "degreeValue": 75000,
+      "vetSalary": 1509600
+    },
+    "نقيب||2": {
+      "category": "الضباط الأعوان",
+      "rank": "نقيب",
+      "degree": 2,
+      "basicSalary": 1851000,
+      "degreeValue": 75000,
+      "vetSalary": 1573350
+    },
+    "نقيب||3": {
+      "category": "الضباط الأعوان",
+      "rank": "نقيب",
+      "degree": 3,
+      "basicSalary": 1926000,
+      "degreeValue": 75000,
+      "vetSalary": 1637100
+    },
+    "نقيب||4": {
+      "category": "الضباط الأعوان",
+      "rank": "نقيب",
+      "degree": 4,
+      "basicSalary": 2001000,
+      "degreeValue": 90000,
+      "vetSalary": 1700850
+    },
+    "نقيب||5": {
+      "category": "الضباط الأعوان",
+      "rank": "نقيب",
+      "degree": 5,
+      "basicSalary": 2091000,
+      "degreeValue": 90000,
+      "vetSalary": 1777350
+    },
+    "نقيب||6": {
+      "category": "الضباط الأعوان",
+      "rank": "نقيب",
+      "degree": 6,
+      "basicSalary": 2181000,
+      "degreeValue": 90000,
+      "vetSalary": 1853850
+    },
+    "نقيب||7": {
+      "category": "الضباط الأعوان",
+      "rank": "نقيب",
+      "degree": 7,
+      "basicSalary": 2271000,
+      "degreeValue": 90000,
+      "vetSalary": 1930350
+    },
+    "نقيب||8": {
+      "category": "الضباط الأعوان",
+      "rank": "نقيب",
+      "degree": 8,
+      "basicSalary": 2361000,
+      "degreeValue": 100000,
+      "vetSalary": 2006850
+    },
+    "نقيب||9": {
+      "category": "الضباط الأعوان",
+      "rank": "نقيب",
+      "degree": 9,
+      "basicSalary": 2461000,
+      "degreeValue": 100000,
+      "vetSalary": 2091850
+    },
+    "نقيب||10": {
+      "category": "الضباط الأعوان",
+      "rank": "نقيب",
+      "degree": 10,
+      "basicSalary": 2561000,
+      "degreeValue": 100000,
+      "vetSalary": 2176850
+    },
+    "نقيب||11": {
+      "category": "الضباط الأعوان",
+      "rank": "نقيب",
+      "degree": 11,
+      "basicSalary": 2661000,
+      "degreeValue": 100000,
+      "vetSalary": 2261850
+    },
+    "نقيب||12": {
+      "category": "الضباط الأعوان",
+      "rank": "نقيب",
+      "degree": 12,
+      "basicSalary": 2761000,
+      "degreeValue": 115000,
+      "vetSalary": 2346850
+    },
+    "نقيب||13": {
+      "category": "الضباط الأعوان",
+      "rank": "نقيب",
+      "degree": 13,
+      "basicSalary": 2876000,
+      "degreeValue": 115000,
+      "vetSalary": 2444600
+    },
+    "رائد||1": {
+      "category": "الضباط القادة",
+      "rank": "رائد",
+      "degree": 1,
+      "basicSalary": 2000000,
+      "degreeValue": 90000,
+      "vetSalary": 1700000
+    },
+    "رائد||2": {
+      "category": "الضباط القادة",
+      "rank": "رائد",
+      "degree": 2,
+      "basicSalary": 2090000,
+      "degreeValue": 90000,
+      "vetSalary": 1776500
+    },
+    "رائد||3": {
+      "category": "الضباط القادة",
+      "rank": "رائد",
+      "degree": 3,
+      "basicSalary": 2180000,
+      "degreeValue": 90000,
+      "vetSalary": 1853000
+    },
+    "رائد||4": {
+      "category": "الضباط القادة",
+      "rank": "رائد",
+      "degree": 4,
+      "basicSalary": 2270000,
+      "degreeValue": 90000,
+      "vetSalary": 1929500
+    },
+    "رائد||5": {
+      "category": "الضباط القادة",
+      "rank": "رائد",
+      "degree": 5,
+      "basicSalary": 2360000,
+      "degreeValue": 100000,
+      "vetSalary": 2006000
+    },
+    "رائد||6": {
+      "category": "الضباط القادة",
+      "rank": "رائد",
+      "degree": 6,
+      "basicSalary": 2460000,
+      "degreeValue": 100000,
+      "vetSalary": 2091000
+    },
+    "رائد||7": {
+      "category": "الضباط القادة",
+      "rank": "رائد",
+      "degree": 7,
+      "basicSalary": 2560000,
+      "degreeValue": 100000,
+      "vetSalary": 2176000
+    },
+    "رائد||8": {
+      "category": "الضباط القادة",
+      "rank": "رائد",
+      "degree": 8,
+      "basicSalary": 2660000,
+      "degreeValue": 100000,
+      "vetSalary": 2261000
+    },
+    "رائد||9": {
+      "category": "الضباط القادة",
+      "rank": "رائد",
+      "degree": 9,
+      "basicSalary": 2760000,
+      "degreeValue": 115000,
+      "vetSalary": 2346000
+    },
+    "رائد||10": {
+      "category": "الضباط القادة",
+      "rank": "رائد",
+      "degree": 10,
+      "basicSalary": 2875000,
+      "degreeValue": 115000,
+      "vetSalary": 2443750
+    },
+    "رائد||11": {
+      "category": "الضباط القادة",
+      "rank": "رائد",
+      "degree": 11,
+      "basicSalary": 2990000,
+      "degreeValue": 115000,
+      "vetSalary": 2541500
+    },
+    "رائد||12": {
+      "category": "الضباط القادة",
+      "rank": "رائد",
+      "degree": 12,
+      "basicSalary": 3105000,
+      "degreeValue": 115000,
+      "vetSalary": 2639250
+    },
+    "رائد||13": {
+      "category": "الضباط القادة",
+      "rank": "رائد",
+      "degree": 13,
+      "basicSalary": 3220000,
+      "degreeValue": 115000,
+      "vetSalary": 2737000
+    },
+    "مقدم||1": {
+      "category": "الضباط القادة",
+      "rank": "مقدم",
+      "degree": 1,
+      "basicSalary": 2180000,
+      "degreeValue": 90000,
+      "vetSalary": 1853000
+    },
+    "مقدم||2": {
+      "category": "الضباط القادة",
+      "rank": "مقدم",
+      "degree": 2,
+      "basicSalary": 2270000,
+      "degreeValue": 90000,
+      "vetSalary": 1929500
+    },
+    "مقدم||3": {
+      "category": "الضباط القادة",
+      "rank": "مقدم",
+      "degree": 3,
+      "basicSalary": 2360000,
+      "degreeValue": 100000,
+      "vetSalary": 2006000
+    },
+    "مقدم||4": {
+      "category": "الضباط القادة",
+      "rank": "مقدم",
+      "degree": 4,
+      "basicSalary": 2460000,
+      "degreeValue": 100000,
+      "vetSalary": 2091000
+    },
+    "مقدم||5": {
+      "category": "الضباط القادة",
+      "rank": "مقدم",
+      "degree": 5,
+      "basicSalary": 2560000,
+      "degreeValue": 100000,
+      "vetSalary": 2176000
+    },
+    "مقدم||6": {
+      "category": "الضباط القادة",
+      "rank": "مقدم",
+      "degree": 6,
+      "basicSalary": 2660000,
+      "degreeValue": 100000,
+      "vetSalary": 2261000
+    },
+    "مقدم||7": {
+      "category": "الضباط القادة",
+      "rank": "مقدم",
+      "degree": 7,
+      "basicSalary": 2760000,
+      "degreeValue": 115000,
+      "vetSalary": 2346000
+    },
+    "مقدم||8": {
+      "category": "الضباط القادة",
+      "rank": "مقدم",
+      "degree": 8,
+      "basicSalary": 2875000,
+      "degreeValue": 115000,
+      "vetSalary": 2443750
+    },
+    "مقدم||9": {
+      "category": "الضباط القادة",
+      "rank": "مقدم",
+      "degree": 9,
+      "basicSalary": 2990000,
+      "degreeValue": 115000,
+      "vetSalary": 2541500
+    },
+    "مقدم||10": {
+      "category": "الضباط القادة",
+      "rank": "مقدم",
+      "degree": 10,
+      "basicSalary": 3105000,
+      "degreeValue": 115000,
+      "vetSalary": 2639250
+    },
+    "مقدم||11": {
+      "category": "الضباط القادة",
+      "rank": "مقدم",
+      "degree": 11,
+      "basicSalary": 3220000,
+      "degreeValue": 115000,
+      "vetSalary": 2737000
+    },
+    "مقدم||12": {
+      "category": "الضباط القادة",
+      "rank": "مقدم",
+      "degree": 12,
+      "basicSalary": 3335000,
+      "degreeValue": 130000,
+      "vetSalary": 2834750
+    },
+    "مقدم||13": {
+      "category": "الضباط القادة",
+      "rank": "مقدم",
+      "degree": 13,
+      "basicSalary": 3465000,
+      "degreeValue": 130000,
+      "vetSalary": 2945250
+    },
+    "مقدم||14": {
+      "category": "الضباط القادة",
+      "rank": "مقدم",
+      "degree": 14,
+      "basicSalary": 3595000,
+      "degreeValue": 130000,
+      "vetSalary": 3055750
+    },
+    "عقيد||1": {
+      "category": "الضباط القادة",
+      "rank": "عقيد",
+      "degree": 1,
+      "basicSalary": 2460000,
+      "degreeValue": 100000,
+      "vetSalary": 2091000
+    },
+    "عقيد||2": {
+      "category": "الضباط القادة",
+      "rank": "عقيد",
+      "degree": 2,
+      "basicSalary": 2560000,
+      "degreeValue": 100000,
+      "vetSalary": 2176000
+    },
+    "عقيد||3": {
+      "category": "الضباط القادة",
+      "rank": "عقيد",
+      "degree": 3,
+      "basicSalary": 2660000,
+      "degreeValue": 100000,
+      "vetSalary": 2261000
+    },
+    "عقيد||4": {
+      "category": "الضباط القادة",
+      "rank": "عقيد",
+      "degree": 4,
+      "basicSalary": 2760000,
+      "degreeValue": 115000,
+      "vetSalary": 2346000
+    },
+    "عقيد||5": {
+      "category": "الضباط القادة",
+      "rank": "عقيد",
+      "degree": 5,
+      "basicSalary": 2875000,
+      "degreeValue": 115000,
+      "vetSalary": 2443750
+    },
+    "عقيد||6": {
+      "category": "الضباط القادة",
+      "rank": "عقيد",
+      "degree": 6,
+      "basicSalary": 2990000,
+      "degreeValue": 115000,
+      "vetSalary": 2541500
+    },
+    "عقيد||7": {
+      "category": "الضباط القادة",
+      "rank": "عقيد",
+      "degree": 7,
+      "basicSalary": 3105000,
+      "degreeValue": 115000,
+      "vetSalary": 2639250
+    },
+    "عقيد||8": {
+      "category": "الضباط القادة",
+      "rank": "عقيد",
+      "degree": 8,
+      "basicSalary": 3220000,
+      "degreeValue": 115000,
+      "vetSalary": 2737000
+    },
+    "عقيد||9": {
+      "category": "الضباط القادة",
+      "rank": "عقيد",
+      "degree": 9,
+      "basicSalary": 3335000,
+      "degreeValue": 130000,
+      "vetSalary": 2834750
+    },
+    "عقيد||10": {
+      "category": "الضباط القادة",
+      "rank": "عقيد",
+      "degree": 10,
+      "basicSalary": 3465000,
+      "degreeValue": 130000,
+      "vetSalary": 2945250
+    },
+    "عقيد||11": {
+      "category": "الضباط القادة",
+      "rank": "عقيد",
+      "degree": 11,
+      "basicSalary": 3595000,
+      "degreeValue": 130000,
+      "vetSalary": 3055750
+    },
+    "عقيد||12": {
+      "category": "الضباط القادة",
+      "rank": "عقيد",
+      "degree": 12,
+      "basicSalary": 3725000,
+      "degreeValue": 130000,
+      "vetSalary": 3166250
+    },
+    "عميد||1": {
+      "category": "الضباط العامون",
+      "rank": "عميد",
+      "degree": 1,
+      "basicSalary": 3600000,
+      "degreeValue": 130000,
+      "vetSalary": 3060000
+    },
+    "عميد||2": {
+      "category": "الضباط العامون",
+      "rank": "عميد",
+      "degree": 2,
+      "basicSalary": 3730000,
+      "degreeValue": 130000,
+      "vetSalary": 3170500
+    },
+    "عميد||3": {
+      "category": "الضباط العامون",
+      "rank": "عميد",
+      "degree": 3,
+      "basicSalary": 3860000,
+      "degreeValue": 130000,
+      "vetSalary": 3281000
+    },
+    "عميد||4": {
+      "category": "الضباط العامون",
+      "rank": "عميد",
+      "degree": 4,
+      "basicSalary": 3990000,
+      "degreeValue": 130000,
+      "vetSalary": 3391500
+    },
+    "عميد||5": {
+      "category": "الضباط العامون",
+      "rank": "عميد",
+      "degree": 5,
+      "basicSalary": 4120000,
+      "degreeValue": 130000,
+      "vetSalary": 3502000
+    },
+    "عميد||6": {
+      "category": "الضباط العامون",
+      "rank": "عميد",
+      "degree": 6,
+      "basicSalary": 4250000,
+      "degreeValue": 130000,
+      "vetSalary": 3612500
+    },
+    "عميد||7": {
+      "category": "الضباط العامون",
+      "rank": "عميد",
+      "degree": 7,
+      "basicSalary": 4380000,
+      "degreeValue": 130000,
+      "vetSalary": 3723000
+    },
+    "عميد||8": {
+      "category": "الضباط العامون",
+      "rank": "عميد",
+      "degree": 8,
+      "basicSalary": 4510000,
+      "degreeValue": 150000,
+      "vetSalary": 3833500
+    },
+    "عميد||9": {
+      "category": "الضباط العامون",
+      "rank": "عميد",
+      "degree": 9,
+      "basicSalary": 4660000,
+      "degreeValue": 150000,
+      "vetSalary": 3961000
+    },
+    "عميد||10": {
+      "category": "الضباط العامون",
+      "rank": "عميد",
+      "degree": 10,
+      "basicSalary": 4810000,
+      "degreeValue": 150000,
+      "vetSalary": 4088500
+    },
+    "عميد||11": {
+      "category": "الضباط العامون",
+      "rank": "عميد",
+      "degree": 11,
+      "basicSalary": 4960000,
+      "degreeValue": 170000,
+      "vetSalary": 4216000
+    },
+    "لواء||1": {
+      "category": "الضباط العامون",
+      "rank": "لواء",
+      "degree": 1,
+      "basicSalary": 4960000,
+      "degreeValue": 170000,
+      "vetSalary": 4216000
+    },
+    "لواء||2": {
+      "category": "الضباط العامون",
+      "rank": "لواء",
+      "degree": 2,
+      "basicSalary": 5130000,
+      "degreeValue": 170000,
+      "vetSalary": 4360500
+    },
+    "لواء||3": {
+      "category": "الضباط العامون",
+      "rank": "لواء",
+      "degree": 3,
+      "basicSalary": 5300000,
+      "degreeValue": 170000,
+      "vetSalary": 4505000
+    },
+    "لواء||4": {
+      "category": "الضباط العامون",
+      "rank": "لواء",
+      "degree": 4,
+      "basicSalary": 5470000,
+      "degreeValue": 200000,
+      "vetSalary": 4649500
+    },
+    "لواء||5": {
+      "category": "الضباط العامون",
+      "rank": "لواء",
+      "degree": 5,
+      "basicSalary": 5670000,
+      "degreeValue": 200000,
+      "vetSalary": 4819500
+    },
+    "لواء||6": {
+      "category": "الضباط العامون",
+      "rank": "لواء",
+      "degree": 6,
+      "basicSalary": 5870000,
+      "degreeValue": 200000,
+      "vetSalary": 4989500
+    },
+    "لواء||7": {
+      "category": "الضباط العامون",
+      "rank": "لواء",
+      "degree": 7,
+      "basicSalary": 6070000,
+      "degreeValue": 230000,
+      "vetSalary": 5159500
+    },
+    "عماد||1": {
+      "category": "الضباط العامون",
+      "rank": "عماد",
+      "degree": 1,
+      "basicSalary": 6300000,
+      "degreeValue": 230000,
+      "vetSalary": 5355000
+    },
+    "عماد||2": {
+      "category": "الضباط العامون",
+      "rank": "عماد",
+      "degree": 2,
+      "basicSalary": 6530000,
+      "degreeValue": 230000,
+      "vetSalary": 5550500
+    },
+    "عماد||3": {
+      "category": "الضباط العامون",
+      "rank": "عماد",
+      "degree": 3,
+      "basicSalary": 6760000,
+      "degreeValue": 260000,
+      "vetSalary": 5746000
+    },
+    "عماد||4": {
+      "category": "الضباط العامون",
+      "rank": "عماد",
+      "degree": 4,
+      "basicSalary": 7020000,
+      "degreeValue": 260000,
+      "vetSalary": 5967000
+    },
+    "عماد||5": {
+      "category": "الضباط العامون",
+      "rank": "عماد",
+      "degree": 5,
+      "basicSalary": 7280000,
+      "degreeValue": 260000,
+      "vetSalary": 6188000
+    }
+  }
+}

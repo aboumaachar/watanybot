@@ -1,6 +1,8 @@
 import { FormEvent, useRef, useState } from "react";
 import { useApp } from "../store/app";
 import LebanonAddressSelector from "../components/address/LebanonAddressSelector";
+import JobApplicationProfileFillButton from "../components/jobs/JobApplicationProfileFillButton";
+import JobApplicationPreviousFillButton from "../components/jobs/JobApplicationPreviousFillButton";
 import type { LebanonAddressValue } from "../components/address/addressTypes";
 import "../styles/jobs-ainelhafeh.css";
 
@@ -192,6 +194,11 @@ export default function AinElHafehJobsPage() {
           const firstInvalidField = event.currentTarget.querySelector<HTMLElement>(":invalid");
           setValidationMessage(firstInvalidField ? describeInvalidField(firstInvalidField) : "اكتملت الحقول المطلوبة. يمكنك إرسال الطلب الآن.");
         }} onSubmit={submit} className="ainelhafeh-form" aria-describedby="ainelhafeh-validation-tooltip">
+          <JobApplicationProfileFillButton value={form} onChange={setForm} className="ainelhafeh-share" />
+          <JobApplicationPreviousFillButton className="ainelhafeh-share" onFill={(snapshot) => {
+            setForm((current) => ({ ...current, name: snapshot.name || current.name, phone: snapshot.phone || current.phone, email: snapshot.email || current.email, age: snapshot.age || current.age }));
+            if (snapshot.address) setAddress(snapshot.address);
+          }} />
           <div id="ainelhafeh-validation-tooltip" className="ainelhafeh-validation-tooltip" role="status" aria-live="polite">{validationMessage}</div>
           <div className="ainelhafeh-form-grid">
             <label><span>الاسم والشهرة *</span><input required value={form.name} onChange={(event) => update("name", event.target.value)} /></label>

@@ -8,6 +8,7 @@ import {
   type SmartAttentionItem,
 } from "./smartAttentionNativeData";
 import { WatanyListingCard } from "../../components/listings/WatanyListingCard";
+import { FeatureAdSensePlacement } from "../../components/ads/FeatureAdSensePlacement";
 import { smartAttentionNativeTheme } from "./smartAttentionNativeTheme";
 
 type SmartAttentionWidgetProps = {
@@ -49,6 +50,21 @@ export function SmartAttentionWidget({ featureKey, limit = 3 }: SmartAttentionWi
     };
   }, [featureKey]);
 
+  const visibleItems = items.slice(0, limit);
+  const adIndex = Math.min(3, visibleItems.length);
+  const renderItem = (item: SmartAttentionItem) => (
+    <WatanyListingCard
+      key={item.id}
+      title={item.title}
+      summary={item.summary}
+      badges={[
+        { label: item.kind },
+        ...(item.source ? [{ label: item.source, tone: "gold" as const }] : []),
+      ]}
+      primaryAction={{ label: "افتح", onClick: () => openSmartAttentionItem(item, navigate) }}
+    />
+  );
+
   return (
     <section dir="rtl" aria-label={feature.title} className={smartAttentionNativeTheme.section}>
       <header className={smartAttentionNativeTheme.header}>
@@ -56,18 +72,13 @@ export function SmartAttentionWidget({ featureKey, limit = 3 }: SmartAttentionWi
       </header>
 
       <div className={smartAttentionNativeTheme.grid}>
-        {items.slice(0, limit).map((item) => (
-          <WatanyListingCard
-            key={item.id}
-            title={item.title}
-            summary={item.summary}
-            badges={[
-              { label: item.kind },
-              ...(item.source ? [{ label: item.source, tone: "gold" as const }] : []),
-            ]}
-            primaryAction={{ label: "افتح", onClick: () => openSmartAttentionItem(item, navigate) }}
-          />
-        ))}
+        {visibleItems.slice(0, adIndex).map(renderItem)}
+        {visibleItems.length > 0 ? (
+          <div key="listing-ad" style={{ gridColumn: "1 / -1" }}>
+            <FeatureAdSensePlacement featureId={featureKey} placement="listing" />
+          </div>
+        ) : null}
+        {visibleItems.slice(adIndex).map(renderItem)}
       </div>
     </section>
   );

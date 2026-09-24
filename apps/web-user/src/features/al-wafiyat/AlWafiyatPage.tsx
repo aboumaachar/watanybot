@@ -1,6 +1,7 @@
 ﻿import React, { useEffect, useMemo, useState } from "react";
 import { api } from "../../lib/api";
 import type { AlWafiyatNotice } from "./alWafiyat.types";
+import { FeatureAdSensePlacement } from "../../components/ads/FeatureAdSensePlacement";
 import "./AlWafiyatCompactListing.css";
 
 type ViewNotice = {
@@ -94,6 +95,27 @@ export default function AlWafiyatPage() {
   }, []);
 
   const sortedItems = useMemo(() => items, [items]);
+  const adIndex = Math.min(3, sortedItems.length);
+  const renderNotice = (notice: ViewNotice) => (
+    <details className="wafiyat-card" key={notice.id}>
+      <summary className="wafiyat-summary">
+        <span className="wafiyat-name">{notice.name}</span>
+        <time className="wafiyat-date">{notice.date}</time>
+      </summary>
+      <div className="wafiyat-details">
+        {notice.details.length > 0 ? (
+          notice.details.map((detail) => (
+            <div className="wafiyat-detail-row" key={`${detail.label}-${detail.value}`}>
+              <strong>{detail.label}</strong>
+              <span>{detail.value}</span>
+            </div>
+          ))
+        ) : (
+          <p className="wafiyat-muted">لا توجد تفاصيل إضافية متاحة.</p>
+        )}
+      </div>
+    </details>
+  );
 
   return (
     <main dir="rtl" className="wafiyat-page">
@@ -108,27 +130,13 @@ export default function AlWafiyatPage() {
       )}
 
       <section className="wafiyat-list" aria-label="قائمة الوفيات">
-        {sortedItems.map((notice) => (
-          <details className="wafiyat-card" key={notice.id}>
-            <summary className="wafiyat-summary">
-              <span className="wafiyat-name">{notice.name}</span>
-              <time className="wafiyat-date">{notice.date}</time>
-            </summary>
-
-            <div className="wafiyat-details">
-              {notice.details.length > 0 ? (
-                notice.details.map((detail) => (
-                  <div className="wafiyat-detail-row" key={`${detail.label}-${detail.value}`}>
-                    <strong>{detail.label}</strong>
-                    <span>{detail.value}</span>
-                  </div>
-                ))
-              ) : (
-                <p className="wafiyat-muted">لا توجد تفاصيل إضافية متاحة.</p>
-              )}
-            </div>
-          </details>
-        ))}
+        {sortedItems.slice(0, adIndex).map(renderNotice)}
+        {sortedItems.length > 0 ? (
+          <div key="listing-ad" style={{ gridColumn: "1 / -1" }}>
+            <FeatureAdSensePlacement featureId="deaths" placement="listing" />
+          </div>
+        ) : null}
+        {sortedItems.slice(adIndex).map(renderNotice)}
       </section>
     </main>
   );

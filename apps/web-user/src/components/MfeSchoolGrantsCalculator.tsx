@@ -13,6 +13,7 @@ import {
 } from "../lib/mfe-school-grants";
 
 import "../styles/MfeSchoolGrantsCalculator.css";
+import { FeatureAdSensePlacement } from "./ads/FeatureAdSensePlacement";
 
 type MfeStudentDraft = {
   id: number;
@@ -562,6 +563,8 @@ export function MfeSchoolGrantsCalculator({
             );
           })}
         </div>
+
+        <FeatureAdSensePlacement featureId="school-grants-calculator" placement="inline" />
       </PopupModal>
 
       <PopupModal

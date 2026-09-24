@@ -326,17 +326,46 @@ export const salaryInlineRoutes: FastifyPluginAsync<SalaryInlineRoutesOptions> =
     const row = findSalaryRow(salariesIndex, rank, degree);
     if (!row) return reply.code(404).send({ ok: false, error: "No salary found", rank, degree });
 
-    const basePension = Number(row.vetSalary || 0);
+    const canonicalVetSalary = Number(row.vetSalary || 0);
+    const exactVetSalaryInput = b.exactVetSalary;
+    let exactVetSalary: number | undefined;
+    if (exactVetSalaryInput !== undefined && exactVetSalaryInput !== null && String(exactVetSalaryInput).trim() !== "") {
+      const parsed = Number(exactVetSalaryInput);
+      if (!Number.isFinite(parsed) || parsed <= 0) {
+        return reply.code(400).send({ ok: false, error: "exactVetSalary must be a positive number" });
+      }
+      exactVetSalary = Math.round(parsed);
+    }
+
+    // An explicitly known veteran pension may include a fractional/additional degree.
+    // It overrides only the individual calculation; the canonical rank/degree row remains unchanged.
+    const basePension = exactVetSalary ?? canonicalVetSalary;
+    const degreeValue = Number(row.degreeValue || 0);
+    const veteranSalaryAdjustment = basePension - canonicalVetSalary;
+    const maxSingleDegreeVeteranAdjustment = Math.round(degreeValue * 0.85);
+    const fractionOfDegree = maxSingleDegreeVeteranAdjustment > 0
+      ? veteranSalaryAdjustment / maxSingleDegreeVeteranAdjustment
+      : 0;
+    const veteranSalaryAdjustmentStatus = exactVetSalary === undefined
+      ? "canonical"
+      : veteranSalaryAdjustment < 0
+        ? "explicit_below_canonical"
+        : veteranSalaryAdjustment <= maxSingleDegreeVeteranAdjustment
+          ? "within_one_degree"
+          : "explicit_above_one_degree";
+
     const tableSupplements = Number(row.equipment || 0) + Number(row.driver || 0) + Number(row.position || 0);
-    const socialAids = Number(row.grant2025 || 0)
-      + Number(row.d13020 || 0)
-      + Number(row.d11227_2 || 0)
-      + Number(row.d11227_1 || 0)
-      + Number(row.budget2022 || 0);
-    const grossPension2026 = basePension + tableSupplements + socialAids;
-    const deduction15Pct = Number(row.officialDeduction2026 || 0) > 0
+    const eligibleBase = basePension + tableSupplements;
+    const grant2025 = 12000000;
+    const d13020 = Math.max(eligibleBase * 3, 7000000);
+    const d11227_2 = Math.max(eligibleBase * 3, 7000000);
+    const d11227_1 = eligibleBase * 4;
+    const budget2022 = Math.min(12000000, Math.max(eligibleBase * 2, Math.max(0, 5000000 - eligibleBase)));
+    const socialAids = grant2025 + d13020 + d11227_2 + d11227_1 + budget2022;
+    const grossPension2026 = eligibleBase + socialAids;
+    const deduction15Pct = Number(row.officialDeduction2026 || 0) > 0 && exactVetSalary === undefined
       ? Number(row.officialDeduction2026)
-      : Math.round(basePension * 0.015);
+      : Math.ceil((basePension * 0.015) / 1000) * 1000;
     const pension2026 = Math.max(0, grossPension2026 - deduction15Pct);
     const usdRate = Number(rankMeta.usdRate || 89500);
 
@@ -367,7 +396,7 @@ export const salaryInlineRoutes: FastifyPluginAsync<SalaryInlineRoutesOptions> =
     const totalPensionUsd = totalPension / usdRate;
 
     // Section 2: 6th salary raise
-    const sixSalary = Number(row.sixSalary || 0);
+    const sixSalary = eligibleBase * 6;
     const faAfterRaise = (rankMeta.familyAllowanceAfterRaise || { wife: 2100000, perChild: 1160000 }) as { wife: number; perChild: number };
     const wifeAfterRaise = married ? faAfterRaise.wife : 0;
     const childAfterRaise = kidsCount * faAfterRaise.perChild;
@@ -388,20 +417,26 @@ export const salaryInlineRoutes: FastifyPluginAsync<SalaryInlineRoutesOptions> =
 
     return reply.send({
       ok: true,
-      input: { rank, degree: Number(degree), category: row.category, married, kidsCount, selectedOrnaments },
+      input: { rank, degree: Number(degree), category: row.category, married, kidsCount, selectedOrnaments, exactVetSalary },
       breakdown: {
         basicSalary: Number(row.basicSalary || 0),
+        canonicalVetSalary,
         vetSalary: basePension,
+        veteranSalaryAdjustment,
+        maxSingleDegreeVeteranAdjustment,
+        fractionOfDegree,
+        veteranSalaryAdjustmentStatus,
+        eligibleBase,
         deduction15Pct,
         equipment: Number(row.equipment || 0),
         driver: Number(row.driver || 0),
         position: Number(row.position || 0),
         aids: {
-          grant2025: Number(row.grant2025 || 0),
-          d13020: Number(row.d13020 || 0),
-          d11227_2: Number(row.d11227_2 || 0),
-          d11227_1: Number(row.d11227_1 || 0),
-          budget2022: Number(row.budget2022 || 0),
+          grant2025,
+          d13020,
+          d11227_2,
+          d11227_1,
+          budget2022,
         },
         pension2026,
         pension2026usd: Math.round((pension2026 / usdRate) * 100) / 100,

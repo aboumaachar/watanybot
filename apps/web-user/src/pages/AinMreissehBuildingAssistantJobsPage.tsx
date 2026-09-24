@@ -1,5 +1,7 @@
 import { FormEvent, useState } from "react";
 import LebanonAddressSelector from "../components/address/LebanonAddressSelector";
+import JobApplicationProfileFillButton from "../components/jobs/JobApplicationProfileFillButton";
+import JobApplicationPreviousFillButton from "../components/jobs/JobApplicationPreviousFillButton";
 import type { LebanonAddressValue } from "../components/address/addressTypes";
 import { useApp } from "../store/app";
 import "../styles/jobs-ainmreisseh.css";
@@ -143,6 +145,11 @@ export default function AinMreissehBuildingAssistantJobsPage() {
         {status === "success" ? <div className="ainmreisseh-message">تم إرسال طلبك بنجاح{applicationId ? ` برقم ${applicationId}` : ""}.</div> : null}
         {status === "error" ? <div className="ainmreisseh-message ainmreisseh-message--error" role="alert">أكمل الحقول المطلوبة وتحقق من رقم الهاتف والعنوان الإداري قبل الإرسال.</div> : null}
         <form className="ainmreisseh-form" onSubmit={submit}>
+          <JobApplicationProfileFillButton value={form} onChange={setForm} className="ainmreisseh-share" />
+          <JobApplicationPreviousFillButton className="ainmreisseh-share" onFill={(snapshot) => {
+            setForm((current) => ({ ...current, name: snapshot.name || current.name, phone: snapshot.phone || current.phone, email: snapshot.email || current.email, age: snapshot.age || current.age }));
+            if (snapshot.address) setAddress(snapshot.address);
+          }} />
           <div className="ainmreisseh-form-grid">
             <label><span>الاسم *</span><input required type="text" value={form.name} onChange={(event) => update("name", event.target.value)} /></label>
             <label><span>رقم الهاتف *</span><input required type="tel" inputMode="tel" value={form.phone} onChange={(event) => update("phone", event.target.value)} /></label>

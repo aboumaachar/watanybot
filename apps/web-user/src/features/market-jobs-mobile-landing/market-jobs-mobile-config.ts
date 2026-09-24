@@ -1,4 +1,4 @@
-﻿import type { LandingConfig } from "./MobileFeatureLandingPage";
+import type { LandingConfig } from "./MobileFeatureLandingPage";
 
 export const marketMobileLandingConfig: LandingConfig = {
   id: "market",
@@ -30,6 +30,7 @@ export const marketMobileLandingConfig: LandingConfig = {
     { icon: "⚙️", label: "التصفية", value: "filter" },
   ],
   shortcuts: [
+    { icon: "🛡️", label: "الأمن والحماية", description: "فرصة عمل لدى ميدل إيست سيكوريتي لبنان", href: "/jobs/middle-east-security" },
     { icon: "🛍️", label: "تصفح السوق", description: "آخر الإعلانات المقبولة والموثوقة", href: "/marketplace?section=browse" },
     { icon: "➕", label: "إنشاء إعلان", description: "أضف بيعاً أو خدمة أو طلب شراء", href: "/marketplace?section=create" },
     { icon: "📋", label: "إعلاناتي", description: "راجع المنشور والمعلّق والمطلوب تعديله", href: "/marketplace?section=my-listings" },
@@ -166,7 +167,13 @@ export const jobsMobileLandingConfig: LandingConfig = {
   filters: [
     { icon: "✨", label: "الكل", value: "all" },
   ],
-  shortcuts: [],
+  shortcuts: [
+    { icon: "🧑‍💼", label: "جاهز للعمل", description: "انشر جاهزيتك ليعثر عليك أصحاب العمل المعتمدون", href: "/jobs/readiness" },
+    { icon: "📋", label: "طلباتي", description: "تابع حالة طلبات الوظائف المرتبطة بحسابك", href: "/jobs/applications" },
+    { icon: "🔎", label: "البحث عن مرشحين", description: "بحث الشركات المعتمدة عن المرشحين الجاهزين للعمل", href: "/jobs/candidates" },
+    { icon: "🏢", label: "بوابة أصحاب العمل", description: "اعتماد الشركة والوصول إلى أدوات التوظيف", href: "/jobs/employer" },
+    { icon: "💼", label: "وظائف أصحاب العمل", description: "فرص منشورة عبر نماذج التقديم الديناميكية", href: "/jobs/opportunities" },
+  ],
   categories: [
     { icon: "🏛️", label: "إدارة", description: "مكاتب وإدارة", href: "/jobs?sector=administration" },
     { icon: "🛡️", label: "أمن", description: "حراسة وسلامة", href: "/jobs?sector=security" },
@@ -199,7 +206,16 @@ export const jobsMobileLandingConfig: LandingConfig = {
       summary: "مساعد مدير مبنى – عين المريسة",
       badge: "تسجيل مفتوح",
       href: "/jobs/ain-mreisseh-building-assistant",
-    }
+},
+{
+  title: "فرصة عمل في الأمن والحماية",
+  company: "ميدل إيست سيكوريتي لبنان",
+  companyEnglish: "Middle East Security Lebanon",
+  location: "لبنان",
+  summary: "طلب انضمام إلى فريق ميدل إيست سيكوريتي لبنان بمعاش محترم وبحسب المؤهلات.",
+  badge: "تسجيل مفتوح",
+  href: "/jobs/middle-east-security",
+},
   ],
   sections: [
     {

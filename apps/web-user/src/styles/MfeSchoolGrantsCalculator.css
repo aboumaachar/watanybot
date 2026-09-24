@@ -1115,3 +1115,99 @@
     overscroll-behavior: contain;
   }
 }
+
+
+/* APEX_SCHOOL_GRANTS_COMPACT_INLINE_AD_VISIBILITY_V1 */
+@media (max-width: 768px) {
+  .popup-overlay:has(.aid-editor__picker-list) .popup-body {
+    padding: 6px !important;
+  }
+
+  .aid-editor__picker-intro {
+    gap: 4px;
+    padding: 6px 8px;
+    margin-bottom: 6px;
+    border-radius: 12px;
+    box-shadow: 0 3px 8px rgba(5, 49, 36, 0.06);
+  }
+
+  .aid-editor__picker-badges {
+    gap: 4px;
+  }
+
+  .aid-editor__picker-badge {
+    min-height: 26px;
+    padding: 3px 5px;
+    border-radius: 8px;
+    font-size: 10px;
+    line-height: 1.15;
+  }
+
+  .aid-editor__picker-list {
+    gap: 6px;
+  }
+
+  .aid-editor__item-card--popup {
+    padding: 8px;
+    border-radius: 14px;
+    box-shadow: 0 4px 12px rgba(5, 49, 36, 0.07);
+  }
+
+  .aid-editor__item-card--popup .aid-editor__item-main {
+    grid-template-columns: minmax(112px, 0.78fr) minmax(0, 1.22fr);
+    gap: 6px 8px;
+    align-items: stretch;
+  }
+
+  .aid-editor__popup-label {
+    padding: 4px 12px;
+    font-size: 14px;
+    line-height: 1.2;
+  }
+
+  .aid-editor__field-step {
+    min-height: 44px;
+    padding: 5px 6px;
+    border-radius: 10px;
+    font-size: 12px;
+    line-height: 1.25;
+    gap: 5px;
+  }
+
+  .aid-editor__field-step::before {
+    width: 24px;
+    height: 24px;
+    font-size: 12px;
+  }
+
+  .aid-editor__field--stacked {
+    padding: 4px;
+    border-radius: 10px;
+  }
+
+  .aid-editor__field--stacked select {
+    min-height: 44px;
+    padding: 6px 8px;
+    font-size: 14px;
+  }
+
+  .aid-editor__popup-footer {
+    gap: 6px;
+  }
+
+  .aid-editor__popup-footer-note {
+    padding: 5px 8px;
+    font-size: 11px;
+    line-height: 1.25;
+  }
+
+  .aid-editor__popup-actions {
+    gap: 8px;
+  }
+
+  .aid-editor__popup-actions .aid-editor__button {
+    min-height: 44px;
+    padding: 8px 12px;
+    font-size: 15px;
+  }
+}

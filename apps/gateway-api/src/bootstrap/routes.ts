@@ -20,6 +20,7 @@ import { advancedRoutes } from "../routes/advanced";
 import { authRoutes } from "../auth/auth-routes.js";
 import { otpRoutes } from "../auth/otp-routes.js";
 import { adminRulesRoutes } from "../routes/admin-rules.js";
+import { adminAdsRoutes } from "../routes/admin-ads.js";
 import { adminKbRoutes } from "../routes/admin-kb.js";
 import { adminKbStudioRoutes } from "../routes/admin-kb-studio.js";
 import { adminAiRoutes } from "../routes/admin-ai.js";
@@ -280,6 +281,7 @@ export async function registerRoutes(
   app.register(payloadSsoRoutes);
   app.register(otpRoutes);
   app.register(adminRulesRoutes);
+  app.register(adminAdsRoutes);
 
   app.register(adminKbRoutes, {
     kbSalariesDir,

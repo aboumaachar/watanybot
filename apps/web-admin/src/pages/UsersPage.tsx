@@ -3,7 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { adminFetch } from "../lib/api";
 import { ManageableList, type ManageableListAdapter } from "../components/ManageableList";
 import { executeBulkAction } from "../components/BulkActionFramework";
-import { AdminConfirmDialog, AdminDataTable, AdminDetailDrawer, AdminPagination, AdminSearchInput, AdminStatusBadge } from "../components/admin/AdminPrimitives";
+import { AdminConfirmDialog, AdminDetailDrawer, AdminPageHeader, AdminPagination, AdminSearchInput, AdminStatusBadge } from "../components/admin/AdminPrimitives";
 
 type User = {
   id: string;
@@ -97,35 +97,32 @@ export default function UsersPage() {
 
   return (
     <div>
-      <div className="page-header">
-        <h2>User Management</h2>
-        <p className="muted">Manage accounts, roles, and access control.</p>
-      </div>
+      <AdminPageHeader title="إدارة المستخدمين" description="حسابات المستخدمين وأدوارهم وحالات الوصول مملوكة لـ Gateway. لا تتم إعادة إنشاء السجلات المحمية للاختبار." />
 
       <div className="toolbar">
-        <AdminSearchInput value={search} onChange={(value) => setParams({ search: value, page: "1", limit: String(pageSize) })} placeholder="Search users by name or email" />
-        <select value={roleFilter} onChange={(event) => setParams({ search, role: event.target.value, status: statusFilter, page: "1", limit: String(pageSize) })} aria-label="Filter by role"><option value="">All roles</option><option value="public">Public</option><option value="accredited">Accredited</option><option value="driver">Driver</option><option value="moderator">Moderator</option><option value="admin">Admin</option><option value="superadmin">Super Admin</option></select>
-        <select value={statusFilter} onChange={(event) => setParams({ search, role: roleFilter, status: event.target.value, page: "1", limit: String(pageSize) })} aria-label="Filter by status"><option value="">All statuses</option><option value="active">Active</option><option value="suspended">Suspended</option><option value="banned">Banned</option></select>
+        <AdminSearchInput value={search} onChange={(value) => setParams({ search: value, page: "1", limit: String(pageSize) })} placeholder="البحث بالاسم أو البريد الإلكتروني" />
+        <select value={roleFilter} onChange={(event) => setParams({ search, role: event.target.value, status: statusFilter, page: "1", limit: String(pageSize) })} aria-label="التصفية حسب الدور"><option value="">كل الأدوار</option><option value="public">عام</option><option value="accredited">معتمد</option><option value="driver">سائق</option><option value="moderator">مشرف</option><option value="admin">مسؤول</option><option value="superadmin">مسؤول أعلى</option></select>
+        <select value={statusFilter} onChange={(event) => setParams({ search, role: roleFilter, status: event.target.value, page: "1", limit: String(pageSize) })} aria-label="التصفية حسب الحالة"><option value="">كل الحالات</option><option value="active">نشط</option><option value="suspended">موقوف</option><option value="banned">محظور</option></select>
         <button type="button" className="ghost" onClick={load}>
-          Refresh
+          تحديث
         </button>
         <button type="button" className="ghost" onClick={() => void activateSelected()} disabled={selectedIds.length === 0 || bulkPending}>
-          {bulkPending ? "Activating..." : "Activate selected"}
+          {bulkPending ? "جارٍ التفعيل..." : "تفعيل المحدد"}
         </button>
       </div>
 
       {error && <div className="alert" role="alert">{error}</div>}
 
       <div className="table-wrap">
-        {loading ? <p className="muted center">Loading…</p> : users.length === 0 ? <p className="muted center">No users found.</p> : <ManageableList adapter={{
+        {loading ? <p className="muted center">جارٍ التحميل...</p> : users.length === 0 ? <p className="muted center">لا يوجد مستخدمون.</p> : <ManageableList adapter={{
           featureId: "cms.user",
           domain: "CMS",
-          title: "User Management",
+          title: "إدارة المستخدمين",
           loadRows: async () => users,
           getRowId: (user) => user.id,
-          columns: ["Name", "Email", "Role", "Status", "Created", "Last Login", "Last Login IP", "Actions"],
+          columns: ["الاسم", "البريد الإلكتروني", "الدور", "الحالة", "تاريخ الإنشاء", "آخر دخول", "عنوان IP لآخر دخول", "الإجراءات"],
           renderRow: (u) => <>
-                  <td className="strong">{u.name || "—"}</td>
+                  <td className="strong" dir={/[\u0600-\u06ff]/u.test(u.name) ? "rtl" : "ltr"}>{u.name || "—"}</td>
                   <td>{u.email}</td>
                   <td>
                     <select
@@ -133,11 +130,11 @@ export default function UsersPage() {
                       onChange={(e) => setPendingAction({ userId: u.id, type: "role", value: e.target.value })}
                       className="role-select"
                     >
-                      <option value="public">Public</option>
-                      <option value="accredited">Accredited</option>
-                      <option value="moderator">Moderator</option>
-                      <option value="admin">Admin</option>
-                      <option value="superadmin">Super Admin</option>
+                      <option value="public">عام</option>
+                      <option value="accredited">معتمد</option>
+                      <option value="moderator">مشرف</option>
+                      <option value="admin">مدير</option>
+                      <option value="superadmin">مدير أعلى</option>
                     </select>
                   </td>
                   <td>
@@ -149,21 +146,21 @@ export default function UsersPage() {
                   <td>
                     {u.status === "active" ? (
                       <button type="button" className="ghost sm danger" onClick={() => setPendingAction({ userId: u.id, type: "status", value: "banned" })}>
-                        Ban
+                        حظر
                       </button>
                     ) : u.status === "banned" ? (
                       <button type="button" className="ghost sm" onClick={() => setPendingAction({ userId: u.id, type: "status", value: "active" })}>
-                        Unban
+                        إلغاء الحظر
                       </button>
                     ) : null}
-                    <button type="button" className="ghost sm" onClick={() => setSelectedUser(u)}>Details</button>
+                    <button type="button" className="ghost sm" onClick={() => setSelectedUser(u)}>التفاصيل</button>
                   </td>
                 </>
         } satisfies ManageableListAdapter<User>} rows={users} onSelectionChange={setSelectedIds} />}
       </div>
       <AdminPagination page={page} pageSize={pageSize} total={total} onPageChange={(nextPage) => setParams({ search, role: roleFilter, status: statusFilter, page: String(nextPage), limit: String(pageSize) })} />
-      {selectedUser ? <AdminDetailDrawer title={selectedUser.name || selectedUser.email} onClose={() => setSelectedUser(null)}><p>{selectedUser.email}</p><p>Role: {selectedUser.role}</p><p>Status: <AdminStatusBadge status={selectedUser.status} /></p><p>Created: {new Date(selectedUser.created_at).toLocaleString()}</p><p>Last login: {selectedUser.last_login ? new Date(selectedUser.last_login).toLocaleString() : "Never"}</p></AdminDetailDrawer> : null}
-      {pendingAction ? <AdminConfirmDialog title={pendingAction.type === "role" ? "Confirm role change" : "Confirm status change"} message={`Apply ${pendingAction.value} to this user? Server-side safety rules still apply.`} confirmLabel="Apply" onCancel={() => setPendingAction(null)} onConfirm={() => { const action = pendingAction; setPendingAction(null); void (action.type === "role" ? updateRole(action.userId, action.value) : updateStatus(action.userId, action.value)); }} /> : null}
+      {selectedUser ? <AdminDetailDrawer title={selectedUser.name || selectedUser.email} onClose={() => setSelectedUser(null)}><p>{selectedUser.email}</p><p>الدور: {selectedUser.role}</p><p>الحالة: <AdminStatusBadge status={selectedUser.status} /></p><p>تاريخ الإنشاء: {new Date(selectedUser.created_at).toLocaleString()}</p><p>آخر دخول: {selectedUser.last_login ? new Date(selectedUser.last_login).toLocaleString() : "لم يسجل الدخول"}</p></AdminDetailDrawer> : null}
+      {pendingAction ? <AdminConfirmDialog title={pendingAction.type === "role" ? "تأكيد تغيير الدور" : "تأكيد تغيير الحالة"} message={`هل تريد تطبيق ${pendingAction.value} على هذا المستخدم؟ تبقى قواعد الأمان من جهة الخادم سارية.`} confirmLabel="تطبيق" onCancel={() => setPendingAction(null)} onConfirm={() => { const action = pendingAction; setPendingAction(null); void (action.type === "role" ? updateRole(action.userId, action.value) : updateStatus(action.userId, action.value)); }} /> : null}
     </div>
   );
 }

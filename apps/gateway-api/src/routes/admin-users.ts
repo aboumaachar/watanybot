@@ -6,60 +6,70 @@ import { getClient, query } from "../lib/db.js";
 import { requireRole } from "../auth/rbac.js";
 import { broadcastToAdmins } from "../ws/admin-ws.js";
 import { createWSEvent } from "../ws/events.js";
+import {
+  appendAdminAuditEvent,
+  appendAdminAuditEventInTransaction,
+  createAdminAuditEvent,
+} from "../admin-authority/adminAuthorityAudit.js";
+
+function adminAuditContext(request: any) {
+  return {
+    requestId: request.id ? String(request.id) : undefined,
+    ip: request.ip ? String(request.ip) : undefined,
+    userAgent: request.headers?.["user-agent"] ? String(request.headers["user-agent"]) : undefined,
+  };
+}
 
 export async function adminUsersRoutes(app: FastifyInstance): Promise<void> {
   /* ────────────────────────────────────────────
      Users CRUD
      ──────────────────────────────────────────── */
 
-  /** GET /api/admin/users — list all users with optional search */
+  /** GET /api/admin/users — paged list with management-grade filters */
   app.get("/api/admin/users", { preHandler: [requireRole("admin")] }, async (request, reply) => {
-    const { search, role, status, limit = 100, offset = 0 } = request.query as {
+    const { search, role, status, lastLogin, limit = 25, offset = 0 } = request.query as {
       search?: string;
       role?: string;
       status?: string;
+      lastLogin?: string;
       limit?: number;
       offset?: number;
     };
 
     try {
-      let sql = "SELECT id, email, name, role, status, phone, rank, military_id, created_at, last_login, last_login_ip FROM users WHERE 1=1";
+      const clauses: string[] = [];
       const params: unknown[] = [];
-      let idx = 1;
-
-      if (search) {
-        sql += ` AND (name ILIKE $${idx} OR email ILIKE $${idx})`;
-        params.push(`%${search}%`);
-        idx++;
+      if (search?.trim()) {
+        params.push(`%${search.trim()}%`);
+        clauses.push(`(COALESCE(NULLIF(full_name,''),name,'') ILIKE $${params.length} OR COALESCE(email,'') ILIKE $${params.length} OR COALESCE(phone_number,phone,'') ILIKE $${params.length} OR id::text ILIKE $${params.length})`);
       }
-      if (role) {
-        sql += ` AND role = $${idx}`;
-        params.push(role);
-        idx++;
-      }
-      if (status) {
-        sql += ` AND status = $${idx}`;
-        params.push(status);
-        idx++;
-      }
-
-      sql += ` ORDER BY created_at DESC LIMIT $${idx} OFFSET $${idx + 1}`;
-      params.push(Number(limit), Number(offset));
-
-      const result = await query(sql, params);
-
-      const countParams = params.slice(0, params.length - 2);
-      let countSql = "SELECT COUNT(*) as total FROM users WHERE 1=1";
-      if (search) countSql += ` AND (name ILIKE $1 OR email ILIKE $1)`;
-      if (role) countSql += ` AND role = $${search ? 2 : 1}`;
-      if (status) countSql += ` AND status = $${[search, role].filter(Boolean).length + 1}`;
-      const countResult = await query(countSql, countParams);
-      const total = countResult.rows[0]?.total ?? 0;
-
-      return reply.send({ users: result.rows, total, limit: Number(limit), offset: Number(offset) });
+      if (role) { params.push(role); clauses.push(`role = $${params.length}`); }
+      if (status) { params.push(status); clauses.push(`status = $${params.length}`); }
+      if (lastLogin === "today") clauses.push("last_login >= CURRENT_DATE");
+      if (lastLogin === "never") clauses.push("last_login IS NULL");
+      if (lastLogin === "inactive30") clauses.push("(last_login IS NULL OR last_login < NOW() - INTERVAL '30 days')");
+      if (lastLogin === "inactive90") clauses.push("(last_login IS NULL OR last_login < NOW() - INTERVAL '90 days')");
+      const whereSql = clauses.length ? ` WHERE ${clauses.join(" AND ")}` : "";
+      const safeLimit = Math.max(1, Math.min(100, Number(limit) || 25));
+      const safeOffset = Math.max(0, Number(offset) || 0);
+      const countResult = await query(`SELECT COUNT(*)::int AS total FROM users${whereSql}`, params);
+      const dataParams = [...params, safeLimit, safeOffset];
+      const result = await query(
+        `SELECT id, email, COALESCE(NULLIF(full_name,''),name) AS name, role, status,
+                COALESCE(phone_number,phone) AS phone, rank, military_id, created_at, last_login, last_login_ip
+         FROM users${whereSql}
+         ORDER BY created_at DESC LIMIT $${params.length + 1} OFFSET $${params.length + 2}`,
+        dataParams,
+      );
+      return reply.send({
+        users: result.rows,
+        total: Number(countResult.rows[0]?.total || 0),
+        limit: safeLimit,
+        offset: safeOffset,
+      });
     } catch (err: any) {
       app.log.warn({ err: err.message }, "admin_users_list_fallback");
-      return reply.send({ users: [], total: 0 });
+      return reply.code(500).send({ error: "ADMIN_USERS_LIST_FAILED" });
     }
   });
 
@@ -80,6 +90,18 @@ export async function adminUsersRoutes(app: FastifyInstance): Promise<void> {
     const result = await query("DELETE FROM sessions WHERE id = $1 RETURNING id, user_id", [id]);
     if (!result.rowCount) return reply.code(404).send({ error: "SESSION_NOT_FOUND" });
     await query("INSERT INTO audit_log (user_id, action, resource, details) VALUES ($1, $2, $3, $4)", [adminUser?.id ?? null, "session.revoke", "sessions", JSON.stringify({ sessionId: id, userId: result.rows[0].user_id })]);
+    if (adminUser?.id) {
+      await appendAdminAuditEvent(createAdminAuditEvent({
+        eventType: "ADMIN_SESSION_REVOKE",
+        actorId: adminUser.id,
+        entityType: "session",
+        entityId: result.rows[0].id,
+        before: { userId: result.rows[0].user_id },
+        after: { revoked: true },
+        reason: "administrator_session_revoke",
+        ...adminAuditContext(request),
+      }));
+    }
     return reply.send({ ok: true });
   });
 
@@ -88,6 +110,17 @@ export async function adminUsersRoutes(app: FastifyInstance): Promise<void> {
     const adminUser = (request as any).user;
     const result = await query("DELETE FROM sessions WHERE user_id = $1 RETURNING id", [id]);
     await query("INSERT INTO audit_log (user_id, action, resource, details) VALUES ($1, $2, $3, $4)", [adminUser?.id ?? null, "session.revoke_all", "sessions", JSON.stringify({ userId: id, count: result.rowCount ?? 0 })]);
+    if (adminUser?.id) {
+      await appendAdminAuditEvent(createAdminAuditEvent({
+        eventType: "ADMIN_SESSION_REVOKE",
+        actorId: adminUser.id,
+        entityType: "user_sessions",
+        entityId: id,
+        after: { revokedCount: result.rowCount ?? 0 },
+        reason: "administrator_revoke_all_sessions",
+        ...adminAuditContext(request),
+      }));
+    }
     return reply.send({ ok: true, revoked: result.rowCount ?? 0 });
   });
 
@@ -144,6 +177,19 @@ export async function adminUsersRoutes(app: FastifyInstance): Promise<void> {
         "INSERT INTO audit_log (user_id, action, resource, details) VALUES ($1, $2, $3, $4)",
         [adminUser?.id ?? null, "user.role_change", "users", JSON.stringify({ targetUserId: id, newRole: role })],
       );
+
+      if (adminUser?.id) {
+        await appendAdminAuditEventInTransaction(client, createAdminAuditEvent({
+          eventType: "ADMIN_ROLE_CHANGE",
+          actorId: adminUser.id,
+          entityType: "user",
+          entityId: id,
+          before: { role: target.rows[0].role },
+          after: { role },
+          reason: "administrator_role_change",
+          ...adminAuditContext(request),
+        }));
+      }
 
       await client.query("COMMIT");
 
@@ -204,6 +250,19 @@ export async function adminUsersRoutes(app: FastifyInstance): Promise<void> {
         "INSERT INTO audit_log (user_id, action, resource, details) VALUES ($1, $2, $3, $4)",
         [adminUser?.id ?? null, "user.status_change", "users", JSON.stringify({ targetUserId: id, newStatus: status })],
       );
+
+      if (adminUser?.id && (status === "suspended" || status === "active")) {
+        await appendAdminAuditEventInTransaction(client, createAdminAuditEvent({
+          eventType: status === "suspended" ? "ADMIN_USER_SUSPEND" : "ADMIN_USER_REACTIVATE",
+          actorId: adminUser.id,
+          entityType: "user",
+          entityId: id,
+          before: { status: target.rows[0].status },
+          after: { status },
+          reason: status === "suspended" ? "administrator_user_suspend" : "administrator_user_reactivate",
+          ...adminAuditContext(request),
+        }));
+      }
 
       await client.query("COMMIT");
 

@@ -10,6 +10,7 @@ import {
   type AinMreissehBuildingAssistantAdminPatch,
   type AinMreissehBuildingAssistantApplicationInput,
 } from "./ainMreissehBuildingAssistant.types.js";
+import { ensureAndLinkJobApplicant } from "../../../civilian-jobs/job-applicant-accounts.js";
 
 function requireAdminOrSuperadmin(request: any, reply: any): boolean {
   const role = String(request.user?.role ?? "").toUpperCase();
@@ -27,8 +28,22 @@ function errorCode(error: unknown): string {
 export async function registerAinMreissehBuildingAssistantRoutes(app: FastifyInstance) {
   app.post("/api/jobs/ain-mreisseh-building-assistant/applications", async (request: any, reply) => {
     try {
-      const item = await createAinMreissehBuildingAssistantApplication((request.body ?? {}) as AinMreissehBuildingAssistantApplicationInput);
-      return reply.code(201).send({ item });
+      const body = (request.body ?? {}) as AinMreissehBuildingAssistantApplicationInput;
+      const item = await createAinMreissehBuildingAssistantApplication(body);
+      let accountLinkPending = false;
+      try {
+        await ensureAndLinkJobApplicant({
+          applicationId: item.id,
+          campaignId: "ain-mreisseh-building-assistant",
+          name: String(body.name ?? ""),
+          phone: String(body.phone ?? ""),
+          email: body.email ? String(body.email) : null,
+        });
+      } catch (accountError) {
+        accountLinkPending = true;
+        request.log.error({ err: accountError, applicationId: item.id, campaignId: "ain-mreisseh-building-assistant" }, "job_applicant_account_link_failed");
+      }
+      return reply.code(201).send({ item, accountLinkPending });
     } catch (error) {
       const code = errorCode(error);
       const clientErrors = new Set([

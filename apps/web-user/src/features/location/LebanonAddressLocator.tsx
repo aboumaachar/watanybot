@@ -15,6 +15,7 @@ export type LebanonAddressValue = {
   governorateId?: string;
   districtOrEquivalentId?: string;
   localityId?: string;
+  localityPcode?: string;
   locationDatasetVersion?: string;
   locationApprovalStatus?: string;
 };
@@ -26,6 +27,7 @@ type LebanonAddressLocatorProps = {
   onChange?: (value: LebanonAddressValue) => void;
   required?: boolean;
   disabled?: boolean;
+  includeExactAddress?: boolean;
   className?: string;
 };
 
@@ -36,6 +38,7 @@ export function LebanonAddressLocator({
   onChange,
   required = false,
   disabled = false,
+  includeExactAddress = true,
   className = "",
 }: LebanonAddressLocatorProps) {
   const [runtime, setRuntime] = useState<CanonicalRuntime | null>(null);
@@ -59,7 +62,8 @@ export function LebanonAddressLocator({
   const cazaOptions = useMemo(() => {
     if (!mohafaza) return [];
     const governorate = runtime?.governorates.find((item) => item.nameAr === mohafaza);
-    return runtime?.districts.filter((item) => item.governorateId === governorate?.id).map((item) => item.nameAr) ?? [];
+    const districtNodes = [...(runtime?.districts ?? []), ...(runtime?.districtEquivalents ?? [])];
+    return districtNodes.filter((item) => item.governorateId === governorate?.id).map((item) => item.nameAr);
   }, [runtime, mohafaza]);
 
   const villageOptions = useMemo(() => {
@@ -77,7 +81,7 @@ export function LebanonAddressLocator({
   const displayAddress = [mohafaza, caza, village, exactAddress].filter(Boolean).join(" - ");
 
   useEffect(() => {
-    onChange?.({ mohafaza, caza, village, exactAddress, displayAddress, source: "universal-locator", status: runtime ? "approvedCanonical" : "loading", governorateId: selectedGovernorate?.id, districtOrEquivalentId: selectedDistrict?.id, localityId: selectedLocality?.id, locationDatasetVersion: runtime?.datasetVersion, locationApprovalStatus: runtime?.approvalStatus });
+    onChange?.({ mohafaza, caza, village, exactAddress, displayAddress, source: "universal-locator", status: runtime ? "approvedCanonical" : "loading", governorateId: selectedGovernorate?.id, districtOrEquivalentId: selectedDistrict?.id, localityId: selectedLocality?.id, localityPcode: selectedLocality?.pcode, locationDatasetVersion: runtime?.datasetVersion, locationApprovalStatus: runtime?.approvalStatus });
   }, [mohafaza, caza, village, exactAddress, displayAddress, onChange, runtime, selectedGovernorate, selectedDistrict, selectedLocality]);
 
   return (
@@ -146,7 +150,7 @@ export function LebanonAddressLocator({
           </label>
         ) : null}
 
-        {mohafaza && caza && village ? (
+        {includeExactAddress && mohafaza && caza && village ? (
           <label className="lebanon-address-locator__field lebanon-address-locator__field--wide" data-stage="exact-address-visible-after-village">
             <span>العنوان التفصيلي</span>
             <textarea

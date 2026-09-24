@@ -1818,6 +1818,7 @@ type AuthenticatedProfilePayload = {
   region?: string | null;
   note?: string | null;
   profile_completed?: boolean | null;
+  must_change_password?: boolean | null;
   phone_verified_at?: string | null;
   last_login?: string | number | null;
 };
@@ -1883,6 +1884,9 @@ function mapAuthenticatedProfile(user: AuthenticatedProfilePayload, fallback?: U
 
   if (typeof user.profile_completed === "boolean") {
     next.profileCompleted = user.profile_completed;
+  }
+  if (typeof user.must_change_password === "boolean") {
+    next.mustChangePassword = user.must_change_password;
   }
 
   if (lastLogin !== undefined) {
@@ -2518,7 +2522,7 @@ export const api = {
   },
 
   async salaryCalc(
-    params: { rank: string; degree: number; married: boolean; kidsCount: number; selectedOrnaments: string[] },
+    params: { rank: string; degree: number; married: boolean; kidsCount: number; selectedOrnaments: string[]; exactVetSalary?: number },
     baseUrl = API_URL,
   ): Promise<PensionCalcResult> {
     const res = await fetch(`${baseUrl}/api/salary/calc`, {

@@ -7,6 +7,7 @@ import {
   listSeasonalAppleJobApplications,
   updateSeasonalAppleJobApplication,
 } from './seasonalAppleJob.repository';
+import { ensureAndLinkJobApplicant } from '../../../civilian-jobs/job-applicant-accounts.js';
 
 type CreateApplicationBody = Parameters<typeof createSeasonalAppleJobApplication>[0];
 type UpdateApplicationBody = Parameters<typeof updateSeasonalAppleJobApplication>[1];
@@ -72,10 +73,24 @@ export async function seasonalAppleJobRouter(app: FastifyInstance): Promise<void
       try {
         const body = request.body as CreateApplicationBody;
         const application = await createSeasonalAppleJobApplication(body);
+        let accountLinkPending = false;
+        try {
+          await ensureAndLinkJobApplicant({
+            applicationId: application.id,
+            campaignId: 'seasonal-apple-job-2026-tannourine',
+            name: String(body.name ?? ''),
+            phone: String(body.phone ?? ''),
+            email: body.email ? String(body.email) : null,
+          });
+        } catch (accountError) {
+          accountLinkPending = true;
+          request.log.error({ err: accountError, applicationId: application.id, campaignId: 'seasonal-apple-job-2026-tannourine' }, 'job_applicant_account_link_failed');
+        }
         return reply.code(201).send({
           ok: true,
           message: 'تم تسجيل الطلب بنجاح',
           applicationId: application.id,
+          accountLinkPending,
           application,
         });
       } catch (error) {

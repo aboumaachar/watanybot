@@ -1,10 +1,11 @@
-﻿import { WatanyFeatureTemplate } from "../components/template";
+import { WatanyFeatureTemplate } from "../components/template";
 import { MfeSchoolGrantsCalculator } from "../components/MfeSchoolGrantsCalculator";
 import { SchoolAidsRequiredFormsPanel } from "../features/school-aids/SchoolAidsRequiredFormsPanel";
 import { getSchoolAidRequiredItem } from "../features/school-aids/schoolAidsRequiredItems";
 import { openSchoolAidViewer } from "../features/school-aids/openSchoolAidViewer";
 import { WatanyAppIcon } from "../components/watanybot/WatanyAppIcon";
 import { PopupModal } from "../components/PopupModal";
+import { FeatureAdSensePlacement } from "../components/ads/FeatureAdSensePlacement";
 import type { SchoolFormIconName } from "../theme/watany-v4/schoolFormIconRegistry";
 import { useEffect, useMemo, useState } from "react";
 // APEX_CSS_FREEZE_DISABLED_IMPORT import "../components/watanybot/watany-drawer.css";
@@ -136,6 +137,8 @@ function SchoolGrantsPageTemplateContent() {
       {childPopup === "calculator" ? (
         <MfeSchoolGrantsCalculator key={calculatorMountKey} initialView="calculator" />
       ) : null}
+
+      <FeatureAdSensePlacement featureId="school-grants" placement="bottom" />
 
       <PopupModal
         open={childPopup !== "none" && childPopup !== "calculator"}

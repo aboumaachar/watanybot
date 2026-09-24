@@ -85,7 +85,7 @@
 })();
 </script>
 <!-- WATANY_V1_INTERIM_STABILIZER_BOOTSTRAP_END -->
-<script src="/watany-public-runtime-scope-v1.js?v=20260922-public-api-base-origin-v1" data-watany-public-runtime-scope="v1" data-watany-public-api-base="same-origin"></script>
+<script defer src="/watany-public-runtime-scope-v1.js" data-watany-public-runtime-scope="v1"></script>
 <!-- APEX:WATANY_V1_UNIVERSAL_FORM_VIEWER_TEMPLATE_BEGIN -->
 <script defer data-apex="watany-v1-universal-form-viewer-v183" src="/watany-v1-universal-form-viewer-v183.js"></script>
 <!-- APEX:WATANY_V1_UNIVERSAL_FORM_VIEWER_TEMPLATE_END -->
@@ -184,6 +184,22 @@ html.watany-no-theme-transitions *, html.watany-no-theme-transitions *::before, 
     gtag('js', new Date());
     gtag('config', 'G-EET1ZRFHB4');
   </script>
+  <style data-apex-salary-medals-visual-viewport="20260921">
+    @media (max-width: 640px) {
+      html[data-apex-theme="v274"] body .popup-overlay:has(.sc-medals-step) {
+        padding-block-start: 8px !important;
+        padding-block-end: max(8px, env(safe-area-inset-bottom)) !important;
+      }
+      html[data-apex-theme="v274"] body .popup-overlay:has(.sc-medals-step) .popup-body {
+        flex: 1 1 auto !important;
+        min-height: 0 !important;
+        padding-bottom: max(24px, calc(env(safe-area-inset-bottom) + 16px)) !important;
+        scroll-padding-bottom: max(24px, calc(env(safe-area-inset-bottom) + 16px));
+        overscroll-behavior-y: contain;
+        -webkit-overflow-scrolling: touch;
+      }
+    }
+  </style>
 </head>
 <body data-watany-theme="canonical-v2">
     <div id="root">
@@ -310,5 +326,6 @@ html.watany-no-theme-transitions *, html.watany-no-theme-transitions *::before, 
       try { window.__WATANY_DISABLE_WORLD_CUP_RUNTIME__ = true; } catch (e) { /* ignore */ }
     </script>
     <script defer src="/watany-v1-world-cup-nine-icons-v170.js"></script>
-</body>
+    <script defer src="/watany-feature-ads-v6.js"></script>
+  </body>
 </html>

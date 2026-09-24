@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { WatanyFeatureTemplate } from "../components/template";
+import { FeatureAdSensePlacement } from "../components/ads/FeatureAdSensePlacement";
 import { api } from "../lib/api";
 import { useApp } from "../store/app";
 import type { RecruitmentAnnouncement } from "../types/domain";
@@ -51,6 +52,20 @@ export default function CircularsPage() {
       .includes(normalizedQuery));
   }, [items, query]);
 
+  const adIndex = Math.min(3, visibleItems.length);
+  const renderCircular = (item: RecruitmentAnnouncement) => (
+    <article className="jobs-card" key={item.id}>
+      <div className="jobs-card__header"><span className="jobs-badge jobs-badge--veteran">{item.status}</span></div>
+      <h2>{item.title}</h2>
+      <p className="jobs-card__employer">{item.apparatusName}</p>
+      <div className="jobs-card__meta">
+        <span>{formatDate(item.startDate || item.createdAt)}</span>
+        {item.announcementNumber ? <span>{item.announcementNumber}</span> : null}
+      </div>
+      {item.sourceUrl ? <a href={item.sourceUrl} target="_blank" rel="noreferrer">فتح المصدر</a> : null}
+    </article>
+  );
+
   return (
     <WatanyFeatureTemplate category="updates" title="التعاميم">
       <section data-watany-feature-route="circulars" className="jobs-page" dir="rtl">
@@ -65,18 +80,13 @@ export default function CircularsPage() {
         {!loading && !error && visibleItems.length === 0 ? <div className="jobs-empty">لا توجد تعاميم مطابقة حالياً.</div> : null}
 
         <section className="jobs-grid" aria-label="لائحة التعاميم">
-          {visibleItems.map((item) => (
-            <article className="jobs-card" key={item.id}>
-              <div className="jobs-card__header"><span className="jobs-badge jobs-badge--veteran">{item.status}</span></div>
-              <h2>{item.title}</h2>
-              <p className="jobs-card__employer">{item.apparatusName}</p>
-              <div className="jobs-card__meta">
-                <span>{formatDate(item.startDate || item.createdAt)}</span>
-                {item.announcementNumber ? <span>{item.announcementNumber}</span> : null}
-              </div>
-              {item.sourceUrl ? <a href={item.sourceUrl} target="_blank" rel="noreferrer">فتح المصدر</a> : null}
-            </article>
-          ))}
+          {visibleItems.slice(0, adIndex).map(renderCircular)}
+          {visibleItems.length > 0 ? (
+            <div key="listing-ad" style={{ gridColumn: "1 / -1" }}>
+              <FeatureAdSensePlacement featureId="circulars" placement="listing" />
+            </div>
+          ) : null}
+          {visibleItems.slice(adIndex).map(renderCircular)}
         </section>
       </section>
     </WatanyFeatureTemplate>
