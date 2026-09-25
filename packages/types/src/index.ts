@@ -487,6 +487,7 @@ export type UserProfile = {
   phoneVerifiedAt?: string;
   profileCompleted?: boolean;
   mustChangePassword?: boolean;
+  identityVerificationRequired?: boolean;
 };
 
 /* â”€â”€ Documents â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
