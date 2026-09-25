@@ -887,3 +887,20 @@ FAIL_CLOSED=YES
 - Root cause class: proof-environment permission mismatch masquerading as source-file absence.
 - Permanent guard: do not treat non-root TS6053 on root-only production files as product absence; verify file existence/permissions and use root controller or an authorized readable clone for gateway proof.
 - Repair rule: no product mutation from this class; continue with independent readable proofs and the root fail-closed controller.
+
+### SALARY_PRE2019_PRODUCTION_BROWSER_CONSOLE_400_UNATTRIBUTED
+- Status: ACTIVE_DIAGNOSTIC
+- Discovered: 2026-09-25
+- Failure: the first live mobile browser closeout passed every salary UI/API assertion but captured one generic browser console error: `Failed to load resource: the server responded with a status of 400 ()`.
+- Risk: an unexplained HTTP 400 could represent an unrelated third-party/advisory browser request or an unobserved first-party regression; it must not be silently ignored in final deployment proof.
+- Guard: capture console source location and every production response with HTTP >=400 in a fresh touch/mobile browser run; classify first-party salary/runtime failures separately from unrelated third-party/advisory noise before final PASS.
+- Repair rule: do not mutate product code from the generic console string alone; require URL/status/source evidence first.
+- Disposition: DIAGNOSTIC_REQUIRED_BEFORE_FINAL_CLOSEOUT
+
+### SALARY_PRE2019_PRODUCTION_BROWSER_CONSOLE_400_UNATTRIBUTED — RESOLUTION
+- Resolved: 2026-09-25
+- Diagnostic: fresh mobile/touch production run captured `CONSOLE_ERRORS=0`, `BAD_RESPONSES=0`, `PAGE_ERRORS=0`.
+- Request failures: six `net::ERR_ABORTED` requests, all third-party Google Analytics/Google Ads endpoints; no first-party WatanyBot salary request failed.
+- Classification: advisory third-party browser noise, not a salary/runtime defect.
+- Final guard: production PASS requires first-party salary/API responses green, page errors zero, and any third-party request aborts explicitly classified.
+- Disposition: RESOLVED_ADVISORY_THIRD_PARTY_NOISE
