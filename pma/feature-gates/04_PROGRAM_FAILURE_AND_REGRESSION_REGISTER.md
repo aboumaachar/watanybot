@@ -869,3 +869,21 @@ FAIL_CLOSED=YES
 - Root cause class: broad substring failure-token scan over verification filenames rather than verification status fields.
 - Permanent guard: match verification status/error syntax such as : FAILED, : WARNING, NOT FOUND, or missing-file diagnostics; warnings.csv: OK must be accepted.
 - Repair rule: repair the verifier predicate, then rerun full controller syntax, guard-token, manifest, failure-path, and success-path evidence checks before deployment retry.
+
+### SALARY_DEPLOY_SECONDARY_OVERLAY_MANIFEST_DRIFT_DEFECT
+- Status: ACTIVE
+- Discovered: 2026-09-25
+- Failure: root deployment candidate failed `CANDIDATE_OVERLAY_MANIFEST_FAILED` after the repaired overlay hash changed but `MANIFEST.sha256` still contained the previous `packages/types/src/index.ts` hash.
+- Evidence: staged overlay `packages/types/src/index.ts` SHA256 is `05d729b7...e578`, while `MANIFEST.sha256` still expected `f7dff61f...808d`; `STAGE_MANIFEST.sha256` had been resealed against the overlay but did not include `MANIFEST.sha256` itself.
+- Root cause class: dual-manifest drift; the secondary candidate manifest was mutable/unsealed relative to the stage integrity manifest.
+- Permanent guard: `MANIFEST.sha256` must be regenerated from the exact nine overlay bytes after every overlay mutation and must itself be included in `STAGE_MANIFEST.sha256` before root execution.
+- Repair rule: regenerate both manifests, re-run complete stage/parser/semantic/typecheck/build/runtime preflight, and only then retry the same root controller.
+
+### SALARY_DEPLOY_NONROOT_GATEWAY_TYPECHECK_PERMISSION_FALSE_MISSING_DEFECT
+- Status: ACTIVE
+- Discovered: 2026-09-25
+- Failure: non-root diagnostic typecheck on the failed production-derived candidate reported TS6053 for `apps/gateway-api/src/scripts/import-wordpress-legacy-users.ts` even though the file exists.
+- Evidence: current and candidate both contain the file as `-rw------- root root`; dcagent cannot read/hash it, while the earlier root controller gateway typecheck/build passed on the same production authority.
+- Root cause class: proof-environment permission mismatch masquerading as source-file absence.
+- Permanent guard: do not treat non-root TS6053 on root-only production files as product absence; verify file existence/permissions and use root controller or an authorized readable clone for gateway proof.
+- Repair rule: no product mutation from this class; continue with independent readable proofs and the root fail-closed controller.
