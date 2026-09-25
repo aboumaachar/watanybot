@@ -860,3 +860,12 @@ FAIL_CLOSED=YES
 - Root cause class: stale whole-file overlay overwrote a newer unrelated contract on the production authority branch.
 - Permanent guard: reconcile every overlaid file against current production authority; preserve unrelated newer symbols; require baseline and candidate typecheck/build before cutover.
 - Repair rule: reconcile the complete file, then rerun semantic, typecheck, build, manifest, and runtime proof; do not patch only the observed failing line.
+
+### APEX_REPORT_MANIFEST_WARNINGS_FILENAME_FALSE_FAILURE
+- Status: ACTIVE
+- Discovered: 2026-09-25
+- Failure: salary deployment report sealing always failed because the verifier scanned report-manifest-verify.txt for case-insensitive token WARNING, which falsely matched the successful filename line ./warnings.csv: OK.
+- Evidence: seal_report runs sha256sum -c and then rejects FAILED|NOT FOUND|WARNING anywhere in the verification output; the mandatory warnings.csv filename therefore guarantees a false failure even when every hash is OK.
+- Root cause class: broad substring failure-token scan over verification filenames rather than verification status fields.
+- Permanent guard: match verification status/error syntax such as : FAILED, : WARNING, NOT FOUND, or missing-file diagnostics; warnings.csv: OK must be accepted.
+- Repair rule: repair the verifier predicate, then rerun full controller syntax, guard-token, manifest, failure-path, and success-path evidence checks before deployment retry.
