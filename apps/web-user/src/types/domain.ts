@@ -56,6 +56,8 @@ export type {
   RankInfo,
   OrnamentChoice,
   SalaryMeta,
+  SalaryDegreeInference,
+  SalaryPre2019DegreeInference,
   LiveSession,
   PensionCalcResult,
   CaseItem,

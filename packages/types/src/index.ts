@@ -220,12 +220,63 @@ export type SalaryMeta = {
   usdRate: number;
 };
 
+export type SalaryDegreeInference = {
+  rank: string;
+  exactVetSalary: number;
+  lookupDegree: number;
+  wholeEquivalentDegree: number;
+  equivalentDegree: number;
+  fractionOfDegree: number;
+  fractionPercent: number;
+  lowerVetSalary: number;
+  nextVetSalary: number | null;
+  veteranStep: number;
+  maxPublishedDegree: number;
+  status: "exact_degree" | "fractional_within_scale" | "extrapolated_above_max";
+};
+
+export type SalaryPre2019DegreeInference = {
+  rank: string;
+  pre2019BaseSalary: number;
+  lookupDegree: number;
+  wholeEquivalentDegree: number;
+  equivalentDegree: number;
+  fractionOfDegree: number;
+  fractionPercent: number;
+  lowerPre2019BaseSalary: number;
+  nextPre2019BaseSalary: number | null;
+  pre2019Step: number;
+  effectiveVetSalary: number;
+  lowerVetSalary: number;
+  nextVetSalary: number | null;
+  veteranStep: number;
+  maxPublishedDegree: number;
+  status: "exact_degree" | "fractional_within_scale" | "extrapolated_above_max";
+};
+
 export type PensionCalcResult = {
   ok: boolean;
-  input: { rank: string; degree: number; category: string; married: boolean; kidsCount: number; selectedOrnaments: string[] };
+  input: {
+    rank: string;
+    degree: number;
+    degreeSource?: "selected" | "inferred_from_exact_veteran_salary" | "inferred_from_pre2019_base_salary";
+    category: string;
+    married: boolean;
+    kidsCount: number;
+    selectedOrnaments: string[];
+    exactVetSalary?: number;
+    pre2019BaseSalary?: number;
+  };
   breakdown: {
     basicSalary: number;
+    degreeInference?: SalaryDegreeInference | SalaryPre2019DegreeInference;
+    canonicalVetSalary: number;
     vetSalary: number;
+    veteranSalaryAdjustment: number;
+    maxSingleDegreeVeteranAdjustment: number;
+    fractionOfDegree: number;
+    veteranSalaryAdjustmentStatus: "canonical" | "explicit_below_canonical" | "within_one_degree" | "explicit_above_one_degree";
+    eligibleBase: number;
     deduction15Pct: number;
     equipment: number;
     driver: number;
@@ -435,6 +486,7 @@ export type UserProfile = {
   phoneVerified?: boolean;
   phoneVerifiedAt?: string;
   profileCompleted?: boolean;
+  mustChangePassword?: boolean;
 };
 
 /* â”€â”€ Documents â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */

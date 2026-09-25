@@ -89,7 +89,7 @@
     {
       "rank": "عقيد",
       "category": "الضباط القادة",
-      "maxDegree": 13
+      "maxDegree": 12
     },
     {
       "rank": "عميد",
@@ -112,7 +112,7 @@
       "id": "cedar_knight",
       "name_ar": "وسام الأرز — فارس",
       "annualValue": 750000,
-      "monthlyValue": 62500
+      "monthlyValue": 62000
     },
     {
       "id": "cedar_officer",
@@ -142,7 +142,7 @@
       "id": "military_medal",
       "name_ar": "الميدالية العسكرية",
       "annualValue": 593500,
-      "monthlyValue": 49458
+      "monthlyValue": 49000
     }
   ],
   "note_ar": "جدول الرواتب يحتوي على جميع القيم المُحتسبة مسبقاً. يُضاف فقط: تعويض عائلي + أوسمة.",
@@ -154,7 +154,7 @@
         "family_allowance",
         "ornaments"
       ],
-      "min_total_including_base": 500000,
+      "min_total_including_base": 5000000,
       "max_increase": 12000000
     },
     "decree_11227": {
@@ -187,5 +187,9 @@
       "type": "fixed",
       "amount": 12000000
     }
-  }
+  },
+  "sourceVersion": "official-tables-18-22-2026-09-22",
+  "sourceFiles": [
+    "kb/salaries/officialSalaryAuthority2026.json"
+  ]
 }
