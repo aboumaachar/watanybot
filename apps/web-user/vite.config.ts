@@ -68,6 +68,11 @@ export default defineConfig(({ mode }) => {
           changeOrigin: true,
           ws: true,
         },
+        "/ws": {
+          target: devProxyTarget,
+          changeOrigin: true,
+          ws: true,
+        },
       },
     },
     build: {

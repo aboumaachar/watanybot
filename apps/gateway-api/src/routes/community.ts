@@ -1,5 +1,5 @@
 import { promises as fs } from "node:fs";
-import { createHash } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
 import path from "node:path";
 import type { FastifyPluginAsync } from "fastify";
 import type {
@@ -53,6 +53,7 @@ import {
   updateCommunityGroup,
   warnCommunityGroupMember,
 } from "../community/service.js";
+import { getOrCreateDirectThread, listDirectContacts, listDirectThreads } from "../community/direct-service.js";
 import {
   buildCommunityAttachmentContentUrl,
   ensureCommunityAttachmentStorage,
@@ -149,7 +150,7 @@ export interface CommunityRoutesOptions {
 }
 
 function defaultId(prefix: string): string {
-  return `${prefix}_${Math.random().toString(36).slice(2, 10)}`;
+  return `${prefix}_${randomUUID()}`;
 }
 
 function parseReplyPreview(value: unknown): CommunityMessage["replyToPreview"] | undefined {
@@ -849,6 +850,42 @@ export const communityRoutes: FastifyPluginAsync<CommunityRoutesOptions> = async
       return overview;
     });
   }
+
+  app.get<{ Querystring: { q?: string } }>("/api/community/direct/contacts", async (req, reply) => {
+    const context: CommunityTelemetryContext = { action: "direct_contacts", actorId: req.user?.id, actorRole: req.user?.role || "public" };
+    const actor = resolveAuthenticatedActor(req, reply, emit, context);
+    if (!actor) return;
+    if (!await ensureCommunityFeatures(reply, emit, getFeatureFlag, ["community.entry.enabled", "community.threads.enabled"], context)) return;
+    const contacts = await withPersistenceTelemetry(emit, context, async () => listDirectContacts(actor.id, req.query?.q || ""));
+    emit("community.read", "info", { ...context, contactCount: contacts.length });
+    return { contacts };
+  });
+
+  app.get("/api/community/direct", async (req, reply) => {
+    const context: CommunityTelemetryContext = { action: "direct_threads", actorId: req.user?.id, actorRole: req.user?.role || "public" };
+    const actor = resolveAuthenticatedActor(req, reply, emit, context);
+    if (!actor) return;
+    if (!await ensureCommunityFeatures(reply, emit, getFeatureFlag, ["community.entry.enabled", "community.threads.enabled"], context)) return;
+    const threads = await withPersistenceTelemetry(emit, context, async () => listDirectThreads({ id: actor.id, role: actor.role }));
+    emit("community.read", "info", { ...context, threadCount: threads.length });
+    return { threads };
+  });
+
+  app.post<{ Body: { recipientUserId?: string } }>("/api/community/direct", async (req, reply) => {
+    const context: CommunityTelemetryContext = { action: "direct_create", actorId: req.user?.id, actorRole: req.user?.role || "public" };
+    const actor = resolveAuthenticatedActor(req, reply, emit, context);
+    if (!actor) return;
+    if (!await ensureCommunityFeatures(reply, emit, getFeatureFlag, ["community.entry.enabled", "community.threads.enabled", "community.writes.enabled"], context)) return;
+    const recipientUserId = typeof req.body?.recipientUserId === "string" ? req.body.recipientUserId.trim() : "";
+    if (!recipientUserId) { reply.code(400); return { error: "direct_recipient_required" }; }
+    const result = await withPersistenceTelemetry(emit, context, async () => getOrCreateDirectThread({ id: actor.id, role: actor.role }, recipientUserId));
+    if (!result.ok) {
+      const status = result.code === "direct_recipient_not_found" ? 404 : 400;
+      reply.code(status); return { error: result.code };
+    }
+    emit("community.write", "info", { ...context, groupId: result.value.groupId, targetUserId: result.value.peer.id });
+    return result.value;
+  });
 
   app.get("/api/community/groups", async (req, reply) => {
     const context: CommunityTelemetryContext = {

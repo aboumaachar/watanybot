@@ -1,19 +1,4 @@
-﻿import { WatanyHybridDefaultChat } from "../features/hybrid-chat/WatanyHybridDefaultChat";
+export { default, default as GroupChatsPage } from "./CommunityThreadsPage";
 
-type HybridDefaultSurfaceProps = Record<string, unknown>;
-
-export function GroupChatsPage(props: HybridDefaultSurfaceProps) {
-  return (
-    <WatanyHybridDefaultChat
-      {...props}
-      surfaceId="group-chats-page"
-      title="مساعد موطني"
-      preserveCommunityChat={true}
-    />
-  );
-}
-
-export const hybridDefaultSourcePath = "apps/web-user/src/pages/GroupChatsPage.tsx";
-export const hybridDefaultModuleKind = "page";
-
-export default GroupChatsPage;
+export const groupChatsCanonicalOwner = "apps/web-user/src/pages/CommunityThreadsPage.tsx";
+export const groupChatsCompatibilityAlias = true;

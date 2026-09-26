@@ -104,6 +104,11 @@ function getStoredApiBaseUrl(): string | null {
 }
 
 function getPreferredWebSocketApiBaseUrl(port = DEFAULT_GATEWAY_PORT): string {
+  const devProxyBase = getDevProxyApiBaseUrl();
+  if (devProxyBase) {
+    return devProxyBase;
+  }
+
   const candidates = uniqueApiBases([
     getForcedApiBaseUrl(),
     getConfiguredApiBaseUrl(port),

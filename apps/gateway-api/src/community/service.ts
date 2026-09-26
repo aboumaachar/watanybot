@@ -1434,6 +1434,8 @@ async function fetchGroupRows(executor: QueryExecutor, viewer: CommunityViewer |
   if (groupId) {
     params.push(groupId);
     sql += ` WHERE g.id = $2`;
+  } else {
+    sql += ` WHERE g.conversation_kind = 'group'`;
   }
 
   const result = await executor.query(sql, params);
@@ -3362,7 +3364,9 @@ export async function addCommunityMessage(
             deleted_for_everyone_at,
             deleted_for_everyone_by,
             is_pinned,
-            client_request_id
+            client_request_id,
+            is_forwarded,
+            forward_source_message_id
           FROM community_messages
           WHERE group_id = $1
             AND sender_id = $2
