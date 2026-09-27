@@ -268,6 +268,7 @@ else
   migration_rc=$?
 fi
 printf '%s\n' "$migration_rc" > "$EVIDENCE/release-migrate.rc"
+proof_database_url="$migration_database_url"
 migration_database_url=''
 [ "$migration_rc" -eq 0 ] || fail RELEASE-MIGRATE_EXIT "rc=$migration_rc stderr=$EVIDENCE/release-migrate.err"
 [ ! -s "$EVIDENCE/release-migrate.err" ] || fail RELEASE-MIGRATE_STDERR_NONZERO "$EVIDENCE/release-migrate.err"
@@ -376,11 +377,12 @@ assert_proof ai-browser
 cd "$RELEASE"
 run_gate saved-live "$NODE" --env-file="$RELEASE/apps/gateway-api/.env" --import tsx "$RELEASE/.pma/chat-convergence-proofs/chat-live-saved-proof.ts"
 assert_proof saved-live
-if env HOME=/home/dcagent PLAYWRIGHT_BROWSERS_PATH=/home/dcagent/.cache/ms-playwright "$NODE" --env-file="$RELEASE/apps/gateway-api/.env" --import tsx "$RELEASE/.pma/chat-convergence-proofs/chat-live-dm-browser-proof.ts" > "$EVIDENCE/dm-browser.out" 2> "$EVIDENCE/dm-browser.err"; then
+if env DATABASE_URL="$proof_database_url" HOME=/home/dcagent PLAYWRIGHT_BROWSERS_PATH=/home/dcagent/.cache/ms-playwright "$NODE" --env-file="$RELEASE/apps/gateway-api/.env" --import tsx "$RELEASE/.pma/chat-convergence-proofs/chat-live-dm-browser-proof.ts" > "$EVIDENCE/dm-browser.out" 2> "$EVIDENCE/dm-browser.err"; then
   dm_rc=0
 else
   dm_rc=$?
 fi
+proof_database_url=''
 printf '%s\n' "$dm_rc" > "$EVIDENCE/dm-browser.rc"
 [ "$dm_rc" -eq 0 ] || fail DM_BROWSER_EXIT "$dm_rc"
 assert_proof dm-browser
