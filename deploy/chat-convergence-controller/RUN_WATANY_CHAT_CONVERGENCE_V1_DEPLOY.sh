@@ -12,9 +12,11 @@ PM2='/usr/local/bin/pm2'
 RUN_ID="chat-convergence-v1-$(date -u +%Y%m%dT%H%M%SZ)-$$"
 RELEASE="/opt/watany/releases/$RUN_ID"
 EVIDENCE="$ST/evidence/$RUN_ID"
+WEB_ROLLBACK="$EVIDENCE/pre-webroot"
 OLD_CURRENT=''
 CURRENT_SWITCHED=0
 WEB_MUTATED=0
+WEB_ROLLBACK_READY=0
 GATEWAY_RESTARTED=0
 MIGRATIONS_APPLIED=0
 mkdir -p "$EVIDENCE"
@@ -53,11 +55,15 @@ seal_report(){
 rollback(){
   local rb=0 health='000' ready='000' current_after=''
   set +e
-  if [ "$WEB_MUTATED" -eq 1 ] && [ -n "$OLD_CURRENT" ]; then
-    rsync -rltD --delete --chown=koudama:koudama --chmod=D755,F644 --exclude='.htaccess' --exclude='ads.txt' --exclude='ops/' --exclude='media/' --exclude='.well-known/' "$OLD_CURRENT/apps/web-user/dist/" "$WEB_LIVE/" > "$EVIDENCE/rollback-web.stdout.txt" 2> "$EVIDENCE/rollback-web.stderr.txt"
-    if [ $? -ne 0 ] || [ -s "$EVIDENCE/rollback-web.stderr.txt" ] || ! cmp -s "$OLD_CURRENT/apps/web-user/dist/index.html" "$WEB_LIVE/index.html"; then
-      printf '%s,%s\n' 'ROLLBACK_WEB_FAILED' 'web restore/parity failed' >> "$EVIDENCE/failures.csv"; rb=1
-    else log 'ROLLBACK_WEB=PASS'; fi
+  if [ "$WEB_MUTATED" -eq 1 ]; then
+    if [ "$WEB_ROLLBACK_READY" -ne 1 ] || [ ! -f "$WEB_ROLLBACK/index.html" ]; then
+      printf '%s,%s\n' 'ROLLBACK_WEB_SNAPSHOT_MISSING' "$WEB_ROLLBACK" >> "$EVIDENCE/failures.csv"; rb=1
+    else
+      rsync -rltD --delete --chown=koudama:koudama --chmod=D755,F644 --exclude='.htaccess' --exclude='ads.txt' --exclude='ops/' --exclude='media/' --exclude='.well-known/' "$WEB_ROLLBACK/" "$WEB_LIVE/" > "$EVIDENCE/rollback-web.stdout.txt" 2> "$EVIDENCE/rollback-web.stderr.txt"
+      if [ $? -ne 0 ] || [ -s "$EVIDENCE/rollback-web.stderr.txt" ] || ! cmp -s "$WEB_ROLLBACK/index.html" "$WEB_LIVE/index.html"; then
+        printf '%s,%s\n' 'ROLLBACK_WEB_FAILED' 'pre-cutover snapshot restore/parity failed' >> "$EVIDENCE/failures.csv"; rb=1
+      else log 'ROLLBACK_WEB=PASS'; fi
+    fi
   fi
   if [ "$CURRENT_SWITCHED" -eq 1 ] && [ -n "$OLD_CURRENT" ]; then
     ln -sfn "$OLD_CURRENT" "$CURRENT_LINK"
@@ -107,7 +113,7 @@ trap 'on_err $LINENO' ERR
 for exe in "$NODE" "$PNPM" "$PM2" /usr/bin/rsync /usr/bin/curl /usr/bin/sha256sum; do
   [ -x "$exe" ] || fail REQUIRED_EXECUTABLE_MISSING "$exe"
 done
-for required in OVERLAY_FILES.txt OVERLAY_MANIFEST.sha256 PROOF_MANIFEST.sha256 EXPECTED_CURRENT.txt BUNDLE_COMMIT.txt; do
+for required in OVERLAY_FILES.txt OVERLAY_MANIFEST.sha256 PROOF_MANIFEST.sha256 EXPECTED_CURRENT.txt EXPECTED_LIVE_WEBROOT_MANIFEST.sha256 BUNDLE_COMMIT.txt; do
   [ -f "$ST/$required" ] || fail PACKAGE_FILE_MISSING "$required"
 done
 OLD_CURRENT="$(readlink -f "$CURRENT_LINK")"
@@ -139,10 +145,20 @@ for ep in health ready; do
   [ ! -s "$EVIDENCE/pre-$ep.stderr.txt" ] || fail "PRE_${ep^^}_STDERR_NONZERO"
   [ "$code" = '200' ] || fail "PRE_${ep^^}_NOT_200" "$code"
 done
-[ -f "$OLD_CURRENT/apps/web-user/dist/index.html" ] || fail CURRENT_DIST_INDEX_MISSING
 [ -f "$WEB_LIVE/index.html" ] || fail LIVE_WEBROOT_INDEX_MISSING
-cmp -s "$OLD_CURRENT/apps/web-user/dist/index.html" "$WEB_LIVE/index.html" || fail LIVE_WEBROOT_INDEX_DRIFT
-record_progress preflight PASS 'package, current authority, predeploy gates, health and webroot parity verified'
+if (cd "$WEB_LIVE" && sha256sum -c "$ST/EXPECTED_LIVE_WEBROOT_MANIFEST.sha256") > "$EVIDENCE/live-webroot-authority.stdout.txt" 2> "$EVIDENCE/live-webroot-authority.stderr.txt"; then
+  live_authority_rc=0
+else
+  live_authority_rc=$?
+fi
+[ "$live_authority_rc" -eq 0 ] || fail LIVE_WEBROOT_AUTHORITY_DRIFT "$live_authority_rc"
+[ ! -s "$EVIDENCE/live-webroot-authority.stderr.txt" ] || fail LIVE_WEBROOT_AUTHORITY_STDERR_NONZERO
+mkdir -p "$WEB_ROLLBACK"
+rsync -a --exclude='.htaccess' --exclude='ads.txt' --exclude='ops/' --exclude='media/' --exclude='.well-known/' "$WEB_LIVE/" "$WEB_ROLLBACK/" > "$EVIDENCE/web-snapshot.stdout.txt" 2> "$EVIDENCE/web-snapshot.stderr.txt" || fail WEB_SNAPSHOT_FAILED
+[ ! -s "$EVIDENCE/web-snapshot.stderr.txt" ] || fail WEB_SNAPSHOT_STDERR_NONZERO
+cmp -s "$WEB_LIVE/index.html" "$WEB_ROLLBACK/index.html" || fail WEB_SNAPSHOT_INDEX_MISMATCH
+WEB_ROLLBACK_READY=1
+record_progress preflight PASS 'package, current release, effective live webroot authority, rollback snapshot, predeploy gates and health verified'
 printf '%s\n' 'PASS' > "$EVIDENCE/stage_preflight.txt"
 run_gate(){
   local name="$1"; shift
@@ -188,6 +204,26 @@ run_gate gateway-release-typecheck "$PNPM" --filter gateway-api typecheck
 run_gate web-release-typecheck "$PNPM" --filter web-user typecheck
 run_gate web-release-build "$PNPM" --filter web-user build
 [ -f "$RELEASE/apps/web-user/dist/index.html" ] || fail RELEASE_DIST_INDEX_MISSING
+v11_runtime="$RELEASE/apps/web-user/dist/watany-feature-ads-v6.js"
+[ -f "$v11_runtime" ] || fail RELEASE_V11_RUNTIME_MISSING
+v11_runtime_hash="$(sha256sum "$v11_runtime" | awk '{print $1}')"
+[ "$v11_runtime_hash" = 'a36012be984bd4efca1dc3f228c345cb5850e14acacf06bb243190e4ba1d086b' ] || fail RELEASE_V11_RUNTIME_HASH_MISMATCH "$v11_runtime_hash"
+grep -Fq 'feature-v11-display-bottom-fail-open-5372868255' "$v11_runtime" || fail RELEASE_V11_RUNTIME_MARKER_MISSING
+grep -Fq "const SLOT = '5372868255';" "$v11_runtime" || fail RELEASE_V11_RUNTIME_SLOT_MISSING
+if grep -Fq '1454512385' "$v11_runtime"; then fail RELEASE_V11_RUNTIME_OLD_SLOT_PRESENT; fi
+mapfile -t salary_chunks < <(find "$RELEASE/apps/web-user/dist/assets" -maxdepth 1 -type f -name 'route-salarypage-tsx-*.js' -printf '%p\n' | sort)
+[ "${#salary_chunks[@]}" -eq 1 ] || fail RELEASE_V11_SALARY_CHUNK_COUNT "${#salary_chunks[@]}"
+salary_chunk="${salary_chunks[0]}"
+for token in 'feature.adsense.salary.bottom' 'data-watany-ad-placement' '5372868255' '1200' '2200'; do
+  grep -Fq "$token" "$salary_chunk" || fail RELEASE_V11_SALARY_TOKEN_MISSING "$token"
+done
+if grep -Fq '1454512385' "$salary_chunk"; then fail RELEASE_V11_SALARY_OLD_SLOT_PRESENT; fi
+v11_index_ref_count=0
+while IFS= read -r idx; do
+  if grep -Fq 'watany-feature-ads-v6.js?v=20260927-ad-v11-display-5372868255' "$idx"; then v11_index_ref_count=$((v11_index_ref_count + 1)); fi
+done < <(find "$RELEASE/apps/web-user/dist" -name index.html -type f -print | sort)
+[ "$v11_index_ref_count" -ge 3 ] || fail RELEASE_V11_INDEX_REF_COUNT "$v11_index_ref_count"
+printf '%s,%s,%s\n' 'ad_v11_build' 'PASS' 'runtime hash/marker/slot, salary chunk tokens and generated index refs verified' >> "$EVIDENCE/validations.csv"
 printf '%s,%s,%s\n' 'gateway_typecheck' 'PASS' 'full root-readable release' >> "$EVIDENCE/validations.csv"
 printf '%s,%s,%s\n' 'web_typecheck' 'PASS' 'full root-readable release' >> "$EVIDENCE/validations.csv"
 printf '%s,%s,%s\n' 'web_build' 'PASS' 'production build' >> "$EVIDENCE/validations.csv"
@@ -270,7 +306,12 @@ fi
 [ "$ready_rc" -eq 0 ] || fail POST_READY_CURL_EXIT "$ready_rc"
 [ ! -s "$EVIDENCE/post-ready.stderr.txt" ] || fail POST_READY_STDERR_NONZERO
 [ "$ready_code" = '200' ] || fail POST_READY_NOT_200 "$ready_code"
-pm2_pid="$("$PM2" pid watany-gateway | tr -d '\r\n ')"
+if pm2_pid="$("$PM2" pid watany-gateway | tr -d '\r\n ')"; then
+  pm2_pid_rc=0
+else
+  pm2_pid_rc=$?
+fi
+[ "$pm2_pid_rc" -eq 0 ] || fail POSTCUTOVER_PM2_PID_QUERY_EXIT "$pm2_pid_rc"
 [[ "$pm2_pid" =~ ^[0-9]+$ ]] || fail PM2_PID_INVALID "$pm2_pid"
 pm2_cwd="$(readlink -f "/proc/$pm2_pid/cwd" 2>/dev/null || true)"
 log "PM2_PID=$pm2_pid"
@@ -280,6 +321,10 @@ WEB_MUTATED=1
 rsync -rltD --delete --chown=koudama:koudama --chmod=D755,F644 --exclude='.htaccess' --exclude='ads.txt' --exclude='ops/' --exclude='media/' --exclude='.well-known/' "$RELEASE/apps/web-user/dist/" "$WEB_LIVE/" > "$EVIDENCE/web-rsync.stdout.txt" 2> "$EVIDENCE/web-rsync.stderr.txt" || fail WEB_RSYNC_FAILED
 [ ! -s "$EVIDENCE/web-rsync.stderr.txt" ] || fail WEB_RSYNC_STDERR_NONZERO
 cmp -s "$RELEASE/apps/web-user/dist/index.html" "$WEB_LIVE/index.html" || fail LIVE_INDEX_MISMATCH
+cmp -s "$v11_runtime" "$WEB_LIVE/watany-feature-ads-v6.js" || fail LIVE_V11_RUNTIME_MISMATCH
+salary_chunk_name="$(basename "$salary_chunk")"
+cmp -s "$salary_chunk" "$WEB_LIVE/assets/$salary_chunk_name" || fail LIVE_V11_SALARY_CHUNK_MISMATCH
+grep -Fq 'watany-feature-ads-v6.js?v=20260927-ad-v11-display-5372868255' "$WEB_LIVE/index.html" || fail LIVE_V11_INDEX_REF_MISSING
 [ "$(readlink -f "$CURRENT_LINK")" = "$RELEASE" ] || fail CURRENT_LINK_POSTCUTOVER_MISMATCH
 printf '%s\n' 'PASS' > "$EVIDENCE/stage_cutover.txt"
 record_progress cutover PASS 'current symlink, root PM2 gateway and public webroot switched'
@@ -302,8 +347,14 @@ check_http DIRECT_UNAUTH 401 "$BASE/api/community/direct"
 check_http DIRECT_CONTACTS_UNAUTH 401 "$BASE/api/community/direct/contacts"
 check_http PUBLIC_CHAT 200 'https://koudama.com/chat'
 check_http PUBLIC_MESSAGES 200 'https://koudama.com/messages'
+check_http PUBLIC_SALARY 200 'https://koudama.com/salary/'
 check_http PUBLIC_MCP_HEALTH 200 'https://koudama.com/mcp/health'
+check_http PUBLIC_V11_RUNTIME 200 'https://koudama.com/watany-feature-ads-v6.js?v=20260927-ad-v11-display-5372868255'
+grep -Fq 'feature-v11-display-bottom-fail-open-5372868255' "$EVIDENCE/PUBLIC_V11_RUNTIME.body" || fail PUBLIC_V11_RUNTIME_MARKER_MISSING
+grep -Fq "const SLOT = '5372868255';" "$EVIDENCE/PUBLIC_V11_RUNTIME.body" || fail PUBLIC_V11_RUNTIME_SLOT_MISSING
+if grep -Fq '1454512385' "$EVIDENCE/PUBLIC_V11_RUNTIME.body"; then fail PUBLIC_V11_RUNTIME_OLD_SLOT_PRESENT; fi
 printf '%s,%s,%s\n' 'route_authority' 'PASS' 'legacy 404, community 200, direct auth 401' >> "$EVIDENCE/validations.csv"
+printf '%s,%s,%s\n' 'ad_v11_runtime' 'PASS' 'public salary 200 and V11 runtime marker/slot verified' >> "$EVIDENCE/validations.csv"
 printf '%s\n' 'PASS' > "$EVIDENCE/stage_runtime.txt"
 record_progress runtime PASS 'internal and public route authority verified'
 assert_proof(){
@@ -342,9 +393,9 @@ record_progress browser PASS 'AI, saved-chat and direct-message live proofs veri
 [ ! -s "$EVIDENCE/pm2-save.stderr.txt" ] || fail PM2_SAVE_STDERR_NONZERO
 printf '%s,%s,%s\n' 'pm2_save' 'PASS' 'process list persisted' >> "$EVIDENCE/actions.csv"
 printf '%s\n' 'PASS' > "$EVIDENCE/FINAL_STATUS.txt"
-printf '{"status":"PASS","runId":"%s","release":"%s","ai":"PASS","savedIsolation":"PASS","directMessages":"PASS"}\n' "$RUN_ID" "$RELEASE" > "$EVIDENCE/summary.json"
+printf '{"status":"PASS","runId":"%s","release":"%s","ai":"PASS","savedIsolation":"PASS","directMessages":"PASS","adV11":"PASS"}\n' "$RUN_ID" "$RELEASE" > "$EVIDENCE/summary.json"
 printf '{"runId":"%s","release":"%s","status":"PASS","stage":"closeout"}\n' "$RUN_ID" "$RELEASE" > "$EVIDENCE/checkpoint.json"
-printf '# Watany Chat Convergence V1 Deployment\n\nStatus: PASS\n\nRelease: `%s`\n\nGateway typecheck: PASS\n\nWeb typecheck/build: PASS\n\nMigrations: PASS\n\nAI chat browser: PASS\n\nSaved-chat isolation: PASS\n\nDirect realtime messaging: PASS\n\nSuccess token: `WATANY_CHAT_CONVERGENCE_V1_PRODUCTION_PASS`\n' "$RELEASE" > "$EVIDENCE/FINAL_REPORT.md"
+printf '# Watany Chat Convergence V1 Deployment\n\nStatus: PASS\n\nRelease: `%s`\n\nGateway typecheck: PASS\n\nWeb typecheck/build: PASS\n\nAd V11 preservation: PASS\n\nMigrations: PASS\n\nAI chat browser: PASS\n\nSaved-chat isolation: PASS\n\nDirect realtime messaging: PASS\n\nSuccess token: `WATANY_CHAT_CONVERGENCE_V1_PRODUCTION_PASS`\n' "$RELEASE" > "$EVIDENCE/FINAL_REPORT.md"
 record_progress closeout PASS 'deployment and complete chat proofs passed'
 log 'PROGRAM_STATUS=PASS'
 log 'FIRST_FAILURE=NONE'
