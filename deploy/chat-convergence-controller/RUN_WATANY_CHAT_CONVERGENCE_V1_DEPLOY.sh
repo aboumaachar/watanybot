@@ -195,7 +195,46 @@ printf '%s\n' 'PASS' > "$EVIDENCE/stage_release.txt"
 record_progress release PASS "$RELEASE"
 log '=== MIGRATIONS ==='
 cd "$RELEASE/apps/gateway-api"
-run_gate release-migrate "$NODE" --env-file=.env --import tsx src/db/migrate.ts
+if migration_pm2_pid="$("$PM2" pid watany-gateway | tr -d '\r\n ')"; then
+  migration_pm2_pid_rc=0
+else
+  migration_pm2_pid_rc=$?
+fi
+[ "$migration_pm2_pid_rc" -eq 0 ] || fail MIGRATION_PM2_PID_QUERY_EXIT "$migration_pm2_pid_rc"
+[[ "$migration_pm2_pid" =~ ^[0-9]+$ ]] || fail MIGRATION_PM2_PID_INVALID "$migration_pm2_pid"
+[ -r "/proc/$migration_pm2_pid/environ" ] || fail MIGRATION_PM2_ENV_UNREADABLE "/proc/$migration_pm2_pid/environ"
+migration_database_url=''
+while IFS= read -r -d '' kv; do
+  case "$kv" in
+    DATABASE_URL=*) migration_database_url="${kv#DATABASE_URL=}" ;;
+  esac
+done < "/proc/$migration_pm2_pid/environ"
+[ -n "$migration_database_url" ] || fail MIGRATION_PM2_DATABASE_URL_MISSING
+if DATABASE_URL="$migration_database_url" "$NODE" -e 'try{const u=new URL(process.env.DATABASE_URL||"");if(!u.password)process.exit(2)}catch{process.exit(3)}'; then
+  migration_url_rc=0
+else
+  migration_url_rc=$?
+fi
+[ "$migration_url_rc" -eq 0 ] || fail MIGRATION_PM2_DATABASE_URL_INVALID "$migration_url_rc"
+MIGRATION_DB_PROBE_CODE="import('./src/lib/db.ts').then(async m=>{const r=await m.query('SELECT 1 AS ok');const ok=r.rows?.[0]?.ok===1;await m.closePool();if(!ok)process.exit(4);}).catch(()=>process.exit(5));"
+if DATABASE_URL="$migration_database_url" "$NODE" --env-file=.env --import tsx --input-type=module -e "$MIGRATION_DB_PROBE_CODE" > "$EVIDENCE/migration-db-authority.out" 2> "$EVIDENCE/migration-db-authority.err"; then
+  migration_probe_rc=0
+else
+  migration_probe_rc=$?
+fi
+printf '%s\n' "$migration_probe_rc" > "$EVIDENCE/migration-db-authority.rc"
+[ "$migration_probe_rc" -eq 0 ] || fail MIGRATION_DB_AUTHORITY_CONNECTIVITY_EXIT "rc=$migration_probe_rc stderr=$EVIDENCE/migration-db-authority.err"
+[ ! -s "$EVIDENCE/migration-db-authority.err" ] || fail MIGRATION_DB_AUTHORITY_STDERR_NONZERO "$EVIDENCE/migration-db-authority.err"
+printf '%s,%s,%s\n' 'migration_db_authority' 'PASS' 'live PM2 DATABASE_URL in-memory; SELECT 1 passed' >> "$EVIDENCE/validations.csv"
+if DATABASE_URL="$migration_database_url" "$NODE" --env-file=.env --import tsx src/db/migrate.ts > "$EVIDENCE/release-migrate.out" 2> "$EVIDENCE/release-migrate.err"; then
+  migration_rc=0
+else
+  migration_rc=$?
+fi
+printf '%s\n' "$migration_rc" > "$EVIDENCE/release-migrate.rc"
+migration_database_url=''
+[ "$migration_rc" -eq 0 ] || fail RELEASE-MIGRATE_EXIT "rc=$migration_rc stderr=$EVIDENCE/release-migrate.err"
+[ ! -s "$EVIDENCE/release-migrate.err" ] || fail RELEASE-MIGRATE_STDERR_NONZERO "$EVIDENCE/release-migrate.err"
 grep -q '\[migrate\] all migrations applied' "$EVIDENCE/release-migrate.out" || fail MIGRATION_SUCCESS_TOKEN_MISSING
 if grep -Eqi 'FATAL|ERROR|failed|exception' "$EVIDENCE/release-migrate.out"; then fail MIGRATION_FAILURE_TOKEN_PRESENT; fi
 MIGRATIONS_APPLIED=1
