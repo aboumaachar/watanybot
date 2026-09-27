@@ -130,9 +130,11 @@ for gate in gateway-typecheck web-typecheck web-build; do
   [ -s "$ST/evidence/$gate.out" ] || fail PREDEPLOY_GATE_OUTPUT_MISSING "$gate"
 done
 for ep in health ready; do
-  set +e
-  code="$(curl -sS -o "$EVIDENCE/pre-$ep.body" -w '%{http_code}' --max-time 15 "$BASE/$ep" 2> "$EVIDENCE/pre-$ep.stderr.txt")"; curl_rc=$?
-  set -e
+  if code="$(curl -sS -o "$EVIDENCE/pre-$ep.body" -w '%{http_code}' --max-time 15 "$BASE/$ep" 2> "$EVIDENCE/pre-$ep.stderr.txt")"; then
+    curl_rc=0
+  else
+    curl_rc=$?
+  fi
   [ "$curl_rc" -eq 0 ] || fail "PRE_${ep^^}_CURL_EXIT" "$curl_rc"
   [ ! -s "$EVIDENCE/pre-$ep.stderr.txt" ] || fail "PRE_${ep^^}_STDERR_NONZERO"
   [ "$code" = '200' ] || fail "PRE_${ep^^}_NOT_200" "$code"
@@ -144,19 +146,26 @@ record_progress preflight PASS 'package, current authority, predeploy gates, hea
 printf '%s\n' 'PASS' > "$EVIDENCE/stage_preflight.txt"
 run_gate(){
   local name="$1"; shift
-  set +e
-  "$@" > "$EVIDENCE/$name.out" 2> "$EVIDENCE/$name.err"; local rc=$?
-  set -e
+  local rc=0
+  if "$@" > "$EVIDENCE/$name.out" 2> "$EVIDENCE/$name.err"; then
+    rc=0
+  else
+    rc=$?
+  fi
   printf '%s\n' "$rc" > "$EVIDENCE/$name.rc"
-  [ "$rc" -eq 0 ] || fail "${name^^}_EXIT" "$rc"
-  [ ! -s "$EVIDENCE/$name.err" ] || fail "${name^^}_STDERR_NONZERO"
+  if [ "$rc" -ne 0 ]; then
+    fail "${name^^}_EXIT" "rc=$rc stderr=$EVIDENCE/$name.err"
+  fi
+  [ ! -s "$EVIDENCE/$name.err" ] || fail "${name^^}_STDERR_NONZERO" "$EVIDENCE/$name.err"
 }
 log '=== RELEASE MATERIALIZATION ==='
 [ ! -e "$RELEASE" ] || fail RELEASE_ALREADY_EXISTS "$RELEASE"
 mkdir -p "$RELEASE"
-set +e
-rsync -a --link-dest="$OLD_CURRENT" "$OLD_CURRENT/" "$RELEASE/" > "$EVIDENCE/release-base-rsync.stdout.txt" 2> "$EVIDENCE/release-base-rsync.stderr.txt"; rsync_rc=$?
-set -e
+if rsync -a --link-dest="$OLD_CURRENT" "$OLD_CURRENT/" "$RELEASE/" > "$EVIDENCE/release-base-rsync.stdout.txt" 2> "$EVIDENCE/release-base-rsync.stderr.txt"; then
+  rsync_rc=0
+else
+  rsync_rc=$?
+fi
 [ "$rsync_rc" -eq 0 ] || fail RELEASE_BASE_COPY_FAILED "$rsync_rc"
 [ ! -s "$EVIDENCE/release-base-rsync.stderr.txt" ] || fail RELEASE_BASE_COPY_STDERR_NONZERO
 rsync -a "$ST/overlay/" "$RELEASE/" > "$EVIDENCE/release-overlay.stdout.txt" 2> "$EVIDENCE/release-overlay.stderr.txt" || fail RELEASE_OVERLAY_FAILED
@@ -204,17 +213,21 @@ CURRENT_SWITCHED=1
 GATEWAY_RESTARTED=1
 health_code='000'; health_rc=1
 for attempt in $(seq 1 60); do
-  set +e
-  health_code="$(curl -sS -o "$EVIDENCE/post-health.body" -w '%{http_code}' --max-time 2 "$BASE/health" 2> "$EVIDENCE/post-health.tmp")"; health_rc=$?
-  set -e
+  if health_code="$(curl -sS -o "$EVIDENCE/post-health.body" -w '%{http_code}' --max-time 2 "$BASE/health" 2> "$EVIDENCE/post-health.tmp")"; then
+    health_rc=0
+  else
+    health_rc=$?
+  fi
   if [ "$health_rc" -eq 0 ] && [ "$health_code" = '200' ] && [ ! -s "$EVIDENCE/post-health.tmp" ]; then rm -f "$EVIDENCE/post-health.tmp"; break; fi
   sleep 1
 done
 [ "$health_rc" -eq 0 ] || fail POST_HEALTH_CURL_EXIT "$health_rc"
 [ "$health_code" = '200' ] || fail POST_HEALTH_NOT_200 "$health_code"
-set +e
-ready_code="$(curl -sS -o "$EVIDENCE/post-ready.body" -w '%{http_code}' --max-time 15 "$BASE/ready" 2> "$EVIDENCE/post-ready.stderr.txt")"; ready_rc=$?
-set -e
+if ready_code="$(curl -sS -o "$EVIDENCE/post-ready.body" -w '%{http_code}' --max-time 15 "$BASE/ready" 2> "$EVIDENCE/post-ready.stderr.txt")"; then
+  ready_rc=0
+else
+  ready_rc=$?
+fi
 [ "$ready_rc" -eq 0 ] || fail POST_READY_CURL_EXIT "$ready_rc"
 [ ! -s "$EVIDENCE/post-ready.stderr.txt" ] || fail POST_READY_STDERR_NONZERO
 [ "$ready_code" = '200' ] || fail POST_READY_NOT_200 "$ready_code"
@@ -234,9 +247,11 @@ record_progress cutover PASS 'current symlink, root PM2 gateway and public webro
 log '=== RUNTIME AUTHORITY ==='
 check_http(){
   local name="$1" expected="$2" url="$3" code rc
-  set +e
-  code="$(curl -sS -o "$EVIDENCE/$name.body" -w '%{http_code}' --max-time 20 "$url" 2> "$EVIDENCE/$name.stderr.txt")"; rc=$?
-  set -e
+  if code="$(curl -sS -o "$EVIDENCE/$name.body" -w '%{http_code}' --max-time 20 "$url" 2> "$EVIDENCE/$name.stderr.txt")"; then
+    rc=0
+  else
+    rc=$?
+  fi
   log "${name}_HTTP=$code"
   [ "$rc" -eq 0 ] || fail "${name}_CURL_EXIT" "$rc"
   [ ! -s "$EVIDENCE/$name.stderr.txt" ] || fail "${name}_STDERR_NONZERO"
@@ -260,18 +275,22 @@ assert_proof(){
   if grep -Eqi '"status": "FAIL"|FATAL|fatal=' "$EVIDENCE/$name.out"; then fail "${name^^}_FAILURE_TOKEN_PRESENT"; fi
 }
 log '=== LIVE CHAT PROOFS ==='
-set +e
-runuser -u dcagent -- env HOME=/home/dcagent PLAYWRIGHT_BROWSERS_PATH=/home/dcagent/.cache/ms-playwright "$NODE" "$RELEASE/.pma/chat-convergence-proofs/chat-live-ai-browser-proof.mjs" > "$EVIDENCE/ai-browser.out" 2> "$EVIDENCE/ai-browser.err"; ai_rc=$?
-set -e
+if runuser -u dcagent -- env HOME=/home/dcagent PLAYWRIGHT_BROWSERS_PATH=/home/dcagent/.cache/ms-playwright "$NODE" "$RELEASE/.pma/chat-convergence-proofs/chat-live-ai-browser-proof.mjs" > "$EVIDENCE/ai-browser.out" 2> "$EVIDENCE/ai-browser.err"; then
+  ai_rc=0
+else
+  ai_rc=$?
+fi
 printf '%s\n' "$ai_rc" > "$EVIDENCE/ai-browser.rc"
 [ "$ai_rc" -eq 0 ] || fail AI_BROWSER_EXIT "$ai_rc"
 assert_proof ai-browser
 cd "$RELEASE"
 run_gate saved-live "$NODE" --env-file="$RELEASE/apps/gateway-api/.env" --import tsx "$RELEASE/.pma/chat-convergence-proofs/chat-live-saved-proof.ts"
 assert_proof saved-live
-set +e
-env HOME=/home/dcagent PLAYWRIGHT_BROWSERS_PATH=/home/dcagent/.cache/ms-playwright "$NODE" --env-file="$RELEASE/apps/gateway-api/.env" --import tsx "$RELEASE/.pma/chat-convergence-proofs/chat-live-dm-browser-proof.ts" > "$EVIDENCE/dm-browser.out" 2> "$EVIDENCE/dm-browser.err"; dm_rc=$?
-set -e
+if env HOME=/home/dcagent PLAYWRIGHT_BROWSERS_PATH=/home/dcagent/.cache/ms-playwright "$NODE" --env-file="$RELEASE/apps/gateway-api/.env" --import tsx "$RELEASE/.pma/chat-convergence-proofs/chat-live-dm-browser-proof.ts" > "$EVIDENCE/dm-browser.out" 2> "$EVIDENCE/dm-browser.err"; then
+  dm_rc=0
+else
+  dm_rc=$?
+fi
 printf '%s\n' "$dm_rc" > "$EVIDENCE/dm-browser.rc"
 [ "$dm_rc" -eq 0 ] || fail DM_BROWSER_EXIT "$dm_rc"
 assert_proof dm-browser
