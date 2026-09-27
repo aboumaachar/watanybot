@@ -75,6 +75,7 @@ import { directoryRoutes } from "../routes/directory";
 import { faqRoutes } from "../routes/faq";
 import { tickerRoutes } from "../routes/ticker";
 import { newsRoutes } from "../routes/news.js";
+import { articleRoutes } from "../routes/articles.js";
 import announcementsRoutes from "../routes/announcements";
 import { adminNewsRoutes } from "../routes/admin-news.js";
 import { txRoutes } from "../routes/tx";
@@ -219,6 +220,7 @@ export async function registerRoutes(
   app.register(faqRoutes);
   app.register(tickerRoutes,        { pluginDb: kb.pluginDb });
   app.register(newsRoutes);
+  app.register(articleRoutes);
   app.register(announcementsRoutes);
   app.register(txRoutes,            { mockTx: MOCK_TX, mockDetail: MOCK_DETAIL });
   app.register(formsInlineRoutes,   { getFormsCatalog, getFormById, searchForms, detectFormIntent, isGenericFormRequest });

@@ -34,6 +34,8 @@ const LegalPage = lazy(() => import("../pages/LegalPage"));
 const ProfilePage = lazy(() => import("../pages/ProfilePage"));
 const NotificationsPage = lazy(() => import("../pages/NotificationsPage"));
 const NewsPage = lazy(() => import("../pages/NewsPage"));
+const ArticlesPage = lazy(() => import("../pages/ArticlesPage"));
+const ArticleDetailPage = lazy(() => import("../pages/ArticleDetailPage"));
 const FakeFactPage = lazy(() => import("../pages/FakeNewsPage"));
 const FormsPage = lazy(() => import("../pages/FormsPage"));
 const SurveyDetailPage = lazy(() => import("../pages/SurveyDetailPage"));
@@ -153,6 +155,9 @@ export function AppShell() {
         <Route path="profile" element={<RequireAuthenticated><div data-watany-feature-route="profile"><ProfilePage /></div></RequireAuthenticated>} />
         <Route path="notifications" element={<RequireAuthenticated><div data-watany-feature-route="notifications"><NotificationsPage /></div></RequireAuthenticated>} />
         <Route path="news" element={<div data-watany-feature-route="news"><NewsPage /></div>} />
+        <Route path="articles" element={<div data-watany-feature-route="articles"><ArticlesPage /></div>} />
+        <Route path="articles/:category/:slug" element={<div data-watany-feature-route="article-detail"><ArticleDetailPage /></div>} />
+        <Route path="articles/:slug" element={<div data-watany-feature-route="article-detail"><ArticleDetailPage /></div>} />
         <Route path="fake-fact" element={<div data-watany-feature-route="fake-fact"><FakeFactPage /></div>} />
         <Route path="forms" element={<div data-watany-feature-route="forms"><FormsPage /></div>} />
         <Route path="vote" element={<SurveyPage />} />

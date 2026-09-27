@@ -47,6 +47,8 @@ const NAV_SECTIONS = [
     { path: "/rules", label: "Content Rules", icon: "shield" },
     { path: "/admin/documents", label: "Documents", icon: "document" },
     { path: "/admin/procedures", label: "Procedures", icon: "folder" },
+    { path: "/superadmin/cms/articles", label: "المقالات والأرشيف", icon: "document" },
+    { path: "/superadmin/cms/articles/archive", label: "أرشيف المقالات", icon: "folder" },
   ] },
   { id: "operations", label: "Operations", items: [
     { path: "/chat", label: "Chat Monitor", icon: "chat" },
@@ -70,6 +72,8 @@ const ROUTE_META: Record<string, { title: string; section: string }> = {
   "/kb": { title: "Knowledge Base", section: "CMS & Knowledge" }, "/rules": { title: "Content Rules", section: "CMS & Knowledge" },
   "/audit": { title: "Audit Log", section: "System" }, "/features": { title: "Feature Controls", section: "System" },
   "/network": { title: "Network", section: "Operations" },
+  "/superadmin/cms/articles": { title: "المقالات والأرشيف", section: "CMS & Knowledge" },
+  "/superadmin/cms/articles/archive": { title: "أرشيف المقالات", section: "CMS & Knowledge" },
 };
 
 function Loading() {

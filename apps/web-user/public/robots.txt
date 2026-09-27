@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /ops/
+Disallow: /mcp/api/admin/
+Disallow: /mcp/api/superadmin/
+Sitemap: https://koudama.com/sitemap-articles.xml
