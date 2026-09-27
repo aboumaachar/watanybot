@@ -15,6 +15,7 @@ import {
 import "../article-authority-9d72.css";
 
 type LegacyMedia = { url: string; title: string };
+type ArticleAuthor = { id: string; name: string; email: string };
 type AutosaveState = "idle" | "saving" | "saved" | "error";
 function articleEditorFromAutosave(value: unknown): ArticleEditor | null {
   if (!value || typeof value !== "object" || Array.isArray(value)) return null;
@@ -53,6 +54,7 @@ export default function ArticlePublishingAuthority9D72Page({ initialArchive = fa
   const [tags, setTags] = useState<CmsGenericItem[]>([]);
   const [media, setMedia] = useState<CmsGenericItem[]>([]);
   const [legacyMedia, setLegacyMedia] = useState<LegacyMedia[]>([]);
+  const [authors, setAuthors] = useState<ArticleAuthor[]>([]);
   const [editor, setEditor] = useState<ArticleEditor>(emptyEditor());
   const [selected, setSelected] = useState<CmsGenericItem | null>(null);
   const [versions, setVersions] = useState<CmsEntityVersion[]>([]);
@@ -110,10 +112,13 @@ export default function ArticlePublishingAuthority9D72Page({ initialArchive = fa
       getCmsGenericEntities("articles", { page: 1, pageSize: 100 }),
       getCmsGenericEntities("articles", { page: 2, pageSize: 100 }),
     ]);
+    const archiveItems = [...archiveA.items, ...archiveB.items];
+    const authorNames = new Set<string>(["موطني"]);
+    for (const item of archiveItems) { const name = textValue(item.payload.authorName).trim(); if (name) authorNames.add(name); }
+    setAuthors([...authorNames].sort((a, b) => a.localeCompare(b, "ar")).map((name) => ({ id: name, name, email: "" })));
     setCategories(categoryData.items);
     setTags(tagData.items);
     const activeMedia = mediaData.items.filter((item) => item.status !== "ARCHIVED"); setMedia(activeMedia);
-    const archiveItems = [...archiveA.items, ...archiveB.items];
     const usage = Object.fromEntries(activeMedia.map((item) => [item.publicId, 0])) as Record<string, number>;
     for (const item of activeMedia) { const raw=textValue(item.payload.url); const absolute=raw?absoluteMediaUrl(raw):""; usage[item.publicId]=archiveItems.filter((article)=>{const payloadText=JSON.stringify(article.payload||{}); return Boolean((raw&&payloadText.includes(raw))||(absolute&&payloadText.includes(absolute)));}).length; }
     setMediaUsage(usage);
@@ -476,7 +481,7 @@ export default function ArticlePublishingAuthority9D72Page({ initialArchive = fa
         <button type="button" className="accent" onClick={() => void beginCreate()}>+ مقال جديد</button>
         <button type="button" className="ghost danger" disabled={!selectedIds.length || saving} onClick={() => void bulkArchive()}>أرشفة المحدد ({selectedIds.length})</button>
       </div>
-      <div className="aa9-table-wrap"><table className="aa9-table"><thead><tr><th><input aria-label="تحديد الصفحة" type="checkbox" checked={allChecked} onChange={(event) => setSelectedIds(event.target.checked ? articles.map((item) => item.publicId) : [])} /></th><th>المقال</th><th>الكاتب</th><th>التصنيفات</th><th>الحالة</th><th>SEO</th><th>آخر تعديل</th></tr></thead><tbody>
+      <div className="aa9-table-wrap"><table className="aa9-table"><thead><tr><th><input aria-label="تحديد الصفحة" type="checkbox" checked={allChecked} onChange={(event) => setSelectedIds(event.target.checked ? articles.map((item) => item.publicId) : [])} /></th><th>المقال</th><th>الكاتب</th><th>التصنيفات</th><th>الحالة</th><th>SEO</th><th>آخر تعديل</th><th>إجراءات</th></tr></thead><tbody>
         {articles.map((item) => {
           const payload = item.payload || {};
           const image = textValue(payload.featuredImage);
@@ -490,6 +495,7 @@ export default function ArticlePublishingAuthority9D72Page({ initialArchive = fa
             <td><span className={statusClass(item.status)}>{STATUS_LABELS[item.status]}</span></td>
             <td><span className={seoReady ? "aa9-seo aa9-seo--good" : "aa9-seo aa9-seo--warn"}>{seoReady ? "جيد" : "ناقص"}</span></td>
             <td>{formatDate(item.updatedAt)}</td>
+            <td><div className="aa9-row-actions"><button type="button" className="ghost sm" onClick={() => void openArticle(item)}>تعديل</button>{item.status === "PUBLISHED" ? <button type="button" className="ghost sm" onClick={() => globalThis.open(articleCanonicalPath(editorFromItem(item, categories, tags), categories), "_blank", "noopener,noreferrer")}>عرض</button> : null}</div></td>
           </tr>;
         })}
       </tbody></table></div>
@@ -589,7 +595,7 @@ export default function ArticlePublishingAuthority9D72Page({ initialArchive = fa
         </section>}
       </main>
       <aside className="aa9-sidebar">
-        <section className="aa9-card aa9-publish"><h2>النشر</h2><div className="aa9-publish-state"><span>الحالة</span><strong className={statusClass(selected?.status || editor.status)}>{STATUS_LABELS[selected?.status || editor.status]}</strong></div><div className={review.blockingIssues.length ? "aa9-publish-gate fail" : "aa9-publish-gate pass"}><strong>{review.blockingIssues.length ? "متطلبات نشر ناقصة" : "جاهز لبوابة النشر"}</strong>{review.blockingIssues.length ? <ul>{review.blockingIssues.map((issue) => <li key={issue}>{issue}</li>)}</ul> : <small>العنوان والمحتوى والتصنيف والرابط الدائم صالحة للنشر.</small>}</div><label><span>الكاتب</span><input value={editor.authorName} onChange={(event) => patchEditor({ authorName: event.target.value })} /></label><small>{dirty ? "● تغييرات غير محفوظة · " + (autosaveState === "saving" ? "جارٍ الحفظ على الخادم" : autosaveState === "saved" ? "حفظ تلقائي على الخادم " + (autosaveAt ? formatDate(autosaveAt) : "") : autosaveState === "error" ? "تعذر الحفظ التلقائي على الخادم" : "بانتظار الحفظ التلقائي") : selected ? "آخر تعديل: " + formatDate(selected.updatedAt) : "مسودة جديدة"}</small>
+        <section className="aa9-card aa9-publish"><h2>النشر</h2><div className="aa9-publish-state"><span>الحالة</span><strong className={statusClass(selected?.status || editor.status)}>{STATUS_LABELS[selected?.status || editor.status]}</strong></div><div className={review.blockingIssues.length ? "aa9-publish-gate fail" : "aa9-publish-gate pass"}><strong>{review.blockingIssues.length ? "متطلبات نشر ناقصة" : "جاهز لبوابة النشر"}</strong>{review.blockingIssues.length ? <ul>{review.blockingIssues.map((issue) => <li key={issue}>{issue}</li>)}</ul> : <small>العنوان والمحتوى والتصنيف والرابط الدائم صالحة للنشر.</small>}</div><label><span>الكاتب</span><select value={editor.authorName} onChange={(event) => patchEditor({ authorName: event.target.value })}><option value="">اختر الكاتب</option>{editor.authorName && !authors.some((author) => author.name === editor.authorName) ? <option value={editor.authorName}>{editor.authorName} (كاتب محفوظ)</option> : null}{authors.map((author) => <option key={author.id || author.email} value={author.name}>{author.name}{author.email ? ` — ${author.email}` : ""}</option>)}</select></label><small>{dirty ? "● تغييرات غير محفوظة · " + (autosaveState === "saving" ? "جارٍ الحفظ على الخادم" : autosaveState === "saved" ? "حفظ تلقائي على الخادم " + (autosaveAt ? formatDate(autosaveAt) : "") : autosaveState === "error" ? "تعذر الحفظ التلقائي على الخادم" : "بانتظار الحفظ التلقائي") : selected ? "آخر تعديل: " + formatDate(selected.updatedAt) : "مسودة جديدة"}</small>
           {conflictItem && <div className="aa9-publish-gate fail"><strong>تعارض تحرير</strong><small>الإصدار على الخادم أصبح {conflictItem.version} بينما المحرر مبني على {selected?.version || "—"}.</small><div className="aa9-side-actions"><button type="button" className="ghost" onClick={loadConflictFromServer}>تحميل نسخة الخادم</button><button type="button" className="ghost danger" disabled={saving} onClick={() => void overwriteConflict()}>استبدال نسخة الخادم بنسختي</button></div></div>}
           <div className="aa9-side-actions"><button type="button" className="ghost" disabled={saving} onClick={previewDraft}>معاينة</button><button type="button" className="ghost" disabled={saving || !dirty} onClick={() => void saveArticle()}>{selected?.status === "PUBLISHED" ? "تحديث المنشور" : "حفظ"}</button>{selected?.status === "PUBLISHED" ? <button type="button" className="ghost" disabled={saving} onClick={() => void lifecycle("unpublish")}>إلغاء النشر</button> : <button type="button" className="accent" disabled={saving} onClick={() => void lifecycle("publish")}>نشر</button>}{selected && selected.status !== "ARCHIVED" && <button type="button" className="ghost danger" disabled={saving} onClick={() => void lifecycle("archive")}>أرشفة</button>}{selected?.status === "ARCHIVED" && <button type="button" className="ghost" disabled={saving} onClick={() => void lifecycle("restore")}>استعادة</button>}</div>
         </section>
@@ -608,7 +614,7 @@ export default function ArticlePublishingAuthority9D72Page({ initialArchive = fa
   ];
   return <section className="aa9-workspace" dir="rtl" data-article-cms-v2="authority-9d72">
     <header className="aa9-header"><div><span className="eyebrow">موطني Ops / CMS & Knowledge</span><h1>المقالات والأرشيف</h1><p>نشر وتحرير احترافي للمقالات مع التصنيفات والوسائط والمراجعات وتحسين محركات البحث.</p></div><button type="button" className="accent" onClick={() => void beginCreate()}><AdminFluentIcon name="add" /> مقال جديد</button></header>
-    <nav className="aa9-nav" aria-label="إدارة المقالات">{navItems.map((item) => <button type="button" key={item.id} className={view === item.id ? "active" : ""} onClick={() => { setView(item.id); setError(""); setNotice(""); }}><AdminFluentIcon name={item.icon} /> {item.label}</button>)}<button type="button" className={view === "editor" ? "active" : ""} onClick={() => selected || dirty ? setView("editor") : beginCreate()}><AdminFluentIcon name="edit" /> المحرر</button></nav>
+    <nav className="aa9-nav" aria-label="إدارة المقالات">{navItems.map((item) => <button type="button" key={item.id} className={view === item.id ? "active" : ""} onClick={() => { setView(item.id); setError(""); setNotice(""); }}><AdminFluentIcon name={item.icon} /> {item.label}</button>)}<button type="button" className={view === "editor" ? "active" : ""} onClick={() => { if (selected || dirty) setView("editor"); else void beginCreate(); }}><AdminFluentIcon name="edit" /> المحرر</button></nav>
     {error && <div className="aa9-alert aa9-alert--error" role="alert">{error}</div>}
     {notice && <output className="aa9-alert aa9-alert--success">{notice}</output>}
     {view === "articles" && renderArticles()}
