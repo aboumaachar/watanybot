@@ -37,9 +37,26 @@ const mediaConfig: GenericCmsRouteConfig = {
   defaultLocale: "ar-LB",
 };
 
+const autosaveConfig: GenericCmsRouteConfig = {
+  domain: "article-autosaves",
+  entityType: "cms.article_autosaves",
+  auditEntityType: "article-autosave",
+  title: "Article autosaves",
+  defaultLocale: "ar-LB",
+};
+
 function actorId(request: FastifyRequest): string {
   const user = (request as any).user;
   return String(user?.id || user?.sub || "unknown-admin");
+}
+
+function autosavePublicId(request: FastifyRequest, articleId: string): string {
+  return `autosave-${Buffer.from(`${actorId(request)}|${articleId}`, "utf8").toString("base64url").slice(0, 120)}`;
+}
+
+function editorSnapshot(value: unknown): Record<string, unknown> {
+  if (!value || typeof value !== "object" || Array.isArray(value)) throw new Error("ARTICLE_AUTOSAVE_EDITOR_REQUIRED");
+  return value as Record<string, unknown>;
 }
 
 const uploadPolicy = {
@@ -60,6 +77,7 @@ function base64Buffer(value: unknown): Buffer {
 
 export function registerArticlesCmsRoutes(app: FastifyInstance): void {
   const mediaService = new GenericCmsService(mediaConfig);
+  const autosaveService = new GenericCmsService(autosaveConfig);
   app.post<{ Body: { name?: unknown; mimeType?: unknown; dataBase64?: unknown; altText?: unknown; caption?: unknown } }>(
     "/api/admin/cms/article-media/upload",
     uploadPolicy,
@@ -114,6 +132,41 @@ export function registerArticlesCmsRoutes(app: FastifyInstance): void {
       }
     },
   );
+
+  app.get<{ Params: { id: string } }>("/api/admin/cms/articles/:id/autosave", { preHandler: [buildAdminAuthorityPreHandler(getRoutePolicyByKey("cms.read"))] }, async (request) => {
+    const item = await autosaveService.get(autosavePublicId(request, request.params.id));
+    if (!item || item.status === "ARCHIVED") return { ok: true, autosave: null };
+    return { ok: true, autosave: item.payload };
+  });
+
+  app.put<{ Params: { id: string }; Body: { articleVersion?: unknown; editor?: unknown } }>("/api/admin/cms/articles/:id/autosave", { preHandler: [buildAdminAuthorityPreHandler(getRoutePolicyByKey("cms.edit"))], bodyLimit: 4 * 1024 * 1024 }, async (request, reply) => {
+    try {
+      const editor = editorSnapshot(request.body?.editor);
+      const versionValue = request.body?.articleVersion;
+      const articleVersion = versionValue === null || versionValue === undefined ? null : String(versionValue);
+      const savedAt = new Date().toISOString();
+      const publicId = autosavePublicId(request, request.params.id);
+      const before = await autosaveService.get(publicId);
+      const payload = { articleId: request.params.id, articleVersion, editor, savedAt };
+      const sourceMeta = { owner: "ARTICLE_CMS_V3", autosave: true, actorId: actorId(request) };
+      const item = before
+        ? await autosaveService.update(publicId, { title: `Autosave ${request.params.id}`, status: "DRAFT", payload, sourceMeta }, actorId(request))
+        : await autosaveService.create({ publicId, title: `Autosave ${request.params.id}`, status: "DRAFT", payload, sourceMeta }, actorId(request));
+      if (!item) return reply.code(500).send({ ok: false, error: "ARTICLE_AUTOSAVE_WRITE_FAILED" });
+      return { ok: true, autosave: item.payload };
+    } catch (error) {
+      const code = error instanceof Error ? error.message : "ARTICLE_AUTOSAVE_FAILED";
+      return reply.code(code.startsWith("ARTICLE_AUTOSAVE_") ? 400 : 500).send({ ok: false, error: code });
+    }
+  });
+
+  app.delete<{ Params: { id: string } }>("/api/admin/cms/articles/:id/autosave", { preHandler: [buildAdminAuthorityPreHandler(getRoutePolicyByKey("cms.edit"))] }, async (request) => {
+    const publicId = autosavePublicId(request, request.params.id);
+    const before = await autosaveService.get(publicId);
+    if (!before) return { ok: true, cleared: false };
+    await autosaveService.update(publicId, { status: "ARCHIVED", payload: { ...before.payload, clearedAt: new Date().toISOString() } }, actorId(request));
+    return { ok: true, cleared: true };
+  });
 
   app.post<{ Body: ArticleSeoAgentInput }>(
     "/api/admin/cms/articles/seo-agent/analyze",

@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AdminFluentIcon } from "../components/AdminFluentIcon";
 import {
-  adminFetch, createCmsGenericEntity, getAdminErrorMessage, getApiUrl, getCmsGenericAudit,
+  adminFetch, clearArticleAutosave, createCmsGenericEntity, getAdminErrorCode, getAdminErrorMessage, getApiUrl, getArticleAutosave, getCmsGenericAudit,
   getCmsGenericEntities, getCmsGenericEntity, getCmsGenericVersions,
   replaceCmsGenericRelationships, rollbackCmsGenericEntity, runCmsGenericAction,
-  runCmsGenericBulkArchive, updateCmsGenericEntity, uploadArticleMedia, replaceArticleMedia,
+  runCmsGenericBulkArchive, saveArticleAutosave, updateCmsGenericEntity, uploadArticleMedia, replaceArticleMedia,
   type CmsAuditEvent, type CmsEntityVersion, type CmsGenericItem, type CmsStatus,
 } from "../lib/api";
 import {
@@ -15,6 +15,17 @@ import {
 import "../article-authority-9d72.css";
 
 type LegacyMedia = { url: string; title: string };
+type AutosaveState = "idle" | "saving" | "saved" | "error";
+function articleEditorFromAutosave(value: unknown): ArticleEditor | null {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+  const record = value as Partial<ArticleEditor>; const blank = emptyEditor();
+  return { ...blank, ...record,
+    categoryIds: Array.isArray(record.categoryIds) ? record.categoryIds.filter((item): item is string => typeof item === "string") : [],
+    tagIds: Array.isArray(record.tagIds) ? record.tagIds.filter((item): item is string => typeof item === "string") : [],
+    basePayload: record.basePayload && typeof record.basePayload === "object" && !Array.isArray(record.basePayload) ? record.basePayload : {},
+    baseSourceMeta: record.baseSourceMeta && typeof record.baseSourceMeta === "object" && !Array.isArray(record.baseSourceMeta) ? record.baseSourceMeta : {},
+  };
+}
 type SeoAgentProposal = {
   mode: "ai" | "heuristic"; provider: string; model: string; scoreBefore: number; scoreAfter: number; summary: string;
   fields: { seoTitle: string; seoDescription: string; focusKeyphrase: string; canonicalUrl: string; robots: string; ogTitle: string; ogDescription: string; ogImage: string; excerpt: string };
@@ -65,6 +76,10 @@ export default function ArticlePublishingAuthority9D72Page({ initialArchive = fa
   const [notice, setNotice] = useState("");
   const [seoAgentBusy, setSeoAgentBusy] = useState(false);
   const [seoProposal, setSeoProposal] = useState<SeoAgentProposal | null>(null);
+  const [autosaveState, setAutosaveState] = useState<AutosaveState>("idle");
+  const [autosaveAt, setAutosaveAt] = useState("");
+  const [conflictItem, setConflictItem] = useState<CmsGenericItem | null>(null);
+  const [mediaUsage, setMediaUsage] = useState<Record<string, number>>({});
   const visualRef = useRef<HTMLDivElement | null>(null);
   const titleRef = useRef<HTMLInputElement | null>(null);
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
@@ -76,10 +91,16 @@ export default function ArticlePublishingAuthority9D72Page({ initialArchive = fa
     setNotice("");
   }
 
-  function beginCreate(): void {
+  async function beginCreate(): Promise<void> {
     if (dirty && !globalThis.confirm("هناك تغييرات غير محفوظة. هل تريد إنشاء مقال جديد؟")) return;
-    setSelected(null); setVersions([]); setAudit([]); setSeoProposal(null); setEditor(emptyEditor());
-    setEditorMode("visual"); setDirty(false); setError(""); setNotice(""); setView("editor");
+    setSelected(null); setVersions([]); setAudit([]); setSeoProposal(null); setConflictItem(null); setEditor(emptyEditor());
+    setEditorMode("visual"); setDirty(false); setError(""); setNotice(""); setAutosaveState("idle"); setAutosaveAt(""); setView("editor");
+    try {
+      const autosave = await getArticleAutosave("new"); const restored = articleEditorFromAutosave(autosave?.editor);
+      if (autosave && restored && (restored.title.trim() || restored.bodyHtml.replace(/<[^>]+>/gu, "").trim()) && globalThis.confirm("توجد مسودة خادم تلقائية لمقال جديد. هل تريد استعادتها؟")) {
+        setEditor(restored); setDirty(true); setAutosaveState("saved"); setAutosaveAt(autosave.savedAt); setNotice("تمت استعادة المسودة التلقائية من الخادم.");
+      }
+    } catch { setAutosaveState("error"); }
   }
   async function loadLibraries(): Promise<void> {
     const [categoryData, tagData, mediaData, archiveA, archiveB] = await Promise.all([
@@ -91,14 +112,13 @@ export default function ArticlePublishingAuthority9D72Page({ initialArchive = fa
     ]);
     setCategories(categoryData.items);
     setTags(tagData.items);
-    setMedia(mediaData.items);
+    const activeMedia = mediaData.items.filter((item) => item.status !== "ARCHIVED"); setMedia(activeMedia);
+    const archiveItems = [...archiveA.items, ...archiveB.items];
+    const usage = Object.fromEntries(activeMedia.map((item) => [item.publicId, 0])) as Record<string, number>;
+    for (const item of activeMedia) { const raw=textValue(item.payload.url); const absolute=raw?absoluteMediaUrl(raw):""; usage[item.publicId]=archiveItems.filter((article)=>{const payloadText=JSON.stringify(article.payload||{}); return Boolean((raw&&payloadText.includes(raw))||(absolute&&payloadText.includes(absolute)));}).length; }
+    setMediaUsage(usage);
     const seen = new Set<string>();
-    const historical = [...archiveA.items, ...archiveB.items].flatMap((item) => {
-      const url = textValue(item.payload.featuredImage);
-      if (!url || seen.has(url)) return [];
-      seen.add(url);
-      return [{ url, title: item.title }];
-    });
+    const historical = archiveItems.flatMap((item) => { const url = textValue(item.payload.featuredImage); if (!url || seen.has(url)) return []; seen.add(url); return [{ url, title: item.title }]; });
     setLegacyMedia(historical);
   }
 
@@ -126,11 +146,13 @@ export default function ArticlePublishingAuthority9D72Page({ initialArchive = fa
   }, [editor.id, editor.bodyHtml, editorMode]);
   useEffect(() => {
     if (view !== "editor" || !dirty) return;
+    const articleId = selected?.publicId || "new"; const articleVersion = selected?.version || null;
     const handle = globalThis.setTimeout(() => {
-      localStorage.setItem(`watany_article_draft_${editor.id || "new"}`, JSON.stringify({ savedAt: new Date().toISOString(), editor }));
-    }, 900);
+      const savedAt = new Date().toISOString(); localStorage.setItem(`watany_article_draft_${editor.id || "new"}`, JSON.stringify({ savedAt, editor })); setAutosaveState("saving");
+      void saveArticleAutosave(articleId, { articleVersion, editor }).then((autosave) => { setAutosaveState("saved"); setAutosaveAt(autosave.savedAt); }).catch(() => setAutosaveState("error"));
+    }, 1800);
     return () => globalThis.clearTimeout(handle);
-  }, [dirty, editor, view]);
+  }, [dirty, editor, selected?.publicId, selected?.version, view]);
   async function openArticle(item: CmsGenericItem): Promise<void> {
     if (dirty && !globalThis.confirm("هناك تغييرات غير محفوظة. هل تريد فتح مقال آخر؟")) return;
     setSaving(true); setError("");
@@ -140,9 +162,16 @@ export default function ArticlePublishingAuthority9D72Page({ initialArchive = fa
         getCmsGenericVersions("articles", item.publicId),
         getCmsGenericAudit("articles", item.publicId),
       ]);
-      setSelected(detail); setSeoProposal(null); setEditor(editorFromItem(detail, categories, tags));
-      setVersions(nextVersions); setAudit(nextAudit); setDirty(false);
+      const serverEditor = editorFromItem(detail, categories, tags);
+      setSelected(detail); setSeoProposal(null); setConflictItem(null); setEditor(serverEditor);
+      setVersions(nextVersions); setAudit(nextAudit); setDirty(false); setAutosaveState("idle"); setAutosaveAt("");
       setEditorMode("visual"); setView("editor");
+      try {
+        const autosave = await getArticleAutosave(detail.publicId); const restored = articleEditorFromAutosave(autosave?.editor);
+        const newer = autosave ? new Date(autosave.savedAt).getTime() > new Date(detail.updatedAt || 0).getTime() : false;
+        if (autosave && restored && autosave.articleVersion === detail.version && newer && globalThis.confirm("توجد مسودة خادم تلقائية أحدث من آخر حفظ. هل تريد استعادتها؟")) { setEditor(restored); setDirty(true); setAutosaveState("saved"); setAutosaveAt(autosave.savedAt); setNotice("تمت استعادة مسودة الخادم التلقائية."); }
+        else if (autosave && autosave.articleVersion && autosave.articleVersion !== detail.version) setNotice("توجد مسودة تلقائية مبنية على إصدار أقدم؛ لم تتم استعادتها تلقائياً لحماية التعديلات الأحدث.");
+      } catch { setAutosaveState("error"); }
     } catch (reason: unknown) {
       setError(getAdminErrorMessage(reason, "تعذر فتح المقال."));
     } finally { setSaving(false); }
@@ -179,13 +208,14 @@ export default function ArticlePublishingAuthority9D72Page({ initialArchive = fa
     setNotice("تم ملء حقول SEO الناقصة آلياً بدون استبدال الحقول المعدلة يدوياً.");
   }
 
-  async function saveArticle(): Promise<CmsGenericItem | null> {
+  async function saveArticle(expectedVersionOverride?: string): Promise<CmsGenericItem | null> {
     const titleNode = titleRef.current ?? document.querySelector<HTMLInputElement>(".aa9-title-input");
     const legacyTitle = selected ? editorFromItem(selected, categories, tags).title : "";
     const slugSeed = String(editor.slug || selected?.publicCode || textValue(selected?.payload?.slug) || "").trim();
     const visibleTitle = String(titleNode?.value || editor.title || legacyTitle || "").trim();
     const title = visibleTitle || slugSeed.replace(/-+/g, " ").trim() || "مقال موطني";
     const slug = (slugSeed || slugify(title) || `article-${Date.now()}`).trim();
+    const autosaveTarget = selected?.publicId || "new";
     if (title !== editor.title) setEditor((current) => ({ ...current, title, slug }));
     setSaving(true); setError(""); setNotice("");
     try {
@@ -200,7 +230,7 @@ export default function ArticlePublishingAuthority9D72Page({ initialArchive = fa
       const payload = { ...articlePayload(next, categories, tags), seoAutomationVersion: 2, structuredEditorVersion: 3 };
       const sourceMeta = { ...next.baseSourceMeta, editorOwner: "ARTICLE_CMS_V3", seoAutomationVersion: 2, lastEditorialSaveAt: new Date().toISOString() };
       const saved = selected
-        ? await updateCmsGenericEntity("articles", selected.publicId, { title, publicCode: slug, payload, sourceMeta })
+        ? await updateCmsGenericEntity("articles", selected.publicId, { title, publicCode: slug, payload, sourceMeta, expectedVersion: expectedVersionOverride || selected.version })
         : await createCmsGenericEntity("articles", {
             publicId: newPublicId("article"), title, publicCode: slug, locale: "ar-LB",
             status: "DRAFT", payload, sourceMeta,
@@ -216,11 +246,16 @@ export default function ArticlePublishingAuthority9D72Page({ initialArchive = fa
       setVersions(await getCmsGenericVersions("articles", detail.publicId));
       setAudit(await getCmsGenericAudit("articles", detail.publicId));
       localStorage.removeItem(`watany_article_draft_${editor.id || "new"}`);
+      await clearArticleAutosave(autosaveTarget).catch(() => undefined);
+      setConflictItem(null); setAutosaveState("idle"); setAutosaveAt("");
       setDirty(false); setNotice("تم حفظ المقال والتصنيفات والوسوم.");
       void loadArticles();
       return detail;
     } catch (reason: unknown) {
-      setError(getAdminErrorMessage(reason, "تعذر حفظ المقال."));
+      if (getAdminErrorCode(reason) === "CMS_REVISION_CONFLICT" && selected) {
+        try { setConflictItem(await getCmsGenericEntity("articles", selected.publicId)); } catch { setConflictItem(null); }
+        setError("تم تعديل هذا المقال من جلسة أخرى بعد فتحه. لم يتم استبدال نسخة الخادم؛ اختر نسخة الخادم أو أكد الاستبدال صراحةً.");
+      } else setError(getAdminErrorMessage(reason, "تعذر حفظ المقال."));
       return null;
     } finally { setSaving(false); }
   }
@@ -264,6 +299,9 @@ export default function ArticlePublishingAuthority9D72Page({ initialArchive = fa
       setError(getAdminErrorMessage(reason, "تعذر استعادة الإصدار."));
     } finally { setSaving(false); }
   }
+
+  function loadConflictFromServer(): void { if (!conflictItem) return; setSelected(conflictItem); setEditor(editorFromItem(conflictItem, categories, tags)); setConflictItem(null); setDirty(false); setError(""); setNotice("تم تحميل أحدث نسخة من الخادم."); }
+  async function overwriteConflict(): Promise<void> { if (!conflictItem || !globalThis.confirm("سيتم استبدال نسخة الخادم الحالية بمحتوى المحرر المفتوح. هل تريد المتابعة؟")) return; await saveArticle(conflictItem.version); }
 
   async function createTaxonomy(domain: "article-categories" | "article-tags", stayInEditor = false): Promise<void> {
     const title = taxonomyName.trim();
@@ -343,6 +381,23 @@ export default function ArticlePublishingAuthority9D72Page({ initialArchive = fa
     } finally { setMediaBusy(false); }
   }
 
+  async function editMediaMetadata(item: CmsGenericItem): Promise<void> {
+    const title = globalThis.prompt("اسم الملف في المكتبة", item.title)?.trim(); if (!title) return;
+    const altText = globalThis.prompt("النص البديل للصورة", textValue(item.payload.altText)) ?? textValue(item.payload.altText);
+    const caption = globalThis.prompt("التعليق / الوصف", textValue(item.payload.caption)) ?? textValue(item.payload.caption);
+    try { const updated = await updateCmsGenericEntity("article-media", item.publicId, { title, payload: { ...item.payload, altText: altText.trim(), caption: caption.trim() }, expectedVersion: item.version }); setMedia((current) => current.map((candidate) => candidate.publicId === updated.publicId ? updated : candidate)); setNotice("تم تحديث بيانات الوسائط."); }
+    catch (reason: unknown) { setError(getAdminErrorMessage(reason, "تعذر تحديث بيانات الوسائط.")); }
+  }
+  async function archiveMedia(item: CmsGenericItem): Promise<void> {
+    const usage = mediaUsage[item.publicId] || 0; if (usage > 0) { setError("لا يمكن أرشفة الملف لأنه مستخدم في " + usage + " مقال."); return; }
+    if (!globalThis.confirm("أرشفة الملف «" + item.title + "»؟")) return;
+    try { await runCmsGenericAction("article-media", item.publicId, "archive"); setMedia((current) => current.filter((candidate) => candidate.publicId !== item.publicId)); setNotice("تمت أرشفة الملف غير المستخدم."); }
+    catch (reason: unknown) { setError(getAdminErrorMessage(reason, "تعذر أرشفة الملف.")); }
+  }
+  async function copyMediaUrl(item: CmsGenericItem): Promise<void> { const raw=textValue(item.payload.url); if(!raw)return; await navigator.clipboard.writeText(absoluteMediaUrl(raw)); setNotice("تم نسخ رابط الوسائط."); }
+  function downloadMedia(item: CmsGenericItem): void { const raw=textValue(item.payload.url); if(!raw)return; const link=document.createElement("a"); link.href=absoluteMediaUrl(raw); link.target="_blank"; link.rel="noopener noreferrer"; link.download=item.title; link.click(); }
+
+
   function editorCommand(command: string, value?: string): void {
     visualRef.current?.focus();
     document.execCommand(command, false, value);
@@ -418,7 +473,7 @@ export default function ArticlePublishingAuthority9D72Page({ initialArchive = fa
       <div className="aa9-toolbar">
         <label><span>بحث</span><input value={query} onChange={(event) => { setQuery(event.target.value); setPage(1); }} placeholder="العنوان أو الرابط" /></label>
         <label><span>الحالة</span><select value={status} onChange={(event) => { setStatus(event.target.value as CmsStatus | ""); setPage(1); }}><option value="">كل الحالات</option>{FILTER_STATUSES.map((value) => <option key={value} value={value}>{STATUS_LABELS[value]}</option>)}</select></label>
-        <button type="button" className="accent" onClick={beginCreate}>+ مقال جديد</button>
+        <button type="button" className="accent" onClick={() => void beginCreate()}>+ مقال جديد</button>
         <button type="button" className="ghost danger" disabled={!selectedIds.length || saving} onClick={() => void bulkArchive()}>أرشفة المحدد ({selectedIds.length})</button>
       </div>
       <div className="aa9-table-wrap"><table className="aa9-table"><thead><tr><th><input aria-label="تحديد الصفحة" type="checkbox" checked={allChecked} onChange={(event) => setSelectedIds(event.target.checked ? articles.map((item) => item.publicId) : [])} /></th><th>المقال</th><th>الكاتب</th><th>التصنيفات</th><th>الحالة</th><th>SEO</th><th>آخر تعديل</th></tr></thead><tbody>
@@ -484,8 +539,8 @@ export default function ArticlePublishingAuthority9D72Page({ initialArchive = fa
           const kind = mediaKind(item);
           return <article className="aa9-media-card" key={item.publicId}>
             <div className="aa9-media-preview">{kind === "image" ? <img src={url} alt={textValue(item.payload.altText)} /> : kind === "video" ? <video src={url} controls preload="metadata" /> : <span><AdminFluentIcon name="document" /><b>{kind === "pdf" ? "PDF" : "FILE"}</b></span>}</div>
-            <strong>{item.title}</strong><small>{textValue(item.payload.mimeType)}</small>
-            <div>{kind === "image" && <button type="button" className="ghost sm" onClick={() => { patchEditor({ featuredImage: url, ogImage: editor.ogImage || url }); setView("editor"); }}>صورة بارزة</button>}<button type="button" className="ghost sm" onClick={() => insertMedia(item)}>إدراج</button><label className="ghost sm aa9-file-button">استبدال بنفس الرابط<input hidden type="file" disabled={mediaBusy} accept={textValue(item.payload.mimeType)} onChange={(event) => { const file = event.target.files?.[0]; if (file) void replaceMediaFile(item, file); event.currentTarget.value = ""; }} /></label></div>
+            <strong>{item.title}</strong><small>{textValue(item.payload.mimeType)} · الاستخدام: {mediaUsage[item.publicId] || 0}</small>
+            <div>{kind === "image" && <button type="button" className="ghost sm" onClick={() => { patchEditor({ featuredImage: url, ogImage: editor.ogImage || url }); setView("editor"); }}>صورة بارزة</button>}<button type="button" className="ghost sm" onClick={() => insertMedia(item)}>إدراج</button><button type="button" className="ghost sm" onClick={() => void editMediaMetadata(item)}>البيانات</button><button type="button" className="ghost sm" onClick={() => void copyMediaUrl(item)}>نسخ الرابط</button><button type="button" className="ghost sm" onClick={() => downloadMedia(item)}>تنزيل</button><label className="ghost sm aa9-file-button">استبدال بنفس الرابط<input hidden type="file" disabled={mediaBusy} accept={textValue(item.payload.mimeType)} onChange={(event) => { const file = event.target.files?.[0]; if (file) void replaceMediaFile(item, file); event.currentTarget.value = ""; }} /></label>{(mediaUsage[item.publicId] || 0) === 0 && <button type="button" className="ghost danger sm" onClick={() => void archiveMedia(item)}>أرشفة</button>}</div>
           </article>;
         })}</div>
       </div>
@@ -534,7 +589,8 @@ export default function ArticlePublishingAuthority9D72Page({ initialArchive = fa
         </section>}
       </main>
       <aside className="aa9-sidebar">
-        <section className="aa9-card aa9-publish"><h2>النشر</h2><div className="aa9-publish-state"><span>الحالة</span><strong className={statusClass(selected?.status || editor.status)}>{STATUS_LABELS[selected?.status || editor.status]}</strong></div><div className={review.blockingIssues.length ? "aa9-publish-gate fail" : "aa9-publish-gate pass"}><strong>{review.blockingIssues.length ? "متطلبات نشر ناقصة" : "جاهز لبوابة النشر"}</strong>{review.blockingIssues.length ? <ul>{review.blockingIssues.map((issue) => <li key={issue}>{issue}</li>)}</ul> : <small>العنوان والمحتوى والتصنيف والرابط الدائم صالحة للنشر.</small>}</div><label><span>الكاتب</span><input value={editor.authorName} onChange={(event) => patchEditor({ authorName: event.target.value })} /></label><small>{dirty ? "● تغييرات غير محفوظة · الحفظ المحلي التلقائي مفعل" : selected ? `آخر تعديل: ${formatDate(selected.updatedAt)}` : "مسودة جديدة"}</small>
+        <section className="aa9-card aa9-publish"><h2>النشر</h2><div className="aa9-publish-state"><span>الحالة</span><strong className={statusClass(selected?.status || editor.status)}>{STATUS_LABELS[selected?.status || editor.status]}</strong></div><div className={review.blockingIssues.length ? "aa9-publish-gate fail" : "aa9-publish-gate pass"}><strong>{review.blockingIssues.length ? "متطلبات نشر ناقصة" : "جاهز لبوابة النشر"}</strong>{review.blockingIssues.length ? <ul>{review.blockingIssues.map((issue) => <li key={issue}>{issue}</li>)}</ul> : <small>العنوان والمحتوى والتصنيف والرابط الدائم صالحة للنشر.</small>}</div><label><span>الكاتب</span><input value={editor.authorName} onChange={(event) => patchEditor({ authorName: event.target.value })} /></label><small>{dirty ? "● تغييرات غير محفوظة · " + (autosaveState === "saving" ? "جارٍ الحفظ على الخادم" : autosaveState === "saved" ? "حفظ تلقائي على الخادم " + (autosaveAt ? formatDate(autosaveAt) : "") : autosaveState === "error" ? "تعذر الحفظ التلقائي على الخادم" : "بانتظار الحفظ التلقائي") : selected ? "آخر تعديل: " + formatDate(selected.updatedAt) : "مسودة جديدة"}</small>
+          {conflictItem && <div className="aa9-publish-gate fail"><strong>تعارض تحرير</strong><small>الإصدار على الخادم أصبح {conflictItem.version} بينما المحرر مبني على {selected?.version || "—"}.</small><div className="aa9-side-actions"><button type="button" className="ghost" onClick={loadConflictFromServer}>تحميل نسخة الخادم</button><button type="button" className="ghost danger" disabled={saving} onClick={() => void overwriteConflict()}>استبدال نسخة الخادم بنسختي</button></div></div>}
           <div className="aa9-side-actions"><button type="button" className="ghost" disabled={saving} onClick={previewDraft}>معاينة</button><button type="button" className="ghost" disabled={saving || !dirty} onClick={() => void saveArticle()}>{selected?.status === "PUBLISHED" ? "تحديث المنشور" : "حفظ"}</button>{selected?.status === "PUBLISHED" ? <button type="button" className="ghost" disabled={saving} onClick={() => void lifecycle("unpublish")}>إلغاء النشر</button> : <button type="button" className="accent" disabled={saving} onClick={() => void lifecycle("publish")}>نشر</button>}{selected && selected.status !== "ARCHIVED" && <button type="button" className="ghost danger" disabled={saving} onClick={() => void lifecycle("archive")}>أرشفة</button>}{selected?.status === "ARCHIVED" && <button type="button" className="ghost" disabled={saving} onClick={() => void lifecycle("restore")}>استعادة</button>}</div>
         </section>
         <section className="aa9-card"><h2>الصورة البارزة</h2>{editor.featuredImage ? <img className="aa9-featured" src={editor.featuredImage} alt="" /> : <div className="aa9-featured-empty">لا توجد صورة بارزة</div>}<button type="button" className="ghost" onClick={() => setView("media")}>اختيار من مكتبة الوسائط</button><label className="ghost aa9-file-button">رفع صورة<input hidden type="file" accept="image/jpeg,image/png,image/webp,image/gif" disabled={mediaBusy} onChange={(event) => { const file = event.target.files?.[0]; if (file) void uploadMedia(file, true); event.currentTarget.value = ""; }} /></label>{editor.featuredImage && <button type="button" className="ghost danger" onClick={() => patchEditor({ featuredImage: "" })}>إزالة</button>}</section>
@@ -551,7 +607,7 @@ export default function ArticlePublishingAuthority9D72Page({ initialArchive = fa
     { id: "media", label: "مكتبة الوسائط", icon: "upload" },
   ];
   return <section className="aa9-workspace" dir="rtl" data-article-cms-v2="authority-9d72">
-    <header className="aa9-header"><div><span className="eyebrow">موطني Ops / CMS & Knowledge</span><h1>المقالات والأرشيف</h1><p>نشر وتحرير احترافي للمقالات مع التصنيفات والوسائط والمراجعات وتحسين محركات البحث.</p></div><button type="button" className="accent" onClick={beginCreate}><AdminFluentIcon name="add" /> مقال جديد</button></header>
+    <header className="aa9-header"><div><span className="eyebrow">موطني Ops / CMS & Knowledge</span><h1>المقالات والأرشيف</h1><p>نشر وتحرير احترافي للمقالات مع التصنيفات والوسائط والمراجعات وتحسين محركات البحث.</p></div><button type="button" className="accent" onClick={() => void beginCreate()}><AdminFluentIcon name="add" /> مقال جديد</button></header>
     <nav className="aa9-nav" aria-label="إدارة المقالات">{navItems.map((item) => <button type="button" key={item.id} className={view === item.id ? "active" : ""} onClick={() => { setView(item.id); setError(""); setNotice(""); }}><AdminFluentIcon name={item.icon} /> {item.label}</button>)}<button type="button" className={view === "editor" ? "active" : ""} onClick={() => selected || dirty ? setView("editor") : beginCreate()}><AdminFluentIcon name="edit" /> المحرر</button></nav>
     {error && <div className="aa9-alert aa9-alert--error" role="alert">{error}</div>}
     {notice && <output className="aa9-alert aa9-alert--success">{notice}</output>}

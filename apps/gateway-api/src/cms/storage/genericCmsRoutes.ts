@@ -11,7 +11,7 @@ function actorId(request: FastifyRequest): string {
 
 function sendServiceError(error: unknown, reply: FastifyReply): FastifyReply {
   if (error instanceof GenericCmsServiceError) {
-    return reply.code(error.statusCode).send({ ok: false, error: error.code, ...(error.id ? { id: error.id } : {}) });
+    return reply.code(error.statusCode).send({ ok: false, error: error.code, ...(error.id ? { id: error.id } : {}), ...(error.currentVersion ? { currentVersion: error.currentVersion } : {}) });
   }
   throw error;
 }

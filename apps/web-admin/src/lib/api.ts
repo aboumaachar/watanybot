@@ -615,7 +615,7 @@ export type CmsGenericWrite = {
   payload?: Record<string, unknown>;
   sourceMeta?: Record<string, unknown>;
 };
-export type CmsGenericPatch = Partial<Omit<CmsGenericWrite, "publicId">>;
+export type CmsGenericPatch = Partial<Omit<CmsGenericWrite, "publicId">> & { expectedVersion?: string | number };
 export type CmsGenericRelationshipTarget = { targetDomain: string; targetPublicId: string };
 export type CmsGenericVersionsResponse = { ok: boolean; versions: CmsEntityVersion[] };
 export type CmsGenericAuditResponse = { ok: boolean; events: CmsAuditEvent[] };
@@ -953,6 +953,19 @@ export async function uploadArticleMedia(input: ArticleMediaUploadInput): Promis
 export async function replaceArticleMedia(id: string, input: ArticleMediaUploadInput): Promise<{ item: CmsGenericItem; asset: ArticleMediaUploadAsset }> {
   const res = await adminFetch(`/api/admin/cms/article-media/${encodeURIComponent(id)}/replace`, { method: "POST", body: JSON.stringify(input) });
   return (await res.json()) as { item: CmsGenericItem; asset: ArticleMediaUploadAsset };
+}
+
+export type ArticleAutosave = { articleId: string; articleVersion: string | null; editor: unknown; savedAt: string };
+export async function getArticleAutosave(articleId: string): Promise<ArticleAutosave | null> {
+  const res = await adminFetch(`/api/admin/cms/articles/${encodeURIComponent(articleId)}/autosave`);
+  return ((await res.json()) as { autosave: ArticleAutosave | null }).autosave;
+}
+export async function saveArticleAutosave(articleId: string, input: { articleVersion: string | null; editor: unknown }): Promise<ArticleAutosave> {
+  const res = await adminFetch(`/api/admin/cms/articles/${encodeURIComponent(articleId)}/autosave`, { method: "PUT", body: JSON.stringify(input) });
+  return ((await res.json()) as { autosave: ArticleAutosave }).autosave;
+}
+export async function clearArticleAutosave(articleId: string): Promise<void> {
+  await adminFetch(`/api/admin/cms/articles/${encodeURIComponent(articleId)}/autosave`, { method: "DELETE" });
 }
 
 export async function getCmsEditorialDocuments(params: { q?: string; page?: number; pageSize?: number } = {}): Promise<PayloadEditorialDocumentListResponse> {

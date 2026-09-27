@@ -39,7 +39,7 @@ export type GenericCmsEntityInput = {
   updatedBy?: string;
 };
 
-export type GenericCmsEntityPatch = Partial<Pick<GenericCmsEntity, "title" | "payload" | "sourceMeta" | "status" | "updatedBy" | "publicCode" | "sourceId" | "locale">>;
+export type GenericCmsEntityPatch = Partial<Pick<GenericCmsEntity, "title" | "payload" | "sourceMeta" | "status" | "updatedBy" | "publicCode" | "sourceId" | "locale">> & { expectedRevision?: number };
 
 export type GenericCmsListFilters = {
   search?: string;
@@ -236,6 +236,7 @@ async function updateWithExecutor(executor: QueryExecutor, domain: string, publi
   const publicCodeProvided = hasOwn(patch, "publicCode");
   const sourceIdProvided = hasOwn(patch, "sourceId");
   const localeProvided = hasOwn(patch, "locale");
+  const expectedRevision = Number.isInteger(patch.expectedRevision) ? Number(patch.expectedRevision) : null;
   const result = await executor.query<CmsRow>(
     `UPDATE cms_content_entities
      SET title = CASE WHEN $3::boolean THEN $4 ELSE title END,
@@ -258,11 +259,21 @@ async function updateWithExecutor(executor: QueryExecutor, domain: string, publi
            WHEN $9::boolean THEN NULL
            ELSE archived_at
          END
-     WHERE domain = $1 AND public_id = $2
+     WHERE domain = $1 AND public_id = $2 AND ($18::int IS NULL OR revision = $18)
      RETURNING *`,
-    [domain, publicId, titleProvided, titleProvided ? patch.title : null, payloadProvided, payloadProvided ? JSON.stringify(patch.payload ?? {}) : null, sourceMetaProvided, sourceMetaProvided ? JSON.stringify(patch.sourceMeta ?? {}) : null, statusProvided, statusProvided ? patch.status : null, publicCodeProvided, publicCodeProvided ? patch.publicCode ?? null : null, sourceIdProvided, sourceIdProvided ? patch.sourceId ?? null : null, localeProvided, localeProvided ? patch.locale ?? null : null, patch.updatedBy || "unknown-admin"],
+     [domain, publicId, titleProvided, titleProvided ? patch.title : null, payloadProvided, payloadProvided ? JSON.stringify(patch.payload ?? {}) : null, sourceMetaProvided, sourceMetaProvided ? JSON.stringify(patch.sourceMeta ?? {}) : null, statusProvided, statusProvided ? patch.status : null, publicCodeProvided, publicCodeProvided ? patch.publicCode ?? null : null, sourceIdProvided, sourceIdProvided ? patch.sourceId ?? null : null, localeProvided, localeProvided ? patch.locale ?? null : null, patch.updatedBy || "unknown-admin", expectedRevision],
   );
-  return result.rows[0] ? mapRow(result.rows[0]) : null;
+  if (result.rows[0]) return mapRow(result.rows[0]);
+  if (expectedRevision !== null) {
+    const current = await executor.query<{ revision: number | string }>("SELECT revision FROM cms_content_entities WHERE domain = $1 AND public_id = $2", [domain, publicId]);
+    if (current.rows[0]) {
+      const error = new Error("CMS_REVISION_CONFLICT") as Error & { code?: string; currentRevision?: number };
+      error.code = "CMS_REVISION_CONFLICT";
+      error.currentRevision = Number(current.rows[0].revision);
+      throw error;
+    }
+  }
+  return null;
 }
 
 export async function updateGenericCmsEntity(domain: string, publicId: string, patch: GenericCmsEntityPatch): Promise<GenericCmsEntity | null> {

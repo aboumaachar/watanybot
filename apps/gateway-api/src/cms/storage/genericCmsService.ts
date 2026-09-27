@@ -58,6 +58,7 @@ export class GenericCmsServiceError extends Error {
     public readonly statusCode: 400 | 404 | 409,
     message = code,
     public readonly id?: string,
+    public readonly currentVersion?: string,
   ) {
     super(message);
     this.name = "GenericCmsServiceError";
@@ -205,7 +206,7 @@ function normalizeCreate(config: GenericCmsRouteConfig, input: unknown, actor: s
 
 function normalizePatch(config: GenericCmsRouteConfig, input: unknown, actor: string): GenericCmsEntityPatch {
   const body = asRecord(input);
-  const supportedKeys = new Set(["title", "publicCode", "sourceId", "locale", "payload", "sourceMeta", "status"]);
+  const supportedKeys = new Set(["title", "publicCode", "sourceId", "locale", "payload", "sourceMeta", "status", "expectedVersion"]);
   const unsupported = Object.keys(body).filter((key) => !supportedKeys.has(key));
   if (unsupported.length > 0) throw new GenericCmsServiceError("VALIDATION_FAILED", 400, `Unsupported CMS fields: ${unsupported.join(", ")}`);
   const patch: GenericCmsEntityPatch = { updatedBy: actor };
@@ -216,7 +217,13 @@ function normalizePatch(config: GenericCmsRouteConfig, input: unknown, actor: st
   if (Object.prototype.hasOwnProperty.call(body, "payload")) patch.payload = normalizePayload(config, body.payload);
   if (Object.prototype.hasOwnProperty.call(body, "sourceMeta")) patch.sourceMeta = normalizeSourceMeta(config, body.sourceMeta);
   if (Object.prototype.hasOwnProperty.call(body, "status")) patch.status = normalizeStatus(body.status);
-  if (Object.keys(patch).length === 1) throw new GenericCmsServiceError("VALIDATION_FAILED", 400, "At least one CMS field is required");
+  if (Object.prototype.hasOwnProperty.call(body, "expectedVersion")) {
+    const expectedRevision = Number(body.expectedVersion);
+    if (!Number.isInteger(expectedRevision) || expectedRevision < 1) throw new GenericCmsServiceError("VALIDATION_FAILED", 400, "expectedVersion must be a positive integer");
+    patch.expectedRevision = expectedRevision;
+  }
+  const mutationKeys = Object.keys(patch).filter((key) => key !== "updatedBy" && key !== "expectedRevision");
+  if (mutationKeys.length === 0) throw new GenericCmsServiceError("VALIDATION_FAILED", 400, "At least one CMS field is required");
   return patch;
 }
 
@@ -230,6 +237,10 @@ function errorFromRepository(error: unknown): GenericCmsServiceError | null {
   const code = (error as Error & { code?: string }).code;
   const id = (error as Error & { id?: string }).id;
   if (code === "CMS_ITEM_NOT_FOUND") return new GenericCmsServiceError(code, 404, code, id);
+  if (code === "CMS_REVISION_CONFLICT") {
+    const currentRevision = (error as Error & { currentRevision?: number }).currentRevision;
+    return new GenericCmsServiceError(code, 409, code, id, currentRevision === undefined ? undefined : String(currentRevision));
+  }
   return null;
 }
 
