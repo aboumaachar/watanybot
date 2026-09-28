@@ -71,6 +71,7 @@ import { registerCivilianJobsAdminRoutes } from "../civilian-jobs/civilian-jobs.
 import { registerCivilianJobsAggregatorRoutes } from "../civilian-jobs/civilian-jobs.aggregator.routes";
 import { registerCivilianJobsMatchingRoutes } from "../civilian-jobs/civilian-jobs.matching.routes";
 import { registerCivilianJobsPersistenceRoutes } from "../civilian-jobs/civilian-jobs.persistence.routes";
+import { registerUniversalJobApplicationRoutes } from "../civilian-jobs/universal-job-applications.routes";
 import { worldCupRoutes } from "../routes/world-cup";
 import { directoryRoutes } from "../routes/directory";
 import { faqRoutes } from "../routes/faq";
@@ -405,6 +406,7 @@ export async function registerRoutes(
   app.register(registerCivilianJobsAggregatorRoutes);
   app.register(registerCivilianJobsMatchingRoutes);
   app.register(registerCivilianJobsPersistenceRoutes);
+  app.register(registerUniversalJobApplicationRoutes);
   app.register(registerCivilianJobsEmployerPortalRoutes);
   app.register(registerCivilianJobsFreelancerSkillRoutes);
   app.register(marketRoutes, { prefix: "/api" });

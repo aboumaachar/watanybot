@@ -39,6 +39,7 @@ const AinMreissehBuildingAssistantApplicationsAdminPage = lazy(() => import("../
 const MiddleEastSecurityJobsPage = lazy(() => import("../pages/MiddleEastSecurityJobsPage"));
 const MiddleEastSecurityApplicationsAdminPage = lazy(() => import("../pages/MiddleEastSecurityApplicationsAdminPage"));
 const MiddleEastSecuritySharePage = lazy(() => import("../pages/MiddleEastSecuritySharePage"));
+const UniversalJobApplicationPage = lazy(() => import("../pages/UniversalJobApplicationPage"));
 const MarketPage = lazy(() => import("../pages/MarketPage"));
 const SuperAdminPage = lazy(() => import("../pages/SuperAdminPage"));
 const SuperadminUsersPage = lazy(() => import("../features/superadmin-users/SuperadminUsersPage"));
@@ -158,6 +159,8 @@ export function AppShell() {
         <Route path="jobs/ainelhafeh" element={<AinElHafehJobsPage />} />
         <Route path="jobs/ain-mreisseh-building-assistant" element={<AinMreissehBuildingAssistantJobsPage />} />
         <Route path="jobs/middle-east-security" element={<MiddleEastSecurityJobsPage />} />
+        <Route path="jobs/:jobSlug/application" element={<UniversalJobApplicationPage />} />
+        <Route path="jobs/accredited-bulldozer-driver" element={<Navigate to="/jobs/accredited-bulldozer-driver/application" replace />} />
         <Route path="superadmin/middle-east-security/applications" element={<RequireAdmin><MiddleEastSecurityApplicationsAdminPage /></RequireAdmin>} />
         <Route path="superadmin/ain-mreisseh-building-assistant/applications" element={<RequireAdmin><AinMreissehBuildingAssistantApplicationsAdminPage /></RequireAdmin>} />
         <Route path="superadmin/jobs" element={<RequireAdmin><AdminEmployerPortalPage /></RequireAdmin>} />

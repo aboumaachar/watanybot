@@ -1,4 +1,4 @@
-﻿import type { LandingConfig } from "./MobileFeatureLandingPage";
+import type { LandingConfig } from "./MobileFeatureLandingPage";
 
 export const marketMobileLandingConfig: LandingConfig = {
   id: "market",
@@ -199,6 +199,14 @@ export const jobsMobileLandingConfig: LandingConfig = {
       summary: "مساعد مدير مبنى – عين المريسة",
       badge: "تسجيل مفتوح",
       href: "/jobs/ain-mreisseh-building-assistant",
+    },
+    {
+      title: "فرصة عمل – سائق جرافة معتمد",
+      company: "جهة توظيف خاصة",
+      location: "لبنان",
+      summary: "طلب توظيف لسائق جرافة معتمد مع خبرة في تشغيل الآليات الثقيلة.",
+      badge: "تسجيل مفتوح",
+      href: "/jobs/accredited-bulldozer-driver/application",
     }
   ],
   sections: [

@@ -9,6 +9,7 @@ import {
 } from "./seed.js";
 import type { JobApplicationRecord, JobPosting, SavedJob, JobSearchResult } from "./types.js";
 import { marketplaceJobApplicationsRepository, type MarketplaceJobApplicationsRepository } from "./repository.js";
+import { listUniversalJobApplicationsForOwner } from "../civilian-jobs/universal-job-applications.repository.js";
 
 let idCounter = 1;
 function makeId(prefix: string) {
@@ -511,9 +512,15 @@ function toPublicEmployerDetail(employer: {
 
     const qs = req.query as Record<string, string>;
     const phone = normalize(qs.phone);
-    if (!phone) return { applications: [] };
-
-    const mine = await applicationsRepository.listByPhone(phone);
+    const mine = phone ? await applicationsRepository.listByPhone(phone) : [];
+    const trackingToken = normalize(req.headers["x-job-tracking-token"] || qs.job_tracking_token);
+    const universal = await listUniversalJobApplicationsForOwner({
+      userId: normalize(req.user?.id) || undefined,
+      trackingToken: trackingToken || undefined,
+    }).catch((error) => {
+      req.log?.error?.({ err: error }, "universal_job_applied_jobs_lookup_failed");
+      return [];
+    });
     const enriched = mine.map((a) => {
       const job = SEED_JOBS.find((j) => j.id === a.job_id);
       const emp = job ? SEED_EMPLOYERS.find((e) => e.id === job.employer_id) : null;
@@ -523,6 +530,29 @@ function toPublicEmployerDetail(employer: {
         company_name: emp?.company_name || "—",
       };
     });
+    enriched.push(...universal.map((a) => ({
+      id: a.id,
+      job_id: a.templateSlug,
+      status: (a.status === "approved" || a.status === "hired" ? "accepted" : a.status === "rejected" || a.status === "withdrawn" ? "rejected" : "pending") as JobApplicationRecord["status"],
+      veteran_name: a.applicantName,
+      phone: a.phone,
+      applied_at: a.createdAt,
+      job_title: a.templateTitle,
+      company_name: a.employerName,
+      address: a.address,
+      mohafaza: a.mohafaza,
+      mohafaza_id: a.mohafazaId,
+      caza: a.caza,
+      caza_id: a.cazaId,
+      village: a.village,
+      village_id: a.villageId,
+      village_pcode: a.villagePcode,
+      location_dataset_version: a.locationDatasetVersion,
+      location_approval_status: a.locationApprovalStatus,
+      updated_at: a.updatedAt,
+      follow_up_status: a.followUpStatus,
+      reference: a.reference,
+    })));
     return { applications: enriched };
   });
 

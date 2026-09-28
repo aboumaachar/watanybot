@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { adminFetch, getAdminErrorMessage } from "../lib/api";
 import { AdminFluentIcon } from "../components/AdminFluentIcon";
+import UniversalJobApplicationsAdminPanel from "./UniversalJobApplicationsAdminPanel";
 
 type OpportunityStatus = "DRAFT" | "PENDING_REVIEW" | "PUBLISHED" | "ARCHIVED";
 type ApplicationStatus =
@@ -104,7 +105,7 @@ export default function JobsAdminPage() {
   const [sources, setSources] = useState<Source[]>([]);
   const [form, setForm] = useState<Partial<Opportunity>>(emptyOpportunity());
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [tab, setTab] = useState<"opportunities" | "applications" | "sources">("opportunities");
+  const [tab, setTab] = useState<"opportunities" | "applications" | "templates" | "templateApplications" | "sources">("opportunities");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -207,9 +208,9 @@ export default function JobsAdminPage() {
       {error && <div className="alert" role="alert">{error}</div>}
 
       <div className="toolbar" role="tablist" aria-label="أقسام إدارة فرص العمل">
-        {(["opportunities", "applications", "sources"] as const).map((value) => (
+        {(["opportunities", "applications", "templates", "templateApplications", "sources"] as const).map((value) => (
           <button key={value} className={tab === value ? "accent" : "ghost"} onClick={() => setTab(value)} role="tab" aria-selected={tab === value}>
-            {value === "opportunities" ? "الفرص" : value === "applications" ? "الطلبات" : "المصادر"}
+            {value === "opportunities" ? "الفرص" : value === "applications" ? "الطلبات القديمة" : value === "templates" ? "نماذج طلبات التوظيف" : value === "templateApplications" ? "طلبات النماذج" : "المصادر"}
           </button>
         ))}
       </div>
@@ -238,6 +239,9 @@ export default function JobsAdminPage() {
       )}
 
       {tab === "applications" && <div className="table-wrap"><table className="admin-table"><thead><tr><th>المتقدم</th><th>الهاتف</th><th>الفرصة</th><th>الفئة</th><th>الحالة</th><th>التاريخ</th></tr></thead><tbody>{applications.length === 0 ? <tr><td colSpan={6} className="muted center">لا توجد طلبات.</td></tr> : applications.map((item) => <tr key={item.id}><td className="strong">{item.applicantName}</td><td dir="ltr">{item.applicantPhone}</td><td>{opportunities.find((opportunity) => opportunity.id === item.opportunityId)?.title ?? item.opportunityId}</td><td>{item.applicantType}</td><td><select value={item.status} onChange={(event) => void updateApplication(item.id, event.target.value as ApplicationStatus)}>{applicationStatuses.map((status) => <option key={status} value={status}>{status}</option>)}</select></td><td className="muted">{formatDate(item.createdAt)}</td></tr>)}</tbody></table></div>}
+
+      {tab === "templates" && <UniversalJobApplicationsAdminPanel view="templates" />}
+      {tab === "templateApplications" && <UniversalJobApplicationsAdminPanel view="applications" />}
 
       {tab === "sources" && <div className="table-wrap"><table className="admin-table"><thead><tr><th>المصدر</th><th>النوع</th><th>سياسة الجمع</th><th>الرابط</th><th>مفعل</th></tr></thead><tbody>{sources.length === 0 ? <tr><td colSpan={5} className="muted center">لا توجد مصادر.</td></tr> : sources.map((source) => <tr key={source.id}><td className="strong">{source.name}</td><td>{source.sourceType}</td><td>{source.crawlPolicy}</td><td><a href={source.url} target="_blank" rel="noreferrer">فتح المصدر</a></td><td><input type="checkbox" checked={source.enabled} onChange={(event) => void updateSource(source, event.target.checked)} aria-label={`تفعيل ${source.name}`} /></td></tr>)}</tbody></table></div>}
     </div>
