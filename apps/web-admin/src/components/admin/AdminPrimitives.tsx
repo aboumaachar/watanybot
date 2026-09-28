@@ -19,6 +19,9 @@ export function AdminStatusBadge({ status }: { status: string }) {
   return <span className={`admin-status-badge status-${normalized}`}><span aria-hidden="true" className="status-dot" />{status}</span>;
 }
 
+export function AdminNotice({ children, tone = "info" }: { children: ReactNode; tone?: "info" | "success" | "warning" | "error" }) {
+  return <div className={`admin-notice notice-${tone}`} role={tone === "error" ? "alert" : undefined}>{children}</div>;
+}
 export function AdminSearchInput({ value, onChange, placeholder = "Search" }: { value: string; onChange: (value: string) => void; placeholder?: string }) {
   return <label className="admin-search"><span className="sr-only">{placeholder}</span><input value={value} onChange={(event) => onChange(event.target.value)} placeholder={placeholder} type="search" /></label>;
 }
