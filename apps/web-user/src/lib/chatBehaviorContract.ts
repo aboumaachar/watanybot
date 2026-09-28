@@ -17,11 +17,11 @@ export interface WatanyChatApiOwner {
 }
 
 export const WATANY_CHAT_ROUTES: readonly WatanyChatRouteOwner[] = [
-  { route: '/hybrid-kb-chat', family: 'hybrid_system_search_ai', owner: 'Full-width hybrid KB continuation', continuation: true },
+  { route: '/hybrid-kb-chat', family: 'hybrid_system_search_ai', owner: 'Compatibility alias to official system chat', continuation: true },
   { route: '/chat', family: 'hybrid_system_search_ai', owner: 'Official system chat continuation', continuation: true },
   { route: '/mobile-os/chat', family: 'hybrid_system_search_ai', owner: 'Redirect to official system chat', continuation: true },
   { route: '/saved', family: 'hybrid_system_search_ai', owner: 'Saved hybrid/system chats' },
-  { route: '/chat-sessions', family: 'hybrid_system_search_ai', owner: 'Hybrid/system chat sessions' },
+  { route: '/chat-sessions', family: 'hybrid_system_search_ai', owner: 'Hybrid/system chat session snapshots (non-canonical)' },
   { route: '/community', family: 'social_user_group', owner: 'Community landing', explicitSystemInvocationRequired: true },
   { route: '/groups', family: 'social_user_group', owner: 'Social group list', explicitSystemInvocationRequired: true },
   { route: '/groups/:groupId', family: 'social_user_group', owner: 'Social group thread', explicitSystemInvocationRequired: true },
@@ -29,12 +29,14 @@ export const WATANY_CHAT_ROUTES: readonly WatanyChatRouteOwner[] = [
 ] as const;
 
 export const WATANY_CHAT_APIS: readonly WatanyChatApiOwner[] = [
-  { path: '/api/chat/hybrid', family: 'hybrid_system_search_ai', owner: 'Hybrid answer endpoint', purpose: 'final hybrid answer' },
+  { path: '/api/chat/hybrid', family: 'hybrid_system_search_ai', owner: 'Legacy hybrid compatibility endpoint', purpose: 'legacy hybrid answer compatibility' },
   { path: '/api/kb/hybrid-chat', family: 'hybrid_system_search_ai', owner: 'Hybrid KB compatibility endpoint', purpose: 'hybrid answer compatibility' },
   { path: '/api/kb/live-search', family: 'hybrid_system_search_ai', owner: 'Typeahead/live search endpoint', purpose: 'candidate answers while typing' },
   { path: '/api/search/unified', family: 'hybrid_system_search_ai', owner: 'Global/app index search endpoint', purpose: 'app index and KB fallback' },
   { path: '/api/chat', family: 'hybrid_system_search_ai', owner: 'System chat endpoint', purpose: 'system chat continuation' },
   { path: '/api/chat/stream', family: 'hybrid_system_search_ai', owner: 'Streaming system chat endpoint', purpose: 'streaming system response' },
+  { path: '/api/community/direct', family: 'social_user_group', owner: 'Direct conversation list/create', purpose: 'authenticated 1:1 thread authority' },
+  { path: '/api/community/direct/contacts', family: 'social_user_group', owner: 'Direct conversation contacts', purpose: 'authenticated 1:1 contact discovery' },
   { path: '/api/community/groups', family: 'social_user_group', owner: 'Social group list', purpose: 'group discovery' },
   { path: '/api/community/groups/:groupId/messages', family: 'social_user_group', owner: 'Social group messages', purpose: 'send and list group messages' },
   { path: '/api/community/groups/:groupId/read', family: 'social_user_group', owner: 'Social read receipts', purpose: 'mark/read state' },

@@ -10,6 +10,8 @@ import type {
   Community,
   CommunityGroupDetail,
   CommunityGroup,
+  CommunityDirectContact,
+  CommunityDirectThread,
   CommunityGroupMembersOverview,
   CommunityGroupMembershipSummary,
   CommunityGroupPermission,
@@ -43,6 +45,8 @@ import type {
   NotificationRoomMuteDuration,
   NotificationSettings,
   PensionCalcResult,
+  SalaryDegreeInference,
+  SalaryPre2019DegreeInference,
   SalaryComputeV2Response,
   SalaryMeta,
   SalaryResult,
@@ -1818,6 +1822,7 @@ type AuthenticatedProfilePayload = {
   region?: string | null;
   note?: string | null;
   profile_completed?: boolean | null;
+  must_change_password?: boolean | null;
   phone_verified_at?: string | null;
   last_login?: string | number | null;
 };
@@ -1883,6 +1888,10 @@ function mapAuthenticatedProfile(user: AuthenticatedProfilePayload, fallback?: U
 
   if (typeof user.profile_completed === "boolean") {
     next.profileCompleted = user.profile_completed;
+  }
+
+  if (typeof user.must_change_password === "boolean") {
+    next.mustChangePassword = user.must_change_password;
   }
 
   if (lastLogin !== undefined) {
@@ -2517,8 +2526,44 @@ export const api = {
     };
   },
 
+  async salaryInferDegree(
+    params: { rank: string; exactVetSalary: number },
+    baseUrl = API_URL,
+  ): Promise<SalaryDegreeInference> {
+    const res = await fetch(`${baseUrl}/api/salary/infer-degree`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(params),
+    });
+    const data = await res.json().catch(() => null) as { ok?: boolean; inference?: SalaryDegreeInference; error?: string; minimumVetSalary?: number } | null;
+    if (!res.ok || !data?.inference) {
+      const error = new Error(data?.error || "salary degree inference failed") as Error & { minimumVetSalary?: number };
+      error.minimumVetSalary = data?.minimumVetSalary;
+      throw error;
+    }
+    return data.inference;
+  },
+
+  async salaryInferPre2019Degree(
+    params: { rank: string; pre2019BaseSalary: number },
+    baseUrl = API_URL,
+  ): Promise<SalaryPre2019DegreeInference> {
+    const res = await fetch(`${baseUrl}/api/salary/infer-pre2019-degree`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(params),
+    });
+    const data = await res.json().catch(() => null) as { ok?: boolean; inference?: SalaryPre2019DegreeInference; error?: string; minimumPre2019BaseSalary?: number } | null;
+    if (!res.ok || !data?.inference) {
+      const error = new Error(data?.error || "pre-2019 salary degree inference failed") as Error & { minimumPre2019BaseSalary?: number };
+      error.minimumPre2019BaseSalary = data?.minimumPre2019BaseSalary;
+      throw error;
+    }
+    return data.inference;
+  },
+
   async salaryCalc(
-    params: { rank: string; degree: number; married: boolean; kidsCount: number; selectedOrnaments: string[] },
+    params: { rank: string; degree?: number; married: boolean; kidsCount: number; selectedOrnaments: string[]; exactVetSalary?: number; pre2019BaseSalary?: number },
     baseUrl = API_URL,
   ): Promise<PensionCalcResult> {
     const res = await fetch(`${baseUrl}/api/salary/calc`, {
@@ -3838,6 +3883,17 @@ export const api = {
     return mapGatewayChatResponse(await res2.json());
   },
 
+  async chatGatewayV2(question: string, context?: Record<string, unknown>, baseUrl = API_URL): Promise<ChatV2Response> {
+    const normalizedQuestion = normalizeSearchableArabicInput(question);
+    const res = await authFetch(`${baseUrl}/api/chat`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ message: normalizedQuestion, context, sessionId: getClientChatSessionId() }),
+    });
+    if (!res.ok) throw new Error("gateway chat failed");
+    return mapGatewayChatResponse(await res.json());
+  },
+
   async chatV2Stream(
     question: string,
     handlers?: ChatStreamHandlers,
@@ -4719,7 +4775,7 @@ export const api = {
     }
 
     try {
-      const res = await fetch(`${baseUrl}/api/admin/features`);
+      const res = await authFetch(`${baseUrl}/api/features`);
       if (!res.ok) return { flags: {}, lastUpdatedAt: null };
       const data = await res.json();
       return {
@@ -4771,6 +4827,31 @@ export const api = {
     if (!res.ok) throw new Error("group fetch failed");
     const data = await res.json() as { group: any };
     return data.group;
+  },
+
+  async getCommunityDirectContacts(query = "", baseUrl = API_URL): Promise<CommunityDirectContact[]> {
+    const params = new URLSearchParams();
+    if (query.trim()) params.set("q", query.trim());
+    const suffix = params.size ? `?${params.toString()}` : "";
+    const res = await authFetch(`${baseUrl}/api/community/direct/contacts${suffix}`);
+    if (!res.ok) throw new Error("community direct contacts fetch failed");
+    const data = await res.json() as { contacts: CommunityDirectContact[] };
+    return data.contacts;
+  },
+
+  async getCommunityDirectThreads(baseUrl = API_URL): Promise<CommunityDirectThread[]> {
+    const res = await authFetch(`${baseUrl}/api/community/direct`);
+    if (!res.ok) throw new Error("community direct threads fetch failed");
+    const data = await res.json() as { threads: CommunityDirectThread[] };
+    return data.threads;
+  },
+
+  async getOrCreateCommunityDirectThread(recipientUserId: string, baseUrl = API_URL): Promise<CommunityDirectThread> {
+    const res = await authFetch(`${baseUrl}/api/community/direct`, {
+      method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ recipientUserId }),
+    });
+    if (!res.ok) throw new Error("community direct thread create failed");
+    return await res.json() as CommunityDirectThread;
   },
 
   async getCommunityOverview(baseUrl = API_URL): Promise<{ community: Community; groups: CommunityGroup[]; liveSessions: LiveSession[] }> {

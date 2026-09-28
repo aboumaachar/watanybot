@@ -1,13 +1,12 @@
-﻿import HybridKbChatWindow from "../components/chat/HybridKbChatWindow";
+﻿import { Navigate, useLocation } from "react-router-dom";
 
-type HybridDefaultSurfaceProps = Record<string, unknown>;
-
-export function HybridKbChatPage(props: HybridDefaultSurfaceProps) {
-  void props;
-  return <HybridKbChatWindow />;
+export function HybridKbChatPage() {
+  const location = useLocation();
+  const target = `/chat${location.search}${location.hash}`;
+  return <Navigate to={target} replace state={location.state} />;
 }
 
-export const hybridDefaultSourcePath = "apps/web-user/src/pages/hybrid-kb-chat.tsx";
-export const hybridDefaultModuleKind = "page";
+export const hybridKbChatCanonicalOwner = "/chat";
+export const hybridKbChatCompatibilityAlias = true;
 
 export default HybridKbChatPage;

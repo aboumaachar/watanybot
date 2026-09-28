@@ -20,18 +20,19 @@ import { advancedRoutes } from "../routes/advanced";
 import { authRoutes } from "../auth/auth-routes.js";
 import { otpRoutes } from "../auth/otp-routes.js";
 import { adminRulesRoutes } from "../routes/admin-rules.js";
+import { adminAdsRoutes } from "../routes/admin-ads.js";
 import { adminKbRoutes } from "../routes/admin-kb.js";
 import { adminKbStudioRoutes } from "../routes/admin-kb-studio.js";
 import { adminAiRoutes } from "../routes/admin-ai.js";
 import { adminAiRuntimeRoutes } from "../routes/admin-ai-runtime.js";
 import { adminUsersRoutes } from "../routes/admin-users.js";
+import { adminUsersManagementRoutes } from "../routes/admin-users-management.js";
 import { adminTickerRoutes } from "../routes/admin-ticker.js";
 import { adminPaymentsRoutes } from "../admin-payments/index.js";
 import { recruitmentRoutes } from "../recruitment/index.js";
 import { casesRoutes } from "../routes/cases.js";
 import { documentsRoutes } from "../routes/documents.js";
 import { communityRoutes } from "../routes/community.js";
-import { groupsRoutes } from "../routes/groups.js";
 import { adminWSRoutes } from "../ws/admin-ws.js";
 import { communityWSRoutes } from "../ws/community-ws.js";
 import { featuresWSRoutes } from "../ws/features-ws.js";
@@ -282,6 +283,7 @@ export async function registerRoutes(
   app.register(payloadSsoRoutes);
   app.register(otpRoutes);
   app.register(adminRulesRoutes);
+  app.register(adminAdsRoutes);
 
   app.register(adminKbRoutes, {
     kbSalariesDir,
@@ -355,6 +357,7 @@ export async function registerRoutes(
   });
 
   app.register(adminUsersRoutes);
+  app.register(adminUsersManagementRoutes);
   app.register(adminTickerRoutes);
   app.register(adminNewsRoutes);
   app.register(adminPaymentsRoutes);
@@ -392,7 +395,6 @@ export async function registerRoutes(
   app.register(documentsRoutes, { pluginDb: kb.pluginDb, makeId });
   app.log.info({ msg: 'registerRoutes: registering communityRoutes' });
   app.register(communityRoutes, { makeId });
-  app.register(groupsRoutes,    { makeId });
   app.register(worldCupRoutes,     { prefix: "/api", pluginDb: kb.pluginDb });
   app.register(createIdentityProfileFoundationProofRouter, { prefix: '/api' });
   app.register(proceduresRoutes);
