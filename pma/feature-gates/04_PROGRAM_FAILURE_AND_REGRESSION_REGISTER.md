@@ -1444,3 +1444,10 @@ FAIL_CLOSED=YES
 - Trigger: `git diff --name-only | find /c /v ""` correctly printed `0` for an empty path set, but Windows `find` returned exit 1; an `&&` chain therefore skipped the following conflict-count command and the wrapper exited 1.
 - Classification: validation-wrapper control-flow defect only; no Git/source mutation occurred and the zero path count itself is not failure evidence.
 - Guard: never chain empty-set cardinality probes through `find` when its exit code controls later gates. Run the authoritative Git command independently and accept empty stdout only with Git exit 0; compute display counts separately without affecting control flow.
+
+### APEX_USERS_PROFILE_REMOTE_RECONCILE_REPORT_PACKAGE_LATE_MATERIALIZATION_20260928
+- Status: ACTIVE PROCESS GUARD / registered 2026-09-28 at final closeout.
+- Trigger: the reconciliation evidence root contained `worktree`, `validation`, and helper scripts but no mandatory APEX report package before the resumed source-freeze, merge commit, and non-force Git publication were executed.
+- Impact: feature validation, merge identity, push exit, and remote-ref parity remain independently evidenced, but this execution violated the APEX report-lifecycle ordering contract and must not be described as process-clean.
+- Guard: every future resume must precreate `FINAL_REPORT.md`, `summary.json`, `FINAL_STATUS.txt`, progress/checkpoint/CSV ledgers, logs, stage reports, and manifest scaffolding before substantive Git or deployment mutation; later sealing may finalize them but cannot substitute for precreation.
+- Current recovery: create and freeze the complete closeout package now, preserve this late-materialization fact in warnings/failures, and report the overall run as successful publication with a registered reporting-order deviation rather than an unqualified process PASS.
