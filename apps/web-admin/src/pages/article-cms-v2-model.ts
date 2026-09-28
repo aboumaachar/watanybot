@@ -143,6 +143,17 @@ export type SeoCheck = { id: string; label: string; ok: boolean; blocking?: bool
 function plainText(value: string): string {
   return value.replace(/<script[\s\S]*?<\/script>/giu, " ").replace(/<style[\s\S]*?<\/style>/giu, " ").replace(/<[^>]+>/g, " ").replace(/&nbsp;/g, " ").replace(/\s+/g, " ").trim();
 }
+function localHeadingStats(value: string): { bodyH1Count: number; skippedLevels: number } {
+  const levels = Array.from(value.matchAll(/<h([1-6])\b[^>]*>/giu), (match) => Number(match[1]));
+  let skippedLevels = 0;
+  for (let index = 1; index < levels.length; index += 1) if (levels[index] > levels[index - 1] + 1) skippedLevels += 1;
+  return { bodyH1Count: levels.filter((level) => level === 1).length, skippedLevels };
+}
+function localImageStats(value: string): { total: number; missingAlt: number } {
+  const images = Array.from(value.matchAll(/<img\b([^>]*)>/giu));
+  const missingAlt = images.filter((match) => !/\balt\s*=\s*(?:"[^"\s][^"]*"|'[^'\s][^']*')/iu.test(match[1] || "")).length;
+  return { total: images.length, missingAlt };
+}
 
 export function articleCanonicalPath(editor: ArticleEditor, categories: CmsGenericItem[]): string {
   const primary = categories.find((row) => row.publicId === editor.primaryCategoryId && editor.categoryIds.includes(row.publicId)) || categories.find((row) => editor.categoryIds.includes(row.publicId));
@@ -166,6 +177,8 @@ export function fillMissingSeo(editor: ArticleEditor, categories: CmsGenericItem
 
 export function seoScore(editor: ArticleEditor): { score: number; notes: string[]; checks: SeoCheck[]; blockingIssues: string[] } {
   const bodyText = plainText(editor.bodyHtml);
+  const heading = localHeadingStats(editor.bodyHtml);
+  const images = localImageStats(editor.bodyHtml);
   const checks: SeoCheck[] = [
     { id: "title", label: "عنوان المقال موجود", ok: Boolean(editor.title.trim()), blocking: true },
     { id: "body", label: "محتوى المقال موجود", ok: bodyText.length >= 40, blocking: true },
@@ -177,6 +190,9 @@ export function seoScore(editor: ArticleEditor): { score: number; notes: string[
     { id: "featured", label: "صورة بارزة أو بديل اجتماعي", ok: Boolean(editor.featuredImage.trim() || editor.ogImage.trim()) },
     { id: "og", label: "بيانات OpenGraph مكتملة", ok: Boolean(editor.ogTitle.trim() && editor.ogDescription.trim() && editor.ogImage.trim()) },
     { id: "excerpt", label: "المقتطف موجود", ok: editor.excerpt.trim().length >= 40 },
+    { id: "body-h1", label: "لا يوجد H1 داخل جسم المقال", ok: heading.bodyH1Count === 0 },
+    { id: "heading-hierarchy", label: "تسلسل H2-H6 دون قفزات", ok: heading.skippedLevels === 0 },
+    { id: "image-alt", label: "كل صور المحتوى لها نص بديل", ok: images.missingAlt === 0 },
   ];
   const failed = checks.filter((check) => !check.ok);
   const score = Math.max(0, Math.round(((checks.length - failed.length) / checks.length) * 100));

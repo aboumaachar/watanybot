@@ -146,7 +146,7 @@ export const articleRoutes: FastifyPluginAsync = async (app) => {
   });
 
   app.get("/api/articles/sitemap.xml", async (_request, reply) => {
-    const rows = await query<CmsRow & { updated_at: string | null }>(`SELECT public_id,public_code,title,payload,published_at,updated_at FROM cms_content_entities WHERE domain='articles' AND status='PUBLISHED' ORDER BY published_at DESC NULLS LAST,public_id ASC`);
+    const rows = await query<CmsRow & { updated_at: string | null }>(`SELECT public_id,public_code,title,payload,published_at,updated_at FROM cms_content_entities WHERE domain='articles' AND status='PUBLISHED' AND COALESCE(payload->>'robots','index,follow') NOT LIKE 'noindex%' ORDER BY published_at DESC NULLS LAST,public_id ASC`);
     const xmlEscape=(value:string)=>value.replace(/[&<>"']/g,(c)=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&apos;"}[c]||c));
     const urls=[`<url><loc>${ARTICLE_PUBLIC_ORIGIN}/articles</loc></url>`,...rows.rows.map((row)=>{const item=toListItem(row);const loc=`${ARTICLE_PUBLIC_ORIGIN}${articleCanonicalPath(item)}`;const lastmod=row.updated_at||row.published_at;return `<url><loc>${xmlEscape(loc)}</loc>${lastmod?`<lastmod>${xmlEscape(new Date(lastmod).toISOString())}</lastmod>`:""}</url>`;})];
     const xml=`<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls.join("")}</urlset>`;
