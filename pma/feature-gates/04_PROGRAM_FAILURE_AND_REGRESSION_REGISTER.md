@@ -1225,3 +1225,51 @@ FAIL_CLOSED=YES
 - Impact: that parent-hash line is invalid evidence, although the same invocation's clean status, `git diff HEAD^ HEAD --check` no-output result, and explicit `252643e..HEAD` name-status are not used as parent proof.
 - Guard: use `HEAD~1`, an explicit parent hash, or properly escaped `HEAD^^` under cmd.exe; verify parent differs from HEAD and equals the expected source commit before push.
 - Status: ACTIVE
+
+### APEX_USERS_PROFILE_UNPERSISTED_110_TEST_CLOSEOUT_CLAIM_20260928
+- Date: 2026-09-28
+- Class: Runtime-evidence durability / report-claim mismatch.
+- Symptom: closeout/register text claimed a final 14/14-file, 110/110-test acceptance run, but no matching preserved stdout/stderr artifact was found in the validation evidence directories; the latest durable complete matrix was 13/13 files and 109/109 tests.
+- Impact: the 14/14, 110/110 claim is UNVERIFIED until rerun and persisted; report text alone is not runtime proof.
+- Guard: every final acceptance count must be backed by preserved command output, exit code, empty-or-classified stderr, and a deterministic success token before it is copied into closeout documentation.
+- Status: ACTIVE
+
+### APEX_NATIVE_SKILL_DECLARED_PATH_MISSING_REPOSITORY_MIRROR_ONLY_20260928
+- Date: 2026-09-28
+- Class: APEX skill authority path / repository enforcement-layer integrity.
+- Symptom: `.github\skills\apex-ps1\SKILL.md` declares native source `.pma\skills\apex-ps1\SKILL.md`, but that declared file is absent in both the isolated worktree and canonical workspace; only the `.github` mirror is present.
+- Impact: repository-local native-skill parity is UNVERIFIED and must not be represented as loaded from the declared `.pma` source. Product validation may proceed under the active ChatGPT-native policy plus repository mirror, but the repository skill state requires separate repair/update.
+- Guard: never silently substitute the mirror for the declared native path; report `APEX_PS1_SKILL_UPDATE_REQUIRED=YES` until the repository authority path is restored or the metadata is intentionally revised and independently verified.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_REMOTE_COMMAND_TRANSPORT_FETCH_FAILURE_20260928
+- Date: 2026-09-28
+- Class: Remote command transport / missing execution evidence.
+- Symptom: Desktop Commander returned `Result could not be stored (TypeError: fetch failed)` while invoking the final Node authority validator, so no trustworthy process exit code or validator token was captured.
+- Impact: that invocation is UNVERIFIED and cannot satisfy the authority gate.
+- Guard: retry only after confirming device connectivity; accept the stage only when the actual process result includes exit 0 plus the expected deterministic success token.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_LOCAL_SEALED_SHARED_FILE_COPY_NOT_SERVER_RAW_AUTHORITY_20260928
+- Date: 2026-09-28
+- Class: Evidence-source identity / stale local sealed-file copy.
+- Symptom: the reconciliation validator correctly found the expected 15/17 raw Git-blob matches, then failed because local `sealed-AddressWidget.tsx.bin` did not hash to the server manifest's raw SHA `206c0b68...`.
+- Impact: the local `.bin` copy cannot be used as proof of the sealed server bytes; the raw manifest mismatch classification remains valid, but normalized equivalence must be re-proven from the server authority itself.
+- Guard: never trust a locally named `sealed-*` file without re-verifying its raw hash against the server manifest. For cross-platform normalization proof, compute raw and normalized hashes directly on the sealed server release and compare them to the isolated Git blob.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_APP_ADAPTATION_VALIDATOR_SYNTAX_EQUIVALENCE_DEFECT_20260928
+- Date: 2026-09-28
+- Class: Semantic-equivalence validator incorrectly required local implementation syntax in sealed server source.
+- Symptom: direct server proof confirmed both shared files match the sealed raw manifest exactly and confirmed the AddressWidget normalized hash, then failed because it required the product adaptation string `const UserPage = lazy(...)` to exist in the sealed server `App.tsx`.
+- Impact: the server proof invocation is INVALID as an App semantic-equivalence gate; it conflated implementation syntax with required user-profile routing behavior.
+- Guard: compare server and product App files by their actual V3 route/navigation contracts and separately prove product App provenance/immutability since `3251471`; never require the product-shell adaptation syntax to appear verbatim in the production-shell source.
+- Status: ACTIVE
+
+## Users/Profile V3 final evidence-resolution update — 2026-09-28
+- `APEX_USERS_PROFILE_UNPERSISTED_110_TEST_CLOSEOUT_CLAIM_20260928`: RESOLVED; fresh `users-auth-regressions-v3.out/.err` proves exit 0, 14/14 files, 110/110 tests, stderr 0.
+- `APEX_USERS_PROFILE_REMOTE_COMMAND_TRANSPORT_FETCH_FAILURE_20260928`: RESOLVED; device ping succeeded and the authority validator rerun returned exit 0 with `USERS_PROFILE_INDEX_AUTHORITY=PASS`.
+- `APEX_USERS_PROFILE_LOCAL_SEALED_SHARED_FILE_COPY_NOT_SERVER_RAW_AUTHORITY_20260928`: RESOLVED_BY_DIRECT_SERVER_PROOF; server `shared-authority-v5.out` proves App and AddressWidget raw hashes match `SOURCE_MANIFEST.sha256`, with AddressWidget normalized SHA `0a5cf333...`.
+- `APEX_USERS_PROFILE_APP_ADAPTATION_VALIDATOR_SYNTAX_EQUIVALENCE_DEFECT_20260928`: RESOLVED; server V5 validates the production App's direct-import route/breadcrumb contract, while Windows reconciliation V4 validates the product lazy-import adaptation and unchanged provenance since `3251471`.
+- Final local validator: `final-validation-v3.out/.err` => `FINAL_LOCAL_VALIDATION_CHAIN=PASS`, stderr 0.
+- Sealed V3 disposition: 15/17 raw exact + AddressWidget normalized exact + App product-shell contract adaptation; never report 17/17 raw-byte identity.

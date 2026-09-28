@@ -35,7 +35,9 @@ The integrated product carries the dedicated user profile page, avatar support, 
 - Gateway typecheck: PASS; stderr 0 bytes.
 - Web-admin typecheck: PASS; stderr 0 bytes.
 - Web-user typecheck: PASS; stderr 0 bytes.
-- Expanded Users/Auth regression matrix: PASS, **13/13 files and 109/109 tests**; stderr 0 bytes.
+- Expanded Users/Auth regression matrix: PASS, **14/14 files and 110/110 tests**; stderr 0 bytes.
+- Final local evidence validator: `FINAL_LOCAL_VALIDATION_CHAIN=PASS`; stderr 0 bytes.
+- Direct server shared-file proof: `shared-authority-v5.out`; raw manifest hashes PASS, AddressWidget normalized equivalence PASS, App V3 route/breadcrumb contracts PASS.
 - Web-admin production build with `VITE_BASE=/ops/`, `VITE_API_URL=/mcp`, `VITE_WEB_USER_ORIGIN=https://koudama.com`: exit 0, 304 modules transformed, 11 dist assets, `/ops/assets/` refs verified.
 - Build stderr: four classified Vite reporter chunking advisories only; no error/failed/failure/exception tokens.
 - Production closeout canaries: `/ops/`, `/ops/users`, user deeplink, address data, health/ready all PASS; unauthenticated management/network/service-privilege boundaries 401/401/401.
