@@ -22,6 +22,10 @@ export function AdminStatusBadge({ status }: { status: string }) {
 export function AdminNotice({ children, tone = "info" }: { children: ReactNode; tone?: "info" | "success" | "warning" | "error" }) {
   return <div className={`admin-notice notice-${tone}`} role={tone === "error" ? "alert" : undefined}>{children}</div>;
 }
+
+export function AdminTabs({ items, value, onChange }: { items: Array<{ value: string; label: string; count?: number }>; value: string; onChange: (value: string) => void }) {
+  return <div className="admin-tabs" role="tablist">{items.map((item) => <button key={item.value} type="button" role="tab" aria-selected={value === item.value} className={value === item.value ? "active" : ""} onClick={() => onChange(item.value)}>{item.label}{item.count !== undefined && <span>{item.count}</span>}</button>)}</div>;
+}
 export function AdminSearchInput({ value, onChange, placeholder = "Search" }: { value: string; onChange: (value: string) => void; placeholder?: string }) {
   return <label className="admin-search"><span className="sr-only">{placeholder}</span><input value={value} onChange={(event) => onChange(event.target.value)} placeholder={placeholder} type="search" /></label>;
 }
@@ -44,8 +48,8 @@ export function AdminPagination({ page, pageSize, total, onPageChange }: { page:
   return <div className="pagination" aria-label="Pagination"><button type="button" className="ghost" disabled={page <= 1} onClick={() => onPageChange(page - 1)}>Previous</button><span className="muted">Page {page} of {pageCount} ({total} total)</span><button type="button" className="ghost" disabled={page >= pageCount} onClick={() => onPageChange(page + 1)}>Next</button></div>;
 }
 
-export function AdminConfirmDialog({ title, message, confirmLabel = "Confirm", onConfirm, onCancel }: { title: string; message: string; confirmLabel?: string; onConfirm: () => void; onCancel: () => void }) {
-  return <div className="admin-dialog-backdrop" role="presentation"><section className="admin-dialog" role="dialog" aria-modal="true" aria-labelledby="admin-dialog-title"><h2 id="admin-dialog-title">{title}</h2><p>{message}</p><div className="admin-dialog-actions"><button type="button" className="ghost" onClick={onCancel}>Cancel</button><button type="button" className="accent" onClick={onConfirm}>{confirmLabel}</button></div></section></div>;
+export function AdminConfirmDialog({ title, message, confirmLabel = "Confirm", danger = false, onConfirm, onCancel }: { title: string; message: string; confirmLabel?: string; danger?: boolean; onConfirm: () => void; onCancel: () => void }) {
+  return <div className="admin-dialog-backdrop" role="presentation"><section className="admin-dialog" role="dialog" aria-modal="true" aria-labelledby="admin-dialog-title"><h2 id="admin-dialog-title">{title}</h2><p>{message}</p><div className="admin-dialog-actions"><button type="button" className="ghost" onClick={onCancel}>Cancel</button><button type="button" className={danger ? "admin-danger-button" : "accent"} onClick={onConfirm}>{confirmLabel}</button></div></section></div>;
 }
 
 export function AdminDetailDrawer({ title, children, onClose }: { title: string; children: ReactNode; onClose: () => void }) {
