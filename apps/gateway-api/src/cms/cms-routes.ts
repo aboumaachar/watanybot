@@ -11,6 +11,7 @@ import type { Procedure, ProcToDocs, StoredDocAsset } from "../procedures/types.
 import { registerDocumentsCmsRoutes } from "./documents/documents-cms-adapter.js";
 import { registerFormsCmsRoutes } from "./forms/forms-cms-adapter.js";
 import { registerAnnouncementsCmsRoutes } from "./announcements/announcements-cms-adapter.js";
+import { registerArticlesCmsRoutes } from "./articles/articles-cms-adapter.js";
 import { PayloadSyncError, payloadCanonicalSync } from "./payloadCanonicalSync.js";
 import { applyPayloadDocumentDrafts, getPayloadBootstrapStatus, publishPayloadDocuments } from "./payloadEditorialBootstrap.js";
 import { claimImportPlan, createImportPlan, getImportPlan, markImportPlanApplied, markImportPlanRecoveryRequired, reconcileImportPlan } from "../admin-authority/adminAuthorityStore.js";
@@ -222,6 +223,7 @@ export async function cmsRoutes(app: FastifyInstance): Promise<void> {
   registerDocumentsCmsRoutes(app);
   registerFormsCmsRoutes(app);
   registerAnnouncementsCmsRoutes(app);
+  registerArticlesCmsRoutes(app);
   app.get<{ Querystring: { format?: string; q?: string; status?: CmsStatus } }>("/api/admin/cms/procedures/export", cmsPolicy("cms.read"), async (request, reply) => {
     const term = String(request.query.q || "").trim().toLocaleLowerCase();
     const status = STATUS_VALUES.includes(request.query.status as CmsStatus) ? request.query.status as CmsStatus : undefined;
@@ -450,6 +452,15 @@ export async function cmsRoutes(app: FastifyInstance): Promise<void> {
       lifecycle: STATUS_VALUES,
       canonicalEditor: "GATEWAY_CMS",
       publicApi: "/api/announcements",
+    }, {
+      domainId: "articles",
+      displayName: "Articles & Archive",
+      route: "/superadmin/cms/articles",
+      apiBase: "/api/admin/cms/articles",
+      identityField: "publicId",
+      lifecycle: STATUS_VALUES,
+      canonicalEditor: "GATEWAY_CMS",
+      publicApi: "/api/articles",
     }],
     legacyUtilities: [{
       domainId: "documents",

@@ -99,12 +99,11 @@ describe("GET /api/v2/search (proxy → Python)", () => {
       url: "/api/v2/search?q=تقاعد",
     });
     const body = res.json();
-    expectProxyOkOrDown(res.statusCode, body);
-
-    if (PYTHON_UP) {
-      expect(body).toHaveProperty("hits");
-      expect(Array.isArray(body.hits)).toBe(true);
-    }
+    expect(res.statusCode).toBe(200);
+    expect(body).toHaveProperty("items");
+    expect(Array.isArray(body.items)).toBe(true);
+    expect(body).toHaveProperty("total");
+    expect(body).toHaveProperty("query", "تقاعد");
   });
 
   it("handles empty q gracefully", async () => {
@@ -161,19 +160,15 @@ describe("POST /api/v2/salary/compute (proxy → Python)", () => {
 // POST /api/v2/tickets
 // ─────────────────────────────────────────────────────────────────────────────
 describe("POST /api/v2/tickets (proxy → Python)", () => {
-  it("returns 200 or 502 for ticket creation", async () => {
+  it("uses the local fallback and requires authentication when Python is unavailable", async () => {
     const res = await app.inject({
       method: "POST",
       url: "/api/v2/tickets",
       payload: { subject: "استفسار عن المعاش", message: "أحتاج مساعدة", lang: "ar" },
     });
     const body = res.json();
-    expectProxyOkOrDown(res.statusCode, body);
-
-    if (PYTHON_UP) {
-      expect(body).toHaveProperty("id");
-      expect(body).toHaveProperty("status");
-    }
+    expect(res.statusCode).toBe(401);
+    expect(body).toMatchObject({ error: "Authentication required" });
   });
 });
 
@@ -181,18 +176,14 @@ describe("POST /api/v2/tickets (proxy → Python)", () => {
 // GET /api/v2/tickets
 // ─────────────────────────────────────────────────────────────────────────────
 describe("GET /api/v2/tickets (proxy → Python)", () => {
-  it("returns 200 or 502 for ticket list", async () => {
+  it("uses the local fallback and requires authentication when Python is unavailable", async () => {
     const res = await app.inject({
       method: "GET",
       url: "/api/v2/tickets",
     });
     const body = res.json();
-    expectProxyOkOrDown(res.statusCode, body);
-
-    if (PYTHON_UP) {
-      expect(body).toHaveProperty("tickets");
-      expect(Array.isArray(body.tickets)).toBe(true);
-    }
+    expect(res.statusCode).toBe(401);
+    expect(body).toMatchObject({ error: "Authentication required" });
   });
 });
 

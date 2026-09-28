@@ -311,6 +311,22 @@ export type CommunityGroup = {
   actorPermissions?: CommunityGroupPermission[];
 };
 
+export type CommunityDirectContact = {
+  id: string;
+  name: string;
+  email: string;
+  phone?: string;
+  role: string;
+};
+
+export type CommunityDirectThread = {
+  groupId: string;
+  peer: CommunityDirectContact;
+  unreadCount: number;
+  lastMessagePreview?: string;
+  lastMessageAt?: string;
+};
+
 export type CommunityMessage = {
   id: string;
   groupId: string;

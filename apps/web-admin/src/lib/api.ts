@@ -552,6 +552,7 @@ export type CmsDocumentWrite = {
   file_path?: string | null;
 };
 export type ManagedCmsDomain = "forms" | "announcements";
+export type CmsGenericDomain = ManagedCmsDomain | "articles" | "article-categories" | "article-tags" | "article-media";
 export type CmsRelationship = {
   entityId: string;
   publicId: string;
@@ -587,7 +588,7 @@ export type CmsAuditEvent = {
   immutableHash?: string;
 };
 export type CmsGenericItem = CmsItem & {
-  domain: ManagedCmsDomain;
+  domain: CmsGenericDomain;
   publicId: string;
   publicCode: string | null;
   sourceId: string | null;
@@ -600,7 +601,7 @@ export type CmsGenericItem = CmsItem & {
 };
 export type CmsGenericListResponse = Omit<CmsListResponse, "items"> & {
   ok?: boolean;
-  domain?: ManagedCmsDomain;
+  domain?: CmsGenericDomain;
   items: CmsGenericItem[];
 };
 export type CmsGenericDetailResponse = { ok: boolean; item: CmsGenericItem };
@@ -614,7 +615,7 @@ export type CmsGenericWrite = {
   payload?: Record<string, unknown>;
   sourceMeta?: Record<string, unknown>;
 };
-export type CmsGenericPatch = Partial<Omit<CmsGenericWrite, "publicId">>;
+export type CmsGenericPatch = Partial<Omit<CmsGenericWrite, "publicId">> & { expectedVersion?: string | number };
 export type CmsGenericRelationshipTarget = { targetDomain: string; targetPublicId: string };
 export type CmsGenericVersionsResponse = { ok: boolean; versions: CmsEntityVersion[] };
 export type CmsGenericAuditResponse = { ok: boolean; events: CmsAuditEvent[] };
@@ -857,7 +858,7 @@ export async function triggerPayloadSync(): Promise<PayloadSyncStatus["active"]>
 
 type CmsGenericListParams = { q?: string; status?: CmsStatus; page?: number; pageSize?: number };
 
-function cmsGenericPath(domain: ManagedCmsDomain, id?: string): string {
+function cmsGenericPath(domain: CmsGenericDomain, id?: string): string {
   const suffix = id === undefined ? "" : `/${encodeURIComponent(id)}`;
   return `/api/admin/cms/${domain}${suffix}`;
 }
@@ -871,75 +872,100 @@ function cmsGenericQuery(params: CmsGenericListParams): string {
   return value ? `?${value}` : "";
 }
 
-export async function getCmsGenericEntities(domain: ManagedCmsDomain, params: CmsGenericListParams = {}): Promise<CmsGenericListResponse> {
+export async function getCmsGenericEntities(domain: CmsGenericDomain, params: CmsGenericListParams = {}): Promise<CmsGenericListResponse> {
   const res = await adminFetch(`${cmsGenericPath(domain)}${cmsGenericQuery(params)}`);
   return (await res.json()) as CmsGenericListResponse;
 }
 
-export async function getCmsGenericEntity(domain: ManagedCmsDomain, id: string): Promise<CmsGenericItem> {
+export async function getCmsGenericEntity(domain: CmsGenericDomain, id: string): Promise<CmsGenericItem> {
   const res = await adminFetch(cmsGenericPath(domain, id));
   return ((await res.json()) as CmsGenericDetailResponse).item;
 }
 
-export async function createCmsGenericEntity(domain: ManagedCmsDomain, payload: CmsGenericWrite): Promise<CmsGenericItem> {
+export async function createCmsGenericEntity(domain: CmsGenericDomain, payload: CmsGenericWrite): Promise<CmsGenericItem> {
   const res = await adminFetch(cmsGenericPath(domain), { method: "POST", body: JSON.stringify(payload) });
   return ((await res.json()) as CmsGenericDetailResponse).item;
 }
 
-export async function updateCmsGenericEntity(domain: ManagedCmsDomain, id: string, payload: CmsGenericPatch): Promise<CmsGenericItem> {
+export async function updateCmsGenericEntity(domain: CmsGenericDomain, id: string, payload: CmsGenericPatch): Promise<CmsGenericItem> {
   const res = await adminFetch(cmsGenericPath(domain, id), { method: "PATCH", body: JSON.stringify(payload) });
   return ((await res.json()) as CmsGenericDetailResponse).item;
 }
 
-export async function runCmsGenericAction(domain: ManagedCmsDomain, id: string, action: CmsGenericAction): Promise<CmsGenericItem> {
+export async function runCmsGenericAction(domain: CmsGenericDomain, id: string, action: CmsGenericAction): Promise<CmsGenericItem> {
   const res = await adminFetch(`${cmsGenericPath(domain, id)}/actions/${action}`, { method: "POST" });
   return ((await res.json()) as CmsGenericDetailResponse).item;
 }
 
-export async function runCmsGenericBulkArchive(domain: ManagedCmsDomain, ids: readonly string[]): Promise<CmsGenericItem[]> {
+export async function runCmsGenericBulkArchive(domain: CmsGenericDomain, ids: readonly string[]): Promise<CmsGenericItem[]> {
   const res = await adminFetch(`${cmsGenericPath(domain)}/bulk-actions/archive`, { method: "POST", body: JSON.stringify({ ids }) });
   return ((await res.json()) as { items: CmsGenericItem[] }).items;
 }
 
-export async function runCmsGenericBulkEdit(domain: ManagedCmsDomain, ids: readonly string[], patch: CmsGenericPatch): Promise<CmsGenericItem[]> {
+export async function runCmsGenericBulkEdit(domain: CmsGenericDomain, ids: readonly string[], patch: CmsGenericPatch): Promise<CmsGenericItem[]> {
   const res = await adminFetch(`${cmsGenericPath(domain)}/bulk-actions/edit`, { method: "POST", body: JSON.stringify({ ids, patch }) });
   return ((await res.json()) as { items: CmsGenericItem[] }).items;
 }
 
-export async function getCmsGenericVersions(domain: ManagedCmsDomain, id: string): Promise<CmsEntityVersion[]> {
+export async function getCmsGenericVersions(domain: CmsGenericDomain, id: string): Promise<CmsEntityVersion[]> {
   const res = await adminFetch(`${cmsGenericPath(domain, id)}/versions`);
   return ((await res.json()) as CmsGenericVersionsResponse).versions;
 }
 
-export async function getCmsGenericAudit(domain: ManagedCmsDomain, id: string): Promise<CmsAuditEvent[]> {
+export async function getCmsGenericAudit(domain: CmsGenericDomain, id: string): Promise<CmsAuditEvent[]> {
   const res = await adminFetch(`${cmsGenericPath(domain, id)}/audit`);
   return ((await res.json()) as CmsGenericAuditResponse).events;
 }
 
-export async function rollbackCmsGenericEntity(domain: ManagedCmsDomain, id: string, versionId: string): Promise<CmsGenericItem> {
+export async function rollbackCmsGenericEntity(domain: CmsGenericDomain, id: string, versionId: string): Promise<CmsGenericItem> {
   const res = await adminFetch(`${cmsGenericPath(domain, id)}/rollback/${encodeURIComponent(versionId)}`, { method: "POST" });
   return ((await res.json()) as CmsGenericDetailResponse).item;
 }
 
-export async function getCmsGenericRelationships(domain: ManagedCmsDomain, id: string, relationType?: string): Promise<CmsRelationship[]> {
+export async function getCmsGenericRelationships(domain: CmsGenericDomain, id: string, relationType?: string): Promise<CmsRelationship[]> {
   const query = relationType ? `?relationType=${encodeURIComponent(relationType)}` : "";
   const res = await adminFetch(`${cmsGenericPath(domain, id)}/relationships${query}`);
   return ((await res.json()) as CmsGenericRelationshipsResponse).relationships;
 }
 
-export async function addCmsGenericRelationship(domain: ManagedCmsDomain, id: string, relationship: { relationType: string; targetDomain: string; targetPublicId: string }): Promise<CmsRelationship> {
+export async function addCmsGenericRelationship(domain: CmsGenericDomain, id: string, relationship: { relationType: string; targetDomain: string; targetPublicId: string }): Promise<CmsRelationship> {
   const res = await adminFetch(`${cmsGenericPath(domain, id)}/relationships`, { method: "POST", body: JSON.stringify(relationship) });
   return ((await res.json()) as { relationship: CmsRelationship }).relationship;
 }
 
-export async function replaceCmsGenericRelationships(domain: ManagedCmsDomain, id: string, relationType: string, targets: readonly CmsGenericRelationshipTarget[]): Promise<CmsRelationship[]> {
+export async function replaceCmsGenericRelationships(domain: CmsGenericDomain, id: string, relationType: string, targets: readonly CmsGenericRelationshipTarget[]): Promise<CmsRelationship[]> {
   const res = await adminFetch(`${cmsGenericPath(domain, id)}/relationships/${encodeURIComponent(relationType)}`, { method: "PUT", body: JSON.stringify({ targets }) });
   return ((await res.json()) as CmsGenericRelationshipsResponse).relationships;
 }
 
-export async function deleteCmsGenericRelationship(domain: ManagedCmsDomain, id: string, relationship: Pick<CmsRelationship, "relationType" | "targetDomain" | "targetPublicId">): Promise<void> {
+export async function deleteCmsGenericRelationship(domain: CmsGenericDomain, id: string, relationship: Pick<CmsRelationship, "relationType" | "targetDomain" | "targetPublicId">): Promise<void> {
   const path = `${cmsGenericPath(domain, id)}/relationships/${encodeURIComponent(relationship.relationType)}/${encodeURIComponent(relationship.targetDomain)}/${encodeURIComponent(relationship.targetPublicId)}`;
   await adminFetch(path, { method: "DELETE" });
+}
+
+export type ArticleMediaUploadAsset = { fileName: string; url: string; mimeType: string; size: number };
+export type ArticleMediaUploadInput = { name: string; mimeType: string; dataBase64: string; altText?: string; caption?: string };
+export async function uploadArticleMedia(input: ArticleMediaUploadInput): Promise<{ item: CmsGenericItem; asset: ArticleMediaUploadAsset }> {
+  const res = await adminFetch("/api/admin/cms/article-media/upload", { method: "POST", body: JSON.stringify(input) });
+  return (await res.json()) as { item: CmsGenericItem; asset: ArticleMediaUploadAsset };
+}
+
+export async function replaceArticleMedia(id: string, input: ArticleMediaUploadInput): Promise<{ item: CmsGenericItem; asset: ArticleMediaUploadAsset }> {
+  const res = await adminFetch(`/api/admin/cms/article-media/${encodeURIComponent(id)}/replace`, { method: "POST", body: JSON.stringify(input) });
+  return (await res.json()) as { item: CmsGenericItem; asset: ArticleMediaUploadAsset };
+}
+
+export type ArticleAutosave = { articleId: string; articleVersion: string | null; editor: unknown; savedAt: string };
+export async function getArticleAutosave(articleId: string): Promise<ArticleAutosave | null> {
+  const res = await adminFetch(`/api/admin/cms/articles/${encodeURIComponent(articleId)}/autosave`);
+  return ((await res.json()) as { autosave: ArticleAutosave | null }).autosave;
+}
+export async function saveArticleAutosave(articleId: string, input: { articleVersion: string | null; editor: unknown }): Promise<ArticleAutosave> {
+  const res = await adminFetch(`/api/admin/cms/articles/${encodeURIComponent(articleId)}/autosave`, { method: "PUT", body: JSON.stringify(input) });
+  return ((await res.json()) as { autosave: ArticleAutosave }).autosave;
+}
+export async function clearArticleAutosave(articleId: string): Promise<void> {
+  await adminFetch(`/api/admin/cms/articles/${encodeURIComponent(articleId)}/autosave`, { method: "DELETE" });
 }
 
 export async function getCmsEditorialDocuments(params: { q?: string; page?: number; pageSize?: number } = {}): Promise<PayloadEditorialDocumentListResponse> {

@@ -1,12 +1,3 @@
-﻿/**
- * Wave 02 Admin service for Civilian Jobs & Services.
- *
- * Extends Wave01 service with admin-only CRUD and status transitions.
- * All opportunity state is held in-memory (Wave03 will add persistence).
- *
- * Boundary: إعلانات التطويع (military recruitment) is never managed here.
- */
-import { civilianOpportunitySeed, civilianOpportunitySources } from "./civilian-jobs.seed.js";
 import { updateCivilianOpportunityApplicationStatus } from "./civilian-jobs.service.js";
 import type {
   CivilianOpportunity,
@@ -17,125 +8,112 @@ import type {
   OpportunityType,
   OpportunityAudience,
 } from "./civilian-jobs.types.js";
+import { civilianJobsRepository } from "./civilian-jobs.repository.js";
 import type { CivilianJobsRepository } from "./civilian-jobs.repository.js";
 
-// Re-export public reads so admin routes can use a single import
 export { listCivilianOpportunityApplications, listCivilianOpportunitySources } from "./civilian-jobs.service.js";
 
-function watanySafeStringField(value: unknown, fallback = ""): string {
+function safeString(value: unknown, fallback = ""): string {
   if (typeof value === "string") return value.trim();
   if (typeof value === "number" || typeof value === "boolean" || typeof value === "bigint") return String(value);
   return fallback;
 }
 
-function watanySafeStringArrayField(value: unknown): string[] {
+function safeStringArray(value: unknown): string[] {
   if (!Array.isArray(value)) return [];
-  return value.map((item) => watanySafeStringField(item)).filter(Boolean);
+  return value.map((item) => safeString(item)).filter(Boolean);
 }
-// Clone seed into a mutable array so admin operations don't mutate the seed.
-const adminOpportunities: CivilianOpportunity[] = civilianOpportunitySeed.map((o) => ({ ...o }));
-let nextSeq = adminOpportunities.length + 1;
 
-// ── Sources (mutable) ────────────────────────────────────────────────
-const adminSources: OpportunitySource[] = civilianOpportunitySources.map((s) => ({ ...s }));
-
-// ── Filters ──────────────────────────────────────────────────────────
 export interface AdminListFilters {
   status?: OpportunityStatus;
   q?: string;
 }
 
-export function adminListOpportunities(filters: AdminListFilters = {}): CivilianOpportunity[] {
-  return adminOpportunities.filter((item) => {
+export async function adminListOpportunities(
+  filters: AdminListFilters = {},
+  repository: CivilianJobsRepository = civilianJobsRepository,
+): Promise<CivilianOpportunity[]> {
+  const items = await repository.listOpportunities();
+  return items.filter((item) => {
     if (filters.status && item.status !== filters.status) return false;
     if (filters.q) {
-      const hay = [item.title, item.organization, item.location, item.category, item.summary].join(" ").toLowerCase();
+      const hay = [item.title,item.organization,item.location,item.category,item.summary].join(" ").toLowerCase();
       if (!hay.includes(filters.q.toLowerCase())) return false;
     }
     return true;
   });
 }
 
-export function adminGetOpportunity(id: string): CivilianOpportunity | undefined {
-  return adminOpportunities.find((o) => o.id === id);
+export async function adminGetOpportunity(
+  id: string,
+  repository: CivilianJobsRepository = civilianJobsRepository,
+): Promise<CivilianOpportunity | undefined> {
+  return repository.getOpportunity(id);
 }
 
-// ── Create ────────────────────────────────────────────────────────────
-export function adminCreateOpportunity(body: Record<string, unknown>): CivilianOpportunity {
+export async function adminCreateOpportunity(
+  body: Record<string, unknown>,
+  repository: CivilianJobsRepository = civilianJobsRepository,
+): Promise<CivilianOpportunity> {
   if (!body.title || !body.organization || !body.location || !body.type) {
     throw new Error("title, organization, location, and type are required.");
   }
   const now = new Date().toISOString();
   const item: CivilianOpportunity = {
-    id: `opp-admin-${Date.now()}-${nextSeq++}`,
+    id: `opp-admin-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
     type: (body.type as OpportunityType) || "PAID_JOB",
     audience: Array.isArray(body.audience) ? (body.audience as OpportunityAudience[]) : ["PUBLIC"],
-    title: watanySafeStringField(body.title),
-    organization: watanySafeStringField(body.organization),
-    location: watanySafeStringField(body.location),
-    category: String(watanySafeStringField(body.category)),
-    summary: String(watanySafeStringField(body.summary)),
-    description: String(watanySafeStringField(body.description)),
-    requirements: Array.isArray(body.requirements) ? (body.requirements as string[]) : [],
-    applicationMethod: String(watanySafeStringField(body.applicationMethod, "Apply via WatanyBot.")),
-    sourceName: String(watanySafeStringField(body.sourceName, "Manual admin entry")),
-    sourceUrl: String(watanySafeStringField(body.sourceUrl, "internal://manual")),
-    deadline: body.deadline ? watanySafeStringField(body.deadline) : undefined,
-    status: "DRAFT",
-    adminVerified: false,
-    createdAt: now,
-    updatedAt: now,
+    title: safeString(body.title), organization: safeString(body.organization), location: safeString(body.location),
+    category: safeString(body.category), summary: safeString(body.summary), description: safeString(body.description),
+    requirements: safeStringArray(body.requirements),
+    applicationMethod: safeString(body.applicationMethod, "Apply via WatanyBot."),
+    sourceName: safeString(body.sourceName, "Manual admin entry"),
+    sourceUrl: safeString(body.sourceUrl, "internal://manual"),
+    deadline: body.deadline ? safeString(body.deadline) : undefined,
+    status: "DRAFT", adminVerified: false, createdAt: now, updatedAt: now,
   };
-  adminOpportunities.push(item);
-  return item;
+  return repository.saveOpportunity(item);
 }
 
-// ── Update ────────────────────────────────────────────────────────────
-export function adminUpdateOpportunity(id: string, body: Record<string, unknown>): CivilianOpportunity | undefined {
-  const item = adminOpportunities.find((o) => o.id === id);
+export async function adminUpdateOpportunity(
+  id: string,
+  body: Record<string, unknown>,
+  repository: CivilianJobsRepository = civilianJobsRepository,
+): Promise<CivilianOpportunity | undefined> {
+  const item = await repository.getOpportunity(id);
   if (!item) return undefined;
-  const updatable: (keyof CivilianOpportunity)[] = [
-    "title", "organization", "location", "category", "summary",
-    "description", "requirements", "applicationMethod", "sourceName",
-    "sourceUrl", "deadline", "audience", "type",
-  ];
-  for (const key of updatable) {
-    if (body[key] !== undefined) {
-      (item as unknown as Record<string, unknown>)[key] = body[key];
-    }
-  }
-  item.updatedAt = new Date().toISOString();
-  return item;
+  const updated: CivilianOpportunity = {
+    ...item,
+    title: body.title === undefined ? item.title : safeString(body.title),
+    organization: body.organization === undefined ? item.organization : safeString(body.organization),
+    location: body.location === undefined ? item.location : safeString(body.location),
+    category: body.category === undefined ? item.category : safeString(body.category),
+    summary: body.summary === undefined ? item.summary : safeString(body.summary),
+    description: body.description === undefined ? item.description : safeString(body.description),
+    requirements: body.requirements === undefined ? item.requirements : safeStringArray(body.requirements),
+    applicationMethod: body.applicationMethod === undefined ? item.applicationMethod : safeString(body.applicationMethod),
+    sourceName: body.sourceName === undefined ? item.sourceName : safeString(body.sourceName),
+    sourceUrl: body.sourceUrl === undefined ? item.sourceUrl : safeString(body.sourceUrl),
+    deadline: body.deadline === undefined ? item.deadline : safeString(body.deadline) || undefined,
+    audience: body.audience === undefined ? item.audience : safeStringArray(body.audience) as OpportunityAudience[],
+    type: body.type === undefined ? item.type : body.type as OpportunityType,
+    updatedAt: new Date().toISOString(),
+  };
+  return repository.saveOpportunity(updated);
 }
 
-// ── Status transitions ────────────────────────────────────────────────
-function setStatus(id: string, status: OpportunityStatus, adminVerified: boolean): CivilianOpportunity | undefined {
-  const item = adminOpportunities.find((o) => o.id === id);
-  if (!item) return undefined;
-  item.status = status;
-  item.adminVerified = adminVerified;
-  item.updatedAt = new Date().toISOString();
-  return item;
+export async function adminPublishOpportunity(id: string, repository: CivilianJobsRepository = civilianJobsRepository, actorId?: string) {
+  return repository.updateOpportunityStatus(id, "PUBLISHED", actorId, "admin publish");
 }
 
-export function adminPublishOpportunity(id: string): CivilianOpportunity | undefined {
-  return setStatus(id, "PUBLISHED", true);
+export async function adminArchiveOpportunity(id: string, repository: CivilianJobsRepository = civilianJobsRepository, actorId?: string) {
+  return repository.updateOpportunityStatus(id, "ARCHIVED", actorId, "admin archive");
 }
 
-export function adminArchiveOpportunity(id: string): CivilianOpportunity | undefined {
-  return setStatus(id, "ARCHIVED", false);
+export async function adminRejectOpportunity(id: string, repository: CivilianJobsRepository = civilianJobsRepository, actorId?: string) {
+  return repository.updateOpportunityStatus(id, "ARCHIVED", actorId, "admin reject");
 }
 
-export function adminRejectOpportunity(id: string): CivilianOpportunity | undefined {
-  const item = adminOpportunities.find((o) => o.id === id);
-  if (!item) return undefined;
-  item.status = "ARCHIVED";
-  item.adminVerified = false;
-  item.updatedAt = new Date().toISOString();
-  return item;
-}
-
-// ── Applications admin ────────────────────────────────────────────────
 const VALID_APPLICATION_STATUSES = new Set<OpportunityApplicationStatus>([
   "NEW_APPLICATION", "PROFILE_INCOMPLETE", "REVIEWED", "MATCHED",
   "SENT_TO_EMPLOYER", "INTERVIEW_REQUESTED", "ACCEPTED", "REJECTED",
@@ -145,20 +123,25 @@ const VALID_APPLICATION_STATUSES = new Set<OpportunityApplicationStatus>([
 export async function adminUpdateApplicationStatus(
   id: string,
   status: string,
-  repository?: CivilianJobsRepository,
+  repository: CivilianJobsRepository = civilianJobsRepository,
 ): Promise<OpportunityApplicationRecord | undefined> {
-  if (!VALID_APPLICATION_STATUSES.has(status as OpportunityApplicationStatus)) {
-    throw new Error(`Invalid status: ${status}`);
-  }
+  if (!VALID_APPLICATION_STATUSES.has(status as OpportunityApplicationStatus)) throw new Error(`Invalid status: ${status}`);
   return updateCivilianOpportunityApplicationStatus(id, status as OpportunityApplicationStatus, repository);
 }
 
-// ── Sources admin ─────────────────────────────────────────────────────
-export function adminUpdateSource(id: string, body: Record<string, unknown>): OpportunitySource | undefined {
-  const src = adminSources.find((s) => s.id === id);
-  if (!src) return undefined;
-  if (body.enabled !== undefined) src.enabled = Boolean(body.enabled);
-  if (body.notes !== undefined) src.notes = watanySafeStringField(body.notes);
-  if (body.crawlPolicy !== undefined) src.crawlPolicy = body.crawlPolicy as OpportunitySource["crawlPolicy"];
-  return src;
+export async function adminUpdateSource(
+  id: string,
+  body: Record<string, unknown>,
+  repository: CivilianJobsRepository = civilianJobsRepository,
+): Promise<OpportunitySource | undefined> {
+  const sources = await repository.listSources();
+  const source = sources.find((item) => item.id === id);
+  if (!source) return undefined;
+  const updated: OpportunitySource = {
+    ...source,
+    enabled: body.enabled === undefined ? source.enabled : Boolean(body.enabled),
+    notes: body.notes === undefined ? source.notes : safeString(body.notes),
+    crawlPolicy: body.crawlPolicy === undefined ? source.crawlPolicy : body.crawlPolicy as OpportunitySource["crawlPolicy"],
+  };
+  return repository.saveSource(updated);
 }

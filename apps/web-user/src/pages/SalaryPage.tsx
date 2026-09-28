@@ -70,6 +70,41 @@ const OFFICIAL_MAX_DEGREE_BY_RANK: Record<string, number> = {
 
 const HIDDEN_PUBLIC_RANKS = new Set<string>();
 
+const RANK_PROMOTION_ORDER = [
+  "جندي", "جندي اول", "عريف", "عريف اول", "رقيب", "رقيب اول", "معاون", "معاون اول", "مؤهل", "مؤهل اول",
+  "ملازم", "ملازم اول", "نقيب", "رائد", "مقدم", "عقيد", "عميد", "لواء", "عماد",
+] as const;
+
+type SalaryFamilyStatus =
+  | "single" | "married"
+  | "widowed_with_children" | "widowed_without_children"
+  | "divorced_with_children" | "divorced_without_children"
+  | "deceased_military_wife" | "martyr_wife" | "honor_martyr_wife";
+
+const FAMILY_STATUS_OPTIONS: Array<{ id: SalaryFamilyStatus; label: string }> = [
+  { id: "married", label: "متأهل" }, { id: "single", label: "عازب" },
+  { id: "widowed_with_children", label: "أرمل مع أولاد" }, { id: "widowed_without_children", label: "أرمل من دون أولاد" },
+  { id: "divorced_with_children", label: "مطلق مع أولاد" }, { id: "divorced_without_children", label: "مطلق من دون أولاد" },
+  { id: "deceased_military_wife", label: "زوجة عسكري متوفى" },
+  { id: "honor_martyr_wife", label: "زوجة شهيد ساحة الشرف" },
+];
+
+const FAMILY_STATUS_LABELS = {
+  ...Object.fromEntries(FAMILY_STATUS_OPTIONS.map((entry) => [entry.id, entry.label])),
+  martyr_wife: "زوجة شهيد",
+} as Record<SalaryFamilyStatus, string>;
+const FAMILY_STATUSES_WITH_CHILD_ALLOWANCE = new Set<SalaryFamilyStatus>(["married", "widowed_with_children", "divorced_with_children"]);
+const FAMILY_STATUSES_REQUIRING_CHILD = new Set<SalaryFamilyStatus>(["widowed_with_children", "divorced_with_children"]);
+const familyStatusHasChildAllowance = (status: SalaryFamilyStatus) => FAMILY_STATUSES_WITH_CHILD_ALLOWANCE.has(status);
+const familyStatusHasWifeAllowance = (status: SalaryFamilyStatus) => status === "married";
+const familyStatusLabel = (status: SalaryFamilyStatus) => FAMILY_STATUS_LABELS[status];
+function honorMartyrBasisForRank(rank: string) {
+  const index = RANK_PROMOTION_ORDER.indexOf(rank as (typeof RANK_PROMOTION_ORDER)[number]);
+  if (index < 0 || index >= RANK_PROMOTION_ORDER.length - 1) return null;
+  const promotedRank = RANK_PROMOTION_ORDER[index + 1];
+  return { rank: promotedRank, degree: OFFICIAL_MAX_DEGREE_BY_RANK[promotedRank] ?? 1 };
+}
+
 const SOLDIER_RANKS = new Set([
   "جندي", "جندي اول", "عريف", "عريف اول", "رقيب", "رقيب اول", "معاون", "معاون اول", "مؤهل", "مؤهل اول",
 ]);
@@ -303,7 +338,7 @@ type SalaryPageViewProps = Readonly<{
   degree: number;
   exactVetSalary: string;
   degreeInference: SalaryPre2019DegreeInference | null;
-  married: boolean;
+  familyStatus: SalaryFamilyStatus;
   kidsCount: number;
   selectedOrnaments: string[];
   selectedOrnament: { name_ar: string } | null;
@@ -324,11 +359,11 @@ type SalaryPageViewProps = Readonly<{
   showMedalsPicker: boolean;
   showResultsPopup: boolean;
   resultSectionRef: React.RefObject<HTMLElement>;
-  isSingle: boolean;
   calcButtonContent: React.ReactNode;
   loadMeta: () => void;
   startWizard: () => void;
   selectRankForWizard: (rank: string) => Promise<void>;
+  selectFamilyStatusForWizard: (status: SalaryFamilyStatus) => void;
   calculate: (overrideOrnaments?: string[]) => Promise<void>;
   closeAllPickers: () => void;
   goToPreviousStep: () => void;
@@ -346,7 +381,6 @@ type SalaryPageViewProps = Readonly<{
   setRank: (value: string) => void;
   setDegree: (value: number) => void;
   setExactVetSalary: (value: string) => void;
-  setMarried: (value: boolean) => void;
   setKidsCount: (value: number) => void;
   setSelectedOrnaments: (value: string[]) => void;
   selectOrnament: (value: string) => void;
@@ -432,6 +466,8 @@ function SalaryResultsContent({
   };
 
   const childAllowancePerChild = result.input.kidsCount > 0 ? Math.round(scenario.familyAllowance.children / result.input.kidsCount) : 0;
+  const pre2019Usd = num(result.fiftyPctRaise.val2019usd);
+  const ratioPct = pre2019Usd > 0 ? Math.round((scenario.summaryUsd / pre2019Usd) * 100) : 0;
 
   return (
     <div className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-results">
@@ -440,23 +476,15 @@ function SalaryResultsContent({
         <span className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-total-banner__value">{fmt(scenario.summary)}</span>
         <span className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-total-banner__currency">ل.ل.</span>
         <span className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-total-banner__usd">≈ {scenario.summaryUsd.toFixed(2)} $</span>
-      </div>
-      <div className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-result-metrics" aria-label="ملخص النتيجة">
-        <div className="sc-result-metric">
-          <span className="sc-result-metric__label">المعاش الأساسي</span>
-          <strong className="sc-result-metric__value">{fmt(scenario.pension)}</strong>
-          <small>ل.ل.</small>
-        </div>
-        <div className="sc-result-metric">
-          <span className="sc-result-metric__label">التعويضات العائلية</span>
-          <strong className="sc-result-metric__value">{fmt(scenario.familyAllowance.total)}</strong>
-          <small>ل.ل.</small>
-        </div>
-        <div className="sc-result-metric">
-          <span className="sc-result-metric__label">الأوسمة</span>
-          <strong className="sc-result-metric__value">{fmt(scenario.medals.total)}</strong>
-          <small>ل.ل.</small>
-        </div>
+        {pre2019Usd > 0 ? (
+          <span
+            className="sc-total-banner__ratio-badge"
+            data-testid="salary-ratio-badge"
+            aria-label="النسبة مقارنة بما قبل 2019"
+          >
+            {ratioPct}%
+          </span>
+        ) : null}
       </div>
       <div className={`sc-section ${openSection === 1 ? "open" : ""}`}>
         <button
@@ -524,9 +552,6 @@ function SalaryResultsContent({
         )}
       </div>
 
-      <div className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-results-disclaimer" data-testid="salary-results-disclaimer">
-        هذا الاحتساب تقريبي للاستئناس فقط، والنتيجة النهائية ليست رسمية ولا تُعد مرجعاً معتمداً.
-      </div>
     </div>
   );
 }
@@ -541,7 +566,7 @@ function SalaryPageView({ // NOSONAR: rendering composition for multi-step wizar
   degree,
   exactVetSalary,
   degreeInference,
-  married,
+  familyStatus,
   kidsCount,
   selectedOrnaments,
   selectedOrnament,
@@ -562,11 +587,11 @@ function SalaryPageView({ // NOSONAR: rendering composition for multi-step wizar
   showMedalsPicker,
   showResultsPopup,
   resultSectionRef,
-  isSingle,
   calcButtonContent,
   loadMeta,
   startWizard,
   selectRankForWizard,
+  selectFamilyStatusForWizard,
   calculate,
   closeAllPickers,
   goToPreviousStep,
@@ -584,14 +609,18 @@ function SalaryPageView({ // NOSONAR: rendering composition for multi-step wizar
   setRank,
   setDegree,
   setExactVetSalary,
-  setMarried,
   setKidsCount,
   setSelectedOrnaments,
   selectOrnament,
 }: SalaryPageViewProps) {
   const b = result?.breakdown;
   const effectiveDegreeInference = b?.degreeInference ?? degreeInference;
-  const effectiveDegreeLabel = formatDegreeInference(effectiveDegreeInference) || `درجة ${degree}`;
+  const honorMartyrBasis = familyStatus === "honor_martyr_wife" ? honorMartyrBasisForRank(rank) : null;
+  const effectiveDegreeLabel = honorMartyrBasis
+    ? `أساس ${honorMartyrBasis.rank} | الدرجة ${honorMartyrBasis.degree} الكاملة`
+    : (formatDegreeInference(effectiveDegreeInference) || `درجة ${degree}`);
+  const effectiveFamilyLabel = familyStatusLabel(familyStatus);
+  const showKidsInBreadcrumb = familyStatusHasChildAllowance(familyStatus);
   let metaStatusWarning = "";
   if (metaStatus === 'server_unavailable') {
     metaStatusWarning = 'الخادم غير متاح حالياً. يتم عرض تقدير محلي مؤقت حتى عودة الخدمة.';
@@ -621,7 +650,7 @@ function SalaryPageView({ // NOSONAR: rendering composition for multi-step wizar
     </div>
   );
   return (
-    <div className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-page">
+    <div className={`wmo-service-route wmo-rebuilt-route wmo-core-route sc-page${result ? " sc-page--result" : ""}`}>
       {error && <div className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-alert sc-alert--danger">{error}</div>}
       {metaStatus === 'ready' ? null : (
         <div className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-alert sc-alert--warn">
@@ -634,7 +663,7 @@ function SalaryPageView({ // NOSONAR: rendering composition for multi-step wizar
           <div>
             <span className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-card__eyebrow">تقدير سريع بمسار ذكي</span>
             <h3 className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-card__header">حاسبة المعاش</h3>
-            <p className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-card__subheader sc-card__disclaimer">الاحتساب ادناه هو تقريبي والنتيجة ليست رسمية ولا تُعد مرجعاً معتمداً.</p>
+            <p className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-card__subheader sc-card__disclaimer">احتساب تقريبي للاستئناس فقط وغير رسمي.</p>
           </div>
         </div>
       </div>
@@ -652,12 +681,15 @@ function SalaryPageView({ // NOSONAR: rendering composition for multi-step wizar
         </button>
       </div>
 
-      <SalaryAdSensePlacement />
+      <div className="sc-salary-ad-top" data-testid="salary-top-ad">
+        <SalaryAdSensePlacement placement="primary" />
+      </div>
 
       {result ? (
-        <section className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-inline-results" ref={resultSectionRef} tabIndex={-1} aria-live="polite" aria-label="نتيجة الاحتساب">
+        <>
+          <section className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-inline-results" ref={resultSectionRef} tabIndex={-1} aria-live="polite" aria-label="نتيجة الاحتساب">
           <div className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-breadcrumb">
-            <span className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-breadcrumb-value">{rank} | {effectiveDegreeLabel} | {married ? 'متأهل' : 'عازب'} | {kidsCount} أولاد {selectedOrnament ? `| ${selectedOrnament.name_ar}` : '| بدون وسام'}</span>
+            <span className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-breadcrumb-value">{rank} | {effectiveDegreeLabel} | {effectiveFamilyLabel}{showKidsInBreadcrumb ? ` | ${kidsCount} أولاد` : ''} {selectedOrnament ? `| ${selectedOrnament.name_ar}` : '| بدون وسام'}</span>
           </div>
           <div className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-result-tabs" role="tablist" aria-label="سيناريوهات المعاش">
             <button type="button" role="tab" aria-selected={resultScenario === 'current6'} className={resultScenario === 'current6' ? 'active' : ''} onClick={() => setResultScenario('current6')}>
@@ -673,13 +705,21 @@ function SalaryPageView({ // NOSONAR: rendering composition for multi-step wizar
               <span className="sc-result-tab__line sc-result-tab__secondary">6 + 6 اضعاف</span>
             </button>
           </div>
-          {b ? <SalaryResultsContent result={result} resultScenario={resultScenario} openSection={openSection} setOpenSection={setOpenSection} /> : null}
-        </section>
+            {b ? <SalaryResultsContent result={result} resultScenario={resultScenario} openSection={openSection} setOpenSection={setOpenSection} /> : null}
+          </section>
+          <div
+            className="sc-results-ad-bottom"
+            data-testid="salary-results-bottom-ad"
+            style={{ paddingBottom: "calc(var(--wmo-dock-height, 78px) + 24px)" }}
+          >
+            <SalaryAdSensePlacement placement="results" />
+          </div>
+        </>
       ) : null}
 
       <PopupModal open={showResultsPopup} title="نتيجة الاحتساب" onClose={() => setShowResultsPopup(false)} compactMobile>
         <div className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-breadcrumb">
-          <span className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-breadcrumb-value">{rank} | {effectiveDegreeLabel} | {married ? 'متأهل' : 'عازب'} | {kidsCount} أولاد {selectedOrnaments.length > 0 ? `| ${meta?.ornamentChoices.find(o => o.id === selectedOrnaments[0])?.name_ar}` : ''}</span>
+          <span className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-breadcrumb-value">{rank} | {effectiveDegreeLabel} | {effectiveFamilyLabel}{showKidsInBreadcrumb ? ` | ${kidsCount} أولاد` : ''} {selectedOrnaments.length > 0 ? `| ${meta?.ornamentChoices.find(o => o.id === selectedOrnaments[0])?.name_ar}` : ''}</span>
         </div>
         <div className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-result-tabs" role="tablist" aria-label="سيناريوهات المعاش">
           <button type="button" role="tab" aria-selected={resultScenario === 'current6'} className={resultScenario === 'current6' ? 'active' : ''} onClick={() => setResultScenario('current6')}>
@@ -700,15 +740,14 @@ function SalaryPageView({ // NOSONAR: rendering composition for multi-step wizar
 
       <PopupModal open={showSalaryPicker} title="الراتب الأساسي" onClose={() => setShowSalaryPicker(false)} hideHeader mobileStickyAnchor compactMobile>
         <div className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-tab-header">① الراتب الأساسي</div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-          <button className="wmo-service-route wmo-rebuilt-route wmo-core-route btn sc-nav-btn" disabled title="هذه الخطوة الأولى"><ArrowRight24Regular aria-hidden /> للخلف</button>
-          <span className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-step-counter">{currentStepIndex + 1} من {steps.length}</span>
-          <button className="wmo-service-route wmo-rebuilt-route wmo-core-route btn sc-nav-btn" onClick={goToNextStep} title="الخطوة التالية">للأمام <ArrowLeft24Regular aria-hidden /></button>
-        </div>
-        <div style={{ display: 'grid', gap: 10, textAlign: 'right' }}>
-          <strong style={{ fontSize: 18 }}>هل تعرف راتبك الأساسي؟</strong>
-          <span style={{ fontSize: 14, opacity: 0.78 }}>إذا كنت تعرفه أدخله هنا. إذا لا، اترك الخانة فارغة واضغط «للأمام».</span>
-          <input type="number" inputMode="numeric" min={1} step={1} value={exactVetSalary} onChange={(event) => setExactVetSalary(event.target.value)} placeholder="مثال: 125000" aria-label="الراتب الأساسي قبل العام 2019" data-testid="salary-initial-veteran-base" style={{ width: "100%", minHeight: 48, padding: "10px 12px", borderRadius: 10, border: "1px solid currentColor", background: "transparent", color: "inherit" }} />
+        <div style={{ display: 'grid', gap: 12, textAlign: 'right' }}>
+          <div data-testid="salary-initial-instruction" className="sc-input-prompt">
+            إذا كنت تعرف راتبك الأساسي قبل العام 2019 أدخله هنا. إذا لا، اترك الخانة فارغة واضغط «ابدأ الاحتساب».
+          </div>
+          <input type="number" inputMode="numeric" min={1} step={1} value={exactVetSalary} onChange={(event) => setExactVetSalary(event.target.value)} placeholder="مثال: 125000" aria-label="الراتب الأساسي قبل العام 2019" data-testid="salary-initial-veteran-base" style={{ width: "100%", minHeight: 52, padding: "10px 12px", borderRadius: 10, border: "1px solid currentColor", background: "transparent", color: "inherit" }} />
+          <button className="wmo-service-route wmo-rebuilt-route wmo-core-route btn sc-calc-btn wt-cta-glow wt-cta-processing" onClick={goToNextStep} type="button">
+            <span className="sc-calc-btn__label">ابدأ الاحتساب</span>
+          </button>
         </div>
       </PopupModal>
 
@@ -753,12 +792,11 @@ function SalaryPageView({ // NOSONAR: rendering composition for multi-step wizar
         </div>
         <div className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-breadcrumb"><span className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-breadcrumb-value">{rank} | {effectiveDegreeLabel}</span></div>
         <div className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-picker-grid sc-family-grid" style={{ gridTemplateColumns: "1fr 1fr" }}>
-          <button className={`sc-picker-chip sc-picker-chip--wide sc-family-choice ${isSingle ? "active" : ""}`} aria-label="اختيار عازب" onClick={() => { setMarried(false); setCurrentStep('kids'); setShowFamilyPicker(false); setTimeout(() => setShowKidsPicker(true), 250); }}>
-            <span className="sc-family-choice__label">عازب</span>
-          </button>
-          <button className={`sc-picker-chip sc-picker-chip--wide sc-family-choice ${married ? "active" : ""}`} aria-label="اختيار متأهل" onClick={() => { setMarried(true); setCurrentStep('kids'); setShowFamilyPicker(false); setTimeout(() => setShowKidsPicker(true), 250); }}>
-            <span className="sc-family-choice__label">متأهل</span>
-          </button>
+          {FAMILY_STATUS_OPTIONS.map((option) => (
+            <button key={option.id} className={`sc-picker-chip sc-picker-chip--wide sc-family-choice ${familyStatus === option.id ? "active" : ""}`} aria-label={`اختيار ${option.label}`} onClick={() => selectFamilyStatusForWizard(option.id)}>
+              <span className="sc-family-choice__label">{option.label}</span>
+            </button>
+          ))}
         </div>
       </PopupModal>
 
@@ -769,9 +807,9 @@ function SalaryPageView({ // NOSONAR: rendering composition for multi-step wizar
           <span className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-step-counter">{currentStepIndex + 1} من {steps.length}</span>
           <button className="wmo-service-route wmo-rebuilt-route wmo-core-route btn sc-nav-btn" disabled={currentStepIndex >= steps.length - 1} onClick={goToNextStep} title="الخطوة التالية">للأمام <ArrowLeft24Regular aria-hidden /></button>
         </div>
-        <div className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-breadcrumb"><span className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-breadcrumb-value">{rank} | {effectiveDegreeLabel} | {married ? 'متأهل' : 'عازب'}</span></div>
+        <div className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-breadcrumb"><span className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-breadcrumb-value">{rank} | {effectiveDegreeLabel} | {effectiveFamilyLabel}</span></div>
         <div className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-picker-grid sc-picker-grid--numbers sc-kids-grid">
-          {[0, 1, 2, 3, 4, 5].map((n) => (
+          {(FAMILY_STATUSES_REQUIRING_CHILD.has(familyStatus) ? [1, 2, 3, 4, 5] : [0, 1, 2, 3, 4, 5]).map((n) => (
             <button key={n} className={`sc-picker-chip sc-picker-chip--num ${kidsCount === n ? "active" : ""}`} onClick={() => { setKidsCount(n); setCurrentStep('medals'); setShowKidsPicker(false); setTimeout(() => setShowMedalsPicker(true), 250); }}>{n}</button>
           ))}
         </div>
@@ -785,7 +823,7 @@ function SalaryPageView({ // NOSONAR: rendering composition for multi-step wizar
             <span className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-step-counter">{currentStepIndex + 1} من {steps.length}</span>
             <button className="wmo-service-route wmo-rebuilt-route wmo-core-route btn sc-nav-btn" disabled title="هذه الخطوة الأخيرة">للأمام <ArrowLeft24Regular aria-hidden /></button>
           </div>
-          <div className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-breadcrumb"><span className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-breadcrumb-value">{rank} | {effectiveDegreeLabel} | {married ? 'متأهل' : 'عازب'} | {kidsCount} أولاد</span></div>
+          <div className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-breadcrumb"><span className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-breadcrumb-value">{rank} | {effectiveDegreeLabel} | {effectiveFamilyLabel}{showKidsInBreadcrumb ? ` | ${kidsCount} أولاد` : ''}</span></div>
           <div className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-medals-bottom sc-medals-picker">
             <div className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-medals-grid sc-medals-grid--mobile-fit">
               <button
@@ -828,7 +866,7 @@ function useSalaryPageController() {
   const [degree, setDegree] = useState(1);
   const [exactVetSalary, setExactVetSalary] = useState("");
   const [degreeInference, setDegreeInference] = useState<SalaryPre2019DegreeInference | null>(null);
-  const [married, setMarried] = useState(true);
+  const [familyStatus, setFamilyStatus] = useState<SalaryFamilyStatus>("married");
   const [kidsCount, setKidsCount] = useState(0);
   const [selectedOrnaments, setSelectedOrnaments] = useState<string[]>([]);
   const [showSalaryPicker, setShowSalaryPicker] = useState(false);
@@ -875,10 +913,12 @@ function useSalaryPageController() {
   }, []);
 
   const hasExactVeteranBase = exactVetSalary.trim().length > 0;
-  const steps: SalaryStep[] = useMemo(
-    () => hasExactVeteranBase ? ['salary', 'rank', 'family', 'kids', 'medals'] : ['salary', 'rank', 'degree', 'family', 'kids', 'medals'],
-    [hasExactVeteranBase],
-  );
+  const steps: SalaryStep[] = useMemo(() => {
+    const next: SalaryStep[] = hasExactVeteranBase ? ['salary', 'rank', 'family'] : ['salary', 'rank', 'degree', 'family'];
+    if (familyStatusHasChildAllowance(familyStatus)) next.push('kids');
+    next.push('medals');
+    return next;
+  }, [familyStatus, hasExactVeteranBase]);
   const currentStepIndex = steps.indexOf(currentStep);
 
   const closeAllPickers = useCallback(() => {
@@ -965,6 +1005,24 @@ function useSalaryPageController() {
     }
   }, [apiBaseUrl, exactVetSalary]);
 
+
+  const selectFamilyStatusForWizard = useCallback((status: SalaryFamilyStatus) => {
+    const needsKids = familyStatusHasChildAllowance(status);
+    setFamilyStatus(status);
+    if (!needsKids) {
+      setKidsCount(0);
+    } else if (FAMILY_STATUSES_REQUIRING_CHILD.has(status) && kidsCount < 1) {
+      setKidsCount(1);
+    }
+    if (status === "honor_martyr_wife") setDegreeInference(null);
+    setCurrentStep(needsKids ? 'kids' : 'medals');
+    setShowFamilyPicker(false);
+    globalThis.setTimeout(() => {
+      if (needsKids) setShowKidsPicker(true);
+      else setShowMedalsPicker(true);
+    }, 250);
+  }, [kidsCount]);
+
   const loadWizardResult = useCallback(async (overrideOrnaments?: string[]) => {
     setError("");
     setLoading(true);
@@ -975,25 +1033,46 @@ function useSalaryPageController() {
         setError("أدخل قيمة صحيحة للراتب الأساسي قبل العام 2019.");
         return;
       }
+      const honorMartyrBasis = familyStatus === "honor_martyr_wife" ? honorMartyrBasisForRank(rank) : null;
+      if (familyStatus === "honor_martyr_wife" && !honorMartyrBasis) {
+        setError("تعذر تحديد الرتبة الأعلى لحالة زوجة شهيد ساحة الشرف.");
+        return;
+      }
+      const calculationRank = honorMartyrBasis?.rank ?? rank;
+      const calculationDegree = honorMartyrBasis ? honorMartyrBasis.degree : (exactVetSalaryValue !== undefined ? undefined : degree);
+      const calculationPre2019BaseSalary = honorMartyrBasis ? undefined : exactVetSalaryValue;
+      const calculationKidsCount = familyStatusHasChildAllowance(familyStatus) ? kidsCount : 0;
+      const calculationMarried = familyStatusHasWifeAllowance(familyStatus);
       const r = await api.salaryCalc({
-        rank,
-        degree: exactVetSalaryValue !== undefined ? undefined : degree,
-        married,
-        kidsCount,
+        rank: calculationRank,
+        degree: calculationDegree,
+        married: calculationMarried,
+        kidsCount: calculationKidsCount,
         selectedOrnaments: ornaments,
-        pre2019BaseSalary: exactVetSalaryValue,
+        pre2019BaseSalary: calculationPre2019BaseSalary,
       }, apiBaseUrl);
       setResult(r);
-      if (r.breakdown.degreeInference && "pre2019BaseSalary" in r.breakdown.degreeInference) setDegreeInference(r.breakdown.degreeInference);
+      if (!honorMartyrBasis && r.breakdown.degreeInference && "pre2019BaseSalary" in r.breakdown.degreeInference) {
+        setDegreeInference(r.breakdown.degreeInference);
+      }
       setOpenSection(0);
       setResultScenario('current6');
       setShowResultsPopup(false);
     } catch {
-      if (exactVetSalary.trim()) {
+      if (exactVetSalary.trim() && familyStatus !== "honor_martyr_wife") {
         setError("تعذر احتساب الدرجة من الراتب الأساسي قبل العام 2019. حاول مجدداً عند عودة خدمة الرواتب.");
         return;
       }
-      const fallbackResult = buildLocalSalaryResult({ rank, degree, married, kidsCount, selectedOrnaments: overrideOrnaments ?? selectedOrnaments }, meta);
+      const honorMartyrBasis = familyStatus === "honor_martyr_wife" ? honorMartyrBasisForRank(rank) : null;
+      const fallbackRank = honorMartyrBasis?.rank ?? rank;
+      const fallbackDegree = honorMartyrBasis?.degree ?? degree;
+      const fallbackResult = buildLocalSalaryResult({
+        rank: fallbackRank,
+        degree: fallbackDegree,
+        married: familyStatusHasWifeAllowance(familyStatus),
+        kidsCount: familyStatusHasChildAllowance(familyStatus) ? kidsCount : 0,
+        selectedOrnaments: overrideOrnaments ?? selectedOrnaments,
+      }, meta);
       if (fallbackResult) {
         setResult(fallbackResult);
         setOpenSection(0);
@@ -1006,7 +1085,7 @@ function useSalaryPageController() {
     } finally {
       setLoading(false);
     }
-  }, [apiBaseUrl, degree, exactVetSalary, kidsCount, married, meta, rank, selectedOrnaments]);
+  }, [apiBaseUrl, degree, exactVetSalary, familyStatus, kidsCount, meta, rank, selectedOrnaments]);
 
   const startWizard = useCallback(() => {
     setError("");
@@ -1020,11 +1099,12 @@ function useSalaryPageController() {
 
   useEffect(() => {
     if (!result || showResultsPopup) return;
-    const target = resultSectionRef.current;
-    if (!target) return;
+    const resultTarget = resultSectionRef.current;
+    const scrollTarget = globalThis.document?.querySelector<HTMLElement>('[data-testid="salary-top-ad"]') ?? resultTarget;
+    if (!scrollTarget || !resultTarget) return;
     const id = globalThis.requestAnimationFrame(() => {
-      target.scrollIntoView({ behavior: "smooth", block: "start" });
-      target.focus({ preventScroll: true });
+      scrollTarget.scrollIntoView({ behavior: "smooth", block: "start" });
+      resultTarget.focus({ preventScroll: true });
     });
     return () => globalThis.cancelAnimationFrame(id);
   }, [result, showResultsPopup, resultScenario]);
@@ -1053,7 +1133,7 @@ function useSalaryPageController() {
     degree,
     exactVetSalary,
     degreeInference,
-    married,
+    familyStatus,
     kidsCount,
     selectedOrnaments,
     selectedOrnament,
@@ -1074,11 +1154,11 @@ function useSalaryPageController() {
     showMedalsPicker,
     showResultsPopup,
     resultSectionRef,
-    isSingle: married === false,
     calcButtonContent,
     loadMeta,
     startWizard,
     selectRankForWizard,
+    selectFamilyStatusForWizard,
     calculate: loadWizardResult,
     closeAllPickers,
     goToPreviousStep,
@@ -1096,7 +1176,6 @@ function useSalaryPageController() {
     setRank,
     setDegree,
     setExactVetSalary,
-    setMarried,
     setKidsCount,
     setSelectedOrnaments,
     selectOrnament,

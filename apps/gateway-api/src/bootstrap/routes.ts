@@ -2,6 +2,7 @@ import { registerCivilianJobsFreelancerMarketplaceRoutes } from '../civilian-job
 import { smsapiOtpRoutes } from '../integrations/smsapi/smsapi-otp.routes';
 import { taxiRoutes } from '../features/taxi/taxi-routes';
 import { registerCivilianJobsEmployerPortalRoutes } from '../civilian-jobs/civilian-jobs.employer-portal.routes';
+import { registerCivilianJobsFreelancerSkillRoutes } from '../civilian-jobs/civilian-jobs.freelancer-skill.routes';
 import watanyEndpointCompatibilityRoutes from '../routes/watanyEndpointCompatibilityRoutes';
 import { notificationBadgeCountsRoutes } from "../features/notification-badges/notification-badge-counts-routes";
 /**
@@ -19,18 +20,19 @@ import { advancedRoutes } from "../routes/advanced";
 import { authRoutes } from "../auth/auth-routes.js";
 import { otpRoutes } from "../auth/otp-routes.js";
 import { adminRulesRoutes } from "../routes/admin-rules.js";
+import { adminAdsRoutes } from "../routes/admin-ads.js";
 import { adminKbRoutes } from "../routes/admin-kb.js";
 import { adminKbStudioRoutes } from "../routes/admin-kb-studio.js";
 import { adminAiRoutes } from "../routes/admin-ai.js";
 import { adminAiRuntimeRoutes } from "../routes/admin-ai-runtime.js";
 import { adminUsersRoutes } from "../routes/admin-users.js";
+import { adminUsersManagementRoutes } from "../routes/admin-users-management.js";
 import { adminTickerRoutes } from "../routes/admin-ticker.js";
 import { adminPaymentsRoutes } from "../admin-payments/index.js";
 import { recruitmentRoutes } from "../recruitment/index.js";
 import { casesRoutes } from "../routes/cases.js";
 import { documentsRoutes } from "../routes/documents.js";
 import { communityRoutes } from "../routes/community.js";
-import { groupsRoutes } from "../routes/groups.js";
 import { adminWSRoutes } from "../ws/admin-ws.js";
 import { communityWSRoutes } from "../ws/community-ws.js";
 import { featuresWSRoutes } from "../ws/features-ws.js";
@@ -74,6 +76,7 @@ import { directoryRoutes } from "../routes/directory";
 import { faqRoutes } from "../routes/faq";
 import { tickerRoutes } from "../routes/ticker";
 import { newsRoutes } from "../routes/news.js";
+import { articleRoutes } from "../routes/articles.js";
 import announcementsRoutes from "../routes/announcements";
 import { adminNewsRoutes } from "../routes/admin-news.js";
 import { txRoutes } from "../routes/tx";
@@ -218,6 +221,7 @@ export async function registerRoutes(
   app.register(faqRoutes);
   app.register(tickerRoutes,        { pluginDb: kb.pluginDb });
   app.register(newsRoutes);
+  app.register(articleRoutes);
   app.register(announcementsRoutes);
   app.register(txRoutes,            { mockTx: MOCK_TX, mockDetail: MOCK_DETAIL });
   app.register(formsInlineRoutes,   { getFormsCatalog, getFormById, searchForms, detectFormIntent, isGenericFormRequest });
@@ -279,6 +283,7 @@ export async function registerRoutes(
   app.register(payloadSsoRoutes);
   app.register(otpRoutes);
   app.register(adminRulesRoutes);
+  app.register(adminAdsRoutes);
 
   app.register(adminKbRoutes, {
     kbSalariesDir,
@@ -352,6 +357,7 @@ export async function registerRoutes(
   });
 
   app.register(adminUsersRoutes);
+  app.register(adminUsersManagementRoutes);
   app.register(adminTickerRoutes);
   app.register(adminNewsRoutes);
   app.register(adminPaymentsRoutes);
@@ -389,7 +395,6 @@ export async function registerRoutes(
   app.register(documentsRoutes, { pluginDb: kb.pluginDb, makeId });
   app.log.info({ msg: 'registerRoutes: registering communityRoutes' });
   app.register(communityRoutes, { makeId });
-  app.register(groupsRoutes,    { makeId });
   app.register(worldCupRoutes,     { prefix: "/api", pluginDb: kb.pluginDb });
   app.register(createIdentityProfileFoundationProofRouter, { prefix: '/api' });
   app.register(proceduresRoutes);
@@ -401,6 +406,7 @@ export async function registerRoutes(
   app.register(registerCivilianJobsMatchingRoutes);
   app.register(registerCivilianJobsPersistenceRoutes);
   app.register(registerCivilianJobsEmployerPortalRoutes);
+  app.register(registerCivilianJobsFreelancerSkillRoutes);
   app.register(marketRoutes, { prefix: "/api" });
   app.register(reviewRoutes, { prefix: "/api" });
   app.register(theNetworkRoutes);

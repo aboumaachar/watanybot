@@ -10,6 +10,8 @@ import type {
   Community,
   CommunityGroupDetail,
   CommunityGroup,
+  CommunityDirectContact,
+  CommunityDirectThread,
   CommunityGroupMembersOverview,
   CommunityGroupMembershipSummary,
   CommunityGroupPermission,
@@ -3881,6 +3883,17 @@ export const api = {
     return mapGatewayChatResponse(await res2.json());
   },
 
+  async chatGatewayV2(question: string, context?: Record<string, unknown>, baseUrl = API_URL): Promise<ChatV2Response> {
+    const normalizedQuestion = normalizeSearchableArabicInput(question);
+    const res = await authFetch(`${baseUrl}/api/chat`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ message: normalizedQuestion, context, sessionId: getClientChatSessionId() }),
+    });
+    if (!res.ok) throw new Error("gateway chat failed");
+    return mapGatewayChatResponse(await res.json());
+  },
+
   async chatV2Stream(
     question: string,
     handlers?: ChatStreamHandlers,
@@ -4814,6 +4827,31 @@ export const api = {
     if (!res.ok) throw new Error("group fetch failed");
     const data = await res.json() as { group: any };
     return data.group;
+  },
+
+  async getCommunityDirectContacts(query = "", baseUrl = API_URL): Promise<CommunityDirectContact[]> {
+    const params = new URLSearchParams();
+    if (query.trim()) params.set("q", query.trim());
+    const suffix = params.size ? `?${params.toString()}` : "";
+    const res = await authFetch(`${baseUrl}/api/community/direct/contacts${suffix}`);
+    if (!res.ok) throw new Error("community direct contacts fetch failed");
+    const data = await res.json() as { contacts: CommunityDirectContact[] };
+    return data.contacts;
+  },
+
+  async getCommunityDirectThreads(baseUrl = API_URL): Promise<CommunityDirectThread[]> {
+    const res = await authFetch(`${baseUrl}/api/community/direct`);
+    if (!res.ok) throw new Error("community direct threads fetch failed");
+    const data = await res.json() as { threads: CommunityDirectThread[] };
+    return data.threads;
+  },
+
+  async getOrCreateCommunityDirectThread(recipientUserId: string, baseUrl = API_URL): Promise<CommunityDirectThread> {
+    const res = await authFetch(`${baseUrl}/api/community/direct`, {
+      method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ recipientUserId }),
+    });
+    if (!res.ok) throw new Error("community direct thread create failed");
+    return await res.json() as CommunityDirectThread;
   },
 
   async getCommunityOverview(baseUrl = API_URL): Promise<{ community: Community; groups: CommunityGroup[]; liveSessions: LiveSession[] }> {

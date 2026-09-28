@@ -1,59 +1,32 @@
 {
   "announcements": [
     {
-      "id": "07d6080a-b529-4ddb-8cbd-65d789179778",
-      "title": "مباراة تطويع جنود متمرنين",
+      "id": "laf-officer-cadets-2026-09-12",
+      "title": "الإعلان عن الحاجة إلى تطويع تلامذة ضباط لصالح الجيش وقوى الأمن الداخلي والأمن العام وأمن الدولة",
       "apparatusName": "الجيش اللبناني",
-      "announcementNumber": "2026/12",
-      "startDate": "2026-06-10T08:00:00.000Z",
-      "endDate": "2026-12-10T14:00:00.000Z",
+      "startDate": "2026-09-21T08:00:00+03:00",
+      "endDate": "2026-10-23T14:00:00+03:00",
       "status": "published",
       "conditions": [
-        "لبناني",
-        "عمره بين 18 و25 سنة"
+        "التطويع بطريقة المباراة",
+        "العسكريون: ذكور وإناث",
+        "المدنيون: ذكور فقط"
       ],
       "requiredDocuments": [
-        "إخراج قيد فردي",
-        "صورة عن الهوية"
+        "تُراجع المستندات والشروط المطلوبة عبر المصدر الرسمي للجيش اللبناني"
       ],
       "eligibleCategories": [
-        "مدنيون",
-        "عسكريون سابقون"
+        "عسكريون (ذكور وإناث)",
+        "مدنيون (ذكور فقط)"
       ],
-      "applicationLocation": "وزارة الدفاع الوطني",
-      "applicationMethod": "حضورياً",
-      "sourceName": "قيادة الجيش",
-      "sourceUrl": "https://example.test/recruitment",
-      "notes": "يُعتمد الإعلان الرسمي فقط.",
-      "createdAt": "2026-05-22T20:05:31.695Z",
-      "updatedAt": "2026-05-22T20:05:31.695Z",
-      "createdBy": "test-admin"
-    },
-    {
-      "id": "33b876aa-ce23-453e-ad4b-d94b42d1a587",
-      "title": "مباراة تطويع رتباء متطوعين",
-      "apparatusName": "الجيش اللبناني",
-      "announcementNumber": "2026/14",
-      "startDate": "2026-06-12T08:00:00.000Z",
-      "endDate": "2026-12-15T14:00:00.000Z",
-      "status": "published",
-      "conditions": [
-        "لبناني"
-      ],
-      "requiredDocuments": [
-        "إخراج قيد فردي"
-      ],
-      "eligibleCategories": [
-        "مدنيون"
-      ],
-      "applicationLocation": "وزارة الدفاع الوطني",
-      "applicationMethod": "حضورياً",
-      "sourceName": "قيادة الجيش",
-      "sourceUrl": "https://example.test/recruitment-sergeants",
-      "notes": "يُعتمد الإعلان الرسمي فقط.",
-      "createdAt": "2026-05-12T20:23:47.116Z",
-      "updatedAt": "2026-05-12T20:23:47.116Z",
-      "createdBy": "test-admin"
+      "applicationLocation": "الكلية الحربية - الفياضية",
+      "applicationMethod": "تقديم الطلب شخصياً من الإثنين إلى الجمعة بين الساعة 08:00 والساعة 14:00",
+      "sourceName": "وزارة الدفاع الوطني - قيادة الجيش",
+      "sourceUrl": "https://lebarmy.gov.lb/node/141466",
+      "notes": "الإعلان يشمل تلامذة ضباط لصالح الجيش (بر، جو، بحر) وقوى الأمن الداخلي والأمن العام وأمن الدولة.",
+      "createdAt": "2026-09-12T00:00:00.000Z",
+      "updatedAt": "2026-09-22T00:00:00.000Z",
+      "createdBy": "official-source-audit"
     }
   ]
 }

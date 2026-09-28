@@ -24,6 +24,9 @@ function normalize(s: unknown): string {
   return typeof s === "string" ? s.trim() : "";
 }
 
+const allowSeedData = process.env.NODE_ENV !== "production" || process.env.DISASTER_ALLOW_SEED_DATA === "true";
+const noLiveData = () => ({ dataMode: "unconfigured" as const });
+
 export async function disasterRoutes(app: FastifyInstance) {
   const prefix = "/api/v2/disaster";
 
@@ -31,12 +34,14 @@ export async function disasterRoutes(app: FastifyInstance) {
 
   /* GET /api/v2/disaster/active — active disasters */
   app.get(`${prefix}/active`, async () => {
+    if (!allowSeedData) return { disasters: [], ...noLiveData() };
     const active = SEED_DISASTERS.filter((d) => d.status !== "resolved");
-    return { disasters: active };
+    return { disasters: active, dataMode: "seed" as const };
   });
 
   /* GET /api/v2/disaster/shelters — emergency shelters */
   app.get(`${prefix}/shelters`, async (req) => {
+    if (!allowSeedData) return { shelters: [], ...noLiveData() };
     const qs = req.query as Record<string, string>;
     const city = normalize(qs.city).toLowerCase();
     const disasterId = normalize(qs.disaster_id);
@@ -65,11 +70,12 @@ export async function disasterRoutes(app: FastifyInstance) {
     if (type) contacts = contacts.filter((c) => c.contact_type === type);
 
     contacts.sort((a, b) => a.priority_level - b.priority_level);
-    return { contacts };
+    return { contacts, dataMode: "reference" as const };
   });
 
   /* GET /api/v2/disaster/alerts — emergency alerts */
   app.get(`${prefix}/alerts`, async (req) => {
+    if (!allowSeedData) return { alerts: [], ...noLiveData() };
     const qs = req.query as Record<string, string>;
     const disasterId = normalize(qs.disaster_id);
     const limit = Math.min(50, Math.max(1, Number(qs.limit || "20")));
@@ -83,6 +89,7 @@ export async function disasterRoutes(app: FastifyInstance) {
 
   /* GET /api/v2/disaster/:id — single disaster detail */
   app.get(`${prefix}/:id`, async (req, reply) => {
+    if (!allowSeedData) return reply.code(503).send({ error: "disaster_live_data_unconfigured", ...noLiveData() });
     const { id } = req.params as { id: string };
     const disaster = SEED_DISASTERS.find((d) => d.id === id);
     if (!disaster) {
@@ -106,6 +113,7 @@ export async function disasterRoutes(app: FastifyInstance) {
 
   /* POST /api/v2/disaster/register-displaced — self-register */
   app.post(`${prefix}/register-displaced`, async (req, reply) => {
+    if (!allowSeedData) return reply.code(503).send({ error: "disaster_live_data_unconfigured", ...noLiveData() });
     const body = (req.body || {}) as Record<string, unknown>;
     const full_name = normalize(body.full_name);
     const phone = normalize(body.phone);
@@ -175,6 +183,7 @@ export async function disasterRoutes(app: FastifyInstance) {
 
   /* POST /api/v2/disaster/report-missing — report a missing person */
   app.post(`${prefix}/report-missing`, async (req, reply) => {
+    if (!allowSeedData) return reply.code(503).send({ error: "disaster_live_data_unconfigured", ...noLiveData() });
     const body = (req.body || {}) as Record<string, unknown>;
     const full_name = normalize(body.full_name);
     const reporter_name = normalize(body.reporter_name);
@@ -210,6 +219,7 @@ export async function disasterRoutes(app: FastifyInstance) {
 
   /* GET /api/v2/disaster/missing — list missing persons */
   app.get(`${prefix}/missing`, async (req) => {
+    if (!allowSeedData) return { missing_persons: [], ...noLiveData() };
     const qs = req.query as Record<string, string>;
     const disasterId = normalize(qs.disaster_id);
     const q = normalize(qs.q).toLowerCase();
@@ -223,6 +233,7 @@ export async function disasterRoutes(app: FastifyInstance) {
 
   /* POST /api/v2/disaster/volunteer — volunteer signup */
   app.post(`${prefix}/volunteer`, async (req, reply) => {
+    if (!allowSeedData) return reply.code(503).send({ error: "disaster_live_data_unconfigured", ...noLiveData() });
     const body = (req.body || {}) as Record<string, unknown>;
     const full_name = normalize(body.full_name);
     const phone = normalize(body.phone);
@@ -267,6 +278,13 @@ export async function disasterRoutes(app: FastifyInstance) {
   /* ─── STATS ───────────────────────────────────────── */
 
   app.get(`${prefix}/stats`, async () => {
+    if (!allowSeedData) {
+      return {
+        active_disasters: 0, total_shelters: 0, open_shelters: 0, total_capacity: 0, current_occupancy: 0,
+        registered_displaced: 0, active_volunteers: 0, missing_persons: 0,
+        emergency_contacts: SEED_CONTACTS.filter((c) => c.active).length, ...noLiveData(),
+      };
+    }
     return {
       active_disasters: SEED_DISASTERS.filter((d) => d.status !== "resolved").length,
       total_shelters: SEED_SHELTERS.length,

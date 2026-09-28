@@ -17,6 +17,8 @@ export type {
   Community,
   CommunityGroupDetail,
   CommunityGroup,
+  CommunityDirectContact,
+  CommunityDirectThread,
   CommunityGroupCategory,
   CommunityGroupMembersOverview,
   CommunityGroupMembership,

@@ -29,7 +29,7 @@ export async function registerCivilianJobsAdminRoutes(app: FastifyInstance) {
     { preHandler: [requireRole("admin")] },
     async (request) => {
       const q = (request.query || {}) as Record<string, string | undefined>;
-      return { items: adminListOpportunities({ status: q.status as never, q: q.q }) };
+      return { items: await adminListOpportunities({ status: q.status as never, q: q.q }) };
     },
   );
 
@@ -38,7 +38,7 @@ export async function registerCivilianJobsAdminRoutes(app: FastifyInstance) {
     { preHandler: [requireRole("admin")] },
     async (request, reply) => {
       const { id } = request.params as { id: string };
-      const item = adminGetOpportunity(id);
+      const item = await adminGetOpportunity(id);
       if (!item) return reply.code(404).send({ error: "NOT_FOUND" });
       return { item };
     },
@@ -50,7 +50,7 @@ export async function registerCivilianJobsAdminRoutes(app: FastifyInstance) {
     async (request, reply) => {
       try {
         const body = (request.body || {}) as Record<string, unknown>;
-        const item = adminCreateOpportunity(body);
+        const item = await adminCreateOpportunity(body);
         return reply.code(201).send({ item });
       } catch (error) {
         return reply.code(400).send({ error: error instanceof Error ? error.message : "CREATE_FAILED" });
@@ -65,7 +65,7 @@ export async function registerCivilianJobsAdminRoutes(app: FastifyInstance) {
       const { id } = request.params as { id: string };
       try {
         const body = (request.body || {}) as Record<string, unknown>;
-        const item = adminUpdateOpportunity(id, body);
+        const item = await adminUpdateOpportunity(id, body);
         if (!item) return reply.code(404).send({ error: "NOT_FOUND" });
         return { item };
       } catch (error) {
@@ -79,7 +79,7 @@ export async function registerCivilianJobsAdminRoutes(app: FastifyInstance) {
     { preHandler: [requireRole("admin")] },
     async (request, reply) => {
       const { id } = request.params as { id: string };
-      const item = adminPublishOpportunity(id);
+      const item = await adminPublishOpportunity(id);
       if (!item) return reply.code(404).send({ error: "NOT_FOUND" });
       return { item };
     },
@@ -90,7 +90,7 @@ export async function registerCivilianJobsAdminRoutes(app: FastifyInstance) {
     { preHandler: [requireRole("admin")] },
     async (request, reply) => {
       const { id } = request.params as { id: string };
-      const item = adminArchiveOpportunity(id);
+      const item = await adminArchiveOpportunity(id);
       if (!item) return reply.code(404).send({ error: "NOT_FOUND" });
       return { item };
     },
@@ -101,7 +101,7 @@ export async function registerCivilianJobsAdminRoutes(app: FastifyInstance) {
     { preHandler: [requireRole("admin")] },
     async (request, reply) => {
       const { id } = request.params as { id: string };
-      const item = adminRejectOpportunity(id);
+      const item = await adminRejectOpportunity(id);
       if (!item) return reply.code(404).send({ error: "NOT_FOUND" });
       return { item };
     },
@@ -139,7 +139,7 @@ export async function registerCivilianJobsAdminRoutes(app: FastifyInstance) {
     "/api/admin/opportunities/sources",
     { preHandler: [requireRole("admin")] },
     async () => {
-      return { items: listCivilianOpportunitySources() };
+      return { items: await listCivilianOpportunitySources() };
     },
   );
 
@@ -150,7 +150,7 @@ export async function registerCivilianJobsAdminRoutes(app: FastifyInstance) {
       const { id } = request.params as { id: string };
       try {
         const body = (request.body || {}) as Record<string, unknown>;
-        const item = adminUpdateSource(id, body);
+        const item = await adminUpdateSource(id, body);
         if (!item) return reply.code(404).send({ error: "NOT_FOUND" });
         return { item };
       } catch (error) {

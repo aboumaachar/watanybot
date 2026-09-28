@@ -20,6 +20,7 @@ const FEATURE_ICON_NAMES: Record<string, WatanyV4IconName> = {
   roles: "roles",
   "activity-log": "activity-log",
   news: "news",
+  articles: "news",
   "fake-fact": "fake-fact",
   circulars: "circulars",
   "useful-links": "links",

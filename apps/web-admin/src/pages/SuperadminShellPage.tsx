@@ -10,6 +10,7 @@ import UniversalCollectionPage from "./UniversalCollectionPage";
 import PlatformAdminPage from "./PlatformAdminPage";
 import UsersPage from "./UsersPage";
 import SessionsPage from "./SessionsPage";
+import ArticlePublishingAuthority9D72Page from "./ArticlePublishingAuthority9D72Page";
 
 const SHELL_ITEMS = [
   { path: "/superadmin", label: "الرئيسية", icon: "dashboard", end: true },
@@ -100,6 +101,7 @@ export default function SuperadminShellPage() {
   else if (path === "/features") content = <FeatureControlsPage />;
   else if (path === "/cms/community") content = <CommunityPage />;
   else if (path === "/cms" || path === "/cms/procedures") content = <CmsPage />;
+  else if (path === "/cms/articles" || path === "/superadmin/cms/articles" || path === "/superadmin/cms/articles/archive") content = <ArticlePublishingAuthority9D72Page initialArchive={path.endsWith("/archive")} />;
   else if (path === "/system/official-services") content = <UniversalCollectionPage kind="official-services" />;
   else if (path === "/system/ticker") content = <UniversalCollectionPage kind="ticker" />;
   else if (path === "/system/features") content = <FeatureControlsPage />;
@@ -165,6 +167,7 @@ export default function SuperadminShellPage() {
           <NavLink to="/superadmin/erm/assets" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}><AdminFluentIcon name="documents" /><span>ERM Assets</span></NavLink>
           <NavLink to="/superadmin/cms/rules" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}><AdminFluentIcon name="shield" /><span>Filter Rules</span></NavLink>
           <NavLink to="/superadmin/cms/news" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}><AdminFluentIcon name="news" /><span>News</span></NavLink>
+          <NavLink to="/superadmin/cms/articles" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}><AdminFluentIcon name="document" /><span>المقالات والأرشيف</span></NavLink>
           <NavLink to="/superadmin/audit" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}>
             <AdminFluentIcon name="audit" /><span>سجل التدقيق</span>
           </NavLink>

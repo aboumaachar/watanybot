@@ -18,6 +18,7 @@ import type {
 } from "./civilian-jobs.aggregator.types.js";
 import { civilianOpportunitySources } from "./civilian-jobs.seed.js";
 import { adminCreateOpportunity, adminPublishOpportunity } from "./civilian-jobs.admin.service.js";
+import type { CivilianJobsRepository } from "./civilian-jobs.repository.js";
 
 // ── Source Registry ───────────────────────────────────────────────────────────
 
@@ -253,7 +254,7 @@ export function getImportedOpportunity(id: string): ImportedOpportunity | undefi
  * then auto-publishes it (admin explicitly chose to approve = publish).
  * Never auto-publishes without an explicit admin decision.
  */
-export function processImportReview(decision: ImportReviewDecision, reviewedBy = "admin"): ImportedOpportunity {
+export async function processImportReview(decision: ImportReviewDecision, reviewedBy = "admin", repository?: CivilianJobsRepository): Promise<ImportedOpportunity> {
   const item = importedOpportunities.find((i) => i.id === decision.importedOpportunityId);
   if (!item) throw new Error(`Imported opportunity not found: ${decision.importedOpportunityId}`);
   if (item.importStatus !== "NEEDS_ADMIN_REVIEW") {
@@ -269,7 +270,7 @@ export function processImportReview(decision: ImportReviewDecision, reviewedBy =
   if (decision.decision === "APPROVE") {
     item.importStatus = "APPROVED_FOR_PUBLICATION";
     // Create and immediately publish a civilian opportunity from this import
-    const opp = adminCreateOpportunity({
+    const opp = await adminCreateOpportunity({
       title: item.normalizedTitle,
       organization: item.normalizedOrganization,
       location: item.normalizedLocation,
@@ -279,8 +280,8 @@ export function processImportReview(decision: ImportReviewDecision, reviewedBy =
       sourceName: item.sourceName,
       sourceUrl: item.sourceUrl,
       description: `مستورد من ${item.sourceName}. تمت المراجعة الإدارية والموافقة على النشر.`,
-    });
-    adminPublishOpportunity(opp.id);
+    }, repository);
+    await adminPublishOpportunity(opp.id, repository);
     item.publishedOpportunityId = opp.id;
   } else {
     item.importStatus = "REJECTED";

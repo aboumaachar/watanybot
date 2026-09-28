@@ -13,7 +13,6 @@ import { WatanyFluentIcon, type WatanyIconName } from "../icons/WatanyFluentIcon
 import "./koudama-homepage.css";
 import { watanyDrawerItems, type WatanyDrawerItem } from "./watanyDrawerItems";
 import { getWatanyAppIconSign } from "./WatanyAppIcon";
-import { useInternalMail } from "../../lib/internal-mail";
 
 const RUNTIME_DEBUG_LOCALHOSTS = new Set(["127.0.0.1", "localhost"]);
 const RUNTIME_DEBUG_STORAGE_KEYS = [
@@ -196,7 +195,6 @@ export default function WatanyDrawerPage() {
     design,
   } = useApp();
   const { flags, isHydrated } = useFeatureFlags();
-  useInternalMail(profile);
   const [todayMatches, setTodayMatches] = useState<WorldCupMatchDto[]>([]);
   const [todayMatchUnread, setTodayMatchUnread] = useState<Record<string, number>>({});
   const [latestNews, setLatestNews] = useState<NewsItem[]>([]);
@@ -357,7 +355,7 @@ export default function WatanyDrawerPage() {
   const handleForceLocalGateway = React.useCallback(() => {
     const forcedBase = import.meta.env.DEV && globalThis.location
       ? `${globalThis.location.protocol}//${globalThis.location.host}`
-      : "http://127.0.0.1:8010";
+      : (globalThis.location?.origin || getCandidateApiBaseUrls()[0] || "");
     globalThis.localStorage?.setItem("watany_api_base_force", forcedBase);
     globalThis.location.reload();
   }, []);
