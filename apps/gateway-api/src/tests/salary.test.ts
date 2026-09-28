@@ -92,11 +92,11 @@ describe("Salary API", () => {
         + breakdown.aids.d11227_2
         + breakdown.aids.d11227_1
         + breakdown.aids.budget2022;
-      expect(breakdown.pension2026).toBe(componentGross - 29733);
-      expect(breakdown.deduction15Pct).toBe(29733);
+      expect(breakdown.pension2026).toBe(componentGross - 30000);
+      expect(breakdown.deduction15Pct).toBe(30000);
       expect(breakdown.familyAllowance.total).toBe(93000);
-      expect(breakdown.medals.total).toBe(49458);
-      expect(body.totalPension).toBe(43247925);
+      expect(breakdown.medals.total).toBe(49000);
+      expect(body.totalPension).toBe(43405600);
     });
 
     it("computes Moahel First degree 14 from the salary table", async () => {
@@ -108,11 +108,11 @@ describe("Salary API", () => {
 
       expect(res.statusCode).toBe(200);
       const body = res.json();
-      expect(body.breakdown.deduction15Pct).toBe(27744);
-      expect(body.breakdown.medals.total).toBe(49458);
+      expect(body.breakdown.deduction15Pct).toBe(28000);
+      expect(body.breakdown.medals.total).toBe(49000);
       expect(body.breakdown.familyAllowance.total).toBe(93000);
       expect(body.breakdown.vetSalary).toBe(1849600);
-      expect(body.totalPension).toBe(43117314);
+      expect(body.totalPension).toBe(42036200);
     });
 
     it("computes Moahel First degree 12 from the salary table", async () => {
@@ -124,11 +124,11 @@ describe("Salary API", () => {
 
       expect(res.statusCode).toBe(200);
       const body = res.json();
-      expect(body.breakdown.deduction15Pct).toBe(25844);
-      expect(body.breakdown.medals.total).toBe(49458);
+      expect(body.breakdown.deduction15Pct).toBe(26000);
+      expect(body.breakdown.medals.total).toBe(49000);
       expect(body.breakdown.familyAllowance.total).toBe(93000);
       expect(body.breakdown.vetSalary).toBe(1722950);
-      expect(body.totalPension).toBe(42992564);
+      expect(body.totalPension).toBe(41151650);
     });
 
     it("computes Raqeeb First degree 12 from the salary table", async () => {
@@ -141,8 +141,180 @@ describe("Salary API", () => {
       expect(res.statusCode).toBe(200);
       const body = res.json();
       expect(body.breakdown.vetSalary).toBe(1496850);
-      expect(body.breakdown.deduction15Pct).toBe(22453);
-      expect(body.totalPension).toBe(37034136);
+      expect(body.breakdown.deduction15Pct).toBe(23000);
+      expect(body.totalPension).toBe(37123400);
+    });
+
+    it("infers Brigadier degree and fraction from the official pre-2019 base salary scale", async () => {
+      const exact = await app.inject({ method: "POST", url: "/api/salary/infer-pre2019-degree", payload: { rank: "عميد", pre2019BaseSalary: 2698000 } });
+      expect(exact.statusCode).toBe(200);
+      expect(exact.json().inference).toMatchObject({ lookupDegree: 5, wholeEquivalentDegree: 5, fractionPercent: 0, effectiveVetSalary: 3502000, status: "exact_degree" });
+
+      const fractional = await app.inject({ method: "POST", url: "/api/salary/infer-pre2019-degree", payload: { rank: "عميد", pre2019BaseSalary: 2745500 } });
+      expect(fractional.statusCode).toBe(200);
+      const inference = fractional.json().inference;
+      expect(inference.lookupDegree).toBe(5);
+      expect(inference.fractionPercent).toBeCloseTo(50, 8);
+      expect(inference.effectiveVetSalary).toBe(3557250);
+      expect(inference.status).toBe("fractional_within_scale");
+    });
+
+    it("calculates from pre-2019 base salary without requiring manual degree selection", async () => {
+      const res = await app.inject({ method: "POST", url: "/api/salary/calc", payload: { rank: "عميد", pre2019BaseSalary: 2745500, married: true, kidsCount: 1, selectedOrnaments: ["cedar_knight"] } });
+      expect(res.statusCode).toBe(200);
+      const body = res.json();
+      expect(body.input.degree).toBe(5);
+      expect(body.input.degreeSource).toBe("inferred_from_pre2019_base_salary");
+      expect(body.input.pre2019BaseSalary).toBe(2745500);
+      expect(body.breakdown.degreeInference.fractionPercent).toBeCloseTo(50, 8);
+      expect(body.breakdown.vetSalary).toBe(3557250);
+      expect(body.breakdown.eligibleBase).toBe(6196250);
+      expect(body.breakdown.deduction15Pct).toBe(54000);
+      expect(body.raise.sixSalary).toBe(37177500);
+      expect(body.breakdown.pension2026 + body.raise.sixSalary + body.breakdown.familyAllowance.total + body.breakdown.medals.total).toBe(129437250);
+    });
+
+    it("rejects a pre-2019 base below the selected rank minimum", async () => {
+      const res = await app.inject({ method: "POST", url: "/api/salary/infer-pre2019-degree", payload: { rank: "عميد", pre2019BaseSalary: 125000 } });
+      expect(res.statusCode).toBe(400);
+      expect(res.json().minimumPre2019BaseSalary).toBe(2340000);
+    });
+
+    it("matches the verified Brigadier degree 5-plus certificate when exact veteran pension is supplied", async () => {
+      const res = await app.inject({
+        method: "POST",
+        url: "/api/salary/calc",
+        payload: {
+          rank: "عميد",
+          degree: 5,
+          exactVetSalary: 3552000,
+          married: true,
+          kidsCount: 1,
+          selectedOrnaments: ["cedar_knight"],
+        },
+      });
+
+      expect(res.statusCode).toBe(200);
+      const body = res.json();
+      expect(body.breakdown.canonicalVetSalary).toBe(3502000);
+      expect(body.breakdown.vetSalary).toBe(3552000);
+      expect(body.breakdown.veteranSalaryAdjustment).toBe(50000);
+      expect(body.breakdown.maxSingleDegreeVeteranAdjustment).toBe(110500);
+      expect(body.breakdown.veteranSalaryAdjustmentStatus).toBe("within_one_degree");
+      expect(body.breakdown.fractionOfDegree).toBeCloseTo(50000 / 110500, 8);
+      expect(body.breakdown.eligibleBase).toBe(6191000);
+      expect(body.breakdown.deduction15Pct).toBe(54000);
+      expect(body.breakdown.aids).toEqual({
+        grant2025: 12000000,
+        d13020: 18573000,
+        d11227_2: 18573000,
+        d11227_1: 24764000,
+        budget2022: 12000000,
+      });
+      expect(body.breakdown.pension2026).toBe(92047000);
+      expect(body.breakdown.familyAllowance.total).toBe(93000);
+      expect(body.breakdown.medals.total).toBe(62000);
+      expect(body.raise.sixSalary).toBe(37146000);
+      expect(body.breakdown.pension2026 + body.raise.sixSalary + body.breakdown.familyAllowance.total + body.breakdown.medals.total).toBe(129348000);
+      expect(body.breakdown.pension2026 + body.raise.sixSalary + (body.breakdown.eligibleBase * 3) + body.breakdown.familyAllowance.total + body.breakdown.medals.total).toBe(147921000);
+    });
+
+    it("infers Brigadier degree 5 plus fraction from an exact veteran base", async () => {
+      const res = await app.inject({
+        method: "POST",
+        url: "/api/salary/infer-degree",
+        payload: { rank: "عميد", exactVetSalary: 3552000 },
+      });
+
+      expect(res.statusCode).toBe(200);
+      const inference = res.json().inference;
+      expect(inference.lookupDegree).toBe(5);
+      expect(inference.wholeEquivalentDegree).toBe(5);
+      expect(inference.equivalentDegree).toBeCloseTo(5 + (50000 / 110500), 8);
+      expect(inference.fractionPercent).toBeCloseTo((50000 / 110500) * 100, 8);
+      expect(inference.status).toBe("fractional_within_scale");
+    });
+
+    it("calculates from exact veteran base without requiring manual degree selection", async () => {
+      const res = await app.inject({
+        method: "POST",
+        url: "/api/salary/calc",
+        payload: {
+          rank: "عميد",
+          exactVetSalary: 3552000,
+          married: true,
+          kidsCount: 1,
+          selectedOrnaments: ["cedar_knight"],
+        },
+      });
+
+      expect(res.statusCode).toBe(200);
+      const body = res.json();
+      expect(body.input.degree).toBe(5);
+      expect(body.input.degreeSource).toBe("inferred_from_exact_veteran_salary");
+      expect(body.breakdown.degreeInference.lookupDegree).toBe(5);
+      expect(body.breakdown.degreeInference.fractionPercent).toBeCloseTo((50000 / 110500) * 100, 8);
+      expect(body.breakdown.eligibleBase).toBe(6191000);
+      expect(body.breakdown.pension2026 + body.raise.sixSalary + body.breakdown.familyAllowance.total + body.breakdown.medals.total).toBe(129348000);
+    });
+
+    it("reports an equivalent degree above the published Lieutenant scale when the exact base requires it", async () => {
+      const res = await app.inject({
+        method: "POST",
+        url: "/api/salary/infer-degree",
+        payload: { rank: "ملازم", exactVetSalary: 2201000 },
+      });
+
+      expect(res.statusCode).toBe(200);
+      const inference = res.json().inference;
+      expect(inference.lookupDegree).toBe(13);
+      expect(inference.maxPublishedDegree).toBe(13);
+      expect(inference.wholeEquivalentDegree).toBe(14);
+      expect(inference.equivalentDegree).toBeCloseTo(13 + (109150 / 85000), 8);
+      expect(inference.fractionPercent).toBeCloseTo(((13 + (109150 / 85000)) % 1) * 100, 8);
+      expect(inference.status).toBe("extrapolated_above_max");
+    });
+
+    it("rejects an exact base below the minimum pension for the selected rank", async () => {
+      const res = await app.inject({
+        method: "POST",
+        url: "/api/salary/infer-degree",
+        payload: { rank: "عميد", exactVetSalary: 1000000 },
+      });
+
+      expect(res.statusCode).toBe(400);
+      expect(res.json().minimumVetSalary).toBeGreaterThan(1000000);
+    });
+
+    it("keeps Lieutenant degree 13 canonical veteran salary at exactly 85 percent", async () => {
+      const res = await app.inject({
+        method: "POST",
+        url: "/api/salary/calc",
+        payload: { rank: "ملازم", degree: 13, married: false, kidsCount: 0, selectedOrnaments: [] },
+      });
+
+      expect(res.statusCode).toBe(200);
+      const body = res.json();
+      expect(body.breakdown.basicSalary).toBe(2461000);
+      expect(body.breakdown.canonicalVetSalary).toBe(2091850);
+      expect(body.breakdown.vetSalary).toBe(2091850);
+      expect(body.breakdown.veteranSalaryAdjustment).toBe(0);
+    });
+
+    it("uses the official Colonel degree mapping and rejects unsupported degree 13", async () => {
+      const degree1 = await app.inject({ method: "GET", url: "/api/salary?rank=عقيد&degree=1" });
+      const degree12 = await app.inject({ method: "GET", url: "/api/salary?rank=عقيد&degree=12" });
+      const degree13 = await app.inject({ method: "GET", url: "/api/salary?rank=عقيد&degree=13" });
+
+      expect(degree1.statusCode).toBe(200);
+      expect(degree1.json().result.basicSalary).toBe(2460000);
+      expect(degree1.json().result.vetSalary).toBe(2091000);
+      expect(degree1.json().result.degreeValue).toBe(100000);
+      expect(degree12.statusCode).toBe(200);
+      expect(degree12.json().result.basicSalary).toBe(3725000);
+      expect(degree12.json().result.vetSalary).toBe(3166250);
+      expect(degree12.json().result.degreeValue).toBe(130000);
+      expect(degree13.statusCode).toBe(404);
     });
 
     it("rejects when rank is missing", async () => {

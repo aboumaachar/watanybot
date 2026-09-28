@@ -286,6 +286,7 @@ function scoreChunk(query: string, queryTokens: string[], chunk: KbChunk, scopeH
   const searchNorm = normalizeAr(searchText);
   const searchTokens = buildSearchTokenSet(searchText);
   const queryNorm = normalizeAr(query);
+  const requiredDocumentsQuery = /(المستندات|مستندات|الأوراق|اوراق|الوراق)/i.test(query);
   const hasPensionSignal = queryTokens.includes("معاش") || queryTokens.includes("تقاعد") || queryTokens.some((token) => token.startsWith("معاش"));
   const beneficiarySignals = getBeneficiarySignals(queryTokens);
   const broadPensionComputationQuery = isBroadPensionComputationQuery(queryNorm, queryTokens, beneficiarySignals);
@@ -327,12 +328,19 @@ function scoreChunk(query: string, queryTokens: string[], chunk: KbChunk, scopeH
     score += 4;
   }
 
-  // Boost overview and steps chunks
-  if (chunk.chunk_type === "overview") score *= 1.35;
-  if (chunk.chunk_type === "transaction_overview") score *= 1.3;
-  if (chunk.chunk_type === "steps") score *= 1.2;
-  if (chunk.chunk_type === "requirements") score *= 1.1;
-  if (chunk.chunk_type === "documents") score *= 1.1;
+  // Boost chunk types by intent. Explicit document questions must prefer
+  // concrete document chunks over overview text that may contain query aliases.
+  if (requiredDocumentsQuery) {
+    if (chunk.chunk_type === "documents" || chunk.chunk_type === "requirements") score *= 1.7;
+    if (chunk.chunk_type === "overview" || chunk.chunk_type === "transaction_overview") score *= 0.8;
+    if (chunk.chunk_type === "steps") score *= 0.9;
+  } else {
+    if (chunk.chunk_type === "overview") score *= 1.35;
+    if (chunk.chunk_type === "transaction_overview") score *= 1.3;
+    if (chunk.chunk_type === "steps") score *= 1.2;
+    if (chunk.chunk_type === "requirements") score *= 1.1;
+    if (chunk.chunk_type === "documents") score *= 1.1;
+  }
 
   // Veteran-first: boost high-welfare categories (family pension, death/inheritance,
   // spouse/parent coverage). These categories are the most commonly needed by

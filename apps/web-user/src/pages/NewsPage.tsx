@@ -68,6 +68,7 @@ function NewsPageLegacy() {
       <div className="news-page__header">
         <Megaphone24Regular aria-hidden className="news-page__header-icon" />
         <h1 className="news-page__title">الأخبار</h1>
+        <a className="news-page__archive-link" href="/articles?category=اخبار">أرشيف الأخبار</a>
       </div>
 
       {categories.length > 1 && (

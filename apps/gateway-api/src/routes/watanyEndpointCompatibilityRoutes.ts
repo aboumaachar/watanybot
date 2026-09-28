@@ -3,6 +3,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { taxiTrustedMobilityRepository } from '../services/taxiTrustedMobilityRepository';
 import { requireRole } from '../auth/rbac';
+import { loadIndex } from '../procedures/indexer';
+import { getProcedureRuntimeInfo } from '../procedures/config';
 
 type JsonRecord = Record<string, unknown>;
 
@@ -91,20 +93,16 @@ function loadFaqPayload(): JsonRecord {
   return { ok: true, items, source: file };
 }
 
-function loadProceduresPayload(): JsonRecord {
-  const file = firstExisting([
-    'data/kb_rebuild_v4/full_procedures.canonical.json',
-    'data/kb_rebuild_v4/full_procedures.from_kb_studio.canonical.json',
-    'apps/gateway-api/data/procedures.json',
-    'apps/gateway-api/data/kb/procedures.json',
-    'apps/gateway-api/data/kb/full_procedures.canonical.json'
-  ]);
-  if (!file) {
-    return { ok: true, items: [], source: 'missing-procedures-catalog' };
-  }
-  const raw = readJsonFile(file);
-  const items = normalizeItems(raw, ['items', 'procedures', 'documents', 'forms']);
-  return { ok: true, items, source: file };
+async function loadProceduresPayload(): Promise<JsonRecord> {
+  const state = await loadIndex(false);
+  const runtime = getProcedureRuntimeInfo();
+  return {
+    ok: true,
+    items: state.procedures,
+    total: state.procedures.length,
+    source: runtime.source,
+    dataDir: runtime.dataDir,
+  };
 }
 
 function sanitizePathLikeValue(value: string): string {
@@ -114,28 +112,24 @@ function sanitizePathLikeValue(value: string): string {
   return path.posix.basename(normalized);
 }
 
-function loadAdminKbSourcesPayload(): JsonRecord {
-  const proceduresPayload = loadProceduresPayload();
+async function loadAdminKbSourcesPayload(): Promise<JsonRecord> {
+  const proceduresPayload = await loadProceduresPayload();
   const items = normalizeItems(proceduresPayload.items, ['items']);
 
   const seen = new Set<string>();
   const sources = items
     .map((item, index) => {
       const record = asRecord(item);
-      const authority = asRecord(record.primary_authority);
-      const title = asString(record.title_ar) || asString(record.title) || `source-${index + 1}`;
-      const authorityName = asString(authority.name_ar) || asString(authority.id) || 'watany-procedures';
-      const key = `${authorityName}::${title}`;
-      if (seen.has(key)) {
-        return null;
-      }
+      const sourceId = asString(record.source) || `source-${index + 1}`;
+      const sourceLabel = asString(record.source_label) || sourceId;
+      const key = sourceId.toLowerCase();
+      if (seen.has(key)) return null;
       seen.add(key);
-
       return {
-        id: asString(authority.id) || `source-${index + 1}`,
-        name: authorityName,
-        title,
-        source_scope: 'procedure_catalog',
+        id: sourceId,
+        name: sourceLabel,
+        title: sourceLabel,
+        source_scope: 'procedure_runtime',
       };
     })
     .filter(Boolean)
@@ -149,123 +143,72 @@ function loadAdminKbSourcesPayload(): JsonRecord {
   };
 }
 
-function loadAdminDocumentsPayload(): JsonRecord {
-  const proceduresPayload = loadProceduresPayload();
-  const items = normalizeItems(proceduresPayload.items, ['items']);
-
-  const seen = new Set<string>();
-  const documents = items
-    .flatMap((item) => {
-      const record = asRecord(item);
-      const title = asString(record.title_ar) || asString(record.title);
-      const canonicalId = asString(record.canonical_id) || asString(record.id);
-      const requiredDocuments = asArray(record.required_documents);
-
-      return requiredDocuments.map((doc, index) => {
-        const docRecord = asRecord(doc);
-        const name =
-          asString(docRecord.name_ar)
-          || asString(docRecord.title_ar)
-          || asString(docRecord.name)
-          || asString(docRecord.value)
-          || `${title || canonicalId || 'procedure'} document ${index + 1}`;
-
-        const uniqueKey = `${canonicalId}::${name}`;
-        if (seen.has(uniqueKey)) {
-          return null;
-        }
-        seen.add(uniqueKey);
-
-        return {
-          id: `${canonicalId || 'proc'}-doc-${index + 1}`,
-          title: name,
-          procedure_id: canonicalId || null,
-          procedure_title: title || null,
-          source: 'kb_procedure_required_documents',
-        };
-      });
-    })
-    .filter(Boolean)
-    .slice(0, 120);
+async function loadAdminDocumentsPayload(): Promise<JsonRecord> {
+  const state = await loadIndex(false);
+  const runtime = getProcedureRuntimeInfo();
+  const documents = state.docs.slice(0, 120).map((doc) => ({
+    id: doc.id,
+    title: doc.title,
+    url: doc.url || doc.public_url || null,
+    file_name: doc.file_name || null,
+    file_path: doc.file_path || null,
+    file_format: doc.file_format || null,
+    linked_procedures: doc.linked_procedures || [],
+    source: 'procedure_runtime_documents',
+  }));
 
   return {
     ok: true,
     documents,
     count: documents.length,
-    source: proceduresPayload.source,
+    total: state.docs.length,
+    source: runtime.source,
   };
 }
 
-function loadAdminProcedureFilesPayload(): JsonRecord {
-  const proceduresPayload = loadProceduresPayload();
-  const items = normalizeItems(proceduresPayload.items, ['items']);
-
-  const files = items
-    .flatMap((item) => {
-      const record = asRecord(item);
-      const title = asString(record.title_ar) || asString(record.title) || 'Procedure';
-      const canonicalId = asString(record.canonical_id) || asString(record.id) || '';
-      const links = asArray(record.links_contacts);
-
-      return links
-        .map((link, index) => {
-          const linkRecord = asRecord(link);
-          const kind = asString(linkRecord.kind);
-          if (kind !== 'source_file') {
-            return null;
-          }
-
-          const rawValue = asString(linkRecord.value);
-          const safeValue = sanitizePathLikeValue(rawValue);
-          if (!safeValue) {
-            return null;
-          }
-
-          return {
-            id: `${canonicalId || 'proc'}-file-${index + 1}`,
-            procedure_id: canonicalId || null,
-            procedure_title: title,
-            file_name: safeValue,
-            kind,
-            source_scope: asString(linkRecord.source_scope) || 'source_material',
-          };
-        })
-        .filter(Boolean);
-    })
-    .slice(0, 9);
+async function loadAdminProcedureFilesPayload(): Promise<JsonRecord> {
+  const state = await loadIndex(false);
+  const runtime = getProcedureRuntimeInfo();
+  const files = state.docs
+    .filter((doc) => Boolean(doc.file_name || doc.file_path || doc.public_url || doc.url))
+    .slice(0, 120)
+    .map((doc) => ({
+      id: doc.id,
+      procedure_ids: doc.linked_procedures || [],
+      file_name: sanitizePathLikeValue(doc.file_name || doc.file_path || doc.public_url || doc.url || ''),
+      kind: doc.asset_type || 'source_file',
+      source_scope: 'procedure_runtime_documents',
+    }));
 
   return {
     ok: true,
     files,
     count: files.length,
-    source: proceduresPayload.source,
+    total: state.docs.length,
+    source: runtime.source,
   };
 }
 
-function loadAdminKbPreviewPayload(query: string): JsonRecord {
+async function loadAdminKbPreviewPayload(query: string): Promise<JsonRecord> {
   const q = query.trim().toLowerCase();
-  const proceduresPayload = loadProceduresPayload();
+  const proceduresPayload = await loadProceduresPayload();
   const items = normalizeItems(proceduresPayload.items, ['items']);
 
   const candidates = items
     .map((item) => {
       const record = asRecord(item);
       const title = asString(record.title_ar) || asString(record.title);
-      const description = asString(record.short_description_ar) || asString(record.description);
-      const keywords = asArray(record.keywords_ar).map((entry) => asString(entry)).filter(Boolean);
+      const description = asString(record.summary_lb) || asString(record.summary_en);
+      const keywords = asArray(record.tags).map((entry) => asString(entry)).filter(Boolean);
       const haystack = `${title} ${description} ${keywords.join(' ')}`.toLowerCase();
-      const matches = !q || haystack.includes(q);
-      if (!matches) {
-        return null;
-      }
+      if (q && !haystack.includes(q)) return null;
 
-      const authority = asRecord(record.primary_authority);
       return {
-        procedure_id: asString(record.canonical_id) || asString(record.id) || null,
+        procedure_id: asString(record.id) || null,
         title,
         excerpt: description,
-        source_label: asString(authority.name_ar) || 'Watany Procedures Catalog',
-        source_scope: 'procedure_catalog',
+        source_label: asString(record.source_label) || asString(record.source) || 'Watany Procedures Runtime',
+        source_scope: 'procedure_runtime',
       };
     })
     .filter(Boolean)

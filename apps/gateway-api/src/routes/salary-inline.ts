@@ -185,6 +185,191 @@ function findSalaryRow(salariesIndex: Record<string, Record<string, unknown>>, r
   return null;
 }
 
+type SalaryDegreeInferenceStatus = "exact_degree" | "fractional_within_scale" | "extrapolated_above_max";
+
+type SalaryDegreeInference = {
+  rank: string;
+  exactVetSalary: number;
+  lookupDegree: number;
+  wholeEquivalentDegree: number;
+  equivalentDegree: number;
+  fractionOfDegree: number;
+  fractionPercent: number;
+  lowerVetSalary: number;
+  nextVetSalary: number | null;
+  veteranStep: number;
+  maxPublishedDegree: number;
+  status: SalaryDegreeInferenceStatus;
+};
+
+function rankSalaryRows(salariesIndex: Record<string, Record<string, unknown>>, rank: string) {
+  const normalizedRank = normalizeArabic(rank);
+  return Object.values(salariesIndex)
+    .filter((row) => normalizeArabic(String(row.rank || "")) === normalizedRank)
+    .map((row) => ({
+      row,
+      degree: Number(row.degree || 0),
+      vetSalary: Number(row.vetSalary || 0),
+      degreeValue: Number(row.degreeValue || 0),
+      pre2019BaseSalary: Number(row.pre2019BaseSalary || 0),
+    }))
+    .filter((entry) => entry.degree > 0 && entry.vetSalary > 0)
+    .sort((a, b) => a.degree - b.degree);
+}
+
+function inferDegreeFromExactVeteranSalary(
+  salariesIndex: Record<string, Record<string, unknown>>,
+  rank: string,
+  exactVetSalary: number,
+): SalaryDegreeInference | { error: "rank_not_found" | "below_minimum"; minimumVetSalary?: number } {
+  const rows = rankSalaryRows(salariesIndex, rank);
+  if (rows.length === 0) return { error: "rank_not_found" };
+  if (exactVetSalary < rows[0].vetSalary) {
+    return { error: "below_minimum", minimumVetSalary: rows[0].vetSalary };
+  }
+
+  let lowerIndex = 0;
+  for (let index = 0; index < rows.length; index += 1) {
+    if (rows[index].vetSalary <= exactVetSalary) lowerIndex = index;
+    else break;
+  }
+
+  const lower = rows[lowerIndex];
+  const next = rows[lowerIndex + 1] ?? null;
+  const maxPublishedDegree = rows[rows.length - 1].degree;
+  if (exactVetSalary === lower.vetSalary) {
+    return {
+      rank: String(lower.row.rank || rank),
+      exactVetSalary,
+      lookupDegree: lower.degree,
+      wholeEquivalentDegree: lower.degree,
+      equivalentDegree: lower.degree,
+      fractionOfDegree: 0,
+      fractionPercent: 0,
+      lowerVetSalary: lower.vetSalary,
+      nextVetSalary: next?.vetSalary ?? null,
+      veteranStep: next ? Math.max(1, next.vetSalary - lower.vetSalary) : Math.max(1, Math.round(lower.degreeValue * 0.85)),
+      maxPublishedDegree,
+      status: "exact_degree",
+    };
+  }
+
+  if (next) {
+    const veteranStep = Math.max(1, next.vetSalary - lower.vetSalary);
+    const fractionOfDegree = (exactVetSalary - lower.vetSalary) / veteranStep;
+    const equivalentDegree = lower.degree + fractionOfDegree;
+    return {
+      rank: String(lower.row.rank || rank),
+      exactVetSalary,
+      lookupDegree: lower.degree,
+      wholeEquivalentDegree: Math.floor(equivalentDegree),
+      equivalentDegree,
+      fractionOfDegree,
+      fractionPercent: fractionOfDegree * 100,
+      lowerVetSalary: lower.vetSalary,
+      nextVetSalary: next.vetSalary,
+      veteranStep,
+      maxPublishedDegree,
+      status: "fractional_within_scale",
+    };
+  }
+
+  const veteranStep = Math.max(1, Math.round(lower.degreeValue * 0.85));
+  const degreesAbovePublishedMax = (exactVetSalary - lower.vetSalary) / veteranStep;
+  const equivalentDegree = lower.degree + degreesAbovePublishedMax;
+  const wholeEquivalentDegree = Math.floor(equivalentDegree);
+  const fractionOfDegree = equivalentDegree - wholeEquivalentDegree;
+  return {
+    rank: String(lower.row.rank || rank),
+    exactVetSalary,
+    lookupDegree: lower.degree,
+    wholeEquivalentDegree,
+    equivalentDegree,
+    fractionOfDegree,
+    fractionPercent: fractionOfDegree * 100,
+    lowerVetSalary: lower.vetSalary,
+    nextVetSalary: null,
+    veteranStep,
+    maxPublishedDegree,
+    status: "extrapolated_above_max",
+  };
+}
+
+type SalaryPre2019DegreeInference = {
+  rank: string;
+  pre2019BaseSalary: number;
+  lookupDegree: number;
+  wholeEquivalentDegree: number;
+  equivalentDegree: number;
+  fractionOfDegree: number;
+  fractionPercent: number;
+  lowerPre2019BaseSalary: number;
+  nextPre2019BaseSalary: number | null;
+  pre2019Step: number;
+  effectiveVetSalary: number;
+  lowerVetSalary: number;
+  nextVetSalary: number | null;
+  veteranStep: number;
+  maxPublishedDegree: number;
+  status: SalaryDegreeInferenceStatus;
+};
+
+function inferDegreeFromPre2019BaseSalary(
+  salariesIndex: Record<string, Record<string, unknown>>,
+  rank: string,
+  pre2019BaseSalary: number,
+): SalaryPre2019DegreeInference | { error: "rank_not_found" | "authority_missing" | "below_minimum"; minimumPre2019BaseSalary?: number } {
+  const rows = rankSalaryRows(salariesIndex, rank).filter((entry) => entry.pre2019BaseSalary > 0);
+  if (rows.length === 0) return { error: "authority_missing" };
+  if (pre2019BaseSalary < rows[0].pre2019BaseSalary) return { error: "below_minimum", minimumPre2019BaseSalary: rows[0].pre2019BaseSalary };
+  let lowerIndex = 0;
+  for (let index = 0; index < rows.length; index += 1) {
+    if (rows[index].pre2019BaseSalary <= pre2019BaseSalary) lowerIndex = index;
+    else break;
+  }
+  const lower = rows[lowerIndex];
+  const next = rows[lowerIndex + 1] ?? null;
+  const maxPublishedDegree = rows[rows.length - 1].degree;
+  if (pre2019BaseSalary === lower.pre2019BaseSalary) {
+    const previous = lowerIndex > 0 ? rows[lowerIndex - 1] : null;
+    const pre2019Step = next ? Math.max(1, next.pre2019BaseSalary - lower.pre2019BaseSalary)
+      : previous ? Math.max(1, lower.pre2019BaseSalary - previous.pre2019BaseSalary) : 1;
+    const veteranStep = next ? Math.max(1, next.vetSalary - lower.vetSalary)
+      : previous ? Math.max(1, lower.vetSalary - previous.vetSalary) : 1;
+    return { rank: String(lower.row.rank || rank), pre2019BaseSalary, lookupDegree: lower.degree,
+      wholeEquivalentDegree: lower.degree, equivalentDegree: lower.degree, fractionOfDegree: 0, fractionPercent: 0,
+      lowerPre2019BaseSalary: lower.pre2019BaseSalary, nextPre2019BaseSalary: next?.pre2019BaseSalary ?? null,
+      pre2019Step, effectiveVetSalary: lower.vetSalary, lowerVetSalary: lower.vetSalary,
+      nextVetSalary: next?.vetSalary ?? null, veteranStep, maxPublishedDegree, status: "exact_degree" };
+  }
+  if (next) {
+    const pre2019Step = Math.max(1, next.pre2019BaseSalary - lower.pre2019BaseSalary);
+    const veteranStep = Math.max(1, next.vetSalary - lower.vetSalary);
+    const fractionOfDegree = (pre2019BaseSalary - lower.pre2019BaseSalary) / pre2019Step;
+    const equivalentDegree = lower.degree + fractionOfDegree;
+    return { rank: String(lower.row.rank || rank), pre2019BaseSalary, lookupDegree: lower.degree,
+      wholeEquivalentDegree: Math.floor(equivalentDegree), equivalentDegree, fractionOfDegree,
+      fractionPercent: fractionOfDegree * 100, lowerPre2019BaseSalary: lower.pre2019BaseSalary,
+      nextPre2019BaseSalary: next.pre2019BaseSalary, pre2019Step,
+      effectiveVetSalary: Math.round(lower.vetSalary + (fractionOfDegree * veteranStep)),
+      lowerVetSalary: lower.vetSalary, nextVetSalary: next.vetSalary, veteranStep,
+      maxPublishedDegree, status: "fractional_within_scale" };
+  }
+  const previous = rows[rows.length - 2] ?? null;
+  const pre2019Step = previous ? Math.max(1, lower.pre2019BaseSalary - previous.pre2019BaseSalary) : 1;
+  const veteranStep = previous ? Math.max(1, lower.vetSalary - previous.vetSalary) : 1;
+  const degreesAbove = (pre2019BaseSalary - lower.pre2019BaseSalary) / pre2019Step;
+  const equivalentDegree = lower.degree + degreesAbove;
+  const wholeEquivalentDegree = Math.floor(equivalentDegree);
+  const fractionOfDegree = equivalentDegree - wholeEquivalentDegree;
+  return { rank: String(lower.row.rank || rank), pre2019BaseSalary, lookupDegree: lower.degree,
+    wholeEquivalentDegree, equivalentDegree, fractionOfDegree, fractionPercent: fractionOfDegree * 100,
+    lowerPre2019BaseSalary: lower.pre2019BaseSalary, nextPre2019BaseSalary: null, pre2019Step,
+    effectiveVetSalary: Math.round(lower.vetSalary + (degreesAbove * veteranStep)),
+    lowerVetSalary: lower.vetSalary, nextVetSalary: null, veteranStep, maxPublishedDegree,
+    status: "extrapolated_above_max" };
+}
+
 export const salaryInlineRoutes: FastifyPluginAsync<SalaryInlineRoutesOptions> = async (app, { getKb }) => {
   app.get("/api/salary", { config: { rateLimit: { max: 300, timeWindow: "1 minute" } } }, async (req, reply) => {
     const q = (req.query || {}) as Record<string, string | undefined>;
@@ -206,6 +391,7 @@ export const salaryInlineRoutes: FastifyPluginAsync<SalaryInlineRoutesOptions> =
         basicSalary: row.basicSalary,
         degreeValue: row.degreeValue,
         vetSalary: row.vetSalary,
+        base_salary_old_lbp: row.pre2019BaseSalary,
         equipment: row.equipment,
         driver: row.driver,
         position: row.position,
@@ -235,6 +421,48 @@ export const salaryInlineRoutes: FastifyPluginAsync<SalaryInlineRoutesOptions> =
       ornamentChoices: meta.ornamentChoices || [],
       usdRate: meta.usdRate || 89500,
     });
+  });
+
+  app.post<{ Body: Record<string, unknown> }>("/api/salary/infer-degree", { config: { rateLimit: { max: 60, timeWindow: "1 minute" } } }, async (req, reply) => {
+    const b = req.body || {};
+    const rank = typeof b.rank === "string" ? b.rank.trim() : "";
+    const exactVetSalary = Number(b.exactVetSalary);
+    if (!rank) return reply.code(400).send({ ok: false, error: "rank is required" });
+    if (!Number.isFinite(exactVetSalary) || exactVetSalary <= 0) {
+      return reply.code(400).send({ ok: false, error: "exactVetSalary must be a positive number" });
+    }
+
+    const kb = getKb();
+    if (!kb?.salariesIndex) return reply.code(500).send({ ok: false, error: "KB not loaded" });
+    const inference = inferDegreeFromExactVeteranSalary(kb.salariesIndex, rank, Math.round(exactVetSalary));
+    if ("error" in inference) {
+      if (inference.error === "below_minimum") {
+        return reply.code(400).send({
+          ok: false,
+          error: "exactVetSalary is below the minimum veteran salary for this rank",
+          minimumVetSalary: inference.minimumVetSalary,
+        });
+      }
+      return reply.code(404).send({ ok: false, error: "rank not found", rank });
+    }
+    return reply.send({ ok: true, inference });
+  });
+
+  app.post<{ Body: Record<string, unknown> }>("/api/salary/infer-pre2019-degree", { config: { rateLimit: { max: 60, timeWindow: "1 minute" } } }, async (req, reply) => {
+    const b = req.body || {};
+    const rank = typeof b.rank === "string" ? b.rank.trim() : "";
+    const pre2019BaseSalary = Number(b.pre2019BaseSalary);
+    if (!rank) return reply.code(400).send({ ok: false, error: "rank is required" });
+    if (!Number.isFinite(pre2019BaseSalary) || pre2019BaseSalary <= 0) return reply.code(400).send({ ok: false, error: "pre2019BaseSalary must be a positive number" });
+    const kb = getKb();
+    if (!kb?.salariesIndex) return reply.code(500).send({ ok: false, error: "KB not loaded" });
+    const inference = inferDegreeFromPre2019BaseSalary(kb.salariesIndex, rank, Math.round(pre2019BaseSalary));
+    if ("error" in inference) {
+      if (inference.error === "below_minimum") return reply.code(400).send({ ok: false, error: "pre2019BaseSalary is below the minimum base salary for this rank", minimumPre2019BaseSalary: inference.minimumPre2019BaseSalary });
+      if (inference.error === "authority_missing") return reply.code(500).send({ ok: false, error: "pre-2019 salary authority is missing for this rank", rank });
+      return reply.code(404).send({ ok: false, error: "rank not found", rank });
+    }
+    return reply.send({ ok: true, inference });
   });
 
   // GET: compatibility endpoint expected by runtime smoke scripts
@@ -310,33 +538,102 @@ export const salaryInlineRoutes: FastifyPluginAsync<SalaryInlineRoutesOptions> =
   app.post<{ Body: Record<string, unknown> }>("/api/salary/calc", { config: { rateLimit: { max: 30, timeWindow: "1 minute" } } }, async (req, reply) => {
     const b = req.body || {};
     const rank = typeof b.rank === "string" ? b.rank.trim() : "";
-    let degree = "1";
-    if (typeof b.degree === "string") {
-      degree = b.degree.trim() || "1";
-    } else if (typeof b.degree === "number") {
-      degree = String(b.degree);
-    }
     if (!rank) return reply.code(400).send({ ok: false, error: "rank is required" });
+
+    const exactVetSalaryInput = b.exactVetSalary;
+    let exactVetSalary: number | undefined;
+    if (exactVetSalaryInput !== undefined && exactVetSalaryInput !== null && String(exactVetSalaryInput).trim() !== "") {
+      const parsed = Number(exactVetSalaryInput);
+      if (!Number.isFinite(parsed) || parsed <= 0) {
+        return reply.code(400).send({ ok: false, error: "exactVetSalary must be a positive number" });
+      }
+      exactVetSalary = Math.round(parsed);
+    }
+    const pre2019BaseSalaryInput = b.pre2019BaseSalary;
+    let pre2019BaseSalary: number | undefined;
+    if (pre2019BaseSalaryInput !== undefined && pre2019BaseSalaryInput !== null && String(pre2019BaseSalaryInput).trim() !== "") {
+      const parsed = Number(pre2019BaseSalaryInput);
+      if (!Number.isFinite(parsed) || parsed <= 0) return reply.code(400).send({ ok: false, error: "pre2019BaseSalary must be a positive number" });
+      pre2019BaseSalary = Math.round(parsed);
+    }
+    if (exactVetSalary !== undefined && pre2019BaseSalary !== undefined) return reply.code(400).send({ ok: false, error: "use either exactVetSalary or pre2019BaseSalary, not both" });
+
+    let degree = "";
+    let degreeWasProvided = false;
+    if (typeof b.degree === "string" && b.degree.trim()) {
+      degree = b.degree.trim();
+      degreeWasProvided = true;
+    } else if (typeof b.degree === "number" && Number.isFinite(b.degree)) {
+      degree = String(b.degree);
+      degreeWasProvided = true;
+    }
 
     const kb = getKb();
     if (!kb?.salariesIndex) return reply.code(500).send({ ok: false, error: "KB not loaded" });
 
     const salariesIndex = kb.salariesIndex;
     const rankMeta = kb.rankMeta || {};
+    let degreeInference: SalaryDegreeInference | SalaryPre2019DegreeInference | undefined;
+    if (pre2019BaseSalary !== undefined) {
+      const inferred = inferDegreeFromPre2019BaseSalary(salariesIndex, rank, pre2019BaseSalary);
+      if ("error" in inferred) {
+        if (inferred.error === "below_minimum") return reply.code(400).send({ ok: false, error: "pre2019BaseSalary is below the minimum base salary for this rank", minimumPre2019BaseSalary: inferred.minimumPre2019BaseSalary });
+        if (inferred.error === "authority_missing") return reply.code(500).send({ ok: false, error: "pre-2019 salary authority is missing for this rank", rank });
+        return reply.code(404).send({ ok: false, error: "rank not found", rank });
+      }
+      degreeInference = inferred;
+      if (!degreeWasProvided) degree = String(inferred.lookupDegree);
+    } else if (exactVetSalary !== undefined) {
+      const inferred = inferDegreeFromExactVeteranSalary(salariesIndex, rank, exactVetSalary);
+      if ("error" in inferred) {
+        if (inferred.error === "below_minimum") {
+          return reply.code(400).send({
+            ok: false,
+            error: "exactVetSalary is below the minimum veteran salary for this rank",
+            minimumVetSalary: inferred.minimumVetSalary,
+          });
+        }
+        return reply.code(404).send({ ok: false, error: "rank not found", rank });
+      }
+      degreeInference = inferred;
+      if (!degreeWasProvided) degree = String(inferred.lookupDegree);
+    }
+    if (!degree) degree = "1";
+
     const row = findSalaryRow(salariesIndex, rank, degree);
     if (!row) return reply.code(404).send({ ok: false, error: "No salary found", rank, degree });
 
-    const basePension = Number(row.vetSalary || 0);
+    const canonicalVetSalary = Number(row.vetSalary || 0);
+
+    // An explicitly known veteran pension may include a fractional/additional degree.
+    // It overrides only the individual calculation; the canonical rank/degree row remains unchanged.
+    const basePension = degreeInference && "effectiveVetSalary" in degreeInference ? degreeInference.effectiveVetSalary : (exactVetSalary ?? canonicalVetSalary);
+    const degreeValue = Number(row.degreeValue || 0);
+    const veteranSalaryAdjustment = basePension - canonicalVetSalary;
+    const maxSingleDegreeVeteranAdjustment = Math.round(degreeValue * 0.85);
+    const fractionOfDegree = maxSingleDegreeVeteranAdjustment > 0
+      ? veteranSalaryAdjustment / maxSingleDegreeVeteranAdjustment
+      : 0;
+    const veteranSalaryAdjustmentStatus = exactVetSalary === undefined && pre2019BaseSalary === undefined
+      ? "canonical"
+      : veteranSalaryAdjustment < 0
+        ? "explicit_below_canonical"
+        : veteranSalaryAdjustment <= maxSingleDegreeVeteranAdjustment
+          ? "within_one_degree"
+          : "explicit_above_one_degree";
+
     const tableSupplements = Number(row.equipment || 0) + Number(row.driver || 0) + Number(row.position || 0);
-    const socialAids = Number(row.grant2025 || 0)
-      + Number(row.d13020 || 0)
-      + Number(row.d11227_2 || 0)
-      + Number(row.d11227_1 || 0)
-      + Number(row.budget2022 || 0);
-    const grossPension2026 = basePension + tableSupplements + socialAids;
-    const deduction15Pct = Number(row.officialDeduction2026 || 0) > 0
+    const eligibleBase = basePension + tableSupplements;
+    const grant2025 = 12000000;
+    const d13020 = Math.max(eligibleBase * 3, 7000000);
+    const d11227_2 = Math.max(eligibleBase * 3, 7000000);
+    const d11227_1 = eligibleBase * 4;
+    const budget2022 = Math.min(12000000, Math.max(eligibleBase * 2, Math.max(0, 5000000 - eligibleBase)));
+    const socialAids = grant2025 + d13020 + d11227_2 + d11227_1 + budget2022;
+    const grossPension2026 = eligibleBase + socialAids;
+    const deduction15Pct = Number(row.officialDeduction2026 || 0) > 0 && exactVetSalary === undefined && pre2019BaseSalary === undefined
       ? Number(row.officialDeduction2026)
-      : Math.round(basePension * 0.015);
+      : Math.ceil((basePension * 0.015) / 1000) * 1000;
     const pension2026 = Math.max(0, grossPension2026 - deduction15Pct);
     const usdRate = Number(rankMeta.usdRate || 89500);
 
@@ -367,7 +664,7 @@ export const salaryInlineRoutes: FastifyPluginAsync<SalaryInlineRoutesOptions> =
     const totalPensionUsd = totalPension / usdRate;
 
     // Section 2: 6th salary raise
-    const sixSalary = Number(row.sixSalary || 0);
+    const sixSalary = eligibleBase * 6;
     const faAfterRaise = (rankMeta.familyAllowanceAfterRaise || { wife: 2100000, perChild: 1160000 }) as { wife: number; perChild: number };
     const wifeAfterRaise = married ? faAfterRaise.wife : 0;
     const childAfterRaise = kidsCount * faAfterRaise.perChild;
@@ -388,20 +685,37 @@ export const salaryInlineRoutes: FastifyPluginAsync<SalaryInlineRoutesOptions> =
 
     return reply.send({
       ok: true,
-      input: { rank, degree: Number(degree), category: row.category, married, kidsCount, selectedOrnaments },
+      input: {
+        rank,
+        degree: Number(degree),
+        degreeSource: pre2019BaseSalary !== undefined && !degreeWasProvided ? "inferred_from_pre2019_base_salary" : exactVetSalary !== undefined && !degreeWasProvided ? "inferred_from_exact_veteran_salary" : "selected",
+        category: row.category,
+        married,
+        kidsCount,
+        selectedOrnaments,
+        exactVetSalary,
+        pre2019BaseSalary,
+      },
       breakdown: {
         basicSalary: Number(row.basicSalary || 0),
+        degreeInference,
+        canonicalVetSalary,
         vetSalary: basePension,
+        veteranSalaryAdjustment,
+        maxSingleDegreeVeteranAdjustment,
+        fractionOfDegree,
+        veteranSalaryAdjustmentStatus,
+        eligibleBase,
         deduction15Pct,
         equipment: Number(row.equipment || 0),
         driver: Number(row.driver || 0),
         position: Number(row.position || 0),
         aids: {
-          grant2025: Number(row.grant2025 || 0),
-          d13020: Number(row.d13020 || 0),
-          d11227_2: Number(row.d11227_2 || 0),
-          d11227_1: Number(row.d11227_1 || 0),
-          budget2022: Number(row.budget2022 || 0),
+          grant2025,
+          d13020,
+          d11227_2,
+          d11227_1,
+          budget2022,
         },
         pension2026,
         pension2026usd: Math.round((pension2026 / usdRate) * 100) / 100,

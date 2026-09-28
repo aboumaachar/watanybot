@@ -96,6 +96,63 @@ for (let i = 1; i < csv.length; i++) {
   };
 }
 
+/* ────── 1b. Apply the official 2026 salary-table authority ────── */
+const authorityPath = path.join(OUT, "officialSalaryAuthority2026.json");
+if (!fs.existsSync(authorityPath)) {
+  console.error("❌ officialSalaryAuthority2026.json not found; refusing to regenerate salary KB from stale spreadsheet values");
+  process.exit(1);
+}
+const authority = JSON.parse(fs.readFileSync(authorityPath, "utf8"));
+const authorityEntries = authority?.entries || {};
+const authorityKeys = Object.keys(authorityEntries);
+if (authorityKeys.length !== Number(authority?.entryCount || 0) || authorityKeys.length !== 302) {
+  console.error(`❌ official salary authority count mismatch: declared=${authority?.entryCount} actual=${authorityKeys.length}`);
+  process.exit(1);
+}
+
+for (const key of Object.keys(salariesIndex)) {
+  if (!authorityEntries[key]) delete salariesIndex[key];
+}
+for (const [key, official] of Object.entries(authorityEntries)) {
+  const row = salariesIndex[key];
+  if (!row) {
+    console.error(`❌ salary source is missing official row: ${key}`);
+    process.exit(1);
+  }
+  const expectedVet = Math.round(Number(official.basicSalary) * 0.85);
+  if (expectedVet !== Number(official.vetSalary)) {
+    console.error(`❌ official veteran salary invariant failed for ${key}`);
+    process.exit(1);
+  }
+  if (!Number.isFinite(Number(official.pre2019BaseSalary)) || Number(official.pre2019BaseSalary) <= 0) {
+    console.error(`❌ pre-2019 base salary authority missing for ${key}`);
+    process.exit(1);
+  }
+  row.category = official.category;
+  row.rank = official.rank;
+  row.degree = Number(official.degree);
+  row.basicSalary = Number(official.basicSalary);
+  row.degreeValue = Number(official.degreeValue);
+  row.vetSalary = expectedVet;
+  row.pre2019BaseSalary = Number(official.pre2019BaseSalary);
+
+  const eligibleBase = row.vetSalary + row.equipment + row.driver + row.position;
+  row.grant2025 = 12000000;
+  row.d13020 = Math.max(eligibleBase * 3, 7000000);
+  row.d11227_2 = Math.max(eligibleBase * 3, 7000000);
+  row.d11227_1 = eligibleBase * 4;
+  row.budget2022 = Math.min(12000000, Math.max(eligibleBase * 2, Math.max(0, 5000000 - eligibleBase)));
+  row.pension2026 = eligibleBase + row.grant2025 + row.d13020 + row.d11227_2 + row.d11227_1 + row.budget2022;
+  row.pension2026usd = row.pension2026 / 89500;
+  row.sixSalary = eligibleBase * 6;
+  row.totalSalary2026usd = (row.pension2026 + row.sixSalary) / 89500;
+  if (row.val2019usd > 0) {
+    row.pct2019 = row.pension2026usd / row.val2019usd;
+    row.sixPct = row.totalSalary2026usd / row.val2019usd;
+    row.fiftyPct = row.val2019usd * 0.5;
+  }
+}
+
 fs.writeFileSync(path.join(OUT, "salariesIndex.json"), JSON.stringify(salariesIndex, null, 2), "utf8");
 console.log(`✓ salariesIndex.json — ${Object.keys(salariesIndex).length} entries (23 cols each)`);
 
@@ -156,8 +213,16 @@ if (fs.existsSync(medalKbPath)) {
   ];
 }
 
+// Verified paid monthly amounts from Ministry pension certificates.
+for (const ornament of ornamentChoices) {
+  if (ornament.id === "military_medal") ornament.monthlyValue = 49000;
+  if (ornament.id === "cedar_knight") ornament.monthlyValue = 62000;
+}
+
 const rankMeta = {
-  description: "بيانات الرتب وبدلات الأوسمة — حاسبة المعاش التقاعدي (v5)",
+  description: "بيانات الرتب وبدلات الأوسمة — حاسبة المعاش التقاعدي (official tables 18–22, 2026)",
+  sourceVersion: authority.sourceVersion,
+  sourceFiles: ["kb/salaries/officialSalaryAuthority2026.json"],
   familyAllowance: { wife: 60000, perChild: 33000 },
   familyAllowanceAfterRaise: {
     wife: 2100000,
@@ -167,13 +232,13 @@ const rankMeta = {
   usdRate: 89500,
   ranks: allRanks,
   ornamentChoices,
-  note_ar: "جدول الرواتب يحتوي على جميع القيم المُحتسبة مسبقاً. يُضاف فقط: تعويض عائلي + أوسمة.",
+  note_ar: "الراتب والدرجة من الجداول الرسمية 18–22؛ المعاش التقاعدي الأساسي = 85% من الراتب الجديد، والمساعدات تُشتق من الأساس المؤهل قبل الاقتطاع.",
   socialAids: {
     budget_2022: {
       type: "multiplier_with_caps",
       multiplier: 2,
       base_excludes: ["family_allowance", "ornaments"],
-      min_total_including_base: 500000,
+      min_total_including_base: 5000000,
       max_increase: 12000000,
     },
     decree_11227: {

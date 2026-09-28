@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@fluentui/react-icons": "^2.0.328",
+    "@watany/address-network": "workspace:*",
     "@watany/i18n": "workspace:*",
     "@watany/shared": "workspace:*",
     "@watany/types": "workspace:*",

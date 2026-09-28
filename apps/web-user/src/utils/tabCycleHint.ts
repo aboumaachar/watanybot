@@ -1,4 +1,4 @@
-const TABLIST_SELECTOR = ".sc-result-tabs, .dis-tabs, .auth-tabs, .admin-tabs, [role=\"tablist\"]";
+const TABLIST_SELECTOR = ".dis-tabs, .auth-tabs, .admin-tabs, [role=\"tablist\"]:not(.sc-result-tabs)";
 const TAB_SELECTOR = "button, [role='tab'], .dis-tab, .auth-tab, .admin-tab";
 const CYCLE_MS = 1600;
 

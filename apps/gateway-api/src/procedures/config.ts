@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-type ProcedureRuntimeInfo = {
+export type ProcedureRuntimeInfo = {
   kbRoot: string;
   dataDir: string;
   source: "proc-env" | "payload_sync" | "kb_vnext" | "legacy-env" | "kb_studio_export" | "unresolved";
@@ -33,6 +33,30 @@ function firstExistingPath(candidates: Array<string | undefined>): string {
 function getResolvedDataDir(root: string): string {
   const nestedDataDir = path.join(root, "data");
   return fs.existsSync(nestedDataDir) ? nestedDataDir : root;
+}
+
+export type ProcedureRuntimeReadiness = {
+  ready: boolean;
+  source: ProcedureRuntimeInfo["source"];
+  dataDir: string;
+  procedureRows: number;
+  malformedRows: number;
+  missingFiles: string[];
+  reason: "READY" | "UNRESOLVED_SOURCE" | "MISSING_REQUIRED_FILES" | "EMPTY_PROCEDURES" | "MALFORMED_REQUIRED_JSONL";
+};
+
+const REQUIRED_PROCEDURE_DATASET_FILES = ["procedures.jsonl", "documents.jsonl", "procedure_to_docs.jsonl"] as const;
+
+function inspectJsonlFile(filePath: string): { validRows: number; malformedRows: number; missing: boolean } {
+  if (!fs.existsSync(filePath)) return { validRows: 0, malformedRows: 0, missing: true };
+  let validRows = 0;
+  let malformedRows = 0;
+  for (const line of fs.readFileSync(filePath, "utf8").split(/\r?\n/u)) {
+    const trimmed = line.trim();
+    if (!trimmed) continue;
+    try { JSON.parse(trimmed); validRows += 1; } catch { malformedRows += 1; }
+  }
+  return { validRows, malformedRows, missing: false };
 }
 
 export function getPayloadSyncRuntimeRoot(): string {
@@ -134,6 +158,23 @@ function getProcedureRuntimeInfoInternal(): ProcedureRuntimeInfo {
     dataDir: getResolvedDataDir(unresolvedRoot),
     source: "unresolved",
   };
+}
+
+export function evaluateProcedureRuntimeReadiness(runtime: ProcedureRuntimeInfo): ProcedureRuntimeReadiness {
+  const inspections = REQUIRED_PROCEDURE_DATASET_FILES.map((fileName) => ({ fileName, ...inspectJsonlFile(path.join(runtime.dataDir, fileName)) }));
+  const missingFiles = inspections.filter((item) => item.missing).map((item) => item.fileName);
+  const malformedRows = inspections.reduce((sum, item) => sum + item.malformedRows, 0);
+  const procedureRows = inspections.find((item) => item.fileName === "procedures.jsonl")?.validRows || 0;
+  let reason: ProcedureRuntimeReadiness["reason"] = "READY";
+  if (runtime.source === "unresolved") reason = "UNRESOLVED_SOURCE";
+  else if (missingFiles.length > 0) reason = "MISSING_REQUIRED_FILES";
+  else if (malformedRows > 0) reason = "MALFORMED_REQUIRED_JSONL";
+  else if (procedureRows < 1) reason = "EMPTY_PROCEDURES";
+  return { ready: reason === "READY", source: runtime.source, dataDir: runtime.dataDir, procedureRows, malformedRows, missingFiles, reason };
+}
+
+export function getProcedureRuntimeReadiness(): ProcedureRuntimeReadiness {
+  return evaluateProcedureRuntimeReadiness(getProcedureRuntimeInfoInternal());
 }
 
 export function getProcedureRuntimeInfo(): ProcedureRuntimeInfo {
