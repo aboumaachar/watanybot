@@ -32,6 +32,16 @@ type SeoAgentProposal = {
   fields: { seoTitle: string; seoDescription: string; focusKeyphrase: string; canonicalUrl: string; robots: string; ogTitle: string; ogDescription: string; ogImage: string; excerpt: string };
   issues: string[]; contentRecommendations: string[]; siteRecommendations: string[];
   internalLinks: Array<{ title: string; url: string; anchor: string; reason: string }>;
+  audit: {
+    score: number;
+    checks: Array<{ id: string; label: string; status: "pass" | "warn" | "fail"; severity: "info" | "warning" | "blocking"; detail: string }>;
+    duplicateCandidates: Array<{ title: string; url: string; similarity: number }>;
+    heading: { count: number; bodyH1Count: number; skippedLevels: number };
+    images: { total: number; missingAlt: number };
+    links: { internal: number; external: number; brokenInternal: string[]; malformed: string[] };
+    media: { checked: number; broken: string[] };
+    indexing: { publicationStatus: string; robots: string; indexable: boolean; sitemapEligible: boolean; sitemapIncluded: boolean; expectedCanonical: string; canonicalMatches: boolean };
+  };
 };
 
 function absoluteMediaUrl(value: string): string {
@@ -585,6 +595,17 @@ export default function ArticlePublishingAuthority9D72Page({ initialArchive = fa
           {seoProposal && <section className="aa9-agent-panel" aria-live="polite">
             <div className="aa9-agent-title"><div><strong>وكيل DC SEO</strong><small>{seoProposal.mode === "ai" ? "AI · " + seoProposal.provider + " · " + seoProposal.model : "تحليل محلي احتياطي"}</small></div><span className="aa9-agent-score">{seoProposal.scoreBefore} → {seoProposal.scoreAfter}</span></div>
             <p>{seoProposal.summary}</p>
+            <div className="aa9-audit-summary" aria-label="تدقيق SEO المتقدم">
+              <div><span>النتيجة</span><strong>{seoProposal.audit.score}/100</strong></div>
+              <div><span>الفهرسة</span><strong>{seoProposal.audit.indexing.indexable ? "مسموحة" : "noindex"}</strong></div>
+              <div><span>خريطة الموقع</span><strong>{seoProposal.audit.indexing.sitemapIncluded ? "مدرج" : seoProposal.audit.indexing.sitemapEligible ? "مؤهل" : "غير مؤهل"}</strong></div>
+              <div><span>الصور بلا alt</span><strong>{seoProposal.audit.images.missingAlt}</strong></div>
+              <div><span>روابط داخلية مكسورة</span><strong>{seoProposal.audit.links.brokenInternal.length}</strong></div>
+              <div><span>وسائط مفقودة</span><strong>{seoProposal.audit.media.broken.length}</strong></div>
+            </div>
+            <div className="aa9-audit-checks">{seoProposal.audit.checks.map((item) => <div key={item.id} className={item.status}><span>{item.status === "pass" ? "✓" : item.status === "fail" ? "!" : "•"}</span><div><strong>{item.label}</strong><small>{item.detail}</small></div></div>)}</div>
+            {seoProposal.audit.duplicateCandidates.length > 0 && <details open><summary>تشابه / تضارب محتمل ({seoProposal.audit.duplicateCandidates.length})</summary><div className="aa9-agent-links">{seoProposal.audit.duplicateCandidates.map((item) => <div key={item.url}><a href={item.url} target="_blank" rel="noreferrer">{item.title}</a><small>نسبة التشابه {Math.round(item.similarity * 100)}%</small></div>)}</div></details>}
+            {(seoProposal.audit.links.brokenInternal.length > 0 || seoProposal.audit.media.broken.length > 0 || seoProposal.audit.links.malformed.length > 0) && <details open><summary>روابط ووسائط تحتاج إصلاحاً</summary><ul>{seoProposal.audit.links.brokenInternal.map((item) => <li key={`link-${item}`}>رابط داخلي: <code dir="ltr">{item}</code></li>)}{seoProposal.audit.media.broken.map((item) => <li key={`media-${item}`}>وسيط مفقود: <code dir="ltr">{item}</code></li>)}{seoProposal.audit.links.malformed.map((item) => <li key={`bad-${item}`}>رابط غير صالح: <code dir="ltr">{item}</code></li>)}</ul></details>}
             <div className="aa9-agent-actions"><button type="button" className="accent" onClick={() => applySeoProposal(false)}>تطبيق حقول SEO</button><button type="button" className="ghost" onClick={() => applySeoProposal(true)}>تطبيق SEO + المقتطف</button><button type="button" className="ghost" disabled={seoAgentBusy} onClick={() => void runSeoAgent()}>إعادة التحليل</button></div>
             {seoProposal.issues.length > 0 && <details open><summary>المشكلات المكتشفة ({seoProposal.issues.length})</summary><ul>{seoProposal.issues.map((item) => <li key={item}>{item}</li>)}</ul></details>}
             {seoProposal.contentRecommendations.length > 0 && <details><summary>تحسين محتوى المقال</summary><ul>{seoProposal.contentRecommendations.map((item) => <li key={item}>{item}</li>)}</ul></details>}
