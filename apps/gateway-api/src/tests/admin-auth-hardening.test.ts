@@ -139,7 +139,7 @@ describe("admin auth hardening", () => {
     expect(response.statusCode).toBe(401);
   });
 
-  it("allows admin dashboard access with an admin token", async () => {
+  it("blocks an unbound admin dashboard token without a live session", async () => {
     const app = await getApp();
     const response = await app.inject({
       method: "GET",
@@ -147,10 +147,10 @@ describe("admin auth hardening", () => {
       headers: authHeader("admin"),
     });
 
-    expect(response.statusCode).toBe(200);
+    expect(response.statusCode).toBe(403);
   });
 
-  it("allows admin user management access with an admin token", async () => {
+  it("blocks an unbound admin user-management token without a live session", async () => {
     const app = await getApp();
     const response = await app.inject({
       method: "GET",
@@ -158,10 +158,10 @@ describe("admin auth hardening", () => {
       headers: authHeader("admin"),
     });
 
-    expect(response.statusCode).toBe(200);
+    expect(response.statusCode).toBe(403);
   });
 
-  it("allows hybrid KB admin status access with an admin token", async () => {
+  it("blocks an unbound hybrid-KB admin token without a live session", async () => {
     const app = await getApp();
     const response = await app.inject({
       method: "GET",
@@ -169,10 +169,10 @@ describe("admin auth hardening", () => {
       headers: authHeader("admin"),
     });
 
-    expect(response.statusCode).toBe(200);
+    expect(response.statusCode).toBe(403);
   });
 
-  it("allows civilian opportunities admin access with an admin token", async () => {
+  it("blocks an unbound opportunities admin token without a live session", async () => {
     const app = await getApp();
     const response = await app.inject({
       method: "GET",
@@ -180,7 +180,7 @@ describe("admin auth hardening", () => {
       headers: authHeader("admin"),
     });
 
-    expect(response.statusCode).toBe(200);
+    expect(response.statusCode).toBe(403);
   });
 
   it("blocks admin tokens from procedures admin access", async () => {
@@ -194,7 +194,7 @@ describe("admin auth hardening", () => {
     expect(response.statusCode).toBe(403);
   });
 
-  it("allows superadmin tokens to read procedures admin list", async () => {
+  it("blocks an unbound superadmin procedures-list token without a live session", async () => {
     const app = await getApp();
     const response = await app.inject({
       method: "GET",
@@ -202,7 +202,7 @@ describe("admin auth hardening", () => {
       headers: authHeader("superadmin"),
     });
 
-    expect(response.statusCode).toBe(200);
+    expect(response.statusCode).toBe(403);
   }, 60000);
 
   it("blocks admin tokens from superadmin-only procedures diagnostics", async () => {
@@ -216,7 +216,7 @@ describe("admin auth hardening", () => {
     expect(response.statusCode).toBe(403);
   });
 
-  it("allows superadmin tokens to read procedures diagnostics", async () => {
+  it("blocks an unbound superadmin diagnostics token without a live session", async () => {
     const app = await getApp();
     const response = await app.inject({
       method: "GET",
@@ -224,7 +224,7 @@ describe("admin auth hardening", () => {
       headers: authHeader("superadmin"),
     });
 
-    expect(response.statusCode).toBe(200);
+    expect(response.statusCode).toBe(403);
   }, 60000);
 
   it("rejects body-supplied refresh tokens", async () => {

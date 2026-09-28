@@ -35,13 +35,14 @@ import multipart from "@fastify/multipart";
 import { seasonalAppleJobRouter } from './koudama/surveys/seasonal-apple-job';
 import { registerAinElHafehAdminRoutes } from "./routes/ainelhafeh-admin";
 import { registerAinMreissehBuildingAssistantRoutes } from "./koudama/surveys/ain-mreisseh-building-assistant/ainMreissehBuildingAssistant.routes.js";
+import { getTrustProxySetting } from "./auth/request-network.js";
 /* ================================================================
  *  Fastify instance
  * ================================================================ */
 export const app = Fastify({
   logger:    { level: LOG_LEVEL },
   bodyLimit: 11 * 1024 * 1024,
-  trustProxy: process.env.TRUST_PROXY === "true" ? ["127.0.0.1", "::1"] : false,
+  trustProxy: getTrustProxySetting(),
 });
 
 /* ================================================================

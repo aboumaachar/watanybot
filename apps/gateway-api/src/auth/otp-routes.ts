@@ -475,6 +475,15 @@ export async function otpRoutes(app: FastifyInstance): Promise<void> {
       if (!normalized) {
         return reply.code(400).send({ error: "رقم الهاتف غير صالح" });
       }
+      const unresolvedLegacyPhone = await query<{ total: number }>(
+        `SELECT COUNT(*)::int AS total FROM legacy_wp_user_identities
+         WHERE identity_verification_required = TRUE
+           AND regexp_replace(COALESCE(shared_phone,''), '[^0-9]', '', 'g') = $1`,
+        [normalized],
+      );
+      if ((unresolvedLegacyPhone.rows[0]?.total ?? 0) > 0) {
+        return reply.code(409).send({ error: "هذا الرقم مرتبط بأكثر من حساب قديم. سجّل الدخول باسم المستخدم أو البريد ثم وثّق رقمك من الملف الشخصي." });
+      }
 
       try {
         const useSmsApi = isSmsApiPhoneVerificationConfigured();
@@ -802,6 +811,12 @@ export async function otpRoutes(app: FastifyInstance): Promise<void> {
            WHERE id = $1`,
           [pending.id, verifiedAt],
         );
+        await query(
+          `UPDATE legacy_wp_user_identities
+           SET identity_verification_required = FALSE, updated_at = now()
+           WHERE user_id = $1`,
+          [authUser.id],
+        );
 
         await recordOtpAudit({
           userId: authUser.id,
@@ -822,7 +837,7 @@ export async function otpRoutes(app: FastifyInstance): Promise<void> {
             phoneNumber: user.phone_number,
             profileCompleted: Boolean(user.profile_completed),
           },
-          profile: mapPhoneVerificationProfile(user),
+          profile: { ...mapPhoneVerificationProfile(user), identityVerificationRequired: false },
         });
       } catch (error) {
         if (isUsersPhoneNumberUniqueViolation(error)) {
