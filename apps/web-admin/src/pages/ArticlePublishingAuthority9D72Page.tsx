@@ -60,7 +60,7 @@ export default function ArticlePublishingAuthority9D72Page({ initialArchive = fa
   const [versions, setVersions] = useState<CmsEntityVersion[]>([]);
   const [audit, setAudit] = useState<CmsAuditEvent[]>([]);
   const [query, setQuery] = useState("");
-  const [status, setStatus] = useState<CmsStatus | "">(initialArchive ? "ARCHIVED" : "");
+  const [status, setStatus] = useState<CmsStatus | "">((initialArchive || globalThis.location.pathname.endsWith("/archive")) ? "ARCHIVED" : "");
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [statusCounts, setStatusCounts] = useState<Partial<Record<CmsStatus, number>>>({});
@@ -466,9 +466,12 @@ export default function ArticlePublishingAuthority9D72Page({ initialArchive = fa
 
   function toggleTerm(field: "categoryIds" | "tagIds", id: string): void {
     const current = editor[field];
-    patchEditor({
-      [field]: current.includes(id) ? current.filter((value) => value !== id) : [...current, id],
-    } as Pick<ArticleEditor, typeof field>);
+    const next = current.includes(id) ? current.filter((value) => value !== id) : [...current, id];
+    if (field === "categoryIds") {
+      patchEditor({ categoryIds: next, primaryCategoryId: next.includes(editor.primaryCategoryId) ? editor.primaryCategoryId : (next[0] || "") });
+      return;
+    }
+    patchEditor({ tagIds: next });
   }
 
   function renderArticles() {
