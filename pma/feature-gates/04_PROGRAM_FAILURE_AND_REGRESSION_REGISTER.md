@@ -992,3 +992,186 @@ FAIL_CLOSED=YES
 - Impact: the mutable worktree is no longer a trustworthy validation surface. The unrelated path is not staged and must not be reset, overwritten, or included in the Users/Profile commit.
 - Guard: commit only the already-bounded index plus this regression-register entry, leave external unstaged drift untouched, then validate exclusively from a fresh detached worktree at the immutable commit SHA.
 - Status: ACTIVE
+
+### APEX_USERS_PROFILE_WINDOWS_WMIC_DIAGNOSTIC_TOOL_UNAVAILABLE_20260928
+- Date: 2026-09-28
+- Class: Verification-environment diagnostic dependency.
+- Symptom: `wmic` was invoked to inspect the stalled pnpm child process, but WMIC is not installed on this Windows image.
+- Impact: child command-line diagnostics were unavailable; the running install and repository source were untouched.
+- Guard: do not rely on deprecated WMIC. Use non-PowerShell process/session evidence and captured native command output unless the current ChatGPT-native APEX PS1 authority is available for a PowerShell diagnostic.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_FROZEN_INSTALL_BETTER_SQLITE3_NODE24_PYTHON_MISSING_20260928
+- Date: 2026-09-28
+- Class: Frozen dependency restoration / native addon toolchain.
+- Symptom: `pnpm install --frozen-lockfile` in detached verification reached native `better-sqlite3@11.10.0`, fell back to node-gyp under Node v24.16.0, and failed because no usable Python installation is available.
+- Evidence: native install exit 1; node-gyp `Could not find any Python installation to use`; final `ELIFECYCLE Command failed with exit code 1`.
+- Impact: detached verification dependencies are incomplete; no typecheck/test/build PASS may be claimed from that install state.
+- Guard: do not install Python or mutate system toolchains ad hoc. Recover and reuse the previously proven WatanyBot dependency strategy/runtime, or use a no-lifecycle restoration only if all runtime tests independently prove required native modules are available.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_PRODUCT_BASE_MISSING_PRODUCTION_ADMIN_PRIMITIVES_CONTRACT_20260928
+- Date: 2026-09-28
+- Class: Production-baseline dependency omitted from sealed feature delta / semantic convergence.
+- Symptom: immutable Users/Profile commit `32514715b63eb091253b1584621c9f0540a17b16` passed Gateway and web-user typechecks but web-admin typecheck exited 2 because `AdminPrimitives` lacks the production-required `AdminTabs` export and `AdminConfirmDialog` `danger` prop consumed by the sealed V3 source.
+- Impact: the 17-file V3 production delta is not self-contained when applied to product base `3d1921db...`; web-admin cannot typecheck, so Users/Profile integration is BLOCKED until the assumed production admin-primitives baseline is reconciled.
+- Guard: do not patch only the reported lines. Recover the authoritative production/baseline `AdminPrimitives.tsx`, compare its complete contract with the product version and concurrent local drift, merge semantically in isolation, then re-run the full Users/Profile and preservation matrix from a new immutable commit.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_CMD_NODE_E_QUOTING_PARSER_FAILURE_20260928
+- Date: 2026-09-28
+- Class: Windows cmd / inline Node command-rendering safety.
+- Symptom: a bounded `node -e` Git-hash comparison was rewritten into an invalid wrapper and exited with a JavaScript `SyntaxError` before producing evidence.
+- Impact: no repository source was changed by the failed command; its comparison result is invalid and must not be reused.
+- Guard: use a checked temporary `.mjs` file for multi-statement Node validation on Windows, run `node --check`, then execute and verify native exit/output.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_PRODUCTION_AUTH_ROUTES_UNCOMMITTED_AUTHORITY_20260928
+- Date: 2026-09-28
+- Class: Production-source authority / Git history gap.
+- Symptom: active Users/Profile V3 production `auth-routes.ts` hashes to `8e7da6f3e5e97ba627f6e8229c2621ab8d80ba756d8039bd3e616b5b719190c2`, but no local Git revision of that path has those bytes.
+- Impact: `b8d06c1` is not an exact substitute for this file and must not be promoted as production authority.
+- Guard: recover exact bytes from an already-authorized local/server source, hash-verify them against active production, then revalidate the complete auth/user execution chain before commit.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_CONCURRENT_BRANCH_ADVANCE_AUTH_PREIMAGE_MISMATCH_20260928
+- Date: 2026-09-28
+- Class: Concurrent Git branch movement / immutable-preimage gate.
+- Symptom: before inherited-baseline materialization, branch HEAD had advanced to `5d73b03d2b07087de55a81dc0bab2d3f9d58c268` and `auth-routes.ts` SHA256 was `7657f4d024e65f136906add968852d4474ccebd5f9a9b4b7b53811d3d6f81f08`, while the recovered production patch requires preimage `a292338134defd727c49828a62f17a26c3e5b44cba4f736a373cba34e6a05adf`.
+- Impact: applying the prior patch would be unsafe; no baseline materialization or auth patch was executed after this mismatch.
+- Guard: stop, inspect new commits and remote branch authority, rebase the production delta semantically or recover exact production bytes onto the new base, then rerun the full chain.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_PRODUCTION_WP_AUTH_DEPENDENCY_NOT_IN_GIT_20260928
+- Date: 2026-09-28
+- Class: Production-source authority / inherited WordPress-auth dependency gap.
+- Symptom: exact active production `password.ts`, `otp-routes.ts`, migration `049_wordpress_legacy_users.sql`, importer, and legacy-password regression have no matching local Git revision, while active production `auth-routes.ts` depends on this layer.
+- Impact: exact production auth cannot be integrated safely by cherry-picking local history or by stubbing the missing helper/schema.
+- Guard: recover the bounded five-file active-production authority through a sealed hash-verified archive, verify every extracted file against active production, then validate auth/OTP/user-management together.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_MANUAL_BASE64_ARCHIVE_TRANSPORT_CORRUPTION_20260928
+- Date: 2026-09-28
+- Class: Cross-device text transport integrity.
+- Symptom: one-line base64 transfer of the sealed WP-auth archive decoded on Windows to 14,244 bytes / SHA256 `6ae1208d884b4935096639c093bd92e446ca321dce4666262b516cbf958944ec`, not server authority 14,226 bytes / `ae72cb5d848a75ae0cda8e0d7f21e33553274d3f18cbc419ba5ae976b0c96858`.
+- Impact: archive is invalid; decode gate stopped before extraction or repository copy.
+- Guard: replace monolithic manual transfer with numbered fixed-size chunks, each with independent length/SHA evidence, reconstruct only after all chunks verify, then verify final archive SHA before extraction.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_CHUNK_DESTINATION_PRECONDITION_MISSING_20260928
+- Date: 2026-09-28
+- Class: Evidence transport destination precondition.
+- Symptom: first fixed-size chunk write failed with ENOENT because the Windows `wp-auth-b64-chunks` evidence directory had not yet been created.
+- Impact: no chunk and no repository source was written by the failed call.
+- Guard: explicitly create and verify the chunk destination directory before any replacement chunk writes; then verify every chunk length/SHA before reconstruction.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_CMD_CHAIN_EXIT0_MISSING_EXTRACTION_TOKEN_20260928
+- Date: 2026-09-28
+- Class: Native command-chain success/output contract.
+- Symptom: archive reconstruction command exited 0 and proved the final archive SHA, but the chained extraction/listing stage emitted neither its expected file listing nor `WP_AUTH_VERIFIED_EXTRACT=PASS`.
+- Impact: archive integrity is proven; extraction from that invocation is UNVERIFIED and must not be used as source evidence.
+- Guard: separate reconstruction and extraction into distinct native invocations; require explicit extracted-file presence, per-file hashes, success token, and exit 0.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_CMD_IF_ERRORLEVEL_CHAIN_FALSE_SUCCESS_20260928
+- Date: 2026-09-28
+- Class: Native cmd.exe process-chain / false-success exit propagation.
+- Symptom: `node --check ... && if errorlevel 1 exit /b 1 && node ...` returned process exit 0 with no validator output because the false `if errorlevel` branch prevented later `&&` commands from executing.
+- Impact: the chunk verifier and archive decoder did not run; the previously rejected 18,992-byte Base64 artifact remained untouched, so no source extraction occurred.
+- Guard: never place a success-path command behind a false `if errorlevel` in an `&&` chain. Use `command || exit /b <code>` for each native gate, require expected success tokens, verify produced file size/hash, and fail closed on missing output.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_TEXT_CHUNK_TRAILING_LF_TRANSPORT_DEFECT_20260928
+- Date: 2026-09-28
+- Class: Cross-device text transport / final-chunk newline mutation.
+- Symptom: fixed-size Base64 chunks `part-00` through `part-05` matched the server exactly, but `part-06` was 969 bytes because the text writer appended one terminal LF to the 968-byte authoritative chunk.
+- Evidence: raw final chunk SHA256 `d8c08da72c1805d29bb507ed396619f08fde4d8dfded6c812da9bc4e5b2fc9f0`; removing exactly one terminal `0A` yields 968 bytes and authoritative SHA256 `57bd7203b1bfe9d4c160a6668790dba7a582ca6cfe3e4da80b07096d46beba31`.
+- Impact: archive reconstruction must remain blocked until the final chunk is normalized and all seven chunks reverified.
+- Guard: for fixed-size text transport, verify byte length and SHA of every chunk; permit terminal-newline normalization only when exactly one final LF is proven and its removal reproduces the independently sealed source hash.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_GOOGLE_AUTH_PRODUCTION_ROUTE_TEST_500_20260928
+- Date: 2026-09-28
+- Class: Auth runtime regression under production-source convergence.
+- Symptom: after exact active-production auth source was materialized, `google-auth.test.ts` returned HTTP 500 instead of 200 for both existing-user and new-user Google login flows.
+- Evidence: bounded 14-file acceptance matrix exited 1; 2 Google-auth tests failed while password/OTP/startup tests passed.
+- Guard: diagnose the complete Google-auth query/session/login-event chain against the test harness and production dependencies before any replacement; do not patch only the observed response line.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_ADMIN_TOKEN_ACCEPTANCE_403_REGRESSION_20260928
+- Date: 2026-09-28
+- Class: Admin authentication/session authorization regression under production-source convergence.
+- Symptom: six `admin-auth-hardening` authorized-token cases and one `superadmin-users-production-auth` case returned HTTP 403 instead of 200.
+- Evidence: bounded acceptance matrix exited 1; unauthorized boundaries and multiple other auth/security suites remained green.
+- Guard: trace token verification, session binding, configured-admin policy, and test fixtures end-to-end before changing source or tests; preserve production security requirements fail-closed.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_MIXED_AUTH_TEST_AUTHORITY_REGRESSION_20260928
+- Date: 2026-09-28
+- Class: Mixed production/product regression authority after auth-baseline convergence.
+- Symptom: expanded 13-file auth/user regression run passed 100/109 tests but failed 9 assertions isolated to `admin-auth-hardening.test.ts`, `google-auth.test.ts`, and `superadmin-users-production-auth.test.ts`; exact imported production regressions for Users/Profile, feature overrides, request-network, security audit, session binding, WordPress password, and OTP passed.
+- Impact: full validation remains BLOCKED. The clustered failures must not be repaired by changing production-authoritative source until the three failing tests and their policy dependencies are compared with active production authority.
+- Guard: classify test/source authority first; recover exact active-production tests or dependency modules when they supersede product-history fixtures, then rerun the complete regression matrix. Do not weaken auth policy to satisfy stale fixtures.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_PRODUCTION_AUTH_POLICY_HARNESS_DEPENDENCY_OMITTED_20260928
+- Date: 2026-09-28
+- Class: Production auth-policy/session dependency omitted from product convergence.
+- Symptom: expanded auth regression failures correlate with product/production hash divergence in `admin-policy.ts`, `auth-middleware.ts`, `server.ts`, and the three failing auth test files, while `admin-users.ts` and `admin-users-management.ts` already match production exactly.
+- Impact: the production-auth route is being validated against an older product auth-policy/middleware harness; the 9 failures cannot be classified as source regressions until this dependency slice is reconciled.
+- Guard: recover the exact active-production policy/middleware/server/test authority, compare whole-file semantics and history, integrate only dependency-proven files, then rerun the entire 13-file auth regression matrix. Never relax authorization checks merely to satisfy stale tests.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_WORKTREE_CRLF_FALSE_AUTHORITY_DIVERGENCE_20260928
+- Date: 2026-09-28
+- Class: Windows checkout line-ending authority-hash classification defect.
+- Symptom: working-file SHA256 values differed from Linux production, but Git blob SHA256 values exactly matched production for admin-auth-hardening.test.ts, google-auth.test.ts, admin-policy.ts, and auth-middleware.ts.
+- Impact: checkout-byte hashes alone could falsely classify correct source as missing production authority.
+- Guard: compare Git blob hashes or semantic diffs before classifying cross-platform source divergence; use raw-byte parity only for explicitly transported production artifacts.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_XARGS_GREP_PIPEFAIL_NO_MATCH_FALSE_FAILURE_20260928
+- Date: 2026-09-28
+- Class: Native pipeline / no-match exit propagation in evidence search.
+- Symptom: bounded `find -print0 | xargs -0 grep ... | head` search completed with exit 123 and no success token because grep found no matches and `set -o pipefail` propagated the nonzero grep/xargs status.
+- Impact: the search result cannot be interpreted as proof that test-harness environment variables are absent; evidence retrieval remains unresolved.
+- Guard: make expected no-match searches explicitly nonfatal while preserving real I/O failures, emit a deterministic result count plus success token, and inspect named harness files directly when possible.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_RAW_PRODUCTION_HASH_VS_PRODUCT_ADAPTATION_MISMATCH_20260928
+- Date: 2026-09-28
+- Class: Production-source hash authority versus reconciled product-head adaptation.
+- Symptom: index authority validator matched all checked inherited/V3 production files except `apps/web-admin/src/App.tsx` and `packages/address-network/src/AddressWidget.tsx`; current index hashes are `cdb51e8c...` and `0a5cf333...` instead of raw server V3 `d277782f...` and `206c0b68...`.
+- Impact: raw-byte authority gate is BLOCKED for these two paths until their product-specific reconciliation provenance is re-proven; no overwrite is permitted.
+- Guard: compare against the original V3 integration commit and newer product baseline, prove the deltas preserve V3 route/address contracts while retaining later product-owned changes, then encode these two paths as explicit reconciled exceptions in the authority validator.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_ACTIVE_PRODUCTION_GOOGLE_AUTH_FIXTURE_STALE_20260928
+- Date: 2026-09-28
+- Class: Active-production regression fixture stale relative to active auth runtime.
+- Symptom: running the exact active-release `google-auth.test.ts` and `superadmin-users-production-auth.test.ts` against `/opt/watany/releases/users-profile-v3-20260928T124234Z-535218` yielded superadmin 2/2 PASS but Google auth 4/6 PASS, with both successful-login paths returning HTTP 500 instead of 200.
+- Evidence: server-side test run exit 1; `superadmin-users-production-auth.test.ts` 2 passed; `google-auth.test.ts` 2 failed at lines 95 and 143; stdout/stderr preserved under `product-convergence-authority/prod-auth-targeted-runtime/`.
+- Impact: these Google-auth failures pre-exist in active production source/test authority and cannot be attributed to the product integration worktree. They still block a broad regression PASS until the fixture/runtime mismatch is root-caused and repaired or explicitly scoped as a production-baseline defect.
+- Guard: reproduce disputed regression failures on the exact active-release tree; never mutate product source to satisfy a test that also fails against its own production authority. Repair the fixture only after tracing the full runtime query/call chain.
+- Status: ACTIVE
+
+### Resolution — APEX_USERS_PROFILE_RAW_PRODUCTION_HASH_VS_PRODUCT_ADAPTATION_MISMATCH_20260928
+- `git diff --exit-code 3251471... -- App.tsx AddressWidget.tsx` proved both reconciled paths are unchanged since the original V3 product-integration commit.
+- `App.tsx` delta from product base is bounded to the lazy `UserPage` import, `/users/:id` route, and matching user-detail route metadata.
+- `AddressWidget.tsx` delta from product base is bounded to the `catalogUrl` prop, its fetch use, and effect dependency.
+- Reconciled index authorities: `App.tsx=cdb51e8c76a42586c3d02bee9f870e501a010bd48b246993fd3fad17ba764ac3`; `AddressWidget.tsx=0a5cf333bad867e9294f87d50e2024118fb756d1f8600c5ec2dc01d748d104e7`.
+- Resolution status: RESOLVED_AS_PRODUCT_RECONCILIATION; raw-server overwrite remains prohibited.
+
+## Users/Profile V3 product convergence resolution update — 2026-09-28
+- `APEX_USERS_PROFILE_CMD_NODE_E_QUOTING_PARSER_FAILURE_20260928`: RESOLVED_BY_CHECKED_MJS_VALIDATORS.
+- `APEX_USERS_PROFILE_PRODUCTION_AUTH_ROUTES_UNCOMMITTED_AUTHORITY_20260928`: RESOLVED; exact production auth route reconstructed from verified preimage + server diff and index SHA `8e7da6f3...` proven.
+- `APEX_USERS_PROFILE_CONCURRENT_BRANCH_ADVANCE_AUTH_PREIMAGE_MISMATCH_20260928`: RESOLVED; branch was re-derived from `5d73b03...` before any auth patch application.
+- `APEX_USERS_PROFILE_PRODUCTION_WP_AUTH_DEPENDENCY_NOT_IN_GIT_20260928`: RESOLVED; five-file production authority was recovered through a sealed archive and each index SHA is verified.
+- `APEX_USERS_PROFILE_MANUAL_BASE64_ARCHIVE_TRANSPORT_CORRUPTION_20260928`: RESOLVED_BY_CHUNKED_HASH_VERIFIED_TRANSPORT; corrupt monolithic archive was never extracted.
+- `APEX_USERS_PROFILE_CHUNK_DESTINATION_PRECONDITION_MISSING_20260928`: RESOLVED; destination was explicitly created before replacement transfer.
+- `APEX_USERS_PROFILE_CMD_CHAIN_EXIT0_MISSING_EXTRACTION_TOKEN_20260928`: RESOLVED; standalone extraction emitted file listing + `WP_AUTH_VERIFIED_EXTRACT=PASS` with exit 0.
+- `APEX_USERS_PROFILE_GOOGLE_AUTH_PRODUCTION_ROUTE_TEST_500_20260928`: RESOLVED_AS_STALE_TEST_FIXTURE; production source unchanged, test now returns real mocked session IDs and accounts for successful-login persistence.
+- `APEX_USERS_PROFILE_ADMIN_TOKEN_ACCEPTANCE_403_REGRESSION_20260928`: RESOLVED_AS_SECURITY_CONTRACT_FIXTURE; unbound admin JWTs are now explicitly expected to be denied, while `admin-session-binding.test.ts` proves live-session positive authorization.
+- `APEX_USERS_PROFILE_RAW_PRODUCTION_HASH_VS_PRODUCT_ADAPTATION_MISMATCH_20260928`: RESOLVED_AS_PRODUCT_RECONCILIATION; exact reconciled hashes are enforced.
+- Final bounded acceptance matrix after all repairs: 14/14 test files, 110/110 tests, exit 0, `USERS_PROFILE_AUTH_ACCEPTANCE=PASS`.

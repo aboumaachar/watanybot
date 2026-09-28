@@ -17,6 +17,12 @@ const mockRows = Array.from({ length: 121 }, (_, index) => ({
 
 vi.mock("../lib/db.js", () => ({
   query: vi.fn(async (sql: string) => {
+    if (sql.includes("FROM users WHERE id = $1")) {
+      return { rows: [mockRows[0]], rowCount: 1 };
+    }
+    if (sql.includes("FROM sessions WHERE id = $1")) {
+      return { rows: [{ id: "session-1" }], rowCount: 1 };
+    }
     if (sql.includes("FROM users")) {
       return { rows: mockRows, rowCount: mockRows.length };
     }
@@ -68,9 +74,10 @@ describe("superadmin users production auth", () => {
     const { app, signAccessToken } = await buildApp();
     try {
       const token = signAccessToken({
-        sub: "prod-superadmin-test",
+        sub: "user-1",
         role: "superadmin",
-        email: "superadmin@example.test",
+        email: "user1@example.test",
+        sid: "session-1",
       });
 
       const response = await app.inject({

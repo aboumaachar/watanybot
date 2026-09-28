@@ -4,7 +4,7 @@
 import { randomUUID } from "node:crypto";
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { query } from "../lib/db.js";
-import { hashPassword, verifyPassword } from "./password.js";
+import { hashPassword, isLegacyWordpressPasswordHash, verifyPassword } from "./password.js";
 import { createAuthSession, signAccessToken, signRefreshToken, verifyToken } from "./auth-middleware.js";
 import type { UserRole } from "@watany/types";
 import { effectiveUserRole, isConfiguredAdminEmail } from "./admin-policy.js";
@@ -417,6 +417,17 @@ export async function authRoutes(app: FastifyInstance): Promise<void> {
         return reply.code(401).send({ error: "بريد إلكتروني أو كلمة مرور خاطئة" });
       }
 
+      let identityVerificationRequired = false;
+      if (isLegacyWordpressPasswordHash(user.password_hash)) {
+        const upgradedHash = await hashPassword(password);
+        await query("UPDATE users SET password_hash = $2, updated_at = now() WHERE id = $1", [user.id, upgradedHash]);
+      }
+      const legacyIdentity = await query<{ identity_verification_required: boolean }>(
+        "SELECT identity_verification_required FROM legacy_wp_user_identities WHERE user_id = $1 LIMIT 1",
+        [user.id],
+      );
+      identityVerificationRequired = Boolean(legacyIdentity.rows[0]?.identity_verification_required);
+
       const role = effectiveUserRole(user.email, user.role as UserRole);
       if (role !== user.role) {
         await query("UPDATE users SET role = $1 WHERE id = $2", [role, user.id]);
@@ -455,7 +466,7 @@ export async function authRoutes(app: FastifyInstance): Promise<void> {
       return reply.send({
         accessToken,
         expiresIn: 86400,
-        user: { id: user.id, email: user.email, username: user.username, fullName: user.full_name, role },
+        user: { id: user.id, email: user.email, username: user.username, fullName: user.full_name, role, identityVerificationRequired },
       });
     } catch (error) {
       if (isDatabaseUnavailableError(error)) {
@@ -752,7 +763,16 @@ export async function authRoutes(app: FastifyInstance): Promise<void> {
       return reply.code(404).send({ error: "المستخدم غير موجود" });
     }
 
-    return reply.send({ user: result.rows[0] });
+    const legacyIdentity = await query<{ identity_verification_required: boolean }>(
+      "SELECT identity_verification_required FROM legacy_wp_user_identities WHERE user_id = $1 LIMIT 1",
+      [user.id],
+    );
+    return reply.send({
+      user: {
+        ...result.rows[0],
+        identityVerificationRequired: Boolean(legacyIdentity.rows[0]?.identity_verification_required),
+      },
+    });
   }
 
   /** GET /api/auth/me — return current user profile */
