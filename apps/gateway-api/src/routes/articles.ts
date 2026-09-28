@@ -10,6 +10,7 @@ type CmsRow = {
   title: string;
   payload: Record<string, unknown>;
   published_at: string | null;
+  updated_at?: string | null;
 };
 
 function asObject(value: unknown): Record<string, unknown> {
@@ -35,6 +36,7 @@ function toListItem(row: CmsRow) {
     title: row.title,
     excerpt: stringOrNull(p.excerpt),
     publishedAt: row.published_at || p.publishedAtLocal || null,
+    updatedAt: row.updated_at || null,
     authorName: stringOrNull(p.authorName),
     authorUserId: stringOrNull(p.authorUserId),
     featuredImage: stringOrNull(p.featuredImage),
@@ -64,16 +66,40 @@ function articleCategorySlug(categories: string[], primaryCategory?: string | nu
 function articleHtmlEscape(value: unknown): string { return String(value ?? "").replace(/[&<>"']/g,(c)=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c] || c)); }
 function articleAbsoluteUrl(value: string | null): string { if (!value) return ARTICLE_DEFAULT_SHARE_IMAGE; try { return new URL(value, ARTICLE_PUBLIC_ORIGIN).toString(); } catch { return ARTICLE_DEFAULT_SHARE_IMAGE; } }
 function articleCanonicalPath(item: ReturnType<typeof toListItem>): string { return `/articles/${articleCategorySlug(item.categories,item.primaryCategory)}/${articleAsciiSlug(item.permalinkSlug||item.title)}`; }
+function publicArticleItem(row: CmsRow) {
+  const item=toListItem(row);
+  return {...item,seo:{...item.seo,canonicalUrl:`${ARTICLE_PUBLIC_ORIGIN}${articleCanonicalPath(item)}`}};
+}
 function articleJsonScript(value: unknown): string { return JSON.stringify(value).replace(/</g,"\\u003c"); }
 function articleSocialPreviewHtml(row: CmsRow): string {
-  const item=toListItem(row); const payload=asObject(row.payload); const canonical=`${ARTICLE_PUBLIC_ORIGIN}${articleCanonicalPath(item)}`;
+  const item=publicArticleItem(row); const payload=asObject(row.payload); const canonical=`${ARTICLE_PUBLIC_ORIGIN}${articleCanonicalPath(item)}`;
   const image=articleAbsoluteUrl(item.featuredImage||item.seo.ogImage||ARTICLE_DEFAULT_SHARE_IMAGE);
   const title=item.seo.ogTitle||item.seo.title||item.title;
   const description=item.seo.ogDescription||item.seo.description||item.excerpt||"مقال منشور على منصة موطني.";
   const imageType=/\.jpe?g(?:$|\?)/i.test(image)?"image/jpeg":/\.webp(?:$|\?)/i.test(image)?"image/webp":"image/png";
-  const articleSchema={"@context":"https://schema.org","@type":"Article",headline:item.title,description,image:[image],datePublished:item.publishedAt||undefined,dateModified:item.publishedAt||undefined,author:{"@type":"Person",name:item.authorName||"موطني"},publisher:{"@type":"Organization",name:"موطني",logo:{"@type":"ImageObject",url:ARTICLE_DEFAULT_SHARE_IMAGE}},mainEntityOfPage:canonical,articleSection:item.primaryCategory||item.categories[0]||undefined};
+  const articleSchema={"@context":"https://schema.org","@type":"Article",headline:item.title,description,image:[image],datePublished:item.publishedAt||undefined,dateModified:item.updatedAt||item.publishedAt||undefined,author:{"@type":"Person",name:item.authorName||"موطني"},publisher:{"@type":"Organization",name:"موطني",logo:{"@type":"ImageObject",url:ARTICLE_DEFAULT_SHARE_IMAGE}},mainEntityOfPage:canonical,articleSection:item.primaryCategory||item.categories[0]||undefined};
   const breadcrumbSchema={"@context":"https://schema.org","@type":"BreadcrumbList",itemListElement:[{"@type":"ListItem",position:1,name:"موطني",item:ARTICLE_PUBLIC_ORIGIN},{"@type":"ListItem",position:2,name:"المقالات",item:`${ARTICLE_PUBLIC_ORIGIN}/articles`},{"@type":"ListItem",position:3,name:item.primaryCategory||item.categories[0]||"المقالات",item:`${ARTICLE_PUBLIC_ORIGIN}/articles/${articleCategorySlug(item.categories,item.primaryCategory)}`},{"@type":"ListItem",position:4,name:item.title,item:canonical}]};
   return `<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${articleHtmlEscape(item.seo.title||item.title)} | موطني</title><meta name="description" content="${articleHtmlEscape(description)}"><link rel="canonical" href="${articleHtmlEscape(canonical)}"><meta name="robots" content="${articleHtmlEscape(item.seo.robots||"index,follow")}"><meta property="og:type" content="article"><meta property="og:site_name" content="موطني"><meta property="og:locale" content="ar_LB"><meta property="og:url" content="${articleHtmlEscape(canonical)}"><meta property="og:title" content="${articleHtmlEscape(title)}"><meta property="og:description" content="${articleHtmlEscape(description)}"><meta property="og:image" content="${articleHtmlEscape(image)}"><meta property="og:image:secure_url" content="${articleHtmlEscape(image)}"><meta property="og:image:type" content="${imageType}"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="${articleHtmlEscape(title)}"><meta name="twitter:description" content="${articleHtmlEscape(description)}"><meta name="twitter:image" content="${articleHtmlEscape(image)}"><script type="application/ld+json">${articleJsonScript(articleSchema)}</script><script type="application/ld+json">${articleJsonScript(breadcrumbSchema)}</script></head><body><main><h1>${articleHtmlEscape(item.title)}</h1><p><a href="${articleHtmlEscape(canonical)}">فتح المقال على موطني</a></p></main></body></html>`;
+}
+
+function articleSearchBodyHtml(value: unknown): string {
+  let html=typeof value==="string"?value:"";
+  html=html.replace(/<!--[\s\S]*?-->/gu," ")
+    .replace(/<(script|style|iframe|object|embed|form|svg|math|button|textarea|select)\b[\s\S]*?<\/\1\s*>/giu," ")
+    .replace(/<(script|style|iframe|object|embed|form|svg|math|button|input|textarea|select)\b[^>]*\/?\s*>/giu," ");
+  const allowed=new Set(["p","h1","h2","h3","h4","ul","ol","li","strong","b","em","i","blockquote","br","hr","a","table","thead","tbody","tr","th","td"]);
+  html=html.replace(/<([a-z0-9]+)\b([^>]*)>/giu,(full,rawTag,attrs)=>{const tag=String(rawTag).toLowerCase();if(!allowed.has(tag))return "";const outTag=tag==="h1"?"h2":tag;if(tag!=="a")return `<${outTag}>`;const match=String(attrs).match(/\bhref\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/iu);const href=(match?.[1]||match?.[2]||match?.[3]||"").trim();const safe=/^https?:\/\//iu.test(href)||(/^\//u.test(href)&&!/^\/\//u.test(href));return safe?`<a href="${articleHtmlEscape(href)}" rel="noopener noreferrer">`:"<a>";});
+  html=html.replace(/<\/([a-z0-9]+)\s*>/giu,(full,rawTag)=>{const tag=String(rawTag).toLowerCase();if(!allowed.has(tag)||tag==="br"||tag==="hr")return "";return `</${tag==="h1"?"h2":tag}>`;});
+  return html;
+}
+function articleSearchPreviewHtml(row: CmsRow): string {
+  const item=publicArticleItem(row);
+  const payload=asObject(row.payload);
+  const body=articleSearchBodyHtml(payload.bodyHtml);
+  const canonical=`${ARTICLE_PUBLIC_ORIGIN}${articleCanonicalPath(item)}`;
+  const byline=item.authorName?`<p>${articleHtmlEscape(item.authorName)}</p>`:"";
+  const fullBody=`<body><main><article><header><h1>${articleHtmlEscape(item.title)}</h1>${byline}</header>${body}<p><a href="${articleHtmlEscape(canonical)}">فتح المقال على موطني</a></p></article></main></body>`;
+  return articleSocialPreviewHtml(row).replace(/<body>[\s\S]*<\/body>/u,fullBody);
 }
 
 export const articleRoutes: FastifyPluginAsync = async (app) => {
@@ -111,12 +137,12 @@ export const articleRoutes: FastifyPluginAsync = async (app) => {
     }
     params.push(limit, offset);
     const rows = await query<CmsRow>(
-      `SELECT public_id,public_code,title,payload,published_at FROM cms_content_entities
+      `SELECT public_id,public_code,title,payload,published_at,updated_at FROM cms_content_entities
        WHERE ${where.join(" AND ")} ORDER BY published_at DESC NULLS LAST,public_id ASC
        LIMIT $${params.length - 1} OFFSET $${params.length}`,
       params,
     );
-    return { items: rows.rows.map(toListItem), limit, offset };
+    return { items: rows.rows.map(publicArticleItem), limit, offset };
   });
 
   app.get("/api/articles/sitemap.xml", async (_request, reply) => {
@@ -148,7 +174,7 @@ export const articleRoutes: FastifyPluginAsync = async (app) => {
 
   app.get<{ Params: { category: string; slug: string } }>("/api/articles/social-preview/:category/:slug", async (request, reply) => {
     const category=decodeURIComponent(request.params.category); const slug=decodeURIComponent(request.params.slug); const requestedPath=`/articles/${category}/${slug}`;
-    const result=await query<CmsRow>(`SELECT public_id,public_code,title,payload,published_at FROM cms_content_entities WHERE domain='articles' AND status='PUBLISHED' ORDER BY published_at DESC NULLS LAST,public_id ASC`);
+    const result=await query<CmsRow>(`SELECT public_id,public_code,title,payload,published_at,updated_at FROM cms_content_entities WHERE domain='articles' AND status='PUBLISHED' ORDER BY published_at DESC NULLS LAST,public_id ASC`);
     const current=result.rows.find((candidate)=>articleCanonicalPath(toListItem(candidate))===requestedPath);
     const row=current||result.rows.find((candidate)=>toListItem(candidate).permalinkHistory.includes(requestedPath));
     if(!row)return reply.code(404).type("text/html; charset=utf-8").send("<!doctype html><meta charset=utf-8><title>Article not found</title>");
@@ -157,25 +183,43 @@ export const articleRoutes: FastifyPluginAsync = async (app) => {
     reply.header("Cache-Control","public, max-age=300"); return reply.type("text/html; charset=utf-8").send(articleSocialPreviewHtml(row));
   });
   app.get<{ Params: { slug: string } }>("/api/articles/social-preview-legacy/:slug", async (request, reply) => {
-    const slug=decodeURIComponent(request.params.slug); const result=await query<CmsRow>(`SELECT public_id,public_code,title,payload,published_at FROM cms_content_entities WHERE domain='articles' AND status='PUBLISHED' AND (public_code=$1 OR public_id=$1) LIMIT 1`,[slug]); const row=result.rows[0];
+    const slug=decodeURIComponent(request.params.slug); const result=await query<CmsRow>(`SELECT public_id,public_code,title,payload,published_at,updated_at FROM cms_content_entities WHERE domain='articles' AND status='PUBLISHED' AND (public_code=$1 OR public_id=$1) LIMIT 1`,[slug]); const row=result.rows[0];
     if(!row)return reply.code(404).type("text/html; charset=utf-8").send("<!doctype html><meta charset=utf-8><title>Article not found</title>");
     reply.header("Cache-Control","public, max-age=300"); return reply.type("text/html; charset=utf-8").send(articleSocialPreviewHtml(row));
   });
 
+  app.get<{ Params: { category: string; slug: string } }>("/api/articles/search-preview/:category/:slug", async (request, reply) => {
+    const category=decodeURIComponent(request.params.category); const slug=decodeURIComponent(request.params.slug); const requestedPath=`/articles/${category}/${slug}`;
+    const result=await query<CmsRow>(`SELECT public_id,public_code,title,payload,published_at,updated_at FROM cms_content_entities WHERE domain='articles' AND status='PUBLISHED' ORDER BY published_at DESC NULLS LAST,public_id ASC`);
+    const current=result.rows.find((candidate)=>articleCanonicalPath(toListItem(candidate))===requestedPath);
+    const row=current||result.rows.find((candidate)=>toListItem(candidate).permalinkHistory.includes(requestedPath));
+    if(!row)return reply.code(404).type("text/html; charset=utf-8").send("<!doctype html><meta charset=utf-8><title>Article not found</title>");
+    const canonical=`${ARTICLE_PUBLIC_ORIGIN}${articleCanonicalPath(toListItem(row))}`;
+    if(!current)return reply.code(301).header("Location",canonical).send();
+    reply.header("Cache-Control","public, max-age=300, must-revalidate"); return reply.type("text/html; charset=utf-8").send(articleSearchPreviewHtml(row));
+  });
+  app.get<{ Params: { slug: string } }>("/api/articles/search-preview-legacy/:slug", async (request, reply) => {
+    const slug=decodeURIComponent(request.params.slug);
+    const result=await query<CmsRow>(`SELECT public_id,public_code,title,payload,published_at,updated_at FROM cms_content_entities WHERE domain='articles' AND status='PUBLISHED' AND (public_code=$1 OR public_id=$1) LIMIT 1`,[slug]);
+    const row=result.rows[0];
+    if(!row)return reply.code(404).type("text/html; charset=utf-8").send("<!doctype html><meta charset=utf-8><title>Article not found</title>");
+    return reply.code(301).header("Location",`${ARTICLE_PUBLIC_ORIGIN}${articleCanonicalPath(toListItem(row))}`).send();
+  });
+
   app.get<{ Params: { category: string; slug: string } }>("/api/articles/resolve/:category/:slug", async (request, reply) => {
     const category=decodeURIComponent(request.params.category); const slug=decodeURIComponent(request.params.slug); const requestedPath=`/articles/${category}/${slug}`;
-    const result=await query<CmsRow>(`SELECT public_id,public_code,title,payload,published_at FROM cms_content_entities WHERE domain='articles' AND status='PUBLISHED' ORDER BY published_at DESC NULLS LAST,public_id ASC`);
+    const result=await query<CmsRow>(`SELECT public_id,public_code,title,payload,published_at,updated_at FROM cms_content_entities WHERE domain='articles' AND status='PUBLISHED' ORDER BY published_at DESC NULLS LAST,public_id ASC`);
     const current=result.rows.find((candidate)=>articleCanonicalPath(toListItem(candidate))===requestedPath);
     const row=current||result.rows.find((candidate)=>toListItem(candidate).permalinkHistory.includes(requestedPath));
     if(!row)return reply.code(404).send({error:"ARTICLE_NOT_FOUND"});
-    const payload=asObject(row.payload); const item=toListItem(row); const canonicalPath=articleCanonicalPath(item);
+    const payload=asObject(row.payload); const item=publicArticleItem(row); const canonicalPath=articleCanonicalPath(item);
     return {...item,bodyHtml:typeof payload.bodyHtml==="string"?payload.bodyHtml:"",originalWpId:payload.originalWpId??null,authorWpId:payload.authorWpId??null,authorLogin:payload.authorLogin??null,sourceMeta:typeof payload.sourceMeta==="object"?payload.sourceMeta:null,redirectTo:requestedPath===canonicalPath?null:canonicalPath};
   });
 
   app.get<{ Params: { slug: string } }>("/api/articles/:slug", async (request, reply) => {
     const slug = decodeURIComponent(request.params.slug);
     const result = await query<CmsRow>(
-      `SELECT public_id,public_code,title,payload,published_at FROM cms_content_entities
+      `SELECT public_id,public_code,title,payload,published_at,updated_at FROM cms_content_entities
        WHERE domain='articles' AND status='PUBLISHED' AND (public_code=$1 OR public_id=$1) LIMIT 1`,
       [slug],
     );
@@ -183,7 +227,7 @@ export const articleRoutes: FastifyPluginAsync = async (app) => {
     if (!row) return reply.code(404).send({ error: "ARTICLE_NOT_FOUND" });
     const payload = asObject(row.payload);
     return {
-      ...toListItem(row),
+      ...publicArticleItem(row),
       bodyHtml: typeof payload.bodyHtml === "string" ? payload.bodyHtml : "",
       originalWpId: payload.originalWpId ?? null,
       authorWpId: payload.authorWpId ?? null,

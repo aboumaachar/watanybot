@@ -190,7 +190,8 @@ export default function ArticlePublishingAuthority9D72Page({ initialArchive = fa
     try {
       const categoryNames = categories.filter((item) => editor.categoryIds.includes(item.publicId)).map((item) => item.title);
       const tagNames = tags.filter((item) => editor.tagIds.includes(item.publicId)).map((item) => item.title);
-      const response = await adminFetch("/api/admin/cms/articles/seo-agent/analyze", { method: "POST", body: JSON.stringify({ ...editor, id: selected?.publicId || editor.id, title, slug, categories: categoryNames, tags: tagNames }) });
+      const primaryCategory = categories.find((item) => item.publicId === editor.primaryCategoryId)?.title || categoryNames[0] || "";
+      const response = await adminFetch("/api/admin/cms/articles/seo-agent/analyze", { method: "POST", body: JSON.stringify({ ...editor, id: selected?.publicId || editor.id, title, slug, categories: categoryNames, primaryCategory, tags: tagNames }) });
       const data = await response.json() as { proposal?: SeoAgentProposal };
       if (!data.proposal) throw new Error("ARTICLE_SEO_AGENT_RESPONSE_MISSING");
       setSeoProposal(data.proposal);

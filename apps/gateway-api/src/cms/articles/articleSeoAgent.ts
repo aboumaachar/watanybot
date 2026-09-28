@@ -5,6 +5,8 @@ export type ArticleSeoAgentInput = {
   id?: string;
   title: string;
   slug: string;
+  permalinkSlug?: string;
+  primaryCategory?: string;
   excerpt?: string;
   bodyHtml?: string;
   categories?: string[];
@@ -50,10 +52,16 @@ export type ArticleSeoAgentLink = {
 };
 
 type ArticleCandidate = { public_id: string; public_code: string | null; title: string; payload: Record<string, unknown> };
+function candidateCanonicalPath(row:ArticleCandidate):string{const payload=row.payload&&typeof row.payload==="object"?row.payload:{};const categories=Array.isArray(payload.categories)?payload.categories.filter((item):item is string=>typeof item==="string"):[];const primary=cleanText(payload.primaryCategory)||categories[0]||"articles";const permalink=cleanText(payload.permalinkSlug)||row.title;return `/articles/${articleAsciiSlug(primary)}/${articleAsciiSlug(permalink)}`;}
 
 function cleanText(value: unknown): string {
   return typeof value === "string" ? value.replace(/\s+/gu, " ").trim() : "";
-}function stripHtml(value: string): string {
+}
+
+const ARTICLE_ARABIC_LATIN: Record<string,string>={"ا":"a","أ":"a","إ":"i","آ":"a","ب":"b","ت":"t","ث":"th","ج":"j","ح":"h","خ":"kh","د":"d","ذ":"dh","ر":"r","ز":"z","س":"s","ش":"sh","ص":"s","ض":"d","ط":"t","ظ":"z","ع":"a","غ":"gh","ف":"f","ق":"q","ك":"k","ل":"l","م":"m","ن":"n","ه":"h","ة":"a","و":"w","ؤ":"w","ي":"y","ى":"a","ئ":"y","ء":""};
+function articleAsciiSlug(value:string):string{return Array.from(cleanText(value).normalize("NFKD")).map((c)=>ARTICLE_ARABIC_LATIN[c]??c).join("").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,110)||"article";}
+function canonicalArticleUrl(input:ArticleSeoAgentInput):string{const category=articleAsciiSlug(cleanText(input.primaryCategory)||(input.categories||[])[0]||"articles");const permalink=articleAsciiSlug(cleanText(input.permalinkSlug)||input.title);return `https://koudama.com/articles/${category}/${permalink}`;}
+function normalizeOwnCanonical(input:ArticleSeoAgentInput):string{const generated=canonicalArticleUrl(input);const current=cleanText(input.canonicalUrl);if(!current||/^https:\/\/koudama\.com\/articles\//iu.test(current))return generated;return current;}function stripHtml(value: string): string {
   return value.replace(/<script[\s\S]*?<\/script>/giu, " ")
     .replace(/<style[\s\S]*?<\/style>/giu, " ")
     .replace(/<[^>]+>/gu, " ")
@@ -100,7 +108,7 @@ function buildHeuristicFields(input: ArticleSeoAgentInput) {
   const seoTitle = truncate(cleanText(input.seoTitle) || title, 60);
   const seoDescription = truncate(cleanText(input.seoDescription) || excerpt || title, 160);
   const focusKeyphrase = cleanText(input.focusKeyphrase) || heuristicKeyphrase(input);
-  const canonicalUrl = cleanText(input.canonicalUrl) || `https://koudama.com/articles/${encodeURIComponent(input.slug || "article")}`;
+  const canonicalUrl = normalizeOwnCanonical(input);
   return {
     seoTitle, seoDescription, focusKeyphrase, canonicalUrl,
     robots: cleanText(input.robots) || "index,follow",
@@ -131,7 +139,7 @@ function buildHeuristicFields(input: ArticleSeoAgentInput) {
     .slice(0, 8)
     .map(({ row }) => ({
       title: row.title,
-      url: `/articles/${row.public_code || row.public_id}`,
+      url: candidateCanonicalPath(row),
       anchor: row.title,
       reason: "مقال مرتبط دلالياً ويمكن استخدامه كرابط داخلي طبيعي.",
     }));
@@ -154,7 +162,7 @@ function normalizeAiFields(value: unknown, fallback: ReturnType<typeof buildHeur
     seoTitle: truncate(cleanText(obj.seoTitle) || fallback.seoTitle, 60),
     seoDescription: truncate(cleanText(obj.seoDescription) || fallback.seoDescription, 160),
     focusKeyphrase: truncate(cleanText(obj.focusKeyphrase) || fallback.focusKeyphrase, 80),
-    canonicalUrl: cleanText(obj.canonicalUrl) || fallback.canonicalUrl,
+    canonicalUrl: fallback.canonicalUrl,
     robots: ["index,follow", "noindex,follow", "noindex,nofollow"].includes(cleanText(obj.robots)) ? cleanText(obj.robots) : fallback.robots,
     ogTitle: truncate(cleanText(obj.ogTitle) || fallback.ogTitle, 90),
     ogDescription: truncate(cleanText(obj.ogDescription) || fallback.ogDescription, 200),
@@ -198,7 +206,7 @@ function allowedLinks(value: unknown, candidates: ArticleSeoAgentLink[]): Articl
   const linkContext = links.map((item) => ({ title: item.title, url: item.url })).slice(0, 8);
   const system = `You are the DC SEO Agent for Watany (koudama.com). Return ONLY valid JSON. Improve Arabic-first SEO without inventing facts. Preserve the article's meaning. Never recommend keyword stuffing. Only use internal URLs supplied by the user. Keep seoTitle <=60 chars and seoDescription <=160 chars. Canonical must be the article's own koudama.com URL unless there is a clear duplicate-content reason. Robots should normally be index,follow.`;
   const payload = {
-    title: input.title, slug: input.slug, excerpt: input.excerpt || "", bodyText,
+    title: input.title, slug: input.slug, permalinkSlug: input.permalinkSlug || "", primaryCategory: input.primaryCategory || "", excerpt: input.excerpt || "", bodyText,
     categories: input.categories || [], tags: input.tags || [], featuredImage: input.featuredImage || "",
     currentSeo: { seoTitle: input.seoTitle, seoDescription: input.seoDescription, focusKeyphrase: input.focusKeyphrase, canonicalUrl: input.canonicalUrl, robots: input.robots, ogTitle: input.ogTitle, ogDescription: input.ogDescription, ogImage: input.ogImage },
     internalLinkCandidates: linkContext,

@@ -153,7 +153,8 @@ export function fillMissingSeo(editor: ArticleEditor, categories: CmsGenericItem
   const bodyText = plainText(editor.bodyHtml);
   const excerpt = editor.excerpt.trim() || bodyText.slice(0, 155);
   const path = articleCanonicalPath({ ...editor, excerpt }, categories);
-  const canonicalUrl = editor.canonicalUrl.trim() || `https://koudama.com${path}`;
+  const existingCanonical = editor.canonicalUrl.trim();
+  const canonicalUrl = !existingCanonical || /^https:\/\/koudama\.com\/articles\//u.test(existingCanonical) ? `https://koudama.com${path}` : existingCanonical;
   const seoTitle = editor.seoTitle.trim() || editor.title.trim().slice(0, 60);
   const seoDescription = editor.seoDescription.trim() || excerpt.slice(0, 160);
   const ogTitle = editor.ogTitle.trim() || seoTitle || editor.title.trim();
@@ -172,7 +173,7 @@ export function seoScore(editor: ArticleEditor): { score: number; notes: string[
     { id: "permalink", label: "رابط دائم ASCII", ok: /^[a-z0-9][a-z0-9-]*$/u.test(editor.permalinkSlug), blocking: true },
     { id: "seo-title", label: "عنوان SEO بين 20 و60 حرفاً", ok: editor.seoTitle.trim().length >= 20 && editor.seoTitle.trim().length <= 60 },
     { id: "description", label: "وصف Meta بين 70 و160 حرفاً", ok: editor.seoDescription.trim().length >= 70 && editor.seoDescription.trim().length <= 160 },
-    { id: "canonical", label: "Canonical URL مضبوط", ok: /^https:\/\/koudama\.com\/articles\//u.test(editor.canonicalUrl) },
+    { id: "canonical", label: "Canonical URL مطابق للرابط الدائم", ok: /^https:\/\/koudama\.com\/articles\//u.test(editor.canonicalUrl) && Boolean(editor.permalinkSlug) && editor.canonicalUrl.endsWith(`/${editor.permalinkSlug}`) },
     { id: "featured", label: "صورة بارزة أو بديل اجتماعي", ok: Boolean(editor.featuredImage.trim() || editor.ogImage.trim()) },
     { id: "og", label: "بيانات OpenGraph مكتملة", ok: Boolean(editor.ogTitle.trim() && editor.ogDescription.trim() && editor.ogImage.trim()) },
     { id: "excerpt", label: "المقتطف موجود", ok: editor.excerpt.trim().length >= 40 },
