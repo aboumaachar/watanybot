@@ -316,6 +316,9 @@ importers:
       '@fluentui/react-icons':
         specifier: ^2.0.328
         version: 2.0.334(react@18.3.1)
+      '@watany/address-network':
+        specifier: workspace:*
+        version: link:../../packages/address-network
       '@watany/i18n':
         specifier: workspace:*
         version: link:../../packages/i18n

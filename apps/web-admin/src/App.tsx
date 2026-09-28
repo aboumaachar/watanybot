@@ -16,6 +16,7 @@ import AdminCommandCenterPage from "./pages/AdminCommandCenterPage";
 import SuperadminShellPage from "./pages/SuperadminShellPage";
 const DashboardPage = lazy(() => import("./pages/DashboardPage"));
 const UsersPage = lazy(() => import("./pages/UsersPage"));
+const UserPage = lazy(() => import("./pages/UserPage"));
 const ChatMonitorPage = lazy(() => import("./pages/ChatMonitorPage"));
 const RulesPage = lazy(() => import("./pages/RulesPage"));
 const AuditPage = lazy(() => import("./pages/AuditPage"));
@@ -182,6 +183,7 @@ export default function App() {
                     <Route path="/admin/procedures" element={<AdminProceduresPage />} />
                     <Route path="/features" element={<FeatureControlsPage />} />
                     <Route path="/users" element={<UsersPage />} />
+                    <Route path="/users/:id" element={<UserPage />} />
                     <Route path="/chat" element={<ChatMonitorPage />} />
                     <Route path="/rules" element={<RulesPage />} />
                     <Route path="/audit" element={<AuditPage />} />
@@ -220,7 +222,9 @@ export default function App() {
 
 function RouteContext() {
   const location = useLocation();
-  const meta = ROUTE_META[location.pathname] ?? { title: "Superadmin", section: "Superadmin" };
+  const meta = location.pathname.startsWith("/users/")
+    ? { title: "ملف المستخدم", section: "المستخدمون" }
+    : ROUTE_META[location.pathname] ?? { title: "Superadmin", section: "Superadmin" };
   return <div className="page-context"><div className="breadcrumbs"><span>Watany Ops</span><span aria-hidden="true">/</span><span>{meta.section}</span><span aria-hidden="true">/</span><span aria-current="page">{meta.title}</span></div><h1>{meta.title}</h1></div>;
 }
 

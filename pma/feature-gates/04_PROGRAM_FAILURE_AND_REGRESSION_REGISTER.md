@@ -904,3 +904,91 @@ FAIL_CLOSED=YES
 - Classification: advisory third-party browser noise, not a salary/runtime defect.
 - Final guard: production PASS requires first-party salary/API responses green, page errors zero, and any third-party request aborts explicitly classified.
 - Disposition: RESOLVED_ADVISORY_THIRD_PARTY_NOISE
+
+### APEX_CMD_CARET_REVISION_ESCAPE_INVALID_PARENT_PROOF_20260928
+- Date: 2026-09-28
+- Class: Windows cmd Git revision quoting.
+- Symptom: `git rev-parse c48e47c^` was issued inside `cmd.exe`; the caret was consumed as a cmd escape, so Git received the wrong revision and the reported parent/diff evidence was invalid.
+- Impact: read-only diagnostic evidence only; no Git or source mutation occurred.
+- Guard: under `cmd.exe`, avoid caret-bearing revision syntax in inline commands; use `git rev-list --parents -n 1 <sha>`, `git show --format=%P`, or another caret-free plumbing form, then verify the derived parent before computing diffs.
+- Status: ACTIVE
+
+### APEX_CMD_DELAYED_EXPANSION_DISABLED_LITERAL_BANG_VARIABLE_20260928
+- Date: 2026-09-28
+- Class: Windows cmd command rendering / delayed expansion.
+- Symptom: a read-only comparison command used `!W!` / `!P!` variables under `cmd.exe` without `/v:on`, so the literal bang expressions were passed as file paths and every comparison failed before source access.
+- Impact: read-only diagnostic failure only; no repository or source mutation occurred.
+- Guard: avoid shell variables for bounded comparison commands where possible; otherwise require `cmd /v:on`, prove variable expansion with an echo preflight, and reject any literal `!NAME!` token before execution.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_SERVER_ARCHIVE_SCP_EXIT255_20260928
+- Date: 2026-09-28
+- Class: Cross-host source-authority transport.
+- Symptom: Windows-side `scp` of the sealed Users/Profile production source archive returned native exit code 255.
+- Impact: transport failed before repository mutation; isolated worktree source remains unchanged.
+- Guard: do not retry the same opaque scp path. Capture transport diagnostics or use the already-authorized Desktop Commander server channel to materialize/verify the archive through a bounded alternate path. Verify the expected archive SHA256 before any extraction.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_WINDOWS_PYTHON_STORE_ALIAS_UNAVAILABLE_20260928
+- Date: 2026-09-28
+- Class: Validation-tool runtime dependency.
+- Symptom: bounded SHA comparison invoked `python`, but the host resolved only the Microsoft Store execution alias and no Python runtime executed.
+- Impact: hash comparison did not run; no repository/source mutation occurred.
+- Guard: do not depend on unproven Python on this host. Use the repository-proven Node runtime or native hash tooling and verify its exit code/output before accepting evidence.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_ISOLATED_WORKTREE_CONCURRENT_MUTATION_AFTER_CREATION_20260928
+- Date: 2026-09-28
+- Class: Concurrent isolated-worktree mutation / provenance loss.
+- Symptom: the Users/Profile integration worktree was created clean at HEAD `3d1921db9e5c91206a26224820ae8d21071a3a26`, but a later provenance check found the full Users/Profile source set modified/untracked without this execution chain having copied those files.
+- Impact: matching bytes in the mutable worktree cannot by themselves prove a valid integration; four convergence-owned files also diverge from the sealed production hashes.
+- Guard: treat the mutable tree only as a candidate. Validate its bounded diff against the sealed 17-file production authority, commit only after semantic reconciliation, then run all gates against a fresh detached worktree at the immutable commit SHA. Any later mutable-tree drift is non-authoritative.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_SERVER_TRANSPORT_GIT_DUBIOUS_OWNERSHIP_20260928
+- Date: 2026-09-28
+- Class: Server Git trust-boundary / repository ownership.
+- Symptom: a read-only `git -C transport status` diagnostic was rejected by Git as dubious ownership. Preceding direct SHA256 file reads succeeded.
+- Impact: no source mutation; Git metadata from that server transport clone is not accepted as evidence through the current execution identity.
+- Guard: do not alter global `safe.directory` merely for inspection. Use direct file hashes, sealed deployment manifests, and immutable archive evidence; if Git metadata becomes necessary, use an ownership-correct execution identity or isolated clone.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_DC_VALIDATOR_WRITE_CLASSIFIER_BLOCK_20260928
+- Date: 2026-09-28
+- Class: Connector tooling / file-write safety classification.
+- Symptom: the final chunk of a bounded read-only Node validator was blocked by the Desktop Commander/OpenAI safety classifier before the write occurred.
+- Impact: validator file remained incomplete; repository source was not changed by the blocked call.
+- Guard: do not bypass connector policy. Split validation logic into smaller unambiguous chunks and verify the completed validator file before execution.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_CMD_WRAPPER_FALSE_GREEN_RUNTIME_SKIPPED_20260928
+- Date: 2026-09-28
+- Class: Native command-chain control flow / false-green evidence.
+- Symptom: combined parser+runtime `cmd.exe` wrapper reported process exit 0 after the parser gate, but the expected runtime proof file was never created and no runtime exit token was emitted.
+- Impact: parser PASS alone is not runtime proof; the candidate static validator remained UNVERIFIED at that point.
+- Guard: separate parser and runtime invocations. Require runtime output file existence, explicit native exit code, expected success token, and absence of failure token before accepting the gate.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_VALIDATOR_LOCK_SCOPE_FALSE_POSITIVE_20260928
+- Date: 2026-09-28
+- Class: Validation methodology / monorepo lockfile scoping.
+- Symptom: candidate validator counted `@watany/address-network` across the entire `pnpm-lock.yaml` and failed when two legitimate occurrences existed.
+- Impact: validator returned native exit 1 and no candidate PASS was claimed; source was not identified as faulty by this evidence.
+- Guard: mirror the production patch contract by isolating the `apps/web-admin` importer slice and requiring exactly one address-network entry in that slice. Keep global duplicate checks out of package-scoped dependency assertions.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_VALIDATOR_LOCK_CRLF_ANCHOR_PORTABILITY_20260928
+- Date: 2026-09-28
+- Class: Validation portability / line-ending normalization.
+- Symptom: V2 scoped the lockfile correctly but searched LF-only importer anchors against a Windows CRLF checkout, producing a false count of zero.
+- Impact: validator returned native exit 1; no candidate PASS was claimed and source was not modified.
+- Guard: normalize CRLF to LF inside the validator before applying production patch anchors, then prove the scoped entry count again.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_POST_STAGE_EXTERNAL_WORKTREE_DRIFT_20260928
+- Date: 2026-09-28
+- Class: Concurrent isolated-worktree mutation after index freeze.
+- Symptom: immediately after staging the bounded Users/Profile source set, `apps/web-admin/src/components/admin/AdminPrimitives.tsx` appeared as a new unstaged modification even though it was absent from the pre-stage candidate proof.
+- Impact: the mutable worktree is no longer a trustworthy validation surface. The unrelated path is not staged and must not be reset, overwritten, or included in the Users/Profile commit.
+- Guard: commit only the already-bounded index plus this regression-register entry, leave external unstaged drift untouched, then validate exclusively from a fresh detached worktree at the immutable commit SHA.
+- Status: ACTIVE

@@ -8,11 +8,16 @@ import { isConfiguredAdminEmail } from "../auth/admin-policy.js";
 import { PERMISSIONS, requireRole } from "../auth/rbac.js";
 import { getFeatureFlagsPayload } from "../lib/feature-flags.js";
 import { broadcastFeatureFlagsUpdate } from "../ws/features-ws.js";
+import { approveNetworkMembership, getNetworkMembership, saveDraftNetworkMembership, submitNetworkMembership } from "../network/network-store.js";
 
 const USER_ROLES = ["public", "accredited", "driver", "moderator", "admin", "superadmin"] as const;
 const USER_STATUSES = ["active", "suspended", "banned"] as const;
 const BULK_LIMIT = 2000;
 const IMPORT_LIMIT = 500;
+const SERVICE_PRIVILEGES = ["taxi_driver", "seller", "employer"] as const;
+type ServicePrivilege = typeof SERVICE_PRIVILEGES[number];
+const NETWORK_VISIBILITY_LEVELS = ["VISIBLE_PUBLIC", "VISIBLE_NETWORK_ONLY", "VISIBLE_CAZA_ONLY", "VISIBLE_VILLAGE_ONLY", "HIDDEN"] as const;
+const NETWORK_FAMILY_TIERS = ["BASIC_FAMILY_MEMBER", "VERIFIED_FAMILY_MEMBER", "CONTRIBUTOR", "COMMUNITY_STEWARD"] as const;
 
 type UserFilters = { search?: string; role?: string; status?: string; lastLogin?: string };
 type ImportRow = { name?: string; email?: string; phone?: string; role?: string; status?: string; password?: string };
@@ -183,7 +188,7 @@ export async function adminUsersManagementRoutes(app: FastifyInstance): Promise<
     const { id } = request.params as { id: string };
     const userResult = await query(
       `SELECT id, email, username, COALESCE(NULLIF(full_name,''), name) AS name, COALESCE(phone_number, phone) AS phone,
-              role, status, rank, military_id, region, created_at, updated_at, last_login, last_login_ip,
+              role, status, rank, military_id, region, avatar_url, created_at, updated_at, last_login, last_login_ip,
               phone_verified_at, profile_completed
        FROM users WHERE id = $1`, [id],
     );
@@ -223,6 +228,20 @@ export async function adminUsersManagementRoutes(app: FastifyInstance): Promise<
         effectiveEnabled: override === null ? globalEnabled : override,
       };
     });
+    const [networkProfile, privilegeResult] = await Promise.all([
+      getNetworkMembership(id),
+      query<{ privilege: ServicePrivilege; enabled: boolean; created_at: string; updated_at: string }>(
+        "SELECT privilege, enabled, created_at, updated_at FROM user_service_privileges WHERE user_id = $1 ORDER BY privilege",
+        [id],
+      ),
+    ]);
+    const privilegeById = new Map(privilegeResult.rows.map((row) => [row.privilege, row] as const));
+    const servicePrivileges = SERVICE_PRIVILEGES.map((privilege) => ({
+      privilege,
+      enabled: privilegeById.get(privilege)?.enabled === true,
+      created_at: privilegeById.get(privilege)?.created_at,
+      updated_at: privilegeById.get(privilege)?.updated_at,
+    }));
     const activeAdministratorResult = await query(
       "SELECT COUNT(*)::int AS total FROM users WHERE status = 'active' AND role IN ('admin','superadmin')",
     );
@@ -236,6 +255,9 @@ export async function adminUsersManagementRoutes(app: FastifyInstance): Promise<
       access: { model: "ROLE_DERIVED", role: user.role, capabilities: capabilitiesForRole(user.role as UserRole) },
       features,
       canManageFeatureOverrides: request.user?.role === "superadmin",
+      canManageServicePrivileges: request.user?.role === "superadmin",
+      servicePrivileges,
+      networkProfile,
       canDeleteUser: deleteBlockReason === null,
       deleteBlockReason,
       sessions: sessions.rows,
@@ -254,6 +276,7 @@ export async function adminUsersManagementRoutes(app: FastifyInstance): Promise<
       rank?: string;
       militaryId?: string;
       region?: string;
+      avatarUrl?: string;
     };
     const name = normalized(body.name);
     const email = normalized(body.email).toLowerCase();
@@ -261,6 +284,7 @@ export async function adminUsersManagementRoutes(app: FastifyInstance): Promise<
     const rank = normalized(body.rank);
     const militaryId = normalized(body.militaryId);
     const region = normalized(body.region);
+    const avatarUrl = normalized(body.avatarUrl);
     const errors: string[] = [];
     if (!name) errors.push("NAME_REQUIRED");
     if (!email && !phone) errors.push("EMAIL_OR_PHONE_REQUIRED");
@@ -269,6 +293,8 @@ export async function adminUsersManagementRoutes(app: FastifyInstance): Promise<
     if (email.length > 320) errors.push("EMAIL_TOO_LONG");
     if (phone.length > 64) errors.push("PHONE_TOO_LONG");
     if (rank.length > 120 || militaryId.length > 120 || region.length > 160) errors.push("PROFILE_FIELD_TOO_LONG");
+    if (avatarUrl.length > 2048) errors.push("AVATAR_URL_TOO_LONG");
+    if (avatarUrl && !/^\/runtime\/uploads\/[0-9]+-[a-f0-9]{24}\.(jpg|png|webp)$/u.test(avatarUrl) && !/^https:\/\/[^\s]+$/iu.test(avatarUrl)) errors.push("INVALID_AVATAR_URL");
     if (errors.length > 0) return reply.code(400).send({ error: "USER_PROFILE_VALIDATION_FAILED", errors });
     if (email && isConfiguredAdminEmail(email) && actor?.role !== "superadmin") {
       return reply.code(403).send({ error: "SUPERADMIN_REQUIRED_FOR_CONFIGURED_ADMIN_EMAIL" });
@@ -280,7 +306,7 @@ export async function adminUsersManagementRoutes(app: FastifyInstance): Promise<
       await client.query("SELECT pg_advisory_xact_lock(2147483647)");
       const current = await client.query(
         `SELECT id, email, COALESCE(NULLIF(full_name,''), name) AS name,
-                COALESCE(phone_number, phone) AS phone, role, rank, military_id, region
+                COALESCE(phone_number, phone) AS phone, role, rank, military_id, region, avatar_url
          FROM users WHERE id = $1 FOR UPDATE`, [id],
       );
       if (!current.rowCount) {
@@ -304,13 +330,13 @@ export async function adminUsersManagementRoutes(app: FastifyInstance): Promise<
          SET email=NULLIF($1,''), full_name=$2, name=$2,
              phone_number=NULLIF($3,''), phone=NULLIF($3,''),
              rank=NULLIF($4,''), military_id=NULLIF($5,''), service_number=NULLIF($5,''),
-             region=NULLIF($6,''), updated_at=NOW()
-         WHERE id=$7
+             region=NULLIF($6,''), avatar_url=NULLIF($7,''), updated_at=NOW()
+         WHERE id=$8
          RETURNING id, email, username, COALESCE(NULLIF(full_name,''),name) AS name,
                    COALESCE(phone_number,phone) AS phone, role, status, rank, military_id,
-                   region, created_at, updated_at, last_login, last_login_ip,
+                   region, avatar_url, created_at, updated_at, last_login, last_login_ip,
                    phone_verified_at, profile_completed`,
-        [email, name, phone, rank, militaryId, region, id],
+        [email, name, phone, rank, militaryId, region, avatarUrl, id],
       );
       await client.query(
         "INSERT INTO audit_log (user_id, action, resource, details, ip, user_agent) VALUES ($1,$2,$3,$4,$5,$6)",
@@ -325,6 +351,97 @@ export async function adminUsersManagementRoutes(app: FastifyInstance): Promise<
     } catch (error) {
       try { await client.query("ROLLBACK"); } catch { /* preserve original failure */ }
       return reply.code(500).send({ error: error instanceof Error ? error.message : "USER_PROFILE_UPDATE_FAILED" });
+    } finally {
+      client.release();
+    }
+  });
+
+  app.put("/api/admin/users/:id/network", { preHandler: [requireRole("admin")] }, async (request, reply) => {
+    const { id } = request.params as { id: string };
+    const actor = (request as any).user;
+    const body = (request.body || {}) as {
+      address?: unknown;
+      visibilityLevel?: string;
+      familyTier?: string;
+      points?: number;
+      isVerifiedUser?: boolean;
+      approvalAction?: "draft" | "submit" | "approve";
+    };
+    const userResult = await query(
+      "SELECT id, COALESCE(NULLIF(full_name,''),name) AS name FROM users WHERE id = $1",
+      [id],
+    );
+    if (!userResult.rowCount) return reply.code(404).send({ error: "USER_NOT_FOUND" });
+    const visibilityLevel = normalized(body.visibilityLevel) || "VISIBLE_CAZA_ONLY";
+    const familyTier = normalized(body.familyTier) || "BASIC_FAMILY_MEMBER";
+    if (!(NETWORK_VISIBILITY_LEVELS as readonly string[]).includes(visibilityLevel)) return reply.code(400).send({ error: "INVALID_NETWORK_VISIBILITY" });
+    if (!(NETWORK_FAMILY_TIERS as readonly string[]).includes(familyTier)) return reply.code(400).send({ error: "INVALID_NETWORK_FAMILY_TIER" });
+    const existing = await getNetworkMembership(id);
+    let profile = await saveDraftNetworkMembership({
+      userId: id,
+      displayName: userResult.rows[0].name || existing?.displayName || "عضو الشبكة",
+      address: body.address ?? existing?.address ?? {},
+      visibilityLevel: visibilityLevel as any,
+      familyTier: familyTier as any,
+      points: Number.isFinite(Number(body.points)) ? Number(body.points) : Number(existing?.points || 0),
+      isVerifiedUser: body.isVerifiedUser === true,
+    });
+    if (body.approvalAction === "submit") profile = (await submitNetworkMembership(id)) || profile;
+    if (body.approvalAction === "approve") profile = (await approveNetworkMembership(id)) || profile;
+    await query(
+      "INSERT INTO audit_log (user_id, action, resource, details, ip, user_agent) VALUES ($1,$2,$3,$4,$5,$6)",
+      [actor?.id ?? null, "user.network_update", "users", { targetUserId: id, before: existing, after: profile }, request.ip, request.headers["user-agent"] || ""],
+    );
+    return reply.send({ networkProfile: profile });
+  });
+
+  app.put("/api/admin/users/:id/privileges", { preHandler: [requireRole("superadmin")] }, async (request, reply) => {
+    const { id } = request.params as { id: string };
+    const actor = (request as any).user;
+    const body = (request.body || {}) as { privileges?: Partial<Record<ServicePrivilege, boolean>> };
+    if (!body.privileges || typeof body.privileges !== "object" || Array.isArray(body.privileges)) {
+      return reply.code(400).send({ error: "SERVICE_PRIVILEGES_REQUIRED" });
+    }
+    const entries = Object.entries(body.privileges);
+    for (const [privilege, enabled] of entries) {
+      if (!(SERVICE_PRIVILEGES as readonly string[]).includes(privilege)) return reply.code(400).send({ error: "UNKNOWN_SERVICE_PRIVILEGE", privilege });
+      if (typeof enabled !== "boolean") return reply.code(400).send({ error: "INVALID_SERVICE_PRIVILEGE_VALUE", privilege });
+    }
+    const client = await getClient();
+    try {
+      await client.query("BEGIN");
+      const userResult = await client.query("SELECT id FROM users WHERE id = $1 FOR UPDATE", [id]);
+      if (!userResult.rowCount) {
+        await client.query("ROLLBACK");
+        return reply.code(404).send({ error: "USER_NOT_FOUND" });
+      }
+      const beforeResult = await client.query("SELECT privilege, enabled FROM user_service_privileges WHERE user_id = $1 ORDER BY privilege", [id]);
+      for (const [privilege, enabled] of entries) {
+        await client.query(
+          `INSERT INTO user_service_privileges (user_id, privilege, enabled, updated_by, updated_at)
+           VALUES ($1,$2,$3,$4,NOW())
+           ON CONFLICT (user_id, privilege) DO UPDATE SET enabled = EXCLUDED.enabled, updated_by = EXCLUDED.updated_by, updated_at = NOW()`,
+          [id, privilege, enabled, actor?.id ?? null],
+        );
+      }
+      const afterResult = await client.query("SELECT privilege, enabled, created_at, updated_at FROM user_service_privileges WHERE user_id = $1 ORDER BY privilege", [id]);
+      await client.query(
+        "INSERT INTO audit_log (user_id, action, resource, details, ip, user_agent) VALUES ($1,$2,$3,$4,$5,$6)",
+        [actor?.id ?? null, "user.service_privileges_update", "users", { targetUserId: id, before: beforeResult.rows, after: afterResult.rows }, request.ip, request.headers["user-agent"] || ""],
+      );
+      await client.query("COMMIT");
+      const byPrivilege = new Map(afterResult.rows.map((row: any) => [row.privilege, row] as const));
+      return reply.send({
+        servicePrivileges: SERVICE_PRIVILEGES.map((privilege) => ({
+          privilege,
+          enabled: byPrivilege.get(privilege)?.enabled === true,
+          created_at: byPrivilege.get(privilege)?.created_at,
+          updated_at: byPrivilege.get(privilege)?.updated_at,
+        })),
+      });
+    } catch (error) {
+      try { await client.query("ROLLBACK"); } catch { /* preserve original failure */ }
+      return reply.code(500).send({ error: error instanceof Error ? error.message : "SERVICE_PRIVILEGE_UPDATE_FAILED" });
     } finally {
       client.release();
     }
