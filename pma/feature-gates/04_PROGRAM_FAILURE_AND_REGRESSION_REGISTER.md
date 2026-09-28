@@ -904,3 +904,12 @@ FAIL_CLOSED=YES
 - Classification: advisory third-party browser noise, not a salary/runtime defect.
 - Final guard: production PASS requires first-party salary/API responses green, page errors zero, and any third-party request aborts explicitly classified.
 - Disposition: RESOLVED_ADVISORY_THIRD_PARTY_NOISE
+
+### APEX_USERS_PROFILE_REMOTE_PRODUCT_REF_DIVERGED_AFTER_VALIDATION_20260928
+- Date: 2026-09-28
+- Class: Concurrent product-authority branch divergence after Users/Profile validation.
+- Symptom: verified Users/Profile candidate `5a83ed3f143c43937318710ad74754aa2e364c3e` could not fast-forward `origin/integration/theme-upgrade-20260728`; remote product had independently advanced to `407cb1dcff8ea992576784658d09ba80202c4302`.
+- Evidence: `git merge-base --is-ancestor FETCH_HEAD HEAD` exited 1; merge base is `3d1921db9e5c91206a26224820ae8d21071a3a26`; remote-only commits are `5bb600c` and `407cb1d` (Article SEO V4).
+- Impact: direct product-ref update is BLOCKED; force push is prohibited.
+- Guard: reconcile the complete verified Users/Profile chain onto the current remote product head in a fresh isolated worktree, preserve Article SEO V4 semantics, rerun both Users/Profile and Article SEO regressions plus full typecheck/build gates, then publish only a normal fast-forward.
+- Status: ACTIVE
