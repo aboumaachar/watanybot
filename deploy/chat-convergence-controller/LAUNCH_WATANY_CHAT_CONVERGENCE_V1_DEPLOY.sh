@@ -2,8 +2,8 @@
 set -Eeuo pipefail
 ST='/home/dcagent/watany-staging/chat-convergence-v1'
 CTL="$ST/RUN_WATANY_CHAT_CONVERGENCE_V1_DEPLOY.sh"
-EXPECTED_CTL='63744dc1eb0821e1180daed012bb3bea296051de19e3af60b24cf14fb2b073a0'
-EXPECTED_PACKAGE='4e80a677e40f2f3d273d0d5a3d022279aa151b25b73bcbf64320139f268444a4'
+EXPECTED_CTL='35430ac792f2a8c781e0403e2b6b969d473a54be1926265015ed610bd54ad4d3'
+EXPECTED_PACKAGE='c9c88a5cd5f3b72b5cde5c9b53456af6b35b4f2a10e2aac61ef25790171401c8'
 [ "$(id -u)" -eq 0 ] || { echo 'LAUNCH_FAILURE=ROOT_REQUIRED'; exit 1; }
 [ -f "$CTL" ] || { echo 'LAUNCH_FAILURE=CONTROLLER_MISSING'; exit 1; }
 [ "$(sha256sum "$CTL" | awk '{print $1}')" = "$EXPECTED_CTL" ] || { echo 'LAUNCH_FAILURE=CONTROLLER_HASH'; exit 1; }

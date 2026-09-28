@@ -204,6 +204,20 @@ run_gate gateway-release-typecheck "$PNPM" --filter gateway-api typecheck
 run_gate web-release-typecheck "$PNPM" --filter web-user typecheck
 run_gate web-release-build "$PNPM" --filter web-user build
 [ -f "$RELEASE/apps/web-user/dist/index.html" ] || fail RELEASE_DIST_INDEX_MISSING
+mapfile -t messages_chunks < <(find "$RELEASE/apps/web-user/dist/assets" -maxdepth 1 -type f -name 'route-messagespage-tsx-*.js' -printf '%p\n' | sort)
+[ "${#messages_chunks[@]}" -eq 1 ] || fail RELEASE_MESSAGES_CHUNK_COUNT "${#messages_chunks[@]}"
+messages_chunk="${messages_chunks[0]}"
+grep -Fq 'data-direct-messages' "$messages_chunk" || fail RELEASE_MESSAGES_DIRECT_MARKER_MISSING
+messages_chunk_name="$(basename "$messages_chunk")"
+messages_ref_count=0
+while IFS= read -r js_asset; do
+  [ "$js_asset" = "$messages_chunk" ] && continue
+  if grep -Fq "$messages_chunk_name" "$js_asset"; then
+    messages_ref_count=$((messages_ref_count + 1))
+  fi
+done < <(find "$RELEASE/apps/web-user/dist/assets" -maxdepth 1 -type f -name '*.js' -print | sort)
+[ "$messages_ref_count" -ge 1 ] || fail RELEASE_MESSAGES_CHUNK_UNREFERENCED "$messages_chunk_name"
+printf '%s,%s,%s\n' 'messages_route_build' 'PASS' 'MessagesPage chunk, direct marker and route-graph reference verified' >> "$EVIDENCE/validations.csv"
 v11_runtime="$RELEASE/apps/web-user/dist/watany-feature-ads-v6.js"
 [ -f "$v11_runtime" ] || fail RELEASE_V11_RUNTIME_MISSING
 v11_runtime_hash="$(sha256sum "$v11_runtime" | awk '{print $1}')"

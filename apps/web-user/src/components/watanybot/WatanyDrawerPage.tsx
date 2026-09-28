@@ -13,7 +13,6 @@ import { WatanyFluentIcon, type WatanyIconName } from "../icons/WatanyFluentIcon
 import "./koudama-homepage.css";
 import { watanyDrawerItems, type WatanyDrawerItem } from "./watanyDrawerItems";
 import { getWatanyAppIconSign } from "./WatanyAppIcon";
-import { useInternalMail } from "../../lib/internal-mail";
 
 const RUNTIME_DEBUG_LOCALHOSTS = new Set(["127.0.0.1", "localhost"]);
 const RUNTIME_DEBUG_STORAGE_KEYS = [
@@ -196,7 +195,6 @@ export default function WatanyDrawerPage() {
     design,
   } = useApp();
   const { flags, isHydrated } = useFeatureFlags();
-  useInternalMail(profile);
   const [todayMatches, setTodayMatches] = useState<WorldCupMatchDto[]>([]);
   const [todayMatchUnread, setTodayMatchUnread] = useState<Record<string, number>>({});
   const [latestNews, setLatestNews] = useState<NewsItem[]>([]);
