@@ -1175,3 +1175,53 @@ FAIL_CLOSED=YES
 - `APEX_USERS_PROFILE_ADMIN_TOKEN_ACCEPTANCE_403_REGRESSION_20260928`: RESOLVED_AS_SECURITY_CONTRACT_FIXTURE; unbound admin JWTs are now explicitly expected to be denied, while `admin-session-binding.test.ts` proves live-session positive authorization.
 - `APEX_USERS_PROFILE_RAW_PRODUCTION_HASH_VS_PRODUCT_ADAPTATION_MISMATCH_20260928`: RESOLVED_AS_PRODUCT_RECONCILIATION; exact reconciled hashes are enforced.
 - Final bounded acceptance matrix after all repairs: 14/14 test files, 110/110 tests, exit 0, `USERS_PROFILE_AUTH_ACCEPTANCE=PASS`.
+
+### APEX_USERS_PROFILE_ACTIVE_PRODUCTION_ADMIN_HARDENING_FIXTURE_STALE_20260928
+- Date: 2026-09-28
+- Class: Active-production admin hardening fixture stale after mandatory administrative session binding.
+- Symptom: exact active-release `admin-auth-hardening.test.ts` still signs bare administrative JWTs without `sid`; probing its dashboard-success assertion against the active production release reproduces HTTP 403 instead of expected 200.
+- Evidence: active-release probe exit was nonzero as expected, response `/api/admin/dashboard` = 403, and the wrapper verified `expected 403 to be 200`, then emitted `PROD_ADMIN_HARDENING_STALE_FIXTURE_REPRO=PASS`.
+- Impact: the six broad hardening success assertions are incompatible with the newer production `resolveFreshAdminUser` contract and must not drive any weakening of session binding.
+- Guard: update success-path hardening fixtures to supply a session-bound administrative identity through deterministic DB mocks (active user + unexpired matching session), while retaining dedicated negative coverage for missing/invalid `sid` in `admin-session-binding.test.ts`.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_CMD_UNIX_SUBSTITUTION_IN_CMD_IMMUTABLE_PRECHECK_20260928
+- Date: 2026-09-28
+- Class: Windows cmd command-rendering / success-token enforcement.
+- Symptom: immutable-precheck command used Unix `$(git rev-parse HEAD)` inside `cmd.exe`; process exited 0 but emitted no expected `IMMUTABLE_PRECHECK=PASS` token.
+- Impact: that invocation is UNVERIFIED and must not be cited as immutable proof.
+- Guard: use a plain cmd chain that prints `git rev-parse HEAD`, runs unstaged/cached diff checks, and emits the success token only after all commands succeed; verify the printed hash separately.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_WEB_ADMIN_VITE_REPORTER_STDERR_ADVISORY_20260928
+- Date: 2026-09-28
+- Class: Build stderr / nonfatal Vite reporter advisory requiring explicit classification.
+- Symptom: web-admin production build exited 0 and emitted a complete dist, but stderr contained four `plugin:vite:reporter` warnings that DashboardPage, AuditPage, FeatureControlsPage, and UsersPage are both dynamically and statically imported, so those modules will not be split into separate chunks.
+- Impact: nonempty stderr prevents an automatic PASS classification until the stream is proven warning-only and free of failure/error tokens; no build artifact failure is implied by these specific messages.
+- Guard: validate exit code, expected build output, nonempty dist/index/assets, whitelist only the exact Vite reporter advisory form, and reject stderr containing `error`, `failed`, `failure`, stack traces, or unclassified warnings.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_SEALED_17_MANIFEST_SHARED_FILE_SUPERSESSION_20260928
+- Date: 2026-09-28
+- Class: Sealed feature-manifest byte mismatch on shared files after later product integration.
+- Symptom: current `252643e` HEAD matches 15/17 hashes from the sealed Users/Profile V3 `SOURCE_MANIFEST.sha256`; `apps/web-admin/src/App.tsx` and `packages/address-network/src/AddressWidget.tsx` differ.
+- Impact: the original 17-file manifest cannot be reported as byte-identical at current product HEAD. Blind restoration of the two sealed blobs could remove later Jobs/product integrations.
+- Guard: trace both paths from the sealed V3 commit through every later touching commit, prove the V3 route/address contracts remain present, and classify current-head adaptation explicitly. Restore old bytes only if a real V3 regression is proven.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_SEALED_17_MANIFEST_SHARED_FILE_SUPERSESSION_RESOLUTION_20260928
+- Date: 2026-09-28
+- Resolution: the 15/17 raw manifest result is an adapted-equivalence case, not a missing V3 feature regression.
+- `packages/address-network/src/AddressWidget.tsx`: production normalized UTF-8/LF hash is `0a5cf333bad867e9294f87d50e2024118fb756d1f8600c5ec2dc01d748d104e7`, exactly matching the product Git blob; raw server SHA differs only because the production copy uses CRLF.
+- `apps/web-admin/src/App.tsx`: commit `3251471` deliberately preserved the product admin shell and added only the V3 contracts: lazy `UserPage`, route `/users/:id`, and user-profile breadcrumb metadata. No later commit changed this path.
+- Validation: current HEAD retains all three App contracts and `AddressWidget` retains `catalogUrl`, uses it in fetch fallback, and tracks it in the effect dependency; web-admin typecheck and production build pass.
+- Closeout rule: report **15/17 raw-byte exact + 1 normalized-byte exact + 1 explicitly adapted shared-file contract**, never `17/17 byte-identical`.
+- Status: RESOLVED
+
+### APEX_USERS_PROFILE_CMD_CARET_REVISION_ESCAPE_20260928
+- Date: 2026-09-28
+- Class: Windows cmd.exe Git revision rendering / caret escape.
+- Symptom: `git rev-parse HEAD^` inside a cmd command chain printed the current HEAD because `^` was consumed by cmd escaping instead of reaching Git as the parent revision suffix.
+- Impact: that parent-hash line is invalid evidence, although the same invocation's clean status, `git diff HEAD^ HEAD --check` no-output result, and explicit `252643e..HEAD` name-status are not used as parent proof.
+- Guard: use `HEAD~1`, an explicit parent hash, or properly escaped `HEAD^^` under cmd.exe; verify parent differs from HEAD and equals the expected source commit before push.
+- Status: ACTIVE
