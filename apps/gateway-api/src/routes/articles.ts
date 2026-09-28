@@ -120,6 +120,19 @@ export const articleRoutes: FastifyPluginAsync = async (app) => {
     }
   });
 
+  app.post<{ Params: { id: string }; Body: { event?: unknown; path?: unknown } }>("/api/articles/:id/engagement", async (request, reply) => {
+    const articleId=String(request.params.id||"").trim().slice(0,160);
+    const rawEvent=typeof request.body?.event==="string"?request.body.event.trim():"";
+    const eventMap:Record<string,string>={view:"article_view",share:"article_share",pdf_download:"article_pdf_download",internal_link:"article_internal_link"};
+    const eventType=eventMap[rawEvent];
+    if(!articleId||!eventType)return reply.code(400).send({ok:false,error:"ARTICLE_ENGAGEMENT_INVALID"});
+    const pathValue=typeof request.body?.path==="string"?request.body.path.slice(0,300):"";
+    const inserted=await query<{id:number}>(`INSERT INTO watany_analytics_events(event_type,event_data) SELECT $1,jsonb_build_object('articleId',$2,'path',$3) WHERE EXISTS (SELECT 1 FROM cms_content_entities WHERE domain='articles' AND status='PUBLISHED' AND public_id=$2) RETURNING id`,[eventType,articleId,pathValue]);
+    if(!inserted.rowCount)return reply.code(404).send({ok:false,error:"ARTICLE_NOT_FOUND"});
+    reply.header("Cache-Control","no-store");
+    return reply.code(202).send({ok:true});
+  });
+
   app.get<{ Querystring: { category?: string; q?: string; limit?: string; offset?: string } }>("/api/articles", async (request) => {
     const category = String(request.query.category || "").trim();
     const q = String(request.query.q || "").trim();

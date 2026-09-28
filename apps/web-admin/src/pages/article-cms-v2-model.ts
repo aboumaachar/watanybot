@@ -1,6 +1,6 @@
 import type { CmsGenericItem, CmsStatus } from "../lib/api";
 
-export type WorkspaceView = "articles" | "editor" | "categories" | "tags" | "media";
+export type WorkspaceView = "articles" | "editor" | "categories" | "tags" | "media" | "seo";
 export type EditorMode = "visual" | "html";
 
 export type ArticleEditor = {
@@ -175,10 +175,11 @@ export function fillMissingSeo(editor: ArticleEditor, categories: CmsGenericItem
   return { ...editor, excerpt, permalinkSlug: editor.permalinkSlug || asciiSlugify(editor.title), seoTitle, seoDescription, focusKeyphrase, canonicalUrl, ogTitle, ogDescription, ogImage };
 }
 
-export function seoScore(editor: ArticleEditor): { score: number; notes: string[]; checks: SeoCheck[]; blockingIssues: string[] } {
+export function seoScore(editor: ArticleEditor, categories: CmsGenericItem[] = []): { score: number; notes: string[]; checks: SeoCheck[]; blockingIssues: string[] } {
   const bodyText = plainText(editor.bodyHtml);
   const heading = localHeadingStats(editor.bodyHtml);
   const images = localImageStats(editor.bodyHtml);
+  const expectedCanonical = categories.length ? `https://koudama.com${articleCanonicalPath(editor, categories)}` : "";
   const checks: SeoCheck[] = [
     { id: "title", label: "عنوان المقال موجود", ok: Boolean(editor.title.trim()), blocking: true },
     { id: "body", label: "محتوى المقال موجود", ok: bodyText.length >= 40, blocking: true },
@@ -186,7 +187,7 @@ export function seoScore(editor: ArticleEditor): { score: number; notes: string[
     { id: "permalink", label: "رابط دائم ASCII", ok: /^[a-z0-9][a-z0-9-]*$/u.test(editor.permalinkSlug), blocking: true },
     { id: "seo-title", label: "عنوان SEO بين 20 و60 حرفاً", ok: editor.seoTitle.trim().length >= 20 && editor.seoTitle.trim().length <= 60 },
     { id: "description", label: "وصف Meta بين 70 و160 حرفاً", ok: editor.seoDescription.trim().length >= 70 && editor.seoDescription.trim().length <= 160 },
-    { id: "canonical", label: "Canonical URL مطابق للرابط الدائم", ok: /^https:\/\/koudama\.com\/articles\//u.test(editor.canonicalUrl) && Boolean(editor.permalinkSlug) && editor.canonicalUrl.endsWith(`/${editor.permalinkSlug}`) },
+    { id: "canonical", label: "Canonical URL مطابق للرابط الدائم", ok: expectedCanonical ? editor.canonicalUrl === expectedCanonical : /^https:\/\/koudama\.com\/articles\//u.test(editor.canonicalUrl) && Boolean(editor.permalinkSlug) && editor.canonicalUrl.endsWith(`/${editor.permalinkSlug}`) },
     { id: "featured", label: "صورة بارزة أو بديل اجتماعي", ok: Boolean(editor.featuredImage.trim() || editor.ogImage.trim()) },
     { id: "og", label: "بيانات OpenGraph مكتملة", ok: Boolean(editor.ogTitle.trim() && editor.ogDescription.trim() && editor.ogImage.trim()) },
     { id: "excerpt", label: "المقتطف موجود", ok: editor.excerpt.trim().length >= 40 },

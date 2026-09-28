@@ -43,6 +43,13 @@ type SeoAgentProposal = {
     indexing: { publicationStatus: string; robots: string; indexable: boolean; sitemapEligible: boolean; sitemapIncluded: boolean; expectedCanonical: string; canonicalMatches: boolean };
   };
 };
+type SeoSafeFixResult = {
+  patch: { permalinkSlug: string; seoTitle: string; seoDescription: string; focusKeyphrase: string; canonicalUrl: string; robots: string; ogTitle: string; ogDescription: string; ogImage: string; excerpt: string; bodyHtml: string };
+  changes: string[]; scoreBefore: number; scoreAfter: number; audit: SeoAgentProposal["audit"];
+};
+type SeoDashboardPerformance = { views30d: number; shares30d: number; pdfDownloads30d: number; internalLinkClicks30d: number };
+type SeoDashboardItem = { id: string; title: string; url: string; score: number; indexable: boolean; sitemapIncluded: boolean; issues: string[]; performance: SeoDashboardPerformance; duplicateRisk: number };
+type SeoDashboardReport = { generatedAt: string; summary: { total: number; averageScore: number; perfectCount: number; needsAttention: number; indexable: number; sitemapIncluded: number; canonicalIssues: number; missingAlt: number; brokenInternalLinks: number; brokenMedia: number; duplicateRisks: number; performance: SeoDashboardPerformance }; items: SeoDashboardItem[] };
 
 function absoluteMediaUrl(value: string): string {
   if (/^https?:\/\//iu.test(value)) return value;
@@ -87,7 +94,10 @@ export default function ArticlePublishingAuthority9D72Page({ initialArchive = fa
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [seoAgentBusy, setSeoAgentBusy] = useState(false);
+  const [seoFixBusy, setSeoFixBusy] = useState(false);
   const [seoProposal, setSeoProposal] = useState<SeoAgentProposal | null>(null);
+  const [seoDashboardBusy, setSeoDashboardBusy] = useState(false);
+  const [seoDashboard, setSeoDashboard] = useState<SeoDashboardReport | null>(null);
   const [autosaveState, setAutosaveState] = useState<AutosaveState>("idle");
   const [autosaveAt, setAutosaveAt] = useState("");
   const [conflictItem, setConflictItem] = useState<CmsGenericItem | null>(null);
@@ -95,7 +105,7 @@ export default function ArticlePublishingAuthority9D72Page({ initialArchive = fa
   const visualRef = useRef<HTMLDivElement | null>(null);
   const titleRef = useRef<HTMLInputElement | null>(null);
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
-  const review = useMemo(() => seoScore(editor), [editor]);
+  const review = useMemo(() => seoScore(editor, categories), [editor, categories]);
 
   function patchEditor(patch: Partial<ArticleEditor>): void {
     setEditor((current) => ({ ...current, ...patch }));
@@ -137,6 +147,16 @@ export default function ArticlePublishingAuthority9D72Page({ initialArchive = fa
     setLegacyMedia(historical);
   }
 
+  async function loadSeoDashboard(): Promise<void> {
+    setSeoDashboardBusy(true); setError("");
+    try { const response=await adminFetch("/api/admin/cms/articles/seo-audit/bulk?limit=300"); const data=await response.json() as {report?:SeoDashboardReport}; if(!data.report)throw new Error("ARTICLE_SEO_DASHBOARD_RESPONSE_MISSING"); setSeoDashboard(data.report); }
+    catch(reason:unknown){setError(getAdminErrorMessage(reason,"\u062a\u0639\u0630\u0631 \u062a\u062d\u0645\u064a\u0644 \u0644\u0648\u062d\u0629 \u0635\u062d\u0629 SEO."));}
+    finally {setSeoDashboardBusy(false);}
+  }
+  async function openSeoDashboardArticle(id:string):Promise<void> {
+    try { const item=await getCmsGenericEntity("articles",id); await openArticle(item); } catch(reason:unknown){setError(getAdminErrorMessage(reason,"\u062a\u0639\u0630\u0631 \u0641\u062a\u062d \u0627\u0644\u0645\u0642\u0627\u0644 \u0645\u0646 \u0644\u0648\u062d\u0629 SEO.")); }
+  }
+
   async function loadArticles(): Promise<void> {
     setLoading(true);
     try {
@@ -154,6 +174,7 @@ export default function ArticlePublishingAuthority9D72Page({ initialArchive = fa
   useEffect(() => {
     void loadLibraries().catch((reason: unknown) => setError(getAdminErrorMessage(reason, "تعذر تحميل التصنيفات أو الوسائط.")));
   }, []);
+  useEffect(() => { if (view === "seo") void loadSeoDashboard(); }, [view]);
   useEffect(() => {
     if (editorMode === "visual" && visualRef.current && visualRef.current.innerHTML !== editor.bodyHtml) {
       visualRef.current.innerHTML = editor.bodyHtml;
@@ -182,7 +203,7 @@ export default function ArticlePublishingAuthority9D72Page({ initialArchive = fa
       setVersions(nextVersions); setAudit(nextAudit); setDirty(false); setAutosaveState("idle"); setAutosaveAt("");
       setEditorMode("visual"); setView("editor");
       try {
-        const autosave = await getArticleAutosave(detail.publicId); const restored = articleEditorFromAutosave(autosave?.editor);
+        const autosave = await getArticleAutosave(detail.publicId); const restoredRaw = articleEditorFromAutosave(autosave?.editor); const restored = restoredRaw && categories.some((row) => restoredRaw.categoryIds.includes(row.publicId)) ? fillMissingSeo(restoredRaw, categories) : restoredRaw;
         const newer = autosave ? new Date(autosave.savedAt).getTime() > new Date(detail.updatedAt || 0).getTime() : false;
         if (autosave && restored && autosave.articleVersion === detail.version && newer && globalThis.confirm("توجد مسودة خادم تلقائية أحدث من آخر حفظ. هل تريد استعادتها؟")) { setEditor(restored); setDirty(true); setAutosaveState("saved"); setAutosaveAt(autosave.savedAt); setNotice("تمت استعادة مسودة الخادم التلقائية."); }
         else if (autosave && autosave.articleVersion && autosave.articleVersion !== detail.version) setNotice("توجد مسودة تلقائية مبنية على إصدار أقدم؛ لم تتم استعادتها تلقائياً لحماية التعديلات الأحدث.");
@@ -218,6 +239,31 @@ export default function ArticlePublishingAuthority9D72Page({ initialArchive = fa
     setNotice(includeExcerpt ? "تم تطبيق تحسينات SEO والمقتطف. احفظ المقال لتسجيل نسخة ومراجعة جديدة." : "تم تطبيق حقول SEO المقترحة. احفظ المقال لتسجيل نسخة ومراجعة جديدة.");
   }
 
+  async function runSeoSafeFixes(): Promise<void> {
+    const title=editor.title.trim(); const slug=(editor.slug||slugify(title)).trim();
+    if(!title||!slug){setError("\u0623\u062f\u062e\u0644 \u0639\u0646\u0648\u0627\u0646\u0627\u064b \u0648\u0631\u0627\u0628\u0637\u0627\u064b \u0642\u0628\u0644 \u062a\u0637\u0628\u064a\u0642 \u0627\u0644\u0625\u0635\u0644\u0627\u062d\u0627\u062a \u0627\u0644\u0622\u0645\u0646\u0629.");return;}
+    setSeoFixBusy(true);setError("");setNotice("");
+    try {
+      const categoryNames=categories.filter((item)=>editor.categoryIds.includes(item.publicId)).map((item)=>item.title);
+      const tagNames=tags.filter((item)=>editor.tagIds.includes(item.publicId)).map((item)=>item.title);
+      const primaryCategory=categories.find((item)=>item.publicId===editor.primaryCategoryId)?.title||categoryNames[0]||"";
+      const response=await adminFetch("/api/admin/cms/articles/seo-agent/safe-fix",{method:"POST",body:JSON.stringify({...editor,id:selected?.publicId||editor.id,title,slug,categories:categoryNames,primaryCategory,tags:tagNames})});
+      const data=await response.json() as {fix?:SeoSafeFixResult}; if(!data.fix)throw new Error("ARTICLE_SEO_SAFE_FIX_RESPONSE_MISSING");
+      const fix=data.fix; patchEditor({permalinkSlug:fix.patch.permalinkSlug,seoTitle:fix.patch.seoTitle,seoDescription:fix.patch.seoDescription,focusKeyphrase:fix.patch.focusKeyphrase,canonicalUrl:fix.patch.canonicalUrl,robots:fix.patch.robots,ogTitle:fix.patch.ogTitle,ogDescription:fix.patch.ogDescription,ogImage:fix.patch.ogImage,excerpt:fix.patch.excerpt,bodyHtml:fix.patch.bodyHtml});
+      setSeoProposal(null); const lead=fix.scoreAfter===100?"\u062a\u0645 \u062a\u0637\u0628\u064a\u0642 \u0627\u0644\u0625\u0635\u0644\u0627\u062d\u0627\u062a \u0627\u0644\u0622\u0645\u0646\u0629 \u0648\u0623\u0635\u0628\u062d \u0627\u0644\u062a\u062f\u0642\u064a\u0642 \u0627\u0644\u0645\u062a\u0648\u0642\u0639 100/100. ":"\u062a\u0645 \u062a\u0637\u0628\u064a\u0642 \u0627\u0644\u0625\u0635\u0644\u0627\u062d\u0627\u062a \u0627\u0644\u0622\u0645\u0646\u0629; \u0627\u0644\u0646\u062a\u064a\u062c\u0629 \u0627\u0644\u0645\u062a\u0648\u0642\u0639\u0629 "+fix.scoreAfter+"/100. "; setNotice(lead+(fix.changes.length?fix.changes.join(" "):"\u0644\u0627 \u062a\u0648\u062c\u062f \u062a\u063a\u064a\u064a\u0631\u0627\u062a \u0625\u0636\u0627\u0641\u064a\u0629 \u0622\u0645\u0646\u0629.")+" \u0631\u0627\u062c\u0639 \u062b\u0645 \u0627\u062d\u0641\u0638 \u0627\u0644\u0645\u0642\u0627\u0644.");
+    } catch(reason:unknown){setError(getAdminErrorMessage(reason,"\u062a\u0639\u0630\u0631 \u062a\u0637\u0628\u064a\u0642 \u0625\u0635\u0644\u0627\u062d\u0627\u062a SEO \u0627\u0644\u0622\u0645\u0646\u0629."));} finally {setSeoFixBusy(false);}
+  }
+
+  function insertSeoInternalLink(item:{url:string;anchor:string}):void {
+    const href=escapeHtml(item.url); if(editor.bodyHtml.includes(`href="${href}"`)||editor.bodyHtml.includes(`href='${href}'`)){setNotice("\u0627\u0644\u0631\u0627\u0628\u0637 \u0627\u0644\u062f\u0627\u062e\u0644\u064a \u0645\u0648\u062c\u0648\u062f \u0645\u0633\u0628\u0642\u0627\u064b \u0641\u064a \u0627\u0644\u0645\u0642\u0627\u0644.");return;}
+    const block='<p><strong>\u0627\u0642\u0631\u0623 \u0623\u064a\u0636\u0627\u064b:</strong> <a href="'+href+'">'+escapeHtml(item.anchor)+'</a></p>'; patchEditor({bodyHtml:editor.bodyHtml+block}); setNotice("\u062a\u0645 \u0625\u062f\u0631\u0627\u062c \u0627\u0644\u0631\u0627\u0628\u0637 \u0627\u0644\u062f\u0627\u062e\u0644\u064a \u0641\u064a \u0646\u0647\u0627\u064a\u0629 \u0627\u0644\u0645\u0642\u0627\u0644. \u0631\u0627\u062c\u0639 \u0645\u0648\u0636\u0639\u0647 \u062b\u0645 \u0627\u062d\u0641\u0638.");
+  }
+  function insertAllSeoInternalLinks():void {
+    if(!seoProposal?.internalLinks.length)return; let body=editor.bodyHtml; let added=0;
+    for(const item of seoProposal.internalLinks){const href=escapeHtml(item.url);if(body.includes(`href="${href}"`)||body.includes(`href='${href}'`))continue;body+='<p><strong>\u0627\u0642\u0631\u0623 \u0623\u064a\u0636\u0627\u064b:</strong> <a href="'+href+'">'+escapeHtml(item.anchor)+'</a></p>';added+=1;}
+    if(!added){setNotice("\u0643\u0644 \u0627\u0644\u0631\u0648\u0627\u0628\u0637 \u0627\u0644\u0645\u0642\u062a\u0631\u062d\u0629 \u0645\u0648\u062c\u0648\u062f\u0629 \u0645\u0633\u0628\u0642\u0627\u064b.");return;} patchEditor({bodyHtml:body}); setNotice("\u062a\u0645 \u0625\u062f\u0631\u0627\u062c "+added+" \u0631\u0627\u0628\u0637 \u062f\u0627\u062e\u0644\u064a \u0645\u0642\u062a\u0631\u062d. \u0631\u0627\u062c\u0639 \u0627\u0644\u0645\u0648\u0627\u0636\u0639 \u062b\u0645 \u0627\u062d\u0641\u0638.");
+  }
+
   function automateSeo(): void {
     const next = fillMissingSeo(editor, categories);
     setEditor(next); setDirty(true);
@@ -243,8 +289,8 @@ export default function ArticlePublishingAuthority9D72Page({ initialArchive = fa
         const existingHistory = Array.isArray(next.basePayload.permalinkHistory) ? next.basePayload.permalinkHistory.filter((value): value is string => typeof value === "string") : [];
         if (previousPath !== nextPath && !existingHistory.includes(previousPath)) next = { ...next, basePayload: { ...next.basePayload, permalinkHistory: [...existingHistory, previousPath].slice(-25) } };
       }
-      const payload = { ...articlePayload(next, categories, tags), seoAutomationVersion: 2, structuredEditorVersion: 3 };
-      const sourceMeta = { ...next.baseSourceMeta, editorOwner: "ARTICLE_CMS_V3", seoAutomationVersion: 2, lastEditorialSaveAt: new Date().toISOString() };
+      const payload = { ...articlePayload(next, categories, tags), seoAutomationVersion: 4, structuredEditorVersion: 3 };
+      const sourceMeta = { ...next.baseSourceMeta, editorOwner: "ARTICLE_CMS_V4", seoAutomationVersion: 4, lastEditorialSaveAt: new Date().toISOString() };
       const saved = selected
         ? await updateCmsGenericEntity("articles", selected.publicId, { title, publicCode: slug, payload, sourceMeta, expectedVersion: expectedVersionOverride || selected.version })
         : await createCmsGenericEntity("articles", {
@@ -280,7 +326,7 @@ export default function ArticlePublishingAuthority9D72Page({ initialArchive = fa
     if (action === "archive" && !globalThis.confirm("هل تريد أرشفة هذا المقال؟")) return;
     if (action === "publish") {
       const prepared = fillMissingSeo(editor, categories);
-      const gate = seoScore(prepared);
+      const gate = seoScore(prepared, categories);
       setEditor(prepared);
       if (gate.blockingIssues.length) { setDirty(true); setError(`لا يمكن النشر قبل معالجة: ${gate.blockingIssues.join("، ")}`); return; }
     }
@@ -545,6 +591,23 @@ export default function ArticlePublishingAuthority9D72Page({ initialArchive = fa
     </section>;
   }
 
+  function renderSeoDashboard() {
+    const report = seoDashboard;
+    return <section className="aa9-panel aa9-seo-dashboard">
+      <div className="aa9-card aa9-seo-dashboard-head"><div><h2>لوحة صحة SEO</h2><p>تدقيق مجمّع لكل المقالات المنشورة مع حالة الفهرسة وخريطة الموقع وأداء آخر 30 يوماً.</p></div><button type="button" className="accent" disabled={seoDashboardBusy} onClick={() => void loadSeoDashboard()}>{seoDashboardBusy ? "جارٍ التدقيق…" : "إعادة التدقيق"}</button></div>
+      {!report ? <div className="aa9-empty">{seoDashboardBusy ? "جارٍ تحليل المقالات المنشورة…" : "افتح اللوحة أو أعد التدقيق لتحميل التقرير."}</div> : <>
+        <div className="aa9-seo-dashboard-metrics">
+          <div><span>المقالات</span><strong>{report.summary.total}</strong></div><div><span>متوسط SEO</span><strong>{report.summary.averageScore}/100</strong></div><div><span>100/100</span><strong>{report.summary.perfectCount}</strong></div><div><span>تحتاج معالجة</span><strong>{report.summary.needsAttention}</strong></div>
+          <div><span>مفهرسة</span><strong>{report.summary.indexable}</strong></div><div><span>في Sitemap</span><strong>{report.summary.sitemapIncluded}</strong></div><div><span>مشاكل Canonical</span><strong>{report.summary.canonicalIssues}</strong></div><div><span>صور بلا alt</span><strong>{report.summary.missingAlt}</strong></div>
+          <div><span>روابط مكسورة</span><strong>{report.summary.brokenInternalLinks}</strong></div><div><span>وسائط مفقودة</span><strong>{report.summary.brokenMedia}</strong></div><div><span>تضارب محتمل</span><strong>{report.summary.duplicateRisks}</strong></div><div><span>مشاهدات 30 يوم</span><strong>{report.summary.performance.views30d}</strong></div>
+          <div><span>مشاركات</span><strong>{report.summary.performance.shares30d}</strong></div><div><span>تنزيلات PDF</span><strong>{report.summary.performance.pdfDownloads30d}</strong></div><div><span>نقرات داخلية</span><strong>{report.summary.performance.internalLinkClicks30d}</strong></div>
+        </div>
+        <div className="aa9-card aa9-seo-dashboard-meta"><span>آخر تدقيق: {formatDate(report.generatedAt)}</span><span>الأداء المعروض هو قياس موطني الداخلي منذ تفعيل SEO V4، وليس بيانات Google Search Console.</span></div>
+        <div className="aa9-table-wrap"><table className="aa9-table aa9-seo-dashboard-table"><thead><tr><th>المقال</th><th>SEO</th><th>الفهرسة</th><th>Sitemap</th><th>المشكلات</th><th>أداء 30 يوم</th><th>إجراء</th></tr></thead><tbody>{report.items.map((item) => <tr key={item.id}><td><a href={item.url} target="_blank" rel="noreferrer" className="aa9-title-link">{item.title}</a>{item.duplicateRisk >= 0.42 ? <small>تشابه محتمل {Math.round(item.duplicateRisk * 100)}%</small> : null}</td><td><strong className={item.score === 100 ? "aa9-score good" : item.score >= 80 ? "aa9-score warn" : "aa9-score bad"}>{item.score}/100</strong></td><td>{item.indexable ? "index" : "noindex"}</td><td>{item.sitemapIncluded ? "مدرج" : "غير مدرج"}</td><td>{item.issues.length ? item.issues.slice(0, 3).join("، ") : "مكتمل"}</td><td><small>👁 {item.performance.views30d} · ↗ {item.performance.shares30d} · PDF {item.performance.pdfDownloads30d} · 🔗 {item.performance.internalLinkClicks30d}</small></td><td><button type="button" className="ghost sm" onClick={() => void openSeoDashboardArticle(item.id)}>فتح المحرر</button></td></tr>)}</tbody></table></div>
+      </>}
+    </section>;
+  }
+
   function renderMedia() {
     return <section className="aa9-media">
       <div className="aa9-card aa9-media-upload"><h2>رفع وسائط</h2><p>صور، MP4/WebM أو PDF حتى 25MB.</p>
@@ -578,7 +641,7 @@ export default function ArticlePublishingAuthority9D72Page({ initialArchive = fa
         <div className="aa9-body-editor"><div className="aa9-mode-tabs"><button type="button" className={editorMode === "visual" ? "active" : ""} onClick={() => setEditorMode("visual")}>مرئي</button><button type="button" className={editorMode === "html" ? "active" : ""} onClick={() => setEditorMode("html")}>HTML</button></div>
           {editorMode === "visual" ? <><div className="aa9-block-library" aria-label="مكتبة مكونات المحتوى"><span>+ إضافة مكوّن</span><button type="button" onClick={() => insertEditorBlock("paragraph")}>فقرة</button><button type="button" onClick={() => insertEditorBlock("heading")}>عنوان</button><button type="button" onClick={() => insertEditorBlock("quote")}>اقتباس</button><button type="button" onClick={() => setView("media")}>صورة / ملف</button><button type="button" onClick={() => insertEditorBlock("button")}>زر</button><button type="button" onClick={() => insertEditorBlock("faq")}>FAQ</button><button type="button" onClick={() => insertEditorBlock("callout")}>ملاحظة</button><button type="button" onClick={() => insertEditorBlock("table")}>جدول</button><button type="button" onClick={() => insertEditorBlock("ad")}>إعلان</button><button type="button" onClick={() => insertEditorBlock("separator")}>فاصل</button></div><div className="aa9-format"><button type="button" onClick={() => editorCommand("bold")}><b>B</b></button><button type="button" onClick={() => editorCommand("italic")}><i>I</i></button><button type="button" onClick={() => editorCommand("underline")}><u>U</u></button><button type="button" onClick={() => editorCommand("formatBlock", "h2")}>H2</button><button type="button" onClick={() => editorCommand("formatBlock", "h3")}>H3</button><button type="button" onClick={() => editorCommand("insertUnorderedList")}>• قائمة</button><button type="button" onClick={() => editorCommand("insertOrderedList")}>1. قائمة</button><button type="button" onClick={() => editorCommand("formatBlock", "blockquote")}>اقتباس</button><button type="button" onClick={addLink}>رابط</button><button type="button" onClick={() => setView("media")}>+ وسائط</button></div><div ref={visualRef} className="aa9-content" contentEditable suppressContentEditableWarning onInput={() => { if (visualRef.current) patchEditor({ bodyHtml: visualRef.current.innerHTML }); }} dangerouslySetInnerHTML={{ __html: editor.bodyHtml }} /></> : <textarea className="aa9-html" dir="ltr" rows={24} value={editor.bodyHtml} onChange={(event) => patchEditor({ bodyHtml: event.target.value })} />}
         </div>
-        <section className="aa9-card aa9-seo-panel"><div className="aa9-section-head"><div><h2>تحسين محركات البحث SEO</h2><p>نتيجة البحث والمشاركة الاجتماعية.</p></div><div className="aa9-seo-head-actions"><button type="button" className="ghost sm" onClick={automateSeo}>ملء SEO تلقائياً</button><strong className={review.score >= 80 ? "aa9-score good" : review.score >= 55 ? "aa9-score warn" : "aa9-score bad"}>{review.score}/100</strong><button type="button" className="accent aa9-agent-run" disabled={seoAgentBusy} onClick={() => void runSeoAgent()}>{seoAgentBusy ? "جارٍ التحليل…" : "✦ تشغيل وكيل DC SEO"}</button></div></div>
+        <section className="aa9-card aa9-seo-panel"><div className="aa9-section-head"><div><h2>تحسين محركات البحث SEO</h2><p>نتيجة البحث والمشاركة الاجتماعية.</p></div><div className="aa9-seo-head-actions"><button type="button" className="ghost sm" onClick={automateSeo}>ملء SEO تلقائياً</button><button type="button" className="ghost sm aa9-safe-fix" disabled={seoFixBusy} onClick={() => void runSeoSafeFixes()}>{seoFixBusy ? "جارٍ الإصلاح…" : "✓ إصلاح آمن نحو 100"}</button><strong className={review.score >= 80 ? "aa9-score good" : review.score >= 55 ? "aa9-score warn" : "aa9-score bad"}>{review.score}/100</strong><button type="button" className="accent aa9-agent-run" disabled={seoAgentBusy} onClick={() => void runSeoAgent()}>{seoAgentBusy ? "جارٍ التحليل…" : "✦ تشغيل وكيل DC SEO"}</button></div></div>
           <div className="aa9-search-preview"><small>{editor.canonicalUrl || articleCanonicalPath(editor, categories)}</small><h3>{editor.seoTitle || editor.title || "عنوان المقال"}</h3><p>{editor.seoDescription || editor.excerpt || "أضف وصفاً ليظهر في نتيجة البحث."}</p></div><div className="aa9-social-preview-grid"><article><span>Facebook / WhatsApp</span><img src={editor.ogImage || editor.featuredImage || "/logo.png?v=20260827-1"} alt="" /><div><strong>{editor.ogTitle || editor.seoTitle || editor.title || "عنوان المقال"}</strong><p>{editor.ogDescription || editor.seoDescription || editor.excerpt || "وصف المشاركة الاجتماعية"}</p><small dir="ltr">koudama.com</small></div></article></div>
           <div className="aa9-seo-grid">
             <label><span>عنوان SEO <small>{editor.seoTitle.length}/60</small></span><input value={editor.seoTitle} onChange={(event) => patchEditor({ seoTitle: event.target.value })} /></label>
@@ -609,7 +672,7 @@ export default function ArticlePublishingAuthority9D72Page({ initialArchive = fa
             <div className="aa9-agent-actions"><button type="button" className="accent" onClick={() => applySeoProposal(false)}>تطبيق حقول SEO</button><button type="button" className="ghost" onClick={() => applySeoProposal(true)}>تطبيق SEO + المقتطف</button><button type="button" className="ghost" disabled={seoAgentBusy} onClick={() => void runSeoAgent()}>إعادة التحليل</button></div>
             {seoProposal.issues.length > 0 && <details open><summary>المشكلات المكتشفة ({seoProposal.issues.length})</summary><ul>{seoProposal.issues.map((item) => <li key={item}>{item}</li>)}</ul></details>}
             {seoProposal.contentRecommendations.length > 0 && <details><summary>تحسين محتوى المقال</summary><ul>{seoProposal.contentRecommendations.map((item) => <li key={item}>{item}</li>)}</ul></details>}
-            {seoProposal.internalLinks.length > 0 && <details open><summary>روابط داخلية مقترحة</summary><div className="aa9-agent-links">{seoProposal.internalLinks.map((item) => <div key={item.url}><a href={item.url} target="_blank" rel="noreferrer">{item.anchor}</a><small>{item.reason}</small></div>)}</div></details>}
+            {seoProposal.internalLinks.length > 0 && <details open><summary>روابط داخلية مقترحة</summary><div className="aa9-agent-link-toolbar"><button type="button" className="ghost sm" onClick={insertAllSeoInternalLinks}>إدراج كل الروابط</button><small>تُضاف كروابط تحريرية قابلة للمراجعة قبل الحفظ.</small></div><div className="aa9-agent-links">{seoProposal.internalLinks.map((item) => <div key={item.url}><span><a href={item.url} target="_blank" rel="noreferrer">{item.anchor}</a><small>{item.reason}</small></span><button type="button" className="ghost sm" onClick={() => insertSeoInternalLink(item)}>إدراج الرابط</button></div>)}</div></details>}
             {seoProposal.siteRecommendations.length > 0 && <details><summary>تحسينات على مستوى الموقع</summary><ul>{seoProposal.siteRecommendations.map((item) => <li key={item}>{item}</li>)}</ul></details>}
           </section>}
         </section>
@@ -633,6 +696,7 @@ export default function ArticlePublishingAuthority9D72Page({ initialArchive = fa
 
   const navItems: Array<{ id: Exclude<WorkspaceView, "editor">; label: string; icon: string }> = [
     { id: "articles", label: "كل المقالات", icon: "document" },
+    { id: "seo", label: "لوحة SEO", icon: "search" },
     { id: "categories", label: "التصنيفات", icon: "folder" },
     { id: "tags", label: "الوسوم", icon: "bookmark" },
     { id: "media", label: "مكتبة الوسائط", icon: "upload" },
@@ -643,6 +707,7 @@ export default function ArticlePublishingAuthority9D72Page({ initialArchive = fa
     {error && <div className="aa9-alert aa9-alert--error" role="alert">{error}</div>}
     {notice && <output className="aa9-alert aa9-alert--success">{notice}</output>}
     {view === "articles" && renderArticles()}
+    {view === "seo" && renderSeoDashboard()}
     {(view === "categories" || view === "tags") && renderTaxonomy()}
     {view === "media" && renderMedia()}
     {view === "editor" && renderEditor()}
