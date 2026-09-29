@@ -1694,3 +1694,11 @@ FAIL_CLOSED=YES
 - Classification: browser harness event-order/cancellation behavior; target route assertions remain green with zero console/page errors.
 - Required repair: change strategy from route-only neutralization to exact event-time classification: record `analytics.google.com/g/collect` aborts separately as ignored telemetry and keep every non-analytics request failure in the blocking collection.
 - Regression guard: a failed first telemetry-neutralization strategy must not be retried unchanged; only exact-host/path event classification is permitted, never generic `ERR_ABORTED` suppression.
+
+### APEX_FINAL_ALL_RECENT_AUDIT_STALE_ORPHAN_EXPECTATION_20260929
+- Status: ACTIVE_GUARD
+- Scope: final all-recent fail-closed audit harness.
+- Failure: the audit returned BLOCKED because it required an orphan-definition count for `8e1baf...:JobApplicationPrefillControls` even though that path was no longer present in the ref-only `A` set after the final carry-forward.
+- Classification: audit-harness stale expectation; repository runtime gap not indicated.
+- Required repair: run orphan checks only for paths that remain ref-only, then rerun the unchanged path allowlist and semantic supersession checks.
+- Regression guard: a disposition check must not require evidence for a candidate that the same current diff no longer classifies as unique to the historical ref.
