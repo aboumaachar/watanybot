@@ -11,7 +11,7 @@ import type { FastifyInstance } from "fastify";
 import type { UserProfile, UserRole } from "@watany/types";
 import { query } from "../lib/db.js";
 import { hashPassword, verifyPassword } from "./password.js";
-import { signAccessToken, signRefreshToken } from "./auth-middleware.js";
+import { createAuthSession, signAccessToken, signRefreshToken } from "./auth-middleware.js";
 import { createSmsProvider, type SmsProvider } from "./sms.js";
 import {
   SmsApiConfigError,
@@ -142,17 +142,18 @@ function isUsersPhoneNumberUniqueViolation(error: unknown): boolean {
 export function normalizePhone(raw: string): string | null {
   const cleaned = raw.replace(/[\s\-().]/g, "");
 
-  // Already E.164: +<digits>
+  // Already E.164. Canonicalize the common Lebanese mistake +9610XXXXXXXX by removing the trunk 0.
+  if (/^\+9610\d{7}$/.test(cleaned)) return "+961" + cleaned.slice(5);
   if (/^\+\d{8,15}$/.test(cleaned)) return cleaned;
 
-  // International without +: 00<digits>
-  if (/^00\d{8,13}$/.test(cleaned)) return "+" + cleaned.slice(2);
+  // International without +: 00<digits>. Re-run through the E.164 canonicalizer.
+  if (/^00\d{8,13}$/.test(cleaned)) return normalizePhone("+" + cleaned.slice(2));
 
-  // Lebanese local with leading 0: 0<8 digits>
-  if (/^0\d{8}$/.test(cleaned)) return "+961" + cleaned.slice(1);
+  // Lebanese domestic format: the leading 0 is a trunk prefix and must not appear after +961.
+  if (/^0\d{7}$/.test(cleaned)) return "+961" + cleaned.slice(1);
 
-  // Lebanese local without leading 0: 8 digits
-  if (/^\d{8}$/.test(cleaned)) return "+961" + cleaned;
+  // Lebanese local number without trunk prefix (mobile/landline forms used by the app).
+  if (/^\d{7,8}$/.test(cleaned)) return "+961" + cleaned;
 
   return null;
 }
@@ -329,7 +330,8 @@ export async function otpRoutes(app: FastifyInstance): Promise<void> {
         return reply.code(503).send({ error: OTP_SEND_FAILURE_MESSAGE });
       }
 
-      const latestRequestResult = await query<{ created_at: string }>(
+      try {
+        const latestRequestResult = await query<{ created_at: string }>(
         `SELECT created_at
          FROM phone_otps
          WHERE phone_number = $1
@@ -450,7 +452,20 @@ export async function otpRoutes(app: FastifyInstance): Promise<void> {
         "OTP request sent",
       );
 
-      return reply.send(genericSuccess);
+        return reply.send(genericSuccess);
+      } catch (error) {
+        request.log.error(
+          {
+            err: error,
+            otpProvider: process.env.OTP_PROVIDER ?? "console",
+            smsProvider: process.env.OTP_PROVIDER === "sms" ? process.env.SMS_PROVIDER ?? "twilio" : null,
+            phoneNumber: maskPhoneForLogs(normalized),
+            requestIp,
+          },
+          "OTP request persistence/runtime failure",
+        );
+        return reply.code(503).send({ error: OTP_SEND_FAILURE_MESSAGE });
+      }
     },
   );
 
@@ -475,8 +490,17 @@ export async function otpRoutes(app: FastifyInstance): Promise<void> {
       if (!normalized) {
         return reply.code(400).send({ error: "رقم الهاتف غير صالح" });
       }
-
       try {
+        const unresolvedLegacyPhone = await query<{ total: number }>(
+          `SELECT COUNT(*)::int AS total FROM legacy_wp_user_identities
+           WHERE identity_verification_required = TRUE
+             AND regexp_replace(COALESCE(shared_phone,''), '[^0-9]', '', 'g') = $1`,
+          [normalized],
+        );
+        if ((unresolvedLegacyPhone.rows[0]?.total ?? 0) > 0) {
+          return reply.code(409).send({ error: "هذا الرقم مرتبط بأكثر من حساب قديم. سجّل الدخول باسم المستخدم أو البريد ثم وثّق رقمك من الملف الشخصي." });
+        }
+
         const useSmsApi = isSmsApiPhoneVerificationConfigured();
         const localRequestId = randomUUID();
         let backendRequestId = "";
@@ -662,19 +686,20 @@ export async function otpRoutes(app: FastifyInstance): Promise<void> {
 
       const user = upsertResult.rows[0];
 
+      const refreshToken = signRefreshToken({ sub: user.id });
+      const sessionId = await createAuthSession({
+        userId: user.id,
+        refreshToken,
+        ip: requestIp,
+        userAgent,
+      });
       const accessToken = signAccessToken({
         sub: user.id,
         role: user.role as UserRole,
         // Use phone_number as email placeholder for JWT compatibility
         email: user.phone_number,
+        sid: sessionId,
       });
-      const refreshToken = signRefreshToken({ sub: user.id });
-
-      // Store session
-      await query(
-        "INSERT INTO sessions (user_id, token, ip, user_agent, expires_at) VALUES ($1, $2, $3, $4, now() + interval '7 days')",
-        [user.id, refreshToken, requestIp, userAgent],
-      );
 
       await query("UPDATE phone_otps SET consumed_at = now() WHERE id = $1", [otp.id]);
       await recordOtpAudit({
@@ -802,6 +827,12 @@ export async function otpRoutes(app: FastifyInstance): Promise<void> {
            WHERE id = $1`,
           [pending.id, verifiedAt],
         );
+        await query(
+          `UPDATE legacy_wp_user_identities
+           SET identity_verification_required = FALSE, updated_at = now()
+           WHERE user_id = $1`,
+          [authUser.id],
+        );
 
         await recordOtpAudit({
           userId: authUser.id,
@@ -822,7 +853,7 @@ export async function otpRoutes(app: FastifyInstance): Promise<void> {
             phoneNumber: user.phone_number,
             profileCompleted: Boolean(user.profile_completed),
           },
-          profile: mapPhoneVerificationProfile(user),
+          profile: { ...mapPhoneVerificationProfile(user), identityVerificationRequired: false },
         });
       } catch (error) {
         if (isUsersPhoneNumberUniqueViolation(error)) {
