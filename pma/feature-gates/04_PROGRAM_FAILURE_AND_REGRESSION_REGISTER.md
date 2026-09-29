@@ -1630,3 +1630,67 @@ FAIL_CLOSED=YES
 - Root class: `%VAR%` references were composed on the same parsed CMD line as `set VAR=...`, allowing pre-expansion before assignment and invalidating the intended evidence path/repair target.
 - Guard: do not accept process exit alone; verify evidence artifact plus actual reparse target. Use fixed absolute paths or a prewritten CMD with variables expanded at execution time on separate lines.
 - Retry rule: perform an explicit state-changing junction replacement with fixed paths, verify both reparse targets and React package presence, then rerun Web User typecheck.
+
+## APEX_ISOLATED_WEB_USER_TYPESCRIPT_BIN_MISSING_AFTER_DEPENDENCY_JUNCTION_REPAIR_20260929
+- Status: ACTIVE / REGISTERED BEFORE REPAIR.
+- Trigger: Web User typecheck retry exit 1 with Node MODULE_NOT_FOUND for isolated `apps/web-user/node_modules/typescript/bin/tsc`; stderr captured full stack.
+- Evidence: `validation/web-user-typecheck.exit.txt=1`; stdout empty; stderr names the missing exact executable path. Web User production Vite build evidence remains exit 0 with `WEB_USER_BUILD_SUCCESS=YES` and empty stderr.
+- Classification: validation runner dependency-path defect, not product source/type failure.
+- Guard: do not install or mutate product dependencies solely for proof. Resolve TypeScript from an already-proven repository dependency authority and rerun the same `tsconfig.json --noEmit` gate.
+- Retry rule: only after the runner path is changed to an existing TypeScript binary and its existence is independently verified.
+
+## APEX_ISOLATED_WEB_USER_APP_NODE_MODULES_JUNCTION_MISSING_20260929
+- Status: ACTIVE / REGISTERED BEFORE REPAIR.
+- Trigger: true TypeScript compile reached project config but failed TS2688 for `vite/client`; independent filesystem check showed isolated `apps/web-user/node_modules` absent while canonical Web User contains `vite/client.d.ts`.
+- Evidence: `validation/web-user-typecheck.exit.txt=2`, stdout TS2688, stderr empty; live `dir /AL` shows no app-level junction and `ISO_VITE_CLIENT=NO`, `CANON_VITE_CLIENT=YES`.
+- Classification: isolated validation topology defect, not product source/type defect.
+- Guard: restore only the isolated app-level `node_modules` junction to canonical Web User dependencies; do not install, mutate, or clean canonical dependencies.
+- Retry rule: independently verify reparse target plus `vite/client.d.ts`, then rerun typecheck and build with fresh output files.
+
+### APEX_ALL_RECENT_JOB_PREFILL_AND_ACCOUNT_SECURITY_UI_STRANDED_20260929
+- Status: ACTIVE_GUARD
+- Scope: all-recent WatanyBot convergence audit against `b8d06c1ae8c6381b7f62afac899402633a5c690e`.
+- Failure: active b8 job UI capabilities were absent from the unified tree: authenticated profile prefill and previous-application prefill on Ain El Hafeh/Ain Mreisseh forms, plus the Profile job-account password/security card.
+- Evidence: b8 route usage proves `JobApplicationProfileFillButton` and `JobApplicationPreviousFillButton` were imported/rendered by both live legacy job pages; `JobAccountSecurityCard` was imported/rendered by `ProfilePage`; current Web User has no `change-password` UI while `mustChangePassword` remains mapped and backend ownership is present.
+- Required repair: restore only the three active helper components and their bounded page integrations; do not carry orphaned `JobApplicationPrefillControls`, `JobsCmsDashboardPage`, or `MyJobApplicationsPage`.
+- Regression guard: recent-owner audits must distinguish definition-only files from files proven reachable by route/import usage before declaring a branch superseded.
+
+### APEX_CMD_INLINE_PERCENT_EXIT_CAPTURE_LITERAL_EVIDENCE_DEFECT_20260929
+- Status: ACTIVE_GUARD
+- Scope: CMD evidence wrappers that set and consume `%ERRORLEVEL%` variables inside one inline command string.
+- Failure: the b8 active-job UI patch wrapper wrote literal `%RC%` to the check exit artifact and never produced apply-stage evidence, while the outer process returned 0.
+- Classification: controller/evidence defect; source mutation state is unknown until independently inspected.
+- Required repair: inspect source state first, then use a batch file with line-scoped `set RC=%ERRORLEVEL%` and subsequent lines (or delayed expansion) for deterministic exit persistence before any retry.
+- Regression guard: never accept an outer shell exit as child-stage proof when the persisted child exit artifact is missing, non-numeric, or contains an unexpanded `%VAR%` token.
+
+### APEX_VALIDATION_JUNCTION_EXISTING_PATH_AND_STALE_TARGET_DRIFT_20260929
+- Status: ACTIVE_GUARD
+- Scope: isolated Web User validation dependency junction setup.
+- Failure: chained `mklink /J` stopped when the already-correct `apps/web-user/node_modules` junction existed; subsequent topology inspection showed both shared-package junctions present but targeting the web-user dependency tree instead of their canonical package-local donors.
+- Classification: validation topology drift / non-idempotent setup defect; no compile was run under the partial state.
+- Required repair: inspect every expected junction target, preserve already-correct bindings, replace only stale bindings with proven canonical donors, then rerun unchanged validation.
+- Regression guard: validation junction setup must be idempotent and target-aware; an existing path is neither automatic success nor automatic failure until its reparse target is verified.
+
+### APEX_WEB_USER_JOB_UI_BROWSER_PROOF_UNCLASSIFIED_REQUEST_FAILURES_20260929
+- Status: ACTIVE_GUARD
+- Scope: built Web User browser proof for restored job-prefill and Profile account-security UI.
+- Failure: parser preflight passed, but browser runtime exited 1 at the final gate with `REQUEST_FAILURES=3`; the harness did not persist the failed request URLs before throwing.
+- Classification: browser-proof evidence defect until each failed request is identified; product/UI failure is not assumed.
+- Required repair: persist raw failed request method/URL/error before final classification, rerun the same built bundle, and fail closed on any target app/API/resource failure while allowing only specifically proven benign external noise.
+- Regression guard: a request-failure count without URL/error evidence is insufficient for product diagnosis and must not be converted into either PASS or application FAIL.
+
+### APEX_BROWSER_PROOF_EXTERNAL_GOOGLE_ANALYTICS_ABORTED_REQUEST_NOISE_20260929
+- Status: ACTIVE_GUARD
+- Scope: local built-bundle browser proofs that navigate between WatanyBot routes while Google Analytics is enabled.
+- Failure: each tested route emitted one `POST https://analytics.google.com/g/collect` request that Playwright reported as `net::ERR_ABORTED` during local navigation; target route/UI assertions all passed with zero console/page errors.
+- Classification: external telemetry proof noise, not WatanyBot application/API failure.
+- Required repair: intercept only `https://analytics.google.com/g/collect*` in the local proof harness and fulfill it with a synthetic successful empty response; continue to record and fail closed on every other request failure.
+- Regression guard: never broadly ignore request failures; external telemetry may be neutralized only by exact host/path evidence while application, API, asset, and unknown failures remain blockers.
+
+### APEX_PLAYWRIGHT_ANALYTICS_ROUTE_FULFILL_DID_NOT_SUPPRESS_REQUESTFAILED_20260929
+- Status: ACTIVE_GUARD
+- Scope: local Playwright browser proof with Google Analytics send-beacon/page-view telemetry.
+- Failure: exact `analytics.google.com/g/collect` route fulfillment was added, but Playwright still emitted the same three `requestfailed` `net::ERR_ABORTED` events during route navigation.
+- Classification: browser harness event-order/cancellation behavior; target route assertions remain green with zero console/page errors.
+- Required repair: change strategy from route-only neutralization to exact event-time classification: record `analytics.google.com/g/collect` aborts separately as ignored telemetry and keep every non-analytics request failure in the blocking collection.
+- Regression guard: a failed first telemetry-neutralization strategy must not be retried unchanged; only exact-host/path event classification is permitted, never generic `ERR_ABORTED` suppression.
