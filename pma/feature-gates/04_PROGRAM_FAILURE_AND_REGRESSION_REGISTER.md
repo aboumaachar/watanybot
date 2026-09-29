@@ -1451,3 +1451,52 @@ FAIL_CLOSED=YES
 - Impact: feature validation, merge identity, push exit, and remote-ref parity remain independently evidenced, but this execution violated the APEX report-lifecycle ordering contract and must not be described as process-clean.
 - Guard: every future resume must precreate `FINAL_REPORT.md`, `summary.json`, `FINAL_STATUS.txt`, progress/checkpoint/CSV ledgers, logs, stage reports, and manifest scaffolding before substantive Git or deployment mutation; later sealing may finalize them but cannot substitute for precreation.
 - Current recovery: create and freeze the complete closeout package now, preserve this late-materialization fact in warnings/failures, and report the overall run as successful publication with a registered reporting-order deviation rather than an unqualified process PASS.
+
+### APEX_WINDOWS_AUTHORITY_DEVICE_OFFLINE_BLOCKER_20260929
+- Status: ACTIVE PROCESS GUARD / registered 2026-09-29 during CMS/CRM/Admin convergence resume.
+- Trigger: the authorized Windows authority device `WIN-J8RN490L6JB` was offline, so the convergence run could not create the mandatory report package or safely mutate Git state on the canonical machine.
+- Classification: execution-environment connectivity blocker, not a product/source defect.
+- Guard: do not substitute the Redmi, production server, or another host for canonical WatanyBot repository mutation. Resume only after the authorized Windows device is online and responsive; then precreate the complete APEX report package before substantive execution.
+- Recovery evidence: device listed online and answered ping on 2026-09-29 before this resumed run; no repository mutation occurred during the offline interval.
+
+### APEX_NATIVE_SKILL_DECLARED_SOURCE_MISSING_20260929
+- Status: ACTIVE PROCESS GUARD / registered 2026-09-29 during CMS/CRM/Admin convergence precheck.
+- Trigger: `.github\skills\apex-ps1\SKILL.md` declares `APEX_NATIVE_SKILL_SOURCE=C:\xampp\htdocs\projectx\watanybot\.pma\skills\apex-ps1\SKILL.md`, but the declared `.pma` file is absent on disk; the first Windows PowerShell 5.1 precheck terminated with exit 1 before any Git mutation.
+- Classification: stale/missing secondary native-source pointer in the repository APEX shim; not evidence of a product-tree defect. The `.github` APEX skill was readable and its mandatory convergence contract was applied.
+- Guard: never claim the declared native-source SHA is currently verified when the declared file is absent. Treat the loaded `.github` skill plus project-level APEX mandate as current enforcement, preserve the discrepancy as an explicit process warning, and do not fabricate or silently recreate the missing native skill file during feature convergence.
+- Recovery boundary: continue only after this class is registered; no retry may assert `APEX_NATIVE_SKILL_SOURCE_SHA256` verification unless the declared source is actually restored and independently hashed.
+
+### APEX_REMOTE_COMMAND_RESPONSE_TIMEOUT_AMBIGUOUS_MUTATION_20260929
+- Status: ACTIVE PROCESS GUARD / registered 2026-09-29 during convergence governance commit.
+- Trigger: Desktop Commander returned a transport response timeout while a PowerShell/Git add-and-commit sequence could have produced side effects.
+- Classification: remote-execution observability defect; mutation state is UNKNOWN until independently inspected.
+- Guard: never retry a timed-out mutation blindly. First verify device connectivity, branch HEAD, worktree/index state, and last commit read-only; only retry after proving whether the prior command completed.
+- Recovery evidence: follow-up read-only proof showed HEAD remained `7f927fabd92d519e779f4a79bd92ee4257b8b3ae`, no governance commit existed, and the regression register remained as a working-tree modification. Registration of this class is the required state change before retry.
+
+### APEX_POWERSHELL51_GIT_LINE_ENDING_WARNING_NATIVE_STDERR_TERMINATION_20260929
+- Status: ACTIVE PROCESS GUARD / registered 2026-09-29 during convergence governance staging.
+- Trigger: Windows PowerShell 5.1 with `$ErrorActionPreference='Stop'` promoted Git's `LF will be replaced by CRLF` advisory emitted during `git add` into a terminating `NativeCommandError`, even though Git staged the intended path.
+- Classification: native-process wrapper/line-ending advisory handling defect, not a source-content failure. Read-only verification proved HEAD unchanged and exactly the regression-register path staged.
+- Guard: do not retry the same PowerShell native invocation unchanged and do not globally alter repository line-ending configuration. For this add boundary, capture native stdout/stderr explicitly and invoke Git with command-scoped `-c core.safecrlf=false`; require native exit 0, expected staged-path cardinality, and empty captured stderr before commit.
+- Recovery boundary: this class registration plus the changed captured-native runner is the required state change before retry.
+
+### APEX_DOTNET_PROCESS_GIT_ADD_EXIT1_EMPTY_STDERR_20260929
+- Status: ACTIVE PROCESS GUARD / registered 2026-09-29 during governance staging retry.
+- Trigger: the first captured `.NET ProcessStartInfo` Git runner invoked `git -c core.safecrlf=false -C <worktree> add -- <register>` and returned exit 1 with empty captured stderr.
+- Classification: native-runner/argument-boundary defect; not a source or Git-index failure. Follow-up read-only proof showed the register remained both staged and unstaged (`MM`) because the newly appended guard had not been staged.
+- Guard: do not retry the same argument string. Change the process boundary by setting `ProcessStartInfo.WorkingDirectory` to the worktree and remove `-C` from Git arguments; capture exit/stdout/stderr and require exit 0 plus exact one-path staged scope.
+- Recovery boundary: this class registration and changed working-directory runner are required before retry.
+
+### APEX_POWERSHELL_ARGS_AUTOMATIC_VARIABLE_COLLISION_NATIVE_RUNNER_20260929
+- Status: ACTIVE PROCESS GUARD / registered 2026-09-29 during governance staging retry.
+- Trigger: the `.NET ProcessStartInfo` helper declared a function parameter named `$args`, colliding with PowerShell's automatic `$args` variable. The intended Git argument string was therefore not reliably passed and bare `git.exe` behavior produced exit 1 with empty stderr.
+- Classification: PowerShell wrapper/interpolation defect, not a Git repository or source defect.
+- Guard: never use `$args` as a named helper parameter in PowerShell native-process wrappers. Use an unambiguous parameter such as `$gitArgs`, persist the exact argument string when relevant, and require native exit 0 plus expected stdout/scope and empty stderr.
+- Recovery boundary: this class registration and renaming the helper parameter from `$args` to `$gitArgs` is the required state-changing wrapper repair before retry.
+
+### APEX_PROCESSSTARTINFO_GIT_COMMIT_MESSAGE_QUOTING_PATHSPEC_20260929
+- Status: ACTIVE PROCESS GUARD / registered 2026-09-29 during convergence governance commit.
+- Trigger: the first `ProcessStartInfo.Arguments` commit attempt embedded a quoted multi-word `-m` message inside nested PowerShell/cmd quoting; Git parsed message words as pathspecs and exited 1 with explicit pathspec errors.
+- Classification: native-process quoting/interpolation defect; no commit was created. Read-only verification proved HEAD unchanged and the intended regression-register path remained staged.
+- Guard: avoid nested inline commit-message quoting in this execution chain. Persist the exact commit message to an external UTF-8 text file and invoke `git commit -F <message-file>` through the captured native runner; require exit 0, empty stderr, expected parent, and clean worktree.
+- Recovery boundary: this class registration plus the `-F` message-file strategy is required before retry.
