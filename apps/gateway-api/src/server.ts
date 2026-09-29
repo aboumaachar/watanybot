@@ -35,6 +35,10 @@ import multipart from "@fastify/multipart";
 import { seasonalAppleJobRouter } from './koudama/surveys/seasonal-apple-job';
 import { registerAinElHafehAdminRoutes } from "./routes/ainelhafeh-admin";
 import { registerAinMreissehBuildingAssistantRoutes } from "./koudama/surveys/ain-mreisseh-building-assistant/ainMreissehBuildingAssistant.routes.js";
+import { registerMiddleEastSecurityRoutes } from "./koudama/surveys/middle-east-security/middleEastSecurity.routes.js";
+import { registerMiddleEastSecurityShareRoutes } from "./koudama/surveys/middle-east-security/middleEastSecurity.share.js";
+import { registerJobReadinessRoutes } from "./civilian-jobs/job-readiness.routes.js";
+import { registerJobTemplateBuilderRoutes } from "./civilian-jobs/job-template-builder.routes.js";
 import { getTrustProxySetting } from "./auth/request-network.js";
 /* ================================================================
  *  Fastify instance
@@ -152,6 +156,10 @@ if (process.env.NODE_ENV !== "test") {
     await app.register(registerKbImportRoutes);
 await registerAinElHafehAdminRoutes(app);
     await registerAinMreissehBuildingAssistantRoutes(app);
+    await registerMiddleEastSecurityRoutes(app);
+    await registerMiddleEastSecurityShareRoutes(app);
+    await registerJobReadinessRoutes(app);
+    await registerJobTemplateBuilderRoutes(app);
     await app.listen({ port, host, backlog: 2048 });
   } catch (err) {
     app.log.error(err);

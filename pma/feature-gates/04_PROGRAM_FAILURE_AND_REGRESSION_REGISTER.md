@@ -1562,3 +1562,71 @@ FAIL_CLOSED=YES
 - Failure: current unified candidate `d52f5216e313b6b699f7a879f5960993be98a7f8` contains Middle East Security Web User application/admin/share surfaces that call `/api/jobs/middle-east-security/*`, `/api/superadmin/middle-east-security/*`, and `/api/share/jobs/middle-east-security/*`, while the corresponding Gateway survey owner directory is absent from that tree.
 - Guard: do not claim unified-baseline closure and do not patch only a missing import/route. Recover the complete latest proven MES owner set from an authority branch, reconcile migrations/routes/repository/share/address/types/tests plus frontend consumers against the current product tree, and rerun affected typecheck/build/runtime/auth/browser preservation gates.
 - Status: ACTIVE
+
+### APEX_CMD_INLINE_ERRORLEVEL_REDIRECT_EMPTY_EVIDENCE_20260929
+- Status: ACTIVE
+- Scope: Windows CMD evidence wrappers.
+- Failure: inline `echo %errorlevel%>path` produced `ECHO is on.` and an empty exit-code artifact, so parser/runtime success could not be proven from the persisted evidence.
+- Guard: capture `%ERRORLEVEL%` into a named variable in a dedicated `.cmd` wrapper, then emit the variable with redirection separated from the value; require a non-empty numeric exit artifact before interpreting the stage.
+- Repair rule: register first, replace the inline wrapper with a checked batch wrapper, rerun the same preflight on unchanged source bytes, and retain the failed evidence artifacts.
+
+### APEX_ISOLATED_WORKTREE_PNPM_JUNCTION_BIN_RESOLUTION_MISSING_20260929
+- Status: ACTIVE
+- Scope: isolated-worktree validation using donor `node_modules` junctions.
+- Failure: `pnpm --filter gateway-api typecheck` exited 1 because `tsc` was not resolved from the junctioned validation topology; MES tests did not run.
+- Evidence: `mes-gateway-typecheck.exit.txt=1`; stderr contains `'tsc' is not recognized as an internal or external command`.
+- Guard: do not interpret this as a source/type failure. Inspect donor `.bin`/pnpm link targets, prove the exact executable path, and use an explicit validated executable boundary or a complete validation-only junction topology before retrying.
+- Repair rule: validation-plane only; no product-source mutation; rerun typecheck and focused tests after concrete topology repair.
+
+### APEX_CMD_NESTED_REGEX_ALTERNATION_PIPE_INTERPRETATION_20260929
+- Status: ACTIVE
+- Scope: nested Windows CMD audit probes containing regex alternation (`|`).
+- Failure: a quoted `git grep -E` alternation was reinterpreted by the nested CMD boundary as pipeline syntax (`JobApplicationPreviousFillButton is not recognized`).
+- Guard: do not pass regex alternation through nested inline CMD command strings. Use a file-backed wrapper with escaped metacharacters or a non-shell content-search API.
+- Repair rule: no source mutation; preserve the failed probe evidence and rerun the audit through a metacharacter-safe search boundary.
+
+### APEX_ALL_RECENT_JOB_READINESS_BUILDER_FRONTEND_BACKEND_AUTHORITY_SPLIT_20260929
+- Status: ACTIVE
+- Scope: all-recent WatanyBot convergence audit, civilian jobs readiness/employer/builder workflow.
+- Failure: current Web User routes/pages actively call `/api/jobs/readiness`, `/api/jobs/employer-access/*`, `/api/jobs/candidates/search`, and `/api/jobs/builder/*`, but the current Gateway contains none of those route owners and no `ensureAndLinkJobApplicant` owner.
+- Authority evidence: `b8d06c1ae8c6381b7f62afac899402633a5c690e` contains the coherent `job-applicant-accounts.ts`, `job-readiness.routes.ts`, `job-template-builder.routes.ts`, corresponding migrations, server registration, and matching frontend contract.
+- Guard: do not treat the existing routed frontend as proof of capability. Require a coherent backend/schema owner or explicitly remove/retire the frontend contract.
+- Repair rule: preserve newer universal-job authority; adapt the missing b8 owner onto the current migration sequence, validate endpoint ownership/auth/schema compatibility, and rerun jobs plus preservation regressions before publication.
+
+### APEX_NODE_PATCHER_LF_ANCHOR_CRLF_SOURCE_MISMATCH_20260929
+- Status: ACTIVE
+- Scope: Node file-backed source patchers against Windows-checked-out TypeScript files.
+- Failure: parser preflight exited 0, but `patch-jobs-owner.mjs` runtime exited 1 with `SERVER_IMPORT_ANCHOR_MISSING` because the patcher encoded LF-only anchors while `server.ts` uses CRLF line endings.
+- Side effects: none; the patcher buffers all source changes in memory and performs writes only after all replacements/count assertions succeed, so failure occurred before any write.
+- Guard: source patchers must detect each target file's native EOL and construct anchors/replacements using that EOL, or use exact EOL-neutral structural matching with uniqueness assertions.
+- Repair rule: register first, verify expected symbols remain absent, make the complete patcher EOL-aware, rerun parser + runtime, and revalidate all binding counts.
+
+### APEX_JOB_SUCCESS_LINK_UNHANDLED_APPLICATIONS_SECTION_20260929
+- Status: DEFERRED_FOLLOW_UP
+- Scope: Web User job-application success navigation.
+- Failure: Middle East Security and Universal Job Application success views link to `/jobs?section=applications`, but the current `JobsPage.tsx` has no `applications` section/query handler; the canonical routed applications surface is `/jobs/applications` and it is authenticated.
+- Convergence disposition: do not broaden the current authority-reconciliation repair into navigation/auth UX redesign. Preserve the finding for a bounded follow-up that resolves anonymous tracking versus authenticated application history deliberately.
+- Guard: future success-link work must prove the destination exists for both authenticated and anonymous submissions and must not expose applications by phone or other weak identifiers.
+
+### APEX_WEB_USER_SHARED_PACKAGE_REACT_RESOLUTION_JUNCTION_MISSING_20260929
+- Status: ACTIVE_GUARD
+- Scope: isolated-worktree Web User typecheck/build validation.
+- Failure: TypeScript traversed shared workspace packages (`packages/address-network`, `packages/lebanese-administrative-authority`) but could not resolve `react` / `react/jsx-runtime`; Web User typecheck exited 2 with empty stderr before build.
+- Classification: validation dependency-topology defect, not product-source failure.
+- Required repair: prove canonical package/root dependency topology, add validation-only junction bindings needed for shared-package resolution, rerun unchanged typecheck/build, and remove junctions before commit.
+- Regression guard: never classify TS2307 shared-package dependency errors as application defects until isolated workspace package-level module-resolution topology is proven equivalent to canonical donor.
+
+## APEX_ISOLATED_WEB_USER_WORKSPACE_REACT_RESOLUTION_JUNCTION_MISSING_20260929
+- Status: ACTIVE / REGISTERED BEFORE REPAIR.
+- Trigger: Web User typecheck exit 2 in isolated convergence worktree while imported workspace packages `packages/address-network` and `packages/lebanese-administrative-authority` could not resolve `react` or `react/jsx-runtime`.
+- Evidence: `validation/web-user-typecheck.exit.txt=2`; stdout contains TS2307/TS2875 module-resolution failures; stderr empty.
+- Classification: validation topology / dependency-junction defect, not proven product source defect.
+- Guard: repair only isolated validation dependency resolution; do not modify package source to satisfy missing node_modules topology.
+- Retry rule: after state-changing junction repair, rerun exact Web User typecheck from clean evidence files before build.
+
+## APEX_CMD_SAME_LINE_PERCENT_EXPANSION_REPAIR_EVIDENCE_FALSE_ZERO_20260929
+- Status: ACTIVE / REGISTERED BEFORE RETRY.
+- Trigger: junction-repair CMD returned process exit 0 but the expected evidence file was absent and junction targets remained on the prior canonical package-level paths.
+- Root class: `%VAR%` references were composed on the same parsed CMD line as `set VAR=...`, allowing pre-expansion before assignment and invalidating the intended evidence path/repair target.
+- Guard: do not accept process exit alone; verify evidence artifact plus actual reparse target. Use fixed absolute paths or a prewritten CMD with variables expanded at execution time on separate lines.
+- Retry rule: perform an explicit state-changing junction replacement with fixed paths, verify both reparse targets and React package presence, then rerun Web User typecheck.
