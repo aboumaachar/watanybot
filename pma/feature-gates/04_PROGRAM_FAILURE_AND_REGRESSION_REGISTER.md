@@ -1702,3 +1702,45 @@ FAIL_CLOSED=YES
 - Classification: audit-harness stale expectation; repository runtime gap not indicated.
 - Required repair: run orphan checks only for paths that remain ref-only, then rerun the unchanged path allowlist and semantic supersession checks.
 - Regression guard: a disposition check must not require evidence for a candidate that the same current diff no longer classifies as unique to the historical ref.
+
+### APEX_WEB_USER_TYPECHECK_EXIT0_SUCCESS_TOKEN_ABSENT_20260929
+- Date: 2026-09-29
+- Class: validation evidence / success-token integrity.
+- Symptom: Web User typecheck evidence recorded native exit `0` and zero-byte stderr, but the wrapper-owned `WEB_USER_TYPECHECK_SUCCESS=YES` token was absent from captured stdout.
+- Impact: compiler output alone was insufficient for APEX PASS because the expected success token contract was not met; no product source mutation resulted from this evidence defect.
+- Guard: write a dedicated result artifact after the compiler returns, require exit `0`, empty stderr, exact success token, and absence of failure tokens before accepting typecheck.
+- Repair: replace only the evidence wrapper, rerun the unchanged compiler against the same source and dependency junction topology, then independently read exit/stdout/stderr/result artifacts.
+- Status: ACTIVE
+
+### APEX_WEB_USER_TYPECHECK_VITE_CLIENT_VALIDATION_TOPOLOGY_MISSING_20260929
+- Date: 2026-09-29
+- Class: isolated-worktree dependency topology.
+- Symptom: fail-closed Web User typecheck V2 exited `2` with `TS2688 Cannot find type definition file for 'vite/client'` after React resolution was repaired.
+- Impact: validation environment is incomplete; this is not evidence of a Web User source regression. No product source mutation occurred.
+- Guard: prove the isolated Web User `node_modules` junction target contains both `react` and `vite` package roots before typecheck; package-level workspace junctions may reuse that same proven dependency tree.
+- Repair: inspect current junction target and canonical package ownership, then rebind only validation junctions; rerun unchanged typecheck/build and require explicit exit/status/stderr proof.
+- Status: ACTIVE
+
+### APEX_CMD_NESTED_PERCENT_VARIABLE_PREEXPANSION_PATH_DEFECT_20260929
+- Date: 2026-09-29
+- Class: Windows cmd diagnostic transport.
+- Symptom: a nested `cmd /c` diagnostic referenced `%WT%` in the outer command text; the outer shell expanded it before the inner `set WT=...`, yielding an invalid path.
+- Impact: read-only diagnostic failed before repository access; no mutation occurred.
+- Guard: avoid nested `%VAR%` expansion for bounded diagnostics; pass literal absolute paths or use one shell scope with proven variable expansion.
+- Repair: rerun the same read-only topology census with literal absolute paths only.
+- Status: ACTIVE
+
+### APEX_CMD_CHAINED_QUOTED_BATCH_INVOCATION_SYNTAX_DEFECT_20260929
+- Date: 2026-09-29
+- Class: Windows cmd validation launcher transport.
+- Symptom: chaining two quoted `.cmd` paths with `&&` through the Desktop Commander shell produced `The filename, directory name, or volume label syntax is incorrect` before either validation wrapper ran.
+- Impact: no compiler/build/source mutation occurred.
+- Guard: invoke validation batch files one process at a time; do not rely on nested quoted batch chaining through the connector shell.
+- Repair: execute typecheck V2 and build as separate native processes and validate each evidence bundle independently.
+- Status: ACTIVE
+
+- `APEX_WEB_USER_BROWSER_PROOF_EXTERNAL_ANALYTICS_ABORT_FALSE_APP_FAILURE_20260929` - The final Web User restored-surfaces Chromium proof rendered all four required routes and expected controls successfully with zero console errors and zero page errors, but Playwright recorded one aborted `https://analytics.google.com/g/collect` request per navigation in the local headless environment. These external telemetry aborts do not represent application resource or route failure. Guard: preserve the raw failed-request evidence, classify the proof-environment boundary before repair, then rerun unchanged application assertions while preserving raw failed requests and classifying external telemetry separately; require zero failed application/runtime requests, zero console errors, and zero page errors.
+
+- `APEX_BROWSER_PROOF_REPAIR_MUST_RESPECT_EXISTING_ANALYTICS_FULFILL_REGRESSION_20260929` - During final Web User browser-proof closeout, the newly drafted analytics-noise guard initially proposed `204` fulfillment before the full local register tail was re-read. The existing class `APEX_PLAYWRIGHT_ANALYTICS_ROUTE_FULFILL_DID_NOT_SUPPRESS_REQUESTFAILED_20260929` already proves that strategy can still emit aborted-request events. Guard: when a stronger existing regression class supersedes a newly drafted recovery step, correct the new guard before execution and use a materially different strategy; preserve raw request failures, separate external telemetry advisory failures from application/runtime failures, and require zero application/runtime failures.
+
+- `APEX_WINDOWS_STORE_PYTHON_ALIAS_NO_INTERPRETER_REPAIR_BOUNDARY_20260929` - A validation-register text correction attempted a read-modify-write through `python -c`, but this Windows host exposed only the Microsoft Store execution alias and no Python interpreter, so the command terminated before opening or modifying the repository file. Guard: treat the Store alias message as a pre-execution tooling failure, verify the target bytes remain unchanged, then use an already proven local runtime such as Node for the same deterministic replacement; do not install tooling during bounded closeout.
