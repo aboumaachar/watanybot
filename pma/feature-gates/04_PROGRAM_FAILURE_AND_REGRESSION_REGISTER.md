@@ -1500,3 +1500,17 @@ FAIL_CLOSED=YES
 - Classification: native-process quoting/interpolation defect; no commit was created. Read-only verification proved HEAD unchanged and the intended regression-register path remained staged.
 - Guard: avoid nested inline commit-message quoting in this execution chain. Persist the exact commit message to an external UTF-8 text file and invoke `git commit -F <message-file>` through the captured native runner; require exit 0, empty stderr, expected parent, and clean worktree.
 - Recovery boundary: this class registration plus the `-F` message-file strategy is required before retry.
+
+### APEX_CANONICAL_WORKTREE_AGGREGATE_ADMIN_GATEWAY_DIFF_FAILED_20260929
+- Status: ACTIVE PROCESS GUARD / registered 2026-09-29 during CMS/CRM/Admin source-relationship census.
+- Trigger: the captured native runner returned a non-accepted result while attempting one aggregate `git diff --name-status <product-base> -- apps/web-admin apps/gateway-api` against the divergent canonical dirty workspace; the first wrapper terminated before persisting the native exit/stderr details.
+- Classification: source-census wrapper failure pending diagnostic; not evidence that either app tree is invalid. Earlier read-only proof established canonical HEAD is not a descendant of product authority and the two histories diverge.
+- Guard: do not repeat the aggregate diff unchanged or infer source failure. First run an explicitly diagnostic read-only probe that persists native exit, stdout, and stderr; then choose a narrower per-tree/per-path census if required.
+- Recovery boundary: this class registration precedes any replacement census command.
+
+### APEX_INLINE_PS51_JOIN_NEWLINE_NESTED_QUOTING_PARSER_DEFECT_20260929
+- Status: ACTIVE PROCESS GUARD / registered 2026-09-29 during convergence checkpointing.
+- Trigger: an inline Windows PowerShell 5.1 command embedded `($status -join "`n")` inside the outer remote command string; nested quoting removed the string operand and the PowerShell parser failed before execution with `ExpectedValueExpression` / unexpected `` `n `` tokens.
+- Classification: inline PowerShell quoting/parser defect; no repository or report mutation occurred.
+- Guard: do not embed quoted newline join expressions inside nested remote `-Command` strings. Prefer direct collection cardinality/item comparisons or a precreated script file with independent parser proof when multiline expression logic is required.
+- Recovery boundary: register this class first, then retry using direct array count and exact element comparisons without `-join`.
