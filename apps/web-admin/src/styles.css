@@ -2380,3 +2380,56 @@ button:disabled,
   .users-selected-task-actions > * { flex: 1 1 100%; }
 }
 /* APEX_USERS_PROFILE_PAGE_20260928_END */
+
+
+/* APEX_OPTION_B_OPS_PRIMITIVES_20260929_START */
+.ops-page-stack { display: grid; gap: 18px; }
+.ops-card { background: var(--surface); border: 1px solid var(--stroke); border-radius: 6px; padding: 18px; box-shadow: var(--shadow); }
+.ops-toolbar { display: flex; align-items: end; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+.ops-filter { display: grid; gap: 6px; min-width: 170px; }
+.ops-filter > span, .ops-field > span { color: var(--muted); font-size: 12px; font-weight: 700; }
+.ops-filter select { min-height: 40px; border: 1px solid var(--stroke); border-radius: 6px; padding: 9px 10px; background: #fff; color: var(--ink); font: inherit; }
+.ops-button { min-height: 40px; border: 1px solid var(--stroke); border-radius: 6px; padding: 9px 14px; cursor: pointer; font: inherit; }
+.ops-button.primary { border-color: var(--accent); background: var(--accent); color: #fff; }
+.ops-button.danger { border-color: #b91c1c; color: #b91c1c; }
+.ops-field { display: grid; gap: 6px; min-width: 0; }
+.ops-field small { color: var(--muted); font-size: 11px; }
+.ops-health-indicator { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 56px; padding: 11px 0; border-bottom: 1px solid var(--stroke); }
+.ops-health-indicator > span:nth-child(2) { display: grid; gap: 3px; flex: 1; }
+.ops-health-indicator small { color: var(--muted); }
+.ops-health-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--muted); }
+.ops-health-dot.healthy { background: #15803d; }
+.ops-health-dot.degraded { background: #b45309; }
+.ops-health-dot.unavailable { background: #b91c1c; }
+.ops-health-dot.checking { background: var(--accent-2); }
+.ops-authority-panel { display: flex; justify-content: space-between; gap: 18px; align-items: flex-start; padding: 16px; border: 1px solid var(--stroke); background: #f8fafb; }
+.ops-authority-panel h3 { margin: 5px 0 0; }
+.ops-authority-panel p { margin: 7px 0 0; max-width: 720px; }
+.ops-split-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+.ops-split-grid h3 { margin: 0 0 10px; font-size: 15px; }
+.ops-list-row { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: 10px; min-height: 44px; padding: 9px 0; border-bottom: 1px solid var(--stroke); }
+.ops-list-row span { color: var(--muted); font-size: 12px; }
+.ops-form-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; align-items: end; }
+.ops-form-grid label { display: grid; gap: 6px; min-width: 0; }
+.ops-form-grid label > span { color: var(--muted); font-size: 12px; font-weight: 700; }
+.ops-form-grid input, .ops-form-grid select { width: 100%; min-height: 40px; border: 1px solid var(--stroke); border-radius: 6px; padding: 9px 10px; background: #fff; color: var(--ink); font: inherit; }
+.ops-field-wide { grid-column: 1 / -1; }
+.ops-form-actions, .ops-row-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.ops-code-row { display: flex; gap: 12px; align-items: baseline; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--stroke); overflow: auto; }
+.ops-code-row code { color: var(--muted); white-space: pre-wrap; overflow-wrap: anywhere; }
+.admin-notice { border: 1px solid var(--stroke); border-inline-start: 4px solid var(--accent); padding: 12px 14px; background: #fff; color: var(--ink); }
+.notice-success { border-inline-start-color: #15803d; }
+.notice-warning { border-inline-start-color: #b45309; }
+.notice-error { border-inline-start-color: #b91c1c; }
+.admin-tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--stroke); margin-bottom: 16px; overflow-x: auto; }
+.admin-tabs button { border: 0; border-bottom: 2px solid transparent; background: transparent; color: var(--muted); padding: 10px 14px; cursor: pointer; white-space: nowrap; }
+.admin-tabs button.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 700; }
+.admin-tabs button span { margin-inline-start: 6px; font-size: 11px; }
+@media (max-width: 600px) {
+  .ops-form-grid { grid-template-columns: 1fr; }
+  .ops-field-wide { grid-column: auto; }
+  .ops-code-row { display: grid; }
+  .ops-authority-panel { flex-direction: column; }
+  .ops-split-grid { grid-template-columns: 1fr; }
+}
+/* APEX_OPTION_B_OPS_PRIMITIVES_20260929_END */

@@ -1,9 +1,16 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { applyCmsProceduresImport, dryRunCmsProceduresImport, exportCmsProcedures, getAdminCanonicalEditor, getAdminErrorCode, getAdminErrorMessage, getCmsProcedure, getCmsProcedureAudit, getCmsProcedureVersions, getCmsProcedures, getPayloadSyncStatus, openPayloadContentStudio, previewCmsProceduresExport, publishCmsProceduresImport, triggerPayloadSync, type CmsAuditEvent, type CmsEntityVersion, type CmsItem, type CmsStatus, type PayloadSyncStatus } from "../lib/api";
 import { CmsCollectionToolbar, CmsDataTable, CmsExportDialog, CmsImportWizard, CmsPagination, CmsPreviewPanel, CmsRecordDrawer, CmsRowActionMenu, type CmsImportMutationResult, type CmsImportValidationResult } from "../components/cms/CmsPrimitives";
 import CmsEditorialDocumentsPage from "./CmsEditorialDocumentsPage";
 import CmsManagedContentPage from "./CmsManagedContentPage";
 import { AdminPageHeader } from "../components/admin/AdminPrimitives";
+
+type CmsDomain = "procedures" | "editorial-documents" | "forms" | "announcements";
+
+function parseCmsDomain(value: string | null): CmsDomain {
+  return value === "editorial-documents" || value === "forms" || value === "announcements" ? value : "procedures";
+}
 
 const statuses: CmsStatus[] = ["DRAFT", "REVIEW_READY", "PUBLISHED", "UNPUBLISHED", "ARCHIVED"];
 const labels: Record<CmsStatus, string> = { DRAFT: "مسودة", REVIEW_READY: "جاهز للمراجعة", PUBLISHED: "منشور", UNPUBLISHED: "غير منشور", ARCHIVED: "مؤرشف" };
@@ -18,7 +25,15 @@ function cmsErrorMessage(reason: unknown, fallback: string): string {
 }
 
 export default function CmsPage() {
-  const [domain, setDomain] = useState<"procedures" | "editorial-documents" | "forms" | "announcements">("procedures");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [domain, setDomainState] = useState<CmsDomain>(() => parseCmsDomain(searchParams.get("domain")));
+  const setDomain = (next: CmsDomain) => {
+    setDomainState(next);
+    const updated = new URLSearchParams(searchParams);
+    if (next === "procedures") updated.delete("domain");
+    else updated.set("domain", next);
+    setSearchParams(updated, { replace: true });
+  };
   const [items, setItems] = useState<CmsItem[]>([]);
   const [counts, setCounts] = useState<Partial<Record<CmsStatus, number>>>({});
   const [query, setQuery] = useState("");
@@ -40,6 +55,11 @@ export default function CmsPage() {
   const [detailAudit, setDetailAudit] = useState<CmsAuditEvent[]>([]);
   const [detailLoading, setDetailLoading] = useState(false);
   const totalPages = Math.max(1, Math.ceil(total / 20));
+
+  useEffect(() => {
+    const fromUrl = parseCmsDomain(searchParams.get("domain"));
+    setDomainState((current) => current === fromUrl ? current : fromUrl);
+  }, [searchParams]);
 
   useEffect(() => {
     if (domain !== "procedures") return;
@@ -165,7 +185,9 @@ export default function CmsPage() {
   }
 
   if (domain === "editorial-documents") return <CmsEditorialDocumentsPage onBack={() => setDomain("procedures")} />;
-  if (domain === "forms" || domain === "announcements") return <CmsManagedContentPage domain={domain} onDomainChange={setDomain} />;
+  if (domain === "forms" || domain === "announcements") return <CmsManagedContentPage domain={domain} onDomainChange={(nextDomain) => {
+    setDomain(nextDomain);
+  }} />;
 
   let content: JSX.Element;
   if (loading) {

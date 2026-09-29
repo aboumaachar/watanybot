@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { AdminFluentIcon } from "../components/AdminFluentIcon";
-import { getAdminErrorMessage, getAdminAuthorityMe, type AdminAuthority } from "../lib/api";
+import { getAdminErrorMessage, getAdminAuthorityMe, openPayloadContentStudio, type AdminAuthority } from "../lib/api";
 import AuditPage from "./AuditPage";
 import FeatureControlsPage from "./FeatureControlsPage";
 import CmsPage from "./CmsPage";
@@ -11,30 +11,33 @@ import PlatformAdminPage from "./PlatformAdminPage";
 import UsersPage from "./UsersPage";
 import SessionsPage from "./SessionsPage";
 import ArticlePublishingAuthority9D72Page from "./ArticlePublishingAuthority9D72Page";
+import { DASHBOARD_MODULES } from "../dashboardModuleRegistry";
 
 const SHELL_ITEMS = [
-  { path: "/superadmin", label: "الرئيسية", icon: "dashboard", end: true },
-  { path: "/superadmin/cms", label: "CMS", icon: "documents", end: false },
-  { path: "/superadmin/crm", label: "CRM", icon: "users", end: false },
-  { path: "/superadmin/erm", label: "ERM", icon: "briefcase", end: false },
-  { path: "/superadmin/operations", label: "Operations", icon: "briefcase", end: false },
-  { path: "/superadmin/system", label: "النظام", icon: "settings", end: false },
+  { path: "/", label: "الرئيسية", icon: "dashboard", end: true },
+  { path: "/cms", label: "إدارة المحتوى", icon: "documents", end: false },
+  { path: "/operations", label: "العمليات", icon: "briefcase", end: false },
+  { path: "/system", label: "النظام", icon: "settings", end: false },
 ] as const;
+
+const REGISTERED_SHELL_ITEMS = DASHBOARD_MODULES
+  .filter((module) => module.status === "ACTIVE")
+  .map((module) => ({ path: module.route, label: module.labelAr, icon: module.icon, end: false }));
 
 function ChildSurface({ title, description }: Readonly<{ title: string; description: string }>) {
   return (
     <section className="superadmin-surface card">
-      <span className="eyebrow">Universal Admin module index</span>
+      <span className="eyebrow">فهرس وحدات الإدارة الموحدة</span>
       <h2>{title}</h2>
       <p className="muted">{description}</p>
       <div className="superadmin-kpis">
-        <div className="superadmin-kpi card"><span className="eyebrow">Navigation</span><strong>Ready</strong><span>Canonical shell route</span></div>
-        <div className="superadmin-kpi card"><span className="eyebrow">Ownership</span><strong>Preserved</strong><span>Existing owner chains remain authoritative</span></div>
-        <div className="superadmin-kpi card"><span className="eyebrow">Capabilities</span><strong>Gated</strong><span>Actions require frozen capability evidence</span></div>
+        <div className="superadmin-kpi card"><span className="eyebrow">التنقل</span><strong>جاهز</strong><span>مسار القشرة المعتمد</span></div>
+        <div className="superadmin-kpi card"><span className="eyebrow">الملكية</span><strong>محفوظة</strong><span>سلاسل الملكية الحالية ما زالت معتمدة</span></div>
+        <div className="superadmin-kpi card"><span className="eyebrow">الصلاحيات</span><strong>مقيّدة</strong><span>تتطلب الإجراءات دليلاً ثابتاً للصلاحيات</span></div>
       </div>
       <div className="superadmin-module-index" aria-label={`${title} management index`}>
-        <span className="eyebrow">Management surfaces</span>
-        <p className="muted">Select a registered feature from the module navigation when its canonical admin surface is available.</p>
+        <span className="eyebrow">مساحات الإدارة</span>
+        <p className="muted">اختر ميزة مسجلة من تنقل الوحدات عندما تتوفر مساحة إدارتها المعتمدة.</p>
       </div>
     </section>
   );
@@ -44,18 +47,18 @@ function ShellHome({ authority }: Readonly<{ authority: AdminAuthority }>) {
   return (
     <div className="superadmin-home">
       <div className="page-header">
-        <span className="eyebrow">Superadmin Platform</span>
+        <span className="eyebrow">منصة الإدارة العليا</span>
         <h2>لوحة التحكم المركزية</h2>
         <p className="muted">مساحة موحدة للحوكمة والتدقيق والتحكم في الميزات.</p>
       </div>
       <div className="superadmin-kpis">
-        <div className="superadmin-kpi card"><span className="eyebrow">Actor</span><strong>{authority.email}</strong><span>{authority.roles.join(", ")}</span></div>
-        <div className="superadmin-kpi card"><span className="eyebrow">Authorization</span><strong>SUPERADMIN</strong><span>Server-side authority confirmed</span></div>
-        <div className="superadmin-kpi card"><span className="eyebrow">Environment</span><strong>Local Gateway</strong><span>Port 4000 authority boundary</span></div>
+        <div className="superadmin-kpi card"><span className="eyebrow">المشغّل</span><strong>{authority.email}</strong><span>{authority.roles.join(", ")}</span></div>
+        <div className="superadmin-kpi card"><span className="eyebrow">التفويض</span><strong>SUPERADMIN</strong><span>تم تأكيد الصلاحية من الخادم</span></div>
+        <div className="superadmin-kpi card"><span className="eyebrow">البيئة</span><strong>بوابة Gateway المحلية</strong><span>حدود صلاحية المنفذ 4000</span></div>
       </div>
       <div className="superadmin-shortcuts">
-        <NavLink className="accent" to="/superadmin/audit">فتح سجل التدقيق</NavLink>
-        <NavLink className="ghost" to="/superadmin/system">حالة النظام</NavLink>
+        <NavLink className="accent" to="/audit">فتح سجل التدقيق</NavLink>
+        <NavLink className="ghost" to="/system">حالة النظام</NavLink>
       </div>
     </div>
   );
@@ -102,7 +105,7 @@ export default function SuperadminShellPage() {
   else if (path === "/cms/community") content = <CommunityPage />;
   else if (path === "/cms" || path === "/cms/procedures") content = <CmsPage />;
   else if (path === "/cms/articles" || path === "/superadmin/cms/articles" || path === "/superadmin/cms/articles/archive") content = <ArticlePublishingAuthority9D72Page initialArchive={path.endsWith("/archive")} />;
-  else if (path === "/system/official-services") content = <UniversalCollectionPage kind="official-services" />;
+  else if (path === "/system/official-services" || path === "/superadmin/system/official-services") content = <UniversalCollectionPage kind="official-services" />;
   else if (path === "/system/ticker") content = <UniversalCollectionPage kind="ticker" />;
   else if (path === "/system/features") content = <FeatureControlsPage />;
   else if (path === "/cms/ai-training") content = <UniversalCollectionPage kind="ai-training" />;
@@ -110,7 +113,7 @@ export default function SuperadminShellPage() {
   else if (path === "/cms/chat-inputs") content = <UniversalCollectionPage kind="chat-inputs" />;
   else if (path === "/cms/answer-overrides") content = <UniversalCollectionPage kind="answer-overrides" />;
   else if (path === "/cms/chat-sessions") content = <UniversalCollectionPage kind="chat-sessions" />;
-  else if (path === "/crm/contacts") content = <UniversalCollectionPage kind="crm-contacts" />;
+  else if (path === "/crm/contacts" || path === "/superadmin/crm/contacts") content = <UniversalCollectionPage kind="crm-contacts" />;
   else if (path === "/erm/assets") content = <UniversalCollectionPage kind="erm-assets" />;
   else if (path === "/cms/rules") content = <UniversalCollectionPage kind="rules" />;
   else if (path === "/cms/news") content = <UniversalCollectionPage kind="news" />;
@@ -130,7 +133,7 @@ export default function SuperadminShellPage() {
     <div className="superadmin-shell" dir="rtl">
       <header className="superadmin-header">
         <div>
-          <span className="eyebrow">Watany Ops / Superadmin</span>
+          <span className="eyebrow">عمليات موطني / الإدارة العليا</span>
           <h1>مركز الإدارة</h1>
         </div>
         <div className="superadmin-actor" aria-label="Current actor">
@@ -146,38 +149,49 @@ export default function SuperadminShellPage() {
               <span>{item.label}</span>
             </NavLink>
           ))}
-          <NavLink to="/superadmin/features" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}>
+          <span className="superadmin-nav-label">الوحدات المسجلة</span>
+          {REGISTERED_SHELL_ITEMS.map((item) => (
+            <NavLink key={`registered-${item.path}`} to={item.path} end={item.end} className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}>
+              <AdminFluentIcon name={item.icon} />
+              <span>{item.label}</span>
+            </NavLink>
+          ))}
+          <button type="button" className="superadmin-nav-item" onClick={() => void openPayloadContentStudio()}>
+            <AdminFluentIcon name="documents" />
+            <span>استوديو المحتوى</span>
+          </button>
+          <NavLink to="/features" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}>
             <AdminFluentIcon name="settings" /><span>التحكم في الميزات</span>
           </NavLink>
-          <NavLink to="/superadmin/system/official-services" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}>
-            <AdminFluentIcon name="documents" /><span>Official Services</span>
+          <NavLink to="/system/official-services" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}>
+            <AdminFluentIcon name="documents" /><span>الخدمات الرسمية</span>
           </NavLink>
-          <NavLink to="/superadmin/system/ticker" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}>
-            <AdminFluentIcon name="news" /><span>Ticker Items</span>
+          <NavLink to="/system/ticker" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}>
+            <AdminFluentIcon name="news" /><span>عناصر الشريط الإخباري</span>
           </NavLink>
-          <NavLink to="/superadmin/system/features" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}>
-            <AdminFluentIcon name="settings" /><span>Feature Controls</span>
+          <NavLink to="/system/features" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}>
+            <AdminFluentIcon name="settings" /><span>التحكم بالميزات</span>
           </NavLink>
-          <NavLink to="/superadmin/cms/ai-training" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}><AdminFluentIcon name="knowledge" /><span>AI Training</span></NavLink>
-          <NavLink to="/superadmin/cms/abusive-events" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}><AdminFluentIcon name="shield" /><span>Abusive Events</span></NavLink>
-          <NavLink to="/superadmin/cms/chat-inputs" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}><AdminFluentIcon name="chat" /><span>Chat Inputs</span></NavLink>
-          <NavLink to="/superadmin/cms/answer-overrides" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}><AdminFluentIcon name="chat" /><span>Answer Overrides</span></NavLink>
-          <NavLink to="/superadmin/cms/chat-sessions" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}><AdminFluentIcon name="chat" /><span>Chat Sessions</span></NavLink>
-          <NavLink to="/superadmin/crm/contacts" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}><AdminFluentIcon name="users" /><span>CRM Contacts</span></NavLink>
-          <NavLink to="/superadmin/erm/assets" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}><AdminFluentIcon name="documents" /><span>ERM Assets</span></NavLink>
-          <NavLink to="/superadmin/cms/rules" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}><AdminFluentIcon name="shield" /><span>Filter Rules</span></NavLink>
-          <NavLink to="/superadmin/cms/news" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}><AdminFluentIcon name="news" /><span>News</span></NavLink>
+          <NavLink to="/cms/ai-training" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}><AdminFluentIcon name="knowledge" /><span>تدريب الذكاء الاصطناعي</span></NavLink>
+          <NavLink to="/cms/abusive-events" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}><AdminFluentIcon name="shield" /><span>الأحداث المسيئة</span></NavLink>
+          <NavLink to="/cms/chat-inputs" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}><AdminFluentIcon name="chat" /><span>مدخلات المحادثة</span></NavLink>
+          <NavLink to="/cms/answer-overrides" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}><AdminFluentIcon name="chat" /><span>بدائل الإجابات</span></NavLink>
+          <NavLink to="/cms/chat-sessions" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}><AdminFluentIcon name="chat" /><span>جلسات المحادثة</span></NavLink>
+          <NavLink to="/crm/contacts" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}><AdminFluentIcon name="users" /><span>جهات اتصال CRM</span></NavLink>
+          <NavLink to="/erm/assets" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}><AdminFluentIcon name="documents" /><span>أصول ERM</span></NavLink>
+          <NavLink to="/cms/rules" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}><AdminFluentIcon name="shield" /><span>قواعد التصفية</span></NavLink>
+          <NavLink to="/cms/news" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}><AdminFluentIcon name="news" /><span>الأخبار</span></NavLink>
           <NavLink to="/superadmin/cms/articles" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}><AdminFluentIcon name="document" /><span>المقالات والأرشيف</span></NavLink>
-          <NavLink to="/superadmin/audit" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}>
+          <NavLink to="/audit" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}>
             <AdminFluentIcon name="audit" /><span>سجل التدقيق</span>
           </NavLink>
-          <NavLink to="/superadmin/administrators" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}><AdminFluentIcon name="users" /><span>Administrators</span></NavLink>
-          <NavLink to="/superadmin/sessions" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}><AdminFluentIcon name="shield" /><span>Sessions</span></NavLink>
-          <NavLink to="/superadmin/roles-permissions" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}><AdminFluentIcon name="shield" /><span>Roles & Permissions</span></NavLink>
-          <NavLink to="/superadmin/approvals" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}><AdminFluentIcon name="audit" /><span>Approval Center</span></NavLink>
-          <NavLink to="/superadmin/system/health" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}><AdminFluentIcon name="settings" /><span>Module Health</span></NavLink>
-          <NavLink to="/superadmin/system/integrations" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}><AdminFluentIcon name="network" /><span>Integrations</span></NavLink>
-          <NavLink to="/superadmin/authority-audit" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}><AdminFluentIcon name="audit" /><span>Authority Audit</span></NavLink>
+          <NavLink to="/administrators" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}><AdminFluentIcon name="users" /><span>المشرفون</span></NavLink>
+          <NavLink to="/sessions" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}><AdminFluentIcon name="shield" /><span>الجلسات</span></NavLink>
+          <NavLink to="/roles-permissions" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}><AdminFluentIcon name="shield" /><span>الأدوار والصلاحيات</span></NavLink>
+          <NavLink to="/approvals" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}><AdminFluentIcon name="audit" /><span>مركز الموافقات</span></NavLink>
+          <NavLink to="/system/health" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}><AdminFluentIcon name="settings" /><span>صحة الوحدات</span></NavLink>
+          <NavLink to="/system/integrations" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}><AdminFluentIcon name="network" /><span>التكاملات</span></NavLink>
+          <NavLink to="/authority-audit" className={({ isActive }) => `superadmin-nav-item${isActive ? " active" : ""}`}><AdminFluentIcon name="audit" /><span>تدقيق الصلاحيات</span></NavLink>
         </nav>
         <main className="superadmin-main">
           <div className="superadmin-breadcrumb">Superadmin / {path.split("/").filter(Boolean).slice(-1)[0] || "home"}</div>

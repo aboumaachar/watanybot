@@ -4,24 +4,33 @@ import { defaultLocale, dirForLocale } from "@watany/i18n";
 import { ErrorBoundary } from "./ErrorBoundary";
 import { useAdminWS } from "./hooks/useAdminWS";
 import AdminLoginPage from "./pages/AdminLoginPage";
-import { getApiUrl, SERVERS, logoutAdmin } from "./lib/api";
+import { adminFetch, getAdminProfile, getApiUrl, hasAdminCapability, SERVERS, logoutAdmin, type AdminSession } from "./lib/api";
 import { AdminFluentIcon } from "./components/AdminFluentIcon";
+import { DASHBOARD_MODULES } from "./dashboardModuleRegistry";
 
 
 import AdminMarketPage from "./pages/AdminMarketPage";
 import AdminKBStudioPage from "./pages/AdminKBStudioPage";
 import AdminDocumentsPage from "./pages/AdminDocumentsPage";
-import AdminProceduresPage from "./pages/AdminProceduresPage";
+import CmsPage from "./pages/CmsPage";
 import AdminCommandCenterPage from "./pages/AdminCommandCenterPage";
 import SuperadminShellPage from "./pages/SuperadminShellPage";
-const DashboardPage = lazy(() => import("./pages/DashboardPage"));
-const UsersPage = lazy(() => import("./pages/UsersPage"));
-const UserPage = lazy(() => import("./pages/UserPage"));
+import AdminSalaryPage from "./pages/AdminSalaryPage";
+import AdminSchoolGrantsPage from "./pages/AdminSchoolGrantsPage";
+import AdminCrmPage from "./pages/AdminCrmPage";
+import AdminDiagnosticsPage from "./pages/AdminDiagnosticsPage";
+import AdminAnalyticsPage from "./pages/AdminAnalyticsPage";
+import AdminErmPage from "./pages/AdminErmPage";
+import AdminAdsPage from "./pages/AdminAdsPage";
+import AdminPluginsPage from "./pages/AdminPluginsPage";
+import ContentStudioPage from "./pages/ContentStudioPage";
+import DashboardPage from "./pages/DashboardPage";
+import UsersPage from "./pages/UsersPage";
+import UserPage from "./pages/UserPage";
+import AuditPage from "./pages/AuditPage";
 const ChatMonitorPage = lazy(() => import("./pages/ChatMonitorPage"));
 const RulesPage = lazy(() => import("./pages/RulesPage"));
-const AuditPage = lazy(() => import("./pages/AuditPage"));
 const KBEditorPage = lazy(() => import("./pages/KBEditorPage"));
-const FeatureControlsPage = lazy(() => import("./pages/FeatureControlsPage"));
 const NewsAdminPage = lazy(() => import("./pages/NewsAdminPage"));
 const NetworkAdminPage = lazy(() => import("./pages/NetworkAdminPage"));
 const JobsAdminPage = lazy(() => import("./pages/JobsAdminPage"));
@@ -40,65 +49,172 @@ function RedirectToWebUser() {
   return <div className="page-loading">Redirecting...</div>;
 }
 
-const NAV_SECTIONS = [
-  { id: "overview", label: "Overview", items: [{ path: "/", label: "Dashboard", icon: "dashboard" }] },
-  { id: "cms", label: "CMS & Knowledge", items: [
-    { path: "/kb", label: "Knowledge Base", icon: "knowledge" },
-    { path: "/news", label: "News", icon: "news" },
-    { path: "/rules", label: "Content Rules", icon: "shield" },
-    { path: "/admin/documents", label: "Documents", icon: "document" },
-    { path: "/admin/procedures", label: "Procedures", icon: "folder" },
-    { path: "/superadmin/cms/articles", label: "المقالات والأرشيف", icon: "document" },
-    { path: "/superadmin/cms/articles/archive", label: "أرشيف المقالات", icon: "folder" },
-  ] },
-  { id: "operations", label: "Operations", items: [
-    { path: "/chat", label: "Chat Monitor", icon: "chat" },
-    { path: "/jobs", label: "Jobs & Applications", icon: "briefcase" },
-    { path: "/jobs/ain-mreisseh-building-assistant", label: "Ain Mreisseh Applications", icon: "users" },
-    { path: "/market", label: "Marketplace", icon: "apps" },
-    { path: "/network", label: "Network", icon: "location" },
-  ] },
-  { id: "system", label: "System", items: [
-    { path: "/users", label: "Users", icon: "users" },
-    { path: "/features", label: "Feature Controls", icon: "settings" },
-    { path: "/audit", label: "Audit Log", icon: "audit" },
-  ] },
+type NavItem = { path: string; label: string; icon: string; capability: string; action?: string; section?: string };
+
+function sectionForCategory(category: string): string {
+  if (category === "CONTENT") return "cms";
+  if (category === "SYSTEM") return "system";
+  return "operations";
+}
+
+const REGISTERED_NAV_ITEMS: NavItem[] = DASHBOARD_MODULES.filter((module) => module.status === "ACTIVE").map((module) => ({
+  path: module.route,
+  label: module.labelAr,
+  icon: module.icon,
+  capability: module.requiredCapability,
+  section: sectionForCategory(module.category),
+}));
+
+const pickRegistered = (...paths: string[]) => REGISTERED_NAV_ITEMS.filter((item) => paths.includes(item.path));
+
+const NAV_SECTIONS: Array<{ id: string; label: string; items: NavItem[] }> = [
+  { id: "overview", label: "الرئيسية", items: [{ path: "/", label: "لوحة الإدارة", icon: "dashboard", capability: "admin.dashboard" }, { path: "/admin/command-center", label: "مركز العمليات", icon: "briefcase", capability: "admin.dashboard" }] },
+  { id: "cms", label: "المحتوى", items: [...pickRegistered("/admin/procedures", "/kb", "/admin/documents", "/news"), { path: "/content-studio", label: "استوديو المحتوى", icon: "document", capability: "cms.read" }, { path: "/rules", label: "قواعد المحتوى", icon: "shield", capability: "admin.rules" }, { path: "/superadmin/cms/articles", label: "المقالات والأرشيف", icon: "document", capability: "cms.read" }] },
+  { id: "operations", label: "العمليات", items: [...pickRegistered("/jobs", "/market", "/salary", "/school-grants", "/ads"), { path: "/chat", label: "مراقبة المحادثة", icon: "chat", capability: "admin.dashboard" }, { path: "/network", label: "الشبكة", icon: "location", capability: "admin.dashboard" }] },
+  { id: "users", label: "المستخدمون", items: [{ path: "/users", label: "إدارة المستخدمين", icon: "users", capability: "admin.users" }, { path: "/roles-permissions", label: "الأدوار والصلاحيات", icon: "shield", capability: "admin.users" }, { path: "/sessions", label: "الجلسات", icon: "shield", capability: "admin.users" }, { path: "/administrators", label: "المسؤولون", icon: "users", capability: "admin.users" }, { path: "/audit", label: "سجل التدقيق", icon: "audit", capability: "superadmin.audit.read" }] },
+  { id: "crm", label: "CRM", items: [...pickRegistered("/crm")] },
+  { id: "erm", label: "ERM", items: [...pickRegistered("/erm")] },
+  { id: "system", label: "النظام", items: [...pickRegistered("/system/health", "/system/integrations", "/features", "/analytics", "/diagnostics"), { path: "/approvals", label: "مركز الموافقات", icon: "audit", capability: "admin.users" }] },
 ];
 
+function navItemMatches(pathname: string, itemPath: string): boolean {
+  if (itemPath === "/") return pathname === "/";
+  return pathname === itemPath || pathname.startsWith(`${itemPath}/`);
+}
+
+function SidebarNavigation({ adminSession, onNavigate }: Readonly<{ adminSession: AdminSession | null; onNavigate: () => void }>) {
+  const location = useLocation();
+  const activeSectionId = NAV_SECTIONS.find((section) => section.items.some((item) => navItemMatches(location.pathname, item.path)))?.id ?? "overview";
+  const [openSectionId, setOpenSectionId] = useState<string | null>(activeSectionId);
+  useEffect(() => { setOpenSectionId(activeSectionId); }, [activeSectionId]);
+  return <nav className="sidebar-nav" aria-label="Primary navigation">
+    {NAV_SECTIONS.map((section) => {
+      const expanded = openSectionId === section.id;
+      const visibleItems = section.items.filter((item) => Boolean(adminSession) && hasAdminCapability(adminSession, item.capability));
+      return <div className="nav-section" key={section.id}>
+        <button className="nav-section-title" aria-expanded={expanded} onClick={() => setOpenSectionId((current) => current === section.id ? null : section.id)}>
+          <span>{section.label}</span><span aria-hidden="true">{expanded ? "−" : "+"}</span>
+        </button>
+        {expanded && visibleItems.map((item) => <NavLink key={item.path} to={item.path} end={item.path === "/"} onClick={onNavigate} className={({ isActive }) => `nav-item ${isActive ? "active" : ""}`}>
+          <span className="nav-icon"><AdminFluentIcon name={item.icon} /></span><span className="nav-label">{item.label}</span>
+        </NavLink>)}
+      </div>;
+    })}
+  </nav>;
+}
+
+function getUiCapabilitiesForRole(role: string): string[] {
+  if (role !== "admin" && role !== "superadmin") return [];
+  const capabilities = new Set<string>();
+  NAV_SECTIONS.flatMap((section) => section.items).forEach((item) => {
+    if (role === "superadmin" || !item.capability.startsWith("superadmin.")) capabilities.add(item.capability);
+  });
+  return [...capabilities];
+}
+
 const ROUTE_META: Record<string, { title: string; section: string }> = {
-  "/": { title: "Dashboard", section: "Overview" }, "/users": { title: "Users", section: "System" },
-  "/jobs/ain-mreisseh-building-assistant": { title: "Ain Mreisseh Applications", section: "Operations" },
-  "/news": { title: "News", section: "CMS & Knowledge" }, "/jobs": { title: "Jobs & Applications", section: "Operations" },
-  "/market": { title: "Marketplace", section: "Operations" }, "/chat": { title: "Chat Monitor", section: "Operations" },
-  "/kb": { title: "Knowledge Base", section: "CMS & Knowledge" }, "/rules": { title: "Content Rules", section: "CMS & Knowledge" },
-  "/audit": { title: "Audit Log", section: "System" }, "/features": { title: "Feature Controls", section: "System" },
-  "/network": { title: "Network", section: "Operations" },
-  "/superadmin/cms/articles": { title: "المقالات والأرشيف", section: "CMS & Knowledge" },
-  "/superadmin/cms/articles/archive": { title: "أرشيف المقالات", section: "CMS & Knowledge" },
+  "/": { title: "لوحة الإدارة", section: "الرئيسية" },
+  "/admin": { title: "لوحة الإدارة", section: "الرئيسية" },
+  "/admin/command-center": { title: "مركز القيادة", section: "نظرة عامة" },
+  "/users": { title: "المستخدمون", section: "المستخدمون" },
+  "/jobs/ain-mreisseh-building-assistant": { title: "طلبات عين المريسة", section: "التشغيل" },
+  "/news": { title: "التعاميم", section: "المحتوى والمعرفة" },
+  "/jobs": { title: "الفرص والوظائف", section: "التشغيل" },
+  "/market": { title: "السوق", section: "التشغيل" },
+  "/chat": { title: "مراقبة المحادثة", section: "التشغيل" },
+  "/kb": { title: "قاعدة المعرفة", section: "المحتوى والمعرفة" },
+  "/rules": { title: "قواعد المحتوى", section: "المحتوى والمعرفة" },
+  "/audit": { title: "سجل التدقيق", section: "النظام" },
+  "/features": { title: "التحكم بالميزات", section: "النظام" },
+  "/network": { title: "الشبكة", section: "التشغيل" },
+  "/salary": { title: "الراتب", section: "التشغيل" },
+  "/school-grants": { title: "المنح المدرسية", section: "التشغيل" },
+  "/crm": { title: "إدارة العملاء", section: "التشغيل" },
+  "/erm": { title: "إدارة الموارد", section: "التشغيل" },
+  "/ads": { title: "إدارة الإعلانات", section: "التشغيل" },
+  "/analytics": { title: "التحليلات", section: "النظام" },
+  "/diagnostics": { title: "التشخيص", section: "النظام" },
+  "/admin/kb-studio": { title: "استوديو المعرفة", section: "المحتوى والمعرفة" },
+  "/admin/documents": { title: "المستندات", section: "المحتوى والمعرفة" },
+  "/admin/procedures": { title: "إدارة الإجراءات", section: "المحتوى والمعرفة" },
+  "/content-studio": { title: "استوديو المحتوى", section: "المحتوى والمعرفة" },
+  "/superadmin/cms/articles": { title: "المقالات والأرشيف", section: "المحتوى والمعرفة" },
+  "/cms/articles": { title: "المقالات والأرشيف", section: "المحتوى والمعرفة" },
+  "/system/health": { title: "صحة النظام", section: "النظام" },
+  "/system/integrations": { title: "التكاملات", section: "النظام" },
+  "/administrators": { title: "المسؤولون", section: "النظام" },
+  "/sessions": { title: "الجلسات", section: "النظام" },
+  "/roles-permissions": { title: "الأدوار والصلاحيات", section: "النظام" },
+  "/approvals": { title: "مركز الموافقات", section: "النظام" },
+  "/authority-audit": { title: "تدقيق الصلاحيات", section: "النظام" },
 };
 
 function Loading() {
-  return <div className="page-loading">Loading...</div>;
+  return <div className="page-loading">جارٍ التحميل...</div>;
 }
 
 const routerBasename =
   import.meta.env.BASE_URL === "/"
     ? "/"
-    : import.meta.env.BASE_URL.replace(/\/+$/, "");
+    : trimTrailingSlashes(import.meta.env.BASE_URL);
+
+function trimTrailingSlashes(value: string): string {
+  let end = value.length;
+  while (end > 0 && value[end - 1] === "/") end -= 1;
+  return value.slice(0, end);
+}
+
 export default function App() {
   const dir = dirForLocale(defaultLocale);
+  useEffect(() => {
+    document.documentElement.lang = "ar";
+    document.documentElement.dir = "rtl";
+  }, []);
   const [token, setToken] = useState(() => localStorage.getItem("admin_token"));
+  const [adminSession, setAdminSession] = useState<AdminSession | null>(null);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(() => localStorage.getItem("admin_sidebar_collapsed") === "true");
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [openSections, setOpenSections] = useState<Record<string, boolean>>({ cms: true, operations: true, system: true });
+  const [gatewayHealthy, setGatewayHealthy] = useState<boolean | null>(null);
   useEffect(() => {
     if (!mobileOpen) return;
     const closeOnEscape = (event: KeyboardEvent) => { if (event.key === "Escape") setMobileOpen(false); };
     document.addEventListener("keydown", closeOnEscape);
     return () => document.removeEventListener("keydown", closeOnEscape);
   }, [mobileOpen]);
+  useEffect(() => {
+    if (!token) {
+      setAdminSession(null);
+      return;
+    }
+
+    let active = true;
+    void getAdminProfile()
+      .then((profile) => {
+        if (active) {
+          setAdminSession({
+            authenticated: true,
+            actorId: profile.id,
+            roles: [profile.role],
+            capabilities: getUiCapabilitiesForRole(profile.role),
+          });
+        }
+      })
+      .catch(() => {
+        if (active) setAdminSession(null);
+      });
+
+    return () => { active = false; };
+  }, [token]);
   const isAuthenticated = Boolean(token);
   const { connected, messages } = useAdminWS(token);
+  useEffect(() => {
+    if (!token) return;
+    let active = true;
+    void adminFetch("/api/admin/overview").then((response) => response.json()).then((data: { gateway?: { status?: string } }) => {
+      if (active) setGatewayHealthy(data.gateway?.status === "ok");
+    }).catch(() => { if (active) setGatewayHealthy(false); });
+    return () => { active = false; };
+  }, [token]);
 
   const handleLogin = useCallback(() => {
     setToken(localStorage.getItem("admin_token"));
@@ -111,7 +227,7 @@ export default function App() {
   }, []);
 
   const activeUrl = getApiUrl();
-  const serverLabel = SERVERS.find(s => s.url === activeUrl)?.label ?? "Custom";
+  const serverLabel = SERVERS.find(s => s.url === activeUrl)?.label === "Production (koudama.com)" ? "الإنتاج (koudama.com)" : "محلي";
 
   return (
     <ErrorBoundary>
@@ -124,21 +240,12 @@ export default function App() {
               <div className="sidebar-brand">
                 <div className="brand-icon">W</div>
                 <div className="brand-text">
-                  <div className="brand-title">Watany Ops</div>
-                  <div className="brand-sub">Control Room</div>
+                  <div className="brand-title">موطني Ops</div>
+                  <div className="brand-sub">غرفة الإدارة</div>
                 </div>
               </div>
 
-              <nav className="sidebar-nav" aria-label="Primary navigation">
-                {NAV_SECTIONS.map((section) => <div className="nav-section" key={section.id}>
-                  <button className="nav-section-title" aria-expanded={openSections[section.id] !== false} onClick={() => setOpenSections((current) => ({ ...current, [section.id]: current[section.id] === false }))}>
-                    <span>{section.label}</span><span aria-hidden="true">{openSections[section.id] === false ? "+" : "−"}</span>
-                  </button>
-                  {openSections[section.id] !== false && section.items.map((item) => <NavLink key={item.path} to={item.path} end={item.path === "/"} onClick={() => setMobileOpen(false)} className={({ isActive }) => `nav-item ${isActive ? "active" : ""}`}>
-                    <span className="nav-icon"><AdminFluentIcon name={item.icon} /></span><span className="nav-label">{item.label}</span>
-                  </NavLink>)}
-                </div>)}
-              </nav>
+              <SidebarNavigation adminSession={adminSession} onNavigate={() => setMobileOpen(false)} />
 
               <div className="sidebar-footer">
                 <div
@@ -149,15 +256,15 @@ export default function App() {
                 >
                   🌐 {serverLabel}
                 </div>
-                <div className={`ws-status ${connected ? "connected" : "disconnected"}`}>
+                <div className={`ws-status ${gatewayHealthy === true ? "connected" : gatewayHealthy === false ? "disconnected" : "pending"}`}>
                   <span className="ws-dot" />
-                  {connected ? "Live" : "Offline"}
+                  {gatewayHealthy === true ? "البوابة سليمة" : gatewayHealthy === false ? "البوابة غير متاحة" : connected ? "جارٍ التحقق من البوابة" : "البوابة غير متاحة"}
                 </div>
                 {messages.length > 0 && (
-                  <div className="ws-count">{messages.length} events</div>
+                  <div className="ws-count">{messages.length} أحداث</div>
                 )}
                 <button type="button" className="ghost" onClick={handleLogout} style={{ marginTop: 8, fontSize: 12, width: "100%" }}>
-                  Sign Out
+                  تسجيل الخروج
                 </button>
               </div>
             </aside>
@@ -173,17 +280,24 @@ export default function App() {
               <section className="admin-content grid">
                 <Suspense fallback={<Loading />}>
                   <Routes>
-                    <Route path="/school-grants" element={<RedirectToWebUser />} />
                     <Route path="/school-aids/*" element={<RedirectToWebUser />} />
                     <Route path="/" element={<DashboardPage />} />
                     <Route path="/admin" element={<DashboardPage />} />
                     <Route path="/admin/command-center" element={<AdminCommandCenterPage />} />
                     <Route path="/admin/kb-studio" element={<AdminKBStudioPage />} />
                     <Route path="/admin/documents" element={<AdminDocumentsPage />} />
-                    <Route path="/admin/procedures" element={<AdminProceduresPage />} />
-                    <Route path="/features" element={<FeatureControlsPage />} />
+                    <Route path="/admin/procedures" element={<CmsPage />} />
+                    <Route path="/content-studio" element={<ContentStudioPage />} />
+                    <Route path="/salary" element={<AdminSalaryPage />} />
+                    <Route path="/school-grants" element={<AdminSchoolGrantsPage />} />
+                    <Route path="/crm" element={<AdminCrmPage />} />
+                    <Route path="/diagnostics" element={<AdminDiagnosticsPage />} />
+                    <Route path="/analytics" element={<AdminAnalyticsPage />} />
+                    <Route path="/erm" element={<AdminErmPage />} />
+                    <Route path="/ads" element={<AdminAdsPage />} />
+                    <Route path="/features" element={<AdminPluginsPage />} />
                     <Route path="/users" element={<UsersPage />} />
-                    <Route path="/users/:id" element={<UserPage />} />
+            <Route path="/users/:id" element={<UserPage />} />
                     <Route path="/chat" element={<ChatMonitorPage />} />
                     <Route path="/rules" element={<RulesPage />} />
                     <Route path="/audit" element={<AuditPage />} />
@@ -200,6 +314,7 @@ export default function App() {
                     <Route path="/system/health" element={<SuperadminShellPage />} />
                     <Route path="/system/integrations" element={<SuperadminShellPage />} />
                     <Route path="/authority-audit" element={<SuperadminShellPage />} />
+                    <Route path="/superadmin/*" element={<SuperadminShellPage />} />
                     <Route path="/*" element={<SuperadminShellPage />} />
                     <Route path="*" element={<Navigate to="/" replace />} />
                   </Routes>
@@ -224,7 +339,6 @@ function RouteContext() {
   const location = useLocation();
   const meta = location.pathname.startsWith("/users/")
     ? { title: "ملف المستخدم", section: "المستخدمون" }
-    : ROUTE_META[location.pathname] ?? { title: "Superadmin", section: "Superadmin" };
-  return <div className="page-context"><div className="breadcrumbs"><span>Watany Ops</span><span aria-hidden="true">/</span><span>{meta.section}</span><span aria-hidden="true">/</span><span aria-current="page">{meta.title}</span></div><h1>{meta.title}</h1></div>;
+    : ROUTE_META[location.pathname] ?? { title: "لوحة الإدارة", section: "النظام" };
+  return <div className="page-context"><div className="breadcrumbs"><span>موطني Ops</span><span aria-hidden="true">/</span><span>{meta.section}</span><span aria-hidden="true">/</span><span aria-current="page">{meta.title}</span></div><h1>{meta.title}</h1></div>;
 }
-
