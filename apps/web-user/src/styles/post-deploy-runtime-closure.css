@@ -1,0 +1,66 @@
+.watany-service-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px 8px;
+  align-items: start;
+  overflow-x: clip;
+}
+
+.watany-service-card {
+  min-width: 0;
+  min-height: 132px;
+  padding: 12px 8px;
+  align-items: center;
+  text-align: center;
+  gap: 6px;
+}
+
+.watany-service-card > span {
+  width: 48px;
+  height: 48px;
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+.watany-service-card strong {
+  width: 100%;
+  color: #0e3427;
+  font-size: 14px;
+  line-height: 1.4;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.watany-service-card small,
+.watany-home-intro p,
+.watany-page-heading p,
+.watany-entry-card p {
+  color: #394b43;
+}
+
+.watany-recovery-topbar,
+.watany-recovery-bottom,
+.watany-recovery-bottom a,
+.watany-recovery-bottom button {
+  color: #fffef9;
+}
+
+@media (max-width: 360px) {
+  .watany-service-grid {
+    gap: 12px 6px;
+  }
+
+  .watany-service-card {
+    padding-inline: 6px;
+  }
+
+  .watany-service-card > span {
+    width: 44px;
+    height: 44px;
+    font-size: 1.25rem;
+  }
+
+  .watany-service-card strong {
+    font-size: 14px;
+  }
+}
