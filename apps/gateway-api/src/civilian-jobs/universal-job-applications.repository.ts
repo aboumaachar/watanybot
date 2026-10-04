@@ -1,11 +1,11 @@
 import { createHash, randomBytes, randomUUID } from "node:crypto";
+import { readFile } from "node:fs/promises";
+import { resolve as resolvePath } from "node:path";
 import type { PoolClient } from "pg";
 import { getClient, query } from "../lib/db.js";
 import { appendAdminAuditEventInTransaction, createAdminAuditEvent } from "../admin-authority/adminAuthorityAudit.js";
 import { createAdminAuthorityId, createAdminEntityVersionRowInTransaction, ensureAdminAuthorityTables } from "../admin-authority/adminAuthorityStore.js";
 import { listAdminEntityVersions } from "../admin-authority/adminAuthorityVersioning.js";
-import { resolveMiddleEastSecurityAddress } from "../koudama/surveys/middle-east-security/middleEastSecurity.address.js";
-import { listMiddleEastSecurityApplicationsForOwner } from "../koudama/surveys/middle-east-security/middleEastSecurity.repository.js";
 import type {
   UniversalJobAddressInput,
   UniversalJobApplication,
@@ -26,6 +26,23 @@ const APPLICATION_ENTITY_TYPE = "jobs.universal.application";
 const clean = (value: unknown): string => String(value ?? "").trim();
 const APPLICATION_STATUSES = new Set<UniversalJobApplicationStatus>(["pending", "reviewing", "shortlisted", "approved", "rejected", "hired", "withdrawn"]);
 const FOLLOW_UP_STATUSES = new Set<UniversalJobFollowUpStatus>(["not_contacted", "to_contact", "contacted", "interview_scheduled", "interview_completed", "waiting_documents", "follow_up_required", "closed", "no_response", "withdrawn"]);
+
+function isStrictIsoDate(value: string): boolean {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+  if (!match) return false;
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  const day = Number(match[3]);
+  const date = new Date(Date.UTC(year, month - 1, day));
+  return date.getUTCFullYear() === year && date.getUTCMonth() + 1 === month && date.getUTCDate() === day;
+}
+
+function isValidBirthDate(value: string): boolean {
+  if (!isStrictIsoDate(value)) return false;
+  const today = new Date().toISOString().slice(0, 10);
+  const minimum = `${new Date().getUTCFullYear() - 130}-01-01`;
+  return value >= minimum && value <= today;
+}
 
 function hashSecret(value: string): string {
   return createHash("sha256").update(value, "utf8").digest("hex");
@@ -157,7 +174,11 @@ function normalizeAnswers(fields: UniversalJobFieldDefinition[], raw: Record<str
     }
     if (field.type === "phone" && !/^\+?[0-9]{7,15}$/.test(clean(value).replace(/[\s().-]/g, ""))) throw new Error(`INVALID_PHONE:${field.key}`);
     if (field.type === "email" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(clean(value))) throw new Error(`INVALID_EMAIL:${field.key}`);
-    if (field.type === "date" && (!/^\d{4}-\d{2}-\d{2}$/.test(clean(value)) || Number.isNaN(Date.parse(clean(value))))) throw new Error(`INVALID_DATE:${field.key}`);
+    if (field.type === "date") {
+      const dateValue = clean(value);
+      if (!isStrictIsoDate(dateValue) || (field.key === "birth_date" && !isValidBirthDate(dateValue))) throw new Error(`INVALID_DATE:${field.key}`);
+      answers[field.key] = dateValue;
+    }
     if (field.type === "yes_no" && value !== true && value !== false) throw new Error(`INVALID_BOOLEAN:${field.key}`);
     if (field.type === "select" && field.options?.length && !field.options.includes(clean(value))) throw new Error(`INVALID_OPTION:${field.key}`);
     if (field.type === "multi_select") {
@@ -170,12 +191,71 @@ function normalizeAnswers(fields: UniversalJobFieldDefinition[], raw: Record<str
   return answers;
 }
 
+type CanonicalLocationRuntime = {
+  datasetVersion: string;
+  approvalStatus: string;
+  governorates: Array<{ id: string; nameAr: string }>;
+  districts: Array<{ id: string; governorateId: string; nameAr: string }>;
+  districtEquivalents: Array<{ id: string; governorateId: string; nameAr: string }>;
+  localities: Array<{ id: string; governorateId: string; districtId: string; pcode?: string | null; nameAr: string }>;
+};
+
+let canonicalLocationRuntimePromise: Promise<CanonicalLocationRuntime> | undefined;
+async function loadCanonicalLocationRuntime(): Promise<CanonicalLocationRuntime> {
+  if (!canonicalLocationRuntimePromise) {
+    const candidates = [
+      resolvePath(process.cwd(), "../web-user/public/data/location/canonical/runtime.json"),
+      resolvePath(process.cwd(), "apps/web-user/public/data/location/canonical/runtime.json"),
+    ];
+    canonicalLocationRuntimePromise = (async () => {
+      let lastError: unknown;
+      for (const candidate of candidates) {
+        try {
+          const text = await readFile(candidate, "utf8");
+          const runtime = JSON.parse(text) as CanonicalLocationRuntime;
+          if (runtime.approvalStatus !== "approvedCanonical" || !runtime.datasetVersion) throw new Error("LOCATION_DATASET_NOT_APPROVED");
+          return runtime;
+        } catch (error) {
+          lastError = error;
+        }
+      }
+      throw lastError instanceof Error ? lastError : new Error("LOCATION_DATASET_UNAVAILABLE");
+    })().catch((error) => {
+      canonicalLocationRuntimePromise = undefined;
+      throw error;
+    });
+  }
+  return canonicalLocationRuntimePromise;
+}
+
 async function resolveAddress(fields: UniversalJobFieldDefinition[], address: UniversalJobAddressInput | undefined) {
   const locator = fields.find((field) => field.type === "universal_locator");
   if (!locator) return null;
   if (!address && locator.required) throw new Error("MISSING_REQUIRED_FIELD:location");
   if (!address) return null;
-  return resolveMiddleEastSecurityAddress(address as any);
+  const runtime = await loadCanonicalLocationRuntime();
+  const governorate = runtime.governorates.find((item) => item.id === clean(address.mohafaza_id));
+  const districtNodes = [...runtime.districts, ...runtime.districtEquivalents];
+  const district = districtNodes.find((item) => item.id === clean(address.caza_id) && item.governorateId === governorate?.id);
+  const locality = runtime.localities.find((item) => item.id === clean(address.village_id) && item.governorateId === governorate?.id && item.districtId === district?.id);
+  if (!governorate || !district || !locality) throw new Error("INVALID_LOCATION");
+  if (clean(address.mohafaza) && clean(address.mohafaza) !== governorate.nameAr) throw new Error("INVALID_LOCATION");
+  if (clean(address.caza) && clean(address.caza) !== district.nameAr) throw new Error("INVALID_LOCATION");
+  if (clean(address.village) && clean(address.village) !== locality.nameAr) throw new Error("INVALID_LOCATION");
+  if (clean(address.location_dataset_version) && clean(address.location_dataset_version) !== runtime.datasetVersion) throw new Error("INVALID_LOCATION_DATASET_VERSION");
+  if (clean(address.location_approval_status) && clean(address.location_approval_status) !== runtime.approvalStatus) throw new Error("INVALID_LOCATION_APPROVAL_STATUS");
+  return {
+    address: clean(address.address) || undefined,
+    mohafaza: governorate.nameAr,
+    mohafaza_id: governorate.id,
+    caza: district.nameAr,
+    caza_id: district.id,
+    village: locality.nameAr,
+    village_id: locality.id,
+    village_pcode: locality.pcode || undefined,
+    location_dataset_version: runtime.datasetVersion,
+    location_approval_status: runtime.approvalStatus,
+  };
 }
 
 export async function getUniversalJobTemplateBySlug(slug: string, includeUnpublished = false): Promise<UniversalJobPublishedTemplate | null> {
@@ -400,40 +480,6 @@ export async function listUniversalJobPreviousAutofill(slug: string, userId: str
       location_approval_status: clean(row.location_approval_status) || undefined,
     },
   }));
-  const mes = await listMiddleEastSecurityApplicationsForOwner({ userId });
-  for (const row of mes.slice(0, 20)) {
-    const values = reusableValues(template.fields, {
-      full_name: row.full_name,
-      birth_date: row.birth_date,
-      age_years: row.age_years,
-      birth_place: row.birth_place,
-      phone: row.phone,
-      arabic_read: row.arabic_read,
-      arabic_write: row.arabic_write,
-      english_read: row.english_read,
-      english_write: row.english_write,
-    });
-    items.push({
-      id: row.id,
-      source: "middle-east-security",
-      title: "فرصة عمل في الأمن والحماية",
-      employer: "ميدل إيست سيكوريتي لبنان",
-      submittedAt: row.createdAt,
-      values,
-      address: {
-        address: row.address ?? undefined,
-        mohafaza: row.mohafaza ?? undefined,
-        mohafaza_id: row.mohafaza_id ?? undefined,
-        caza: row.caza ?? undefined,
-        caza_id: row.caza_id ?? undefined,
-        village: row.village ?? undefined,
-        village_id: row.village_id ?? undefined,
-        village_pcode: row.village_pcode ?? undefined,
-        location_dataset_version: row.location_dataset_version ?? undefined,
-        location_approval_status: row.location_approval_status ?? undefined,
-      },
-    });
-  }
   return items.sort((a, b) => b.submittedAt.localeCompare(a.submittedAt));
 }
 

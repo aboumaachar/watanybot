@@ -18,6 +18,7 @@ export function resolveInitialAdminServer(storedUrl: string | null, hostname: st
   if (storedUrl === LEGACY_LOCAL_URL) return LOCAL_URL;
   return storedUrl || LOCAL_URL;
 }
+
 function getInitialServer(): string {
   const storedUrl = localStorage.getItem("admin_api_url");
   const resolvedUrl = resolveInitialAdminServer(storedUrl, globalThis.location.hostname);

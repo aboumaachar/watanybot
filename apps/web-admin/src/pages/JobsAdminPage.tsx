@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { adminFetch, getAdminErrorMessage } from "../lib/api";
 import { AdminFluentIcon } from "../components/AdminFluentIcon";
+import UniversalJobApplicationsAdminPanel from "./UniversalJobApplicationsAdminPanel";
+import UnifiedJobsCatalogPanel from "./UnifiedJobsCatalogPanel";
 
 type OpportunityStatus = "DRAFT" | "PENDING_REVIEW" | "PUBLISHED" | "ARCHIVED";
 type ApplicationStatus =
@@ -98,15 +100,56 @@ function formatDate(value?: string) {
   return Number.isNaN(date.valueOf()) ? value : date.toLocaleDateString("ar-LB");
 }
 
+type ExportApplication = Record<string, unknown>;
+type ExportJobKey = "all" | "ain-el-hafeh" | "ain-el-mreisseh" | "middle-east-security" | "bulldozer";
+
+const EXPORT_JOB_OPTIONS: Array<{ value: ExportJobKey; label: string }> = [
+  { value: "all", label: "جميع طلبات التوظيف" },
+  { value: "ain-el-hafeh", label: "قطاف التفاح في عين الحفة – تنورين" },
+  { value: "ain-el-mreisseh", label: "مساعد مدير مبنى – عين المريسة" },
+  { value: "middle-east-security", label: "فرصة عمل في الأمن والحماية" },
+  { value: "bulldozer", label: "فرصة عمل – سائق جرافة معتمد" },
+];
+
+function csvCell(value: unknown): string {
+  const text = value == null ? "" : typeof value === "string" ? value : JSON.stringify(value);
+  return `"${text.replace(/"/g, '""')}"`;
+}
+
+async function readAllPagedApplications(path: string): Promise<ExportApplication[]> {
+  const items: ExportApplication[] = [];
+  let page = 1;
+  let totalPages = 1;
+  do {
+    const separator = path.includes("?") ? "&" : "?";
+    const response = await adminFetch(`${path}${separator}page=${page}&page_size=100`);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const data = await response.json() as { items?: ExportApplication[]; totalPages?: number };
+    items.push(...(data.items || []));
+    totalPages = Math.max(Number(data.totalPages || 1), 1);
+    page += 1;
+  } while (page <= totalPages);
+  return items;
+}
+
+function exportApplicationRow(source: string, jobTitle: string, item: ExportApplication): unknown[] {
+  const answers = item.answers && typeof item.answers === "object" ? item.answers as Record<string, unknown> : {};
+  const location = [item.mohafaza ?? item.governorate ?? item.preferredLocation, item.caza, item.village].filter(Boolean).join(" / ");
+  return [source, jobTitle, item.reference ?? item.id ?? "", item.applicantName ?? item.fullName ?? item.name ?? "", item.phone ?? item.applicantPhone ?? "", item.ageYears ?? item.age ?? "", item.status ?? "", item.followUpStatus ?? item.follow_up_status ?? "", location, item.createdAt ?? item.created_at ?? "", item.adminNotes ?? item.admin_notes ?? "", Object.keys(answers).length ? answers : item];
+}
+
 export default function JobsAdminPage() {
   const [opportunities, setOpportunities] = useState<Opportunity[]>([]);
   const [applications, setApplications] = useState<Application[]>([]);
   const [sources, setSources] = useState<Source[]>([]);
   const [form, setForm] = useState<Partial<Opportunity>>(emptyOpportunity());
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [tab, setTab] = useState<"opportunities" | "applications" | "sources">("opportunities");
+  const [tab, setTab] = useState<"catalog" | "opportunities" | "applications" | "templates" | "templateApplications" | "sources">("catalog");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [exporting, setExporting] = useState(false);
+  const [exportJob, setExportJob] = useState<ExportJobKey>("all");
+  const [focusedTemplateId, setFocusedTemplateId] = useState<string | undefined>(undefined);
   const [error, setError] = useState<string | null>(null);
 
   const load = async () => {
@@ -194,6 +237,46 @@ export default function JobsAdminPage() {
     }
   };
 
+  const exportSelectedApplications = async () => {
+    setExporting(true);
+    setError(null);
+    try {
+      const rows: unknown[][] = [];
+      if (exportJob === "all" || exportJob === "ain-el-hafeh") {
+        const response = await adminFetch("/api/admin/koudama/surveys/seasonal-apple-job/applications");
+        if (!response.ok) throw new Error(`Ain El Hafeh HTTP ${response.status}`);
+        const data = await response.json() as { applications?: ExportApplication[] };
+        rows.push(...(data.applications || []).map((item) => exportApplicationRow("ain-el-hafeh", "قطاف التفاح في عين الحفة – تنورين", item)));
+      }
+      if (exportJob === "all" || exportJob === "ain-el-mreisseh") {
+        const items = await readAllPagedApplications("/api/superadmin/ain-mreisseh-building-assistant/applications");
+        rows.push(...items.map((item) => exportApplicationRow("ain-el-mreisseh", "مساعد مدير مبنى – عين المريسة", item)));
+      }
+      if (exportJob === "all" || exportJob === "middle-east-security") {
+        const items = await readAllPagedApplications("/api/superadmin/middle-east-security/applications");
+        rows.push(...items.map((item) => exportApplicationRow("middle-east-security", "فرصة عمل في الأمن والحماية", item)));
+      }
+      if (exportJob === "all" || exportJob === "bulldozer") {
+        const items = await readAllPagedApplications("/api/jobs/application-template-applications?template_id=uat-accredited-bulldozer-driver");
+        rows.push(...items.map((item) => exportApplicationRow("bulldozer", String(item.templateTitle || "فرصة عمل – سائق جرافة معتمد"), item)));
+      }
+      const headers = ["المصدر", "الوظيفة", "رقم الطلب", "اسم المتقدم", "الهاتف", "العمر", "حالة الطلب", "حالة المتابعة", "الموقع", "تاريخ التقديم", "ملاحظات الإدارة", "كامل البيانات"];
+      const csv = `\uFEFF${[headers, ...rows].map((row) => row.map(csvCell).join(",")).join("\r\n")}\r\n`;
+      const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = `watany-${exportJob}-job-applications-${new Date().toISOString().slice(0, 10)}.csv`;
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      setError(getAdminErrorMessage(err, "تعذر تصدير طلبات التوظيف المحددة."));
+    } finally {
+      setExporting(false);
+    }
+  };
+
   return (
     <div style={{ padding: "20px 24px", maxWidth: 1180 }} dir="rtl">
       <div className="page-header" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16 }}>
@@ -201,18 +284,34 @@ export default function JobsAdminPage() {
           <h2 style={{ display: "flex", alignItems: "center", gap: 8 }}><AdminFluentIcon name="jobs" /> إدارة فرص العمل</h2>
           <p className="muted">إدارة الفرص المدنية وطلبات التقديم ومصادر الاستيراد.</p>
         </div>
-        <button className="ghost" onClick={() => void load()} disabled={loading}>تحديث</button>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "end" }}>
+          <label style={{ display: "grid", gap: 4, minWidth: 260 }}>
+            <span className="muted">اختر طلب التوظيف للتصدير</span>
+            <select aria-label="اختر طلب التوظيف للتصدير" value={exportJob} onChange={(event) => setExportJob(event.target.value as ExportJobKey)} disabled={exporting}>
+              {EXPORT_JOB_OPTIONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+            </select>
+          </label>
+          <button className="ghost" onClick={() => void exportSelectedApplications()} disabled={exporting}>{exporting ? "جارٍ التصدير..." : "تصدير CSV"}</button>
+          <button className="ghost" onClick={() => void load()} disabled={loading}>تحديث</button>
+        </div>
       </div>
 
       {error && <div className="alert" role="alert">{error}</div>}
 
       <div className="toolbar" role="tablist" aria-label="أقسام إدارة فرص العمل">
-        {(["opportunities", "applications", "sources"] as const).map((value) => (
+        {(["catalog", "opportunities", "applications", "templates", "templateApplications", "sources"] as const).map((value) => (
           <button key={value} className={tab === value ? "accent" : "ghost"} onClick={() => setTab(value)} role="tab" aria-selected={tab === value}>
-            {value === "opportunities" ? "الفرص" : value === "applications" ? "الطلبات" : "المصادر"}
+            {value === "catalog" ? "كل الوظائف" : value === "opportunities" ? "سجلات الفرص" : value === "applications" ? "الطلبات القديمة" : value === "templates" ? "منشئ النماذج" : value === "templateApplications" ? "طلبات النماذج" : "المصادر"}
           </button>
         ))}
       </div>
+
+      {tab === "catalog" && <UnifiedJobsCatalogPanel
+        legacyOpportunities={opportunities}
+        onEditLegacy={(id) => { const item = opportunities.find((candidate) => candidate.id === id); if (item) { setEditingId(item.id); setForm(item); setTab("opportunities"); } }}
+        onOpenTemplates={(templateId) => { setFocusedTemplateId(templateId); setTab("templates"); }}
+        onOpenTemplateApplications={(templateId) => { setFocusedTemplateId(templateId); setTab("templateApplications"); }}
+      />}
 
       {tab === "opportunities" && (
         <>
@@ -238,6 +337,9 @@ export default function JobsAdminPage() {
       )}
 
       {tab === "applications" && <div className="table-wrap"><table className="admin-table"><thead><tr><th>المتقدم</th><th>الهاتف</th><th>الفرصة</th><th>الفئة</th><th>الحالة</th><th>التاريخ</th></tr></thead><tbody>{applications.length === 0 ? <tr><td colSpan={6} className="muted center">لا توجد طلبات.</td></tr> : applications.map((item) => <tr key={item.id}><td className="strong">{item.applicantName}</td><td dir="ltr">{item.applicantPhone}</td><td>{opportunities.find((opportunity) => opportunity.id === item.opportunityId)?.title ?? item.opportunityId}</td><td>{item.applicantType}</td><td><select value={item.status} onChange={(event) => void updateApplication(item.id, event.target.value as ApplicationStatus)}>{applicationStatuses.map((status) => <option key={status} value={status}>{status}</option>)}</select></td><td className="muted">{formatDate(item.createdAt)}</td></tr>)}</tbody></table></div>}
+
+      {tab === "templates" && <UniversalJobApplicationsAdminPanel view="templates" focusTemplateId={focusedTemplateId} />}
+      {tab === "templateApplications" && <UniversalJobApplicationsAdminPanel view="applications" focusTemplateId={focusedTemplateId} />}
 
       {tab === "sources" && <div className="table-wrap"><table className="admin-table"><thead><tr><th>المصدر</th><th>النوع</th><th>سياسة الجمع</th><th>الرابط</th><th>مفعل</th></tr></thead><tbody>{sources.length === 0 ? <tr><td colSpan={5} className="muted center">لا توجد مصادر.</td></tr> : sources.map((source) => <tr key={source.id}><td className="strong">{source.name}</td><td>{source.sourceType}</td><td>{source.crawlPolicy}</td><td><a href={source.url} target="_blank" rel="noreferrer">فتح المصدر</a></td><td><input type="checkbox" checked={source.enabled} onChange={(event) => void updateSource(source, event.target.checked)} aria-label={`تفعيل ${source.name}`} /></td></tr>)}</tbody></table></div>}
     </div>

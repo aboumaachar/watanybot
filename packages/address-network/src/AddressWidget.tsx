@@ -58,6 +58,7 @@ export type AddressWidgetProps = {
   onChange?: (value: AddressValueModel) => void;
   defaults?: AddressValueModel;
   featureFlags?: AddressWidgetFeatureFlags;
+  catalogUrl?: string;
   labels?: {
     governorate?: string;
     caza?: string;
@@ -360,7 +361,7 @@ export function AddressWidget(props: Readonly<AddressWidgetProps>) {
 
     async function loadFullCatalog() {
       try {
-        const response = await fetch(FULL_DATA_URL);
+        const response = await fetch(props.catalogUrl || FULL_DATA_URL);
         if (!response.ok) {
           throw new Error(`ADDRESS_WIDGET_FULL_DATA_FETCH_${response.status}`);
         }
@@ -384,7 +385,7 @@ export function AddressWidget(props: Readonly<AddressWidgetProps>) {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [props.catalogUrl]);
 
   const governorates = catalog.governorates;
 
