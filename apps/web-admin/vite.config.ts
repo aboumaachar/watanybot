@@ -8,7 +8,7 @@ export default defineConfig(({ mode }) => {
   const adminPort = Number(env.VITE_PORT || 5175);
   return {
     plugins: [react()],
-    base: env.VITE_BASE || "/superadmin/",
+    base: env.VITE_BASE || "/ops/",
     server: {
       port: adminPort,
       proxy: {

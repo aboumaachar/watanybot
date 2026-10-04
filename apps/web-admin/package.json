@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "vite --host",
     "build": "vite build",
+    "build:ops": "vite build --base /ops/ && node scripts/verify-ops-build.mjs dist",
+    "verify:ops-build": "node scripts/verify-ops-build.mjs dist",
     "preview": "vite preview",
     "lint": "node -e \"console.log('lint not configured')\"",
     "typecheck": "tsc -p tsconfig.json --noEmit"

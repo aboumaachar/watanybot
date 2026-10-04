@@ -5,13 +5,24 @@ import { SERVERS } from "../lib/api";
 const LOCAL_URL = SERVERS[0].url;
 const PROD_URL = SERVERS[1].url;
 
+const LEGACY_LOCAL_URL = "http://localhost:8010";
+
+function isProductionAdminHost(hostname: string): boolean {
+  const normalized = hostname.trim().toLowerCase();
+  return normalized === "koudama.com" || normalized.endsWith(".koudama.com");
+}
+
+export function resolveInitialAdminServer(storedUrl: string | null, hostname: string): string {
+  const isKnownLocalUrl = storedUrl === LOCAL_URL || storedUrl === LEGACY_LOCAL_URL;
+  if (isProductionAdminHost(hostname) && (!storedUrl || isKnownLocalUrl)) return PROD_URL;
+  if (storedUrl === LEGACY_LOCAL_URL) return LOCAL_URL;
+  return storedUrl || LOCAL_URL;
+}
 function getInitialServer(): string {
   const storedUrl = localStorage.getItem("admin_api_url");
-  if (storedUrl === "http://localhost:8010") {
-    localStorage.setItem("admin_api_url", LOCAL_URL);
-    return LOCAL_URL;
-  }
-  return storedUrl || LOCAL_URL;
+  const resolvedUrl = resolveInitialAdminServer(storedUrl, globalThis.location.hostname);
+  if (resolvedUrl !== storedUrl) localStorage.setItem("admin_api_url", resolvedUrl);
+  return resolvedUrl;
 }
 
 const inputStyle: React.CSSProperties = {
