@@ -1,14 +1,16 @@
 /**
- * KB v2 proxy routes — forwards 8 endpoints to the Python backend.
- * Extracted from server.ts.
+ * KB v2 compatibility routes.
+ * Node is the default authority; legacy Python remains an explicit opt-in rollback path.
  */
 import type { FastifyInstance, FastifyPluginAsync, FastifyRequest, FastifyReply } from "fastify";
 import { request } from "undici";
 import { randomUUID } from "node:crypto";
 import { query } from "../lib/db.js";
+import { resolveLegacyV2Intent } from "../lib/legacy-v2-intent.js";
 
 interface KbV2ProxyRoutesOptions {
   getPythonBase: () => string;
+  usePython?: boolean;
 }
 
 type JsonUpstreamResponse = {
@@ -184,8 +186,109 @@ async function getLocalTicket(req: FastifyRequest & { params: { id: string } }, 
   return reply.send(mapTicketRow(result.rows[0]));
 }
 
-export const kbV2ProxyRoutes: FastifyPluginAsync<KbV2ProxyRoutesOptions> = async (app, { getPythonBase }) => {
+async function localDiagnosticsFallback(app: FastifyInstance): Promise<Record<string, unknown> | null> {
+  const [healthRes, kbRes, nodesRes] = await Promise.all([
+    app.inject({ method: "GET", url: "/api/health" }),
+    app.inject({ method: "GET", url: "/api/kb/stats" }),
+    app.inject({ method: "GET", url: "/api/kb-nodes/stats" }),
+  ]);
+  if ([healthRes, kbRes, nodesRes].some((response) => response.statusCode < 200 || response.statusCode >= 300)) return null;
+  const health = asRecord(healthRes.json());
+  const kb = asRecord(kbRes.json());
+  const nodes = asRecord(nodesRes.json());
+  if (health.status !== "ok" || kb.ok !== true || nodes.ready !== true) return null;
+  return {
+    status: "degraded",
+    ready: true,
+    source: "node-fallback",
+    python_backend: "unavailable",
+    kb_path: null,
+    local: { health, kb, nodes },
+  };
+}
+
+export const kbV2ProxyRoutes: FastifyPluginAsync<KbV2ProxyRoutesOptions> = async (app, { getPythonBase, usePython = false }) => {
+  const legacyPythonEnabled = usePython === true;
   const kbV2Base = () => getPythonBase().replace(/\/$/, "");
+
+  const sendNodeChatFallback = async (req: FastifyRequest, reply: FastifyReply, body: Record<string, unknown>) => {
+    const fallbackHeaders: Record<string, string> = { "content-type": "application/json" };
+    if (typeof req.headers.authorization === "string") fallbackHeaders.authorization = req.headers.authorization;
+    if (typeof req.headers.cookie === "string") fallbackHeaders.cookie = req.headers.cookie;
+    const fallbackPayload: Record<string, unknown> = {
+      message: String(body.question),
+      channel: typeof body.channel === "string" ? body.channel : "web-v2-fallback",
+    };
+    if (body.context && typeof body.context === "object" && !Array.isArray(body.context)) fallbackPayload.context = body.context;
+    if (typeof body.session_id === "string" && body.session_id.trim()) fallbackPayload.sessionId = body.session_id;
+    if (typeof body.lang === "string" && body.lang.trim()) fallbackPayload.lang = body.lang;
+
+    const localRes = await app.inject({ method: "POST", url: "/api/chat", headers: fallbackHeaders, payload: fallbackPayload });
+    if (localRes.statusCode < 200 || localRes.statusCode >= 300) {
+      app.log.warn({ statusCode: localRes.statusCode }, "kb_v2_chat_node_fallback_failed");
+      reply.code(502);
+      return { error: "KB v2 backend unavailable", fallback_status: localRes.statusCode };
+    }
+
+    const data = asRecord(localRes.json());
+    const debug = asRecord(data.debug);
+    const sources = Array.isArray(data.sources) ? data.sources : [];
+    const intents = Array.isArray(data.intents) ? data.intents.filter((value): value is string => typeof value === "string") : [];
+    const replyText = String(data.reply ?? data.answer ?? "");
+    const kbHits = sources.map((raw) => {
+      const item = asRecord(raw);
+      return {
+        source: String(item.source ?? "kb"),
+        id: String(item.id ?? ""),
+        title: String(item.title ?? ""),
+        body: String(item.body ?? item.text ?? ""),
+        score: toFiniteScore(item.score),
+      };
+    });
+    const confidence = typeof data.confidence === "number"
+      ? data.confidence
+      : (debug.chitchat || debug.unrecognized ? 0.05 : (sources.length > 0 ? 0.35 : 0.1));
+    const menu = Array.isArray(data.menu)
+      ? data.menu.filter((value): value is string => typeof value === "string" && value.trim().length > 0)
+      : [];
+
+    reply.header("x-watany-kb-v2-source", "node-fallback");
+    return reply.send({
+      answer_lb: replyText,
+      answer_formal: replyText,
+      confidence,
+      kb_hits: kbHits,
+      clarifying: typeof data.clarifying_question === "string" ? data.clarifying_question : undefined,
+      intent: String(data.intent ?? intents[0] ?? ""),
+      domain: String(data.domain ?? ""),
+      intent_result: asRecord(data.intent_result),
+      menu,
+      ticket: data.ticket ?? undefined,
+      salary_breakdown: data.salary_breakdown ?? undefined,
+    });
+  };
+
+  const sendNodeIntentFallback = (reply: FastifyReply, text: string, context?: { slots_filled?: Record<string, unknown> }) => {
+    try {
+      const fallback = resolveLegacyV2Intent(text, context);
+      reply.header("x-watany-kb-v2-source", "node-fallback");
+      return reply.send(fallback);
+    } catch (fallbackErr: unknown) {
+      app.log.error({ err: fallbackErr }, "kb_v2_intent_node_fallback_failed");
+      reply.code(502);
+      return { error: "KB v2 backend unavailable" };
+    }
+  };
+
+  const sendNodeDiagnosticsFallback = async (reply: FastifyReply) => {
+    const fallback = await localDiagnosticsFallback(app);
+    if (!fallback) {
+      reply.code(502);
+      return { error: "KB v2 backend unavailable" };
+    }
+    reply.header("x-watany-kb-v2-source", "node-fallback");
+    return reply.send(fallback);
+  };
 
   // POST /api/v2/chat
   app.post("/api/v2/chat", async (req: FastifyRequest, reply: FastifyReply) => {
@@ -194,18 +297,13 @@ export const kbV2ProxyRoutes: FastifyPluginAsync<KbV2ProxyRoutesOptions> = async
       reply.code(400);
       return { error: "question required" };
     }
+    if (!legacyPythonEnabled) return sendNodeChatFallback(req, reply, body);
     try {
-      const res = await request(`${kbV2Base()}/api/v2/chat`, {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify(body),
-      });
+      const res = await request(`${kbV2Base()}/api/v2/chat`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
       return await sendUpstreamJson(res, reply);
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : String(err);
-      app.log.warn({ err }, "kb_v2_chat_proxy_failed");
-      reply.code(502);
-      return { error: "KB v2 backend unavailable", detail: message };
+      app.log.warn({ err }, "kb_v2_chat_proxy_failed_using_node_fallback");
+      return sendNodeChatFallback(req, reply, body);
     }
   });
 
@@ -215,9 +313,13 @@ export const kbV2ProxyRoutes: FastifyPluginAsync<KbV2ProxyRoutesOptions> = async
     const rawLimit = Number((req.query as Record<string, string>).limit || "10");
     const limit = Number.isFinite(rawLimit) ? Math.min(Math.max(Math.trunc(rawLimit), 1), 50) : 10;
     const domain = (req.query as Record<string, string>).domain || "";
-    if (q.length < 2) {
-      return reply.code(422).send({ error: "q must contain at least 2 characters" });
-    }
+    if (q.length < 2) return reply.code(422).send({ error: "q must contain at least 2 characters" });
+    const sendLocal = async () => {
+      const fallback = await localSearchFallback(app, q, limit, domain);
+      reply.header("x-watany-kb-v2-source", "node-fallback");
+      return reply.send(fallback);
+    };
+    if (!legacyPythonEnabled) return sendLocal();
     const params = new URLSearchParams({ q, limit: String(limit) });
     if (domain) params.set("domain", domain);
     try {
@@ -225,36 +327,41 @@ export const kbV2ProxyRoutes: FastifyPluginAsync<KbV2ProxyRoutesOptions> = async
       return await sendUpstreamJson(res, reply);
     } catch (err: unknown) {
       app.log.warn({ err }, "kb_v2_search_proxy_failed_using_local_fallback");
-      const fallback = await localSearchFallback(app, q, limit, domain);
-      reply.header("x-watany-kb-v2-source", "node-fallback");
-      return reply.send(fallback);
+      return sendLocal();
     }
   });
 
   // POST /api/v2/intent
   app.post("/api/v2/intent", async (req: FastifyRequest, reply: FastifyReply) => {
+    const body = asRecord(req.body);
+    const text = typeof body.text === "string" ? body.text.trim() : "";
+    if (!text) return reply.code(422).send({ error: "text required" });
+    const context = body.context && typeof body.context === "object" && !Array.isArray(body.context)
+      ? body.context as { slots_filled?: Record<string, unknown> } : undefined;
+    if (!legacyPythonEnabled) return sendNodeIntentFallback(reply, text, context);
     try {
-      const res = await request(`${kbV2Base()}/api/v2/intent`, {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify(req.body || {}),
-      });
+      const res = await request(`${kbV2Base()}/api/v2/intent`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
       return await sendUpstreamJson(res, reply);
     } catch (err: unknown) {
-      app.log.warn({ err }, "kb_v2_intent_proxy_failed");
-      reply.code(502);
-      return { error: "KB v2 backend unavailable" };
+      app.log.warn({ err }, "kb_v2_intent_proxy_failed_using_node_fallback");
+      return sendNodeIntentFallback(reply, text, context);
     }
   });
 
   // POST /api/v2/salary/compute
   app.post("/api/v2/salary/compute", async (req: FastifyRequest, reply: FastifyReply) => {
-    try {
-      const res = await request(`${kbV2Base()}/api/v2/salary/compute`, {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify(req.body || {}),
+    if (!legacyPythonEnabled) {
+      reply.header("x-watany-kb-v2-source", "retired");
+      return reply.code(410).send({
+        error: "Legacy KB v2 salary engine retired",
+        code: "LEGACY_V2_SALARY_RETIRED",
+        retired: true,
+        current_salary_route: "/api/salary/calc",
+        semantic_equivalence: false,
       });
+    }
+    try {
+      const res = await request(`${kbV2Base()}/api/v2/salary/compute`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(req.body || {}) });
       return await sendUpstreamJson(res, reply);
     } catch (err: unknown) {
       app.log.warn({ err }, "kb_v2_salary_proxy_failed");
@@ -265,16 +372,13 @@ export const kbV2ProxyRoutes: FastifyPluginAsync<KbV2ProxyRoutesOptions> = async
 
   // POST /api/v2/tickets — Create ticket
   app.post("/api/v2/tickets", async (req: FastifyRequest, reply: FastifyReply) => {
+    if (!legacyPythonEnabled) return createLocalTicket(req, reply);
     try {
-      const res = await request(`${kbV2Base()}/api/v2/tickets`, {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify(req.body || {}),
-      });
+      const res = await request(`${kbV2Base()}/api/v2/tickets`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(req.body || {}) });
       return await sendUpstreamJson(res, reply);
     } catch (err: unknown) {
       app.log.warn({ err }, "kb_v2_ticket_create_proxy_failed_using_local_fallback");
-      return await createLocalTicket(req, reply);
+      return createLocalTicket(req, reply);
     }
   });
 
@@ -282,39 +386,39 @@ export const kbV2ProxyRoutes: FastifyPluginAsync<KbV2ProxyRoutesOptions> = async
   app.get("/api/v2/tickets", async (req: FastifyRequest, reply: FastifyReply) => {
     const status = (req.query as Record<string, string>).status || "";
     const category = (req.query as Record<string, string>).category || "";
-    const params = new URLSearchParams();
-    if (status) params.set("status", status);
-    if (category) params.set("category", category);
+    if (!legacyPythonEnabled) return listLocalTickets(req, reply);
+    const params = new URLSearchParams(); if (status) params.set("status", status); if (category) params.set("category", category);
     try {
       const res = await request(`${kbV2Base()}/api/v2/tickets?${params}`, { method: "GET" });
       return await sendUpstreamJson(res, reply);
     } catch (err: unknown) {
       app.log.warn({ err }, "kb_v2_ticket_list_proxy_failed_using_local_fallback");
-      return await listLocalTickets(req, reply);
+      return listLocalTickets(req, reply);
     }
   });
 
   // GET /api/v2/tickets/:id — Get ticket
   app.get<{ Params: { id: string } }>("/api/v2/tickets/:id", async (req, reply) => {
     const id = req.params.id;
+    if (!legacyPythonEnabled) return getLocalTicket(req as FastifyRequest & { params: { id: string } }, reply);
     try {
       const res = await request(`${kbV2Base()}/api/v2/tickets/${encodeURIComponent(id)}`, { method: "GET" });
       return await sendUpstreamJson(res, reply);
     } catch (err: unknown) {
       app.log.warn({ err }, "kb_v2_ticket_get_proxy_failed_using_local_fallback");
-      return await getLocalTicket(req as FastifyRequest & { params: { id: string } }, reply);
+      return getLocalTicket(req as FastifyRequest & { params: { id: string } }, reply);
     }
   });
 
   // GET /api/v2/diagnostics — KB v2 health
   app.get("/api/v2/diagnostics", async (_req: FastifyRequest, reply: FastifyReply) => {
+    if (!legacyPythonEnabled) return sendNodeDiagnosticsFallback(reply);
     try {
       const res = await request(`${kbV2Base()}/api/v2/diagnostics`, { method: "GET" });
       return await sendUpstreamJson(res, reply);
     } catch (err: unknown) {
-      app.log.warn({ err }, "kb_v2_diagnostics_proxy_failed");
-      reply.code(502);
-      return { error: "KB v2 backend unavailable" };
+      app.log.warn({ err }, "kb_v2_diagnostics_proxy_failed_using_local_fallback");
+      return sendNodeDiagnosticsFallback(reply);
     }
   });
 };

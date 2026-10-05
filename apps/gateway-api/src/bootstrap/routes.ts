@@ -210,7 +210,7 @@ export async function registerRoutes(
   app.register(savedChatsRoutes,    { pluginDb: kb.pluginDb });
   app.register(surveyRoutes,        { pluginDb: kb.pluginDb });
   app.register(pluginsRoutes,       { pluginDb: kb.pluginDb });
-  app.register(kbV2ProxyRoutes,     { getPythonBase });
+  app.register(kbV2ProxyRoutes,     { getPythonBase, usePython });
   app.register(kbVNextRoutes,       { isKbNodesReady, searchKbNodes, getKbNodesStats, listKbNodes });
   app.register(legalRoutes);
   app.register(filesRoutes);

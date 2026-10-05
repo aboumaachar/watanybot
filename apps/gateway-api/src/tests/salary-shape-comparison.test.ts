@@ -17,27 +17,22 @@
  *                    pension_rate, total_severance, summary_lb, summary_formal
  *
  *   Node salary routes are Node-PERMANENT (not scheduled for retirement).
- *   Python's /api/v2/salary/compute is a separate endpoint for chat-embedded
- *   computation and is proxied correctly.
+ *   The historical Python /api/v2/salary/compute contract is intentionally
+ *   non-equivalent and is retired rather than silently remapped.
  *
- * This test now serves as a regression guard for the Node salary shape only.
- * The PYTHON_UP section remains for documentation if the proxy contract changes.
+ * This test guards both the permanent Node salary shape and the explicit
+ * HTTP 410 retirement contract for the old generic v2 salary engine.
  */
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
-// Force Python upstream down for this test file to validate graceful-degradation
-import { restorePythonEnv, forcePythonDown } from "./setup/force-python-down";
 import { app } from "../server";
 
-const PYTHON_UP = process.env.PYTHON_UP === "1";
-
 beforeAll(async () => {
-  forcePythonDown();
+  expect(process.env.USE_PYTHON_API).toBe("false");
   await app.ready();
 });
 
 afterAll(async () => {
   await app.close();
-  try { restorePythonEnv(); } catch (e) { /* best-effort */ }
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -86,37 +81,25 @@ describe("Node salary shape — POST /api/salary/calc", () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Python salary shape (via proxy)
+// Historical generic v2 salary retirement contract
 // ─────────────────────────────────────────────────────────────────────────────
-describe("Python salary shape — POST /api/v2/salary/compute", () => {
-  it("documents all top-level fields returned by Python", async () => {
-    if (!PYTHON_UP) {
-      console.info("[salary-shape] PYTHON_UP not set — skipping Python shape assertions");
-      // Verify graceful 502
-      const res = await app.inject({
-        method: "POST",
-        url: "/api/v2/salary/compute",
-        payload: { rank: "جندي", degree: 1, married: true, kids: 2 },
-      });
-      expect(res.statusCode).toBe(502);
-      return;
-    }
-
+describe("Retired generic salary shape — POST /api/v2/salary/compute", () => {
+  it("returns explicit 410 and preserves the non-equivalence warning", async () => {
     const res = await app.inject({
       method: "POST",
       url: "/api/v2/salary/compute",
       payload: { rank: "جندي", degree: 1, married: true, kids: 2 },
     });
-    expect(res.statusCode).toBe(200);
 
-    const body = res.json();
-    const topLevel = Object.keys(body);
-    console.info("[salary-shape] Python top-level fields:", topLevel);
-
-    // Python SalaryComputeResponse fields (from schemas_kb_v2.py)
-    expect(body).toHaveProperty("breakdown");
-    const bd = body.breakdown as Record<string, unknown>;
-    console.info("[salary-shape] Python breakdown fields:", Object.keys(bd));
+    expect(res.statusCode).toBe(410);
+    expect(res.headers["x-watany-kb-v2-source"]).toBe("retired");
+    expect(res.json()).toEqual({
+      error: "Legacy KB v2 salary engine retired",
+      code: "LEGACY_V2_SALARY_RETIRED",
+      retired: true,
+      current_salary_route: "/api/salary/calc",
+      semantic_equivalence: false,
+    });
   });
 });
 
@@ -145,7 +128,7 @@ describe("Salary schema delta documentation", () => {
      *                   family_allowance, medals_bonus, net_pension,
      *                   severance_factor, total_severance } }
      *
-     * CONCLUSION: Not duplicates. No migration required.
+     * CONCLUSION: Not duplicates. The generic Python contract is retired without semantic migration.
      * Node routes are Node-PERMANENT per ADR-002 amendment.
      */
     expect(true).toBe(true);

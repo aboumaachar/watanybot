@@ -8,7 +8,7 @@ export default defineConfig({
     setupFiles: [],
     env: {
       JWT_SECRET: "TEST_ONLY_FAKE_JWT_SECRET_DO_NOT_USE_IN_PROD",
-      USE_PYTHON_API: "true",
+      USE_PYTHON_API: "false",
       PYTHON_API_URL: "http://localhost:8012",
       PORT: "4000",
       USE_KB_STUB: "false",

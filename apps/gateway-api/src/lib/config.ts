@@ -33,7 +33,7 @@ export const erpNextSiteName = process.env.ERPNEXT_SITE_NAME || "frontend";
 export const erpNextCredentialFile = resolveConfiguredPath(process.env.ERPNEXT_CREDENTIAL_FILE);
 export const erpNextRequestTimeoutMs = Number(process.env.ERPNEXT_REQUEST_TIMEOUT_MS || "10000");
 
-export const usePython = (process.env.USE_PYTHON_API || "true").toLowerCase() === "true";
+export const usePython = (process.env.USE_PYTHON_API || "false").toLowerCase() === "true";
 let pythonBase = process.env.PYTHON_API_URL || "http://localhost:8010";
 export function setPythonBase(v: string) { pythonBase = v; }
 export function getPythonBase() { return pythonBase; }
