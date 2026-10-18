@@ -33,6 +33,23 @@ const STATUSES = new Set<MiddleEastSecurityStatus>(["pending", "approved", "reje
 const clean = (value: unknown): string => String(value ?? "").trim();
 const bool = (value: unknown): boolean => value === true || value === "true" || value === "نعم";
 
+function isStrictIsoDate(value: string): boolean {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+  if (!match) return false;
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  const day = Number(match[3]);
+  const date = new Date(Date.UTC(year, month - 1, day));
+  return date.getUTCFullYear() === year && date.getUTCMonth() + 1 === month && date.getUTCDate() === day;
+}
+
+function isValidBirthDate(value: string): boolean {
+  if (!isStrictIsoDate(value)) return false;
+  const today = new Date().toISOString().slice(0, 10);
+  const minimum = `${new Date().getUTCFullYear() - 130}-01-01`;
+  return value >= minimum && value <= today;
+}
+
 function toIso(value: unknown): string {
   const date = new Date(String(value ?? ""));
   return Number.isNaN(date.getTime()) ? new Date(0).toISOString() : date.toISOString();
@@ -142,7 +159,7 @@ function normalizeInput(input: MiddleEastSecurityInput): MiddleEastSecurityInput
     const supplied = value === true || value === false || ["true", "false", "نعم", "لا"].includes(clean(value).toLowerCase());
     if (!Object.prototype.hasOwnProperty.call(input, key) || !supplied) throw new Error("MISSING_REQUIRED_FIELD");
   }
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(normalized.birth_date) || Number.isNaN(Date.parse(normalized.birth_date))) {
+  if (!isValidBirthDate(normalized.birth_date)) {
     throw new Error("INVALID_BIRTH_DATE");
   }
   if (!/^\d+$/.test(String(normalized.age_years)) || !Number.isSafeInteger(Number(normalized.age_years)) || Number(normalized.age_years) < 1 || Number(normalized.age_years) > 130) {
