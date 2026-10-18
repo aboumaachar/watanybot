@@ -138,6 +138,13 @@ describe("survey routes", () => {
       ],
     });
 
+    const unauthenticatedVoteResponse = await app.inject({
+      method: "POST",
+      url: "/api/voting/elections/watanybot-feature-usage-intent/vote",
+      payload: { optionId: "apex-invalid-public-vote-option" },
+    });
+    expect(unauthenticatedVoteResponse.statusCode).toBe(401);
+    expect(unauthenticatedVoteResponse.json()).toEqual({ error: "unauthorized" });
     await app.close();
   });
 
@@ -306,7 +313,7 @@ describe("survey routes", () => {
         },
       ],
       canEdit: false,
-      canVote: true,
+      canVote: false,
       hasVoted: false,
     });
 
@@ -341,6 +348,14 @@ describe("survey routes", () => {
   it("creates elections and casts votes entirely inside the Watany store", async () => {
     const pluginDb = await createVotingPluginDb("moderator");
     const app = Fastify();
+    let currentRole: "moderator" | "accredited" = "moderator";
+    app.addHook("onRequest", async (request) => {
+      (request as any).user = {
+        id: "voting-tester",
+        role: currentRole,
+        email: "tester@watany.test",
+      };
+    });
     app.register(surveyRoutes, { pluginDb });
     await app.ready();
 
@@ -499,8 +514,7 @@ describe("survey routes", () => {
       items: Array<{ election: { id: string } }>;
     }).items.some((item) => item.election.id === temporaryElectionId)).toBe(false);
 
-    pluginDb.prepare("UPDATE profile SET name = ?, phone = ?, email = ?, region = ?, note = ?, role = ?, is_authed = ?, last_login = ? WHERE id = ?")
-      .run("Voting Tester", "", "tester@watany.test", "", "", "accredited", 1, Date.now(), "default");
+    currentRole = "accredited";
 
     const detailBeforeVote = await app.inject({ method: "GET", url: `/api/voting/elections/${created.election.id}` });
     expect(detailBeforeVote.statusCode).toBe(200);

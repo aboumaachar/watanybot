@@ -24,7 +24,7 @@ function source(mode: SourceMode): PayloadHttpClient {
 function createService(runtimeRoot: string, mode: SourceMode, configured = true, failReload = false) {
   const previous = process.env.PAYLOAD_CMS_BASE_URL;
   if (configured) process.env.PAYLOAD_CMS_BASE_URL = "http://127.0.0.1:4101"; else delete process.env.PAYLOAD_CMS_BASE_URL;
-  const service = new PayloadCanonicalSyncService({ runtimeRoot, fetcher: source(mode), reload: async () => { if (failReload) throw new Error("acceptance reload failure"); }, audit: async () => undefined, now: () => new Date("2026-09-04T00:00:00.000Z") });
+  const service = new PayloadCanonicalSyncService({ runtimeRoot, fetcher: source(mode), reload: async () => { if (failReload) throw new Error("acceptance reload failure"); }, audit: async () => undefined, now: () => new Date("2026-09-04T00:00:00.000Z"), runtimeCoverage: async () => ({ procedures: [], documents: [], mappings: [] }) });
   return { service, restore: () => { if (previous === undefined) delete process.env.PAYLOAD_CMS_BASE_URL; else process.env.PAYLOAD_CMS_BASE_URL = previous; } };
 }
 
