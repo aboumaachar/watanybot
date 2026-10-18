@@ -1,6 +1,7 @@
 import type { FastifyPluginAsync } from "fastify";
 import { loadIndex } from "../procedures/indexer.js";
 import type { Procedure } from "../procedures/types.js";
+import { listPublishedCuratedFaqs } from "./faq-curated.js";
 
 // Veteran-relevance signals for FAQ reranking
 const FAQ_VETERAN_HIGH = [
@@ -228,6 +229,22 @@ function buildFaqSearchHaystack(item: FaqCandidate): string {
 }
 
 export const faqRoutes: FastifyPluginAsync = async (app) => {
+  app.get("/api/v2/faq/curated", async (req, reply) => {
+    const params = (req.query || {}) as { q?: unknown; limit?: unknown };
+    const search = typeof params.q === "string" ? params.q.slice(0, 160) : "";
+    const parsedLimit = Number(params.limit);
+    const limit = Number.isInteger(parsedLimit) ? Math.min(Math.max(parsedLimit, 1), 20) : 10;
+    try {
+      const state = await loadIndex(false);
+      const sourceIds = new Set(state.procedures.map((procedure) => procedure.id));
+      const result = await listPublishedCuratedFaqs(sourceIds, search, limit);
+      return { ...result, editorial: true };
+    } catch {
+      // Never expose drafts or stale editor rows as a fallback on failure.
+      return reply.code(503).send({ error: "FAQ_CURATED_UNAVAILABLE" });
+    }
+  });
+
   app.get("/api/v2/faq", async (req) => {
     const { q, limit } = req.query as { q?: string; limit?: string };
     const query = (q || "").trim().toLowerCase();
