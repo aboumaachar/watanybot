@@ -1,8 +1,24 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
 import app from '../server';
 import { cleanupSessionUsers, createSessionToken } from './helpers/session-auth';
+
+vi.mock('../lib/db.js', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../lib/db.js')>();
+  return {
+    ...actual,
+    query: vi.fn(async (sql: string, params: unknown[] = []) => {
+      if (sql.includes("SELECT id, email, role FROM users WHERE id = $1 AND status = 'active'")) {
+        return { rows: [{ id: String(params[0]), email: 'admin@test.com', role: 'admin' }], rowCount: 1 };
+      }
+      if (sql.includes('SELECT id FROM sessions WHERE id = $1 AND user_id = $2 AND expires_at > now()')) {
+        return { rows: [{ id: String(params[0]) }], rowCount: 1 };
+      }
+      return actual.query(sql, params);
+    }),
+  };
+});
 
 process.env.JWT_SECRET ||= 'test-jwt-secret-for-admin-tests-0123456789abcdef';
 

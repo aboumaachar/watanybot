@@ -1,4 +1,4 @@
-/**
+﻿/**
  * OTP authentication regression tests.
  *
  * Mocks the PostgreSQL query layer so no live DB is required.
@@ -264,6 +264,25 @@ describe("POST /api/auth/otp/request", () => {
 });
 
 // ── POST /api/auth/otp/verify ───────────────────────────────────────────────
+
+describe("POST /api/auth/otp/request persistence failure", () => {
+  it("maps OTP persistence/schema failures to the controlled service error", async () => {
+    query.mockRejectedValueOnce(new Error('relation "phone_otps" does not exist'));
+
+    const app = buildApp();
+    const res = await app.inject({
+      method: "POST",
+      url: "/api/auth/otp/request",
+      payload: { phoneNumber: "03123456" },
+    });
+
+    expect(res.statusCode).toBe(503);
+    const body = res.json() as { error?: unknown };
+    expect(typeof body.error).toBe("string");
+    expect(String(body.error).length).toBeGreaterThan(0);
+    expect(sendOtpMock).not.toHaveBeenCalled();
+  });
+});
 
 describe("POST /api/auth/otp/verify", () => {
   const MOCK_OTP_ID = "otp-uuid-0001";
@@ -907,3 +926,4 @@ describe("PATCH /api/me/profile", () => {
     expect(res.statusCode).toBe(401);
   });
 });
+
