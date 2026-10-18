@@ -1,4 +1,4 @@
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import os from "node:os";
@@ -15,7 +15,7 @@ const canonicalNetworkPrefix = "/api/network";
 const canaryUserId = `apex-c7-network-${Date.now()}`;
 let app: FastifyInstance;
 let temporaryRoot = "";
-let originalCwd = "";
+let restoreCwd: (() => void) | null = null;
 
 function temporaryStorePath(): string {
   return path.join(temporaryRoot, "apps", "gateway-api", "data", "network", "network-store.json");
@@ -40,12 +40,12 @@ async function removeCanary(): Promise<void> {
 
 describe("C7 Network admin-owner runtime", () => {
   beforeAll(async () => {
-    originalCwd = process.cwd();
     temporaryRoot = await mkdtemp(path.join(os.tmpdir(), "watany-c7-network-"));
     const server = await import("../server.js");
     app = server.app;
     await app.ready();
-    process.chdir(temporaryRoot);
+    const cwdSpy = vi.spyOn(process, "cwd").mockReturnValue(temporaryRoot);
+    restoreCwd = () => cwdSpy.mockRestore();
   }, 60000);
 
   afterAll(async () => {
@@ -54,7 +54,8 @@ describe("C7 Network admin-owner runtime", () => {
       const cleaned = await request(`${canonicalNetworkPrefix}/membership?userId=${encodeURIComponent(canaryUserId)}`);
       if (cleaned.body.profile !== null) throw new Error("NETWORK_TEST_CANARY_RESIDUE");
     } finally {
-      process.chdir(originalCwd);
+      restoreCwd?.();
+      restoreCwd = null;
       await app.close();
       await closePool();
       await rm(temporaryRoot, { recursive: true, force: true });
