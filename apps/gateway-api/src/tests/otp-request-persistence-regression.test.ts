@@ -1,10 +1,18 @@
 import Fastify from "fastify";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { queryMock, sendOtpMock } = vi.hoisted(() => ({ queryMock: vi.fn(), sendOtpMock: vi.fn() }));
+const { queryMock, sendOtpMock } = vi.hoisted(() => ({
+  queryMock: vi.fn(),
+  sendOtpMock: vi.fn(),
+}));
+
 vi.mock("../lib/db.js", () => ({ query: queryMock }));
-vi.mock("../auth/sms.js", () => ({ createSmsProvider: () => ({ sendOtp: sendOtpMock }) }));
-const { otpRoutes, normalizePhone } = await import("../auth/otp-routes.js");
+vi.mock("../auth/sms.js", () => ({
+  createSmsProvider: () => ({ sendOtp: sendOtpMock }),
+}));
+
+const { otpRoutes, normalizePhone } = await import("../auth/otp-routes");
+
 beforeEach(() => {
   queryMock.mockReset();
   sendOtpMock.mockReset();
@@ -20,11 +28,13 @@ describe("OTP request persistence resilience", () => {
     const app = Fastify({ logger: false });
     await app.register(otpRoutes);
     await app.ready();
+
     const response = await app.inject({
       method: "POST",
       url: "/api/auth/otp/request",
       payload: { phoneNumber: "03156789" },
     });
+
     expect(response.statusCode).toBe(503);
     expect(response.json()).toMatchObject({ error: expect.any(String) });
     expect(sendOtpMock).not.toHaveBeenCalled();
