@@ -1,4 +1,5 @@
 ﻿import type { PluginDb } from "../types/domain";
+import { randomUUID } from "node:crypto";
 import { createDefaultWorldCupService } from '../worldcup';
 
 const worldCupService = createDefaultWorldCupService();
@@ -54,7 +55,7 @@ let inMemoryReminders: WorldCupReminderRecord[] = [];
 let inMemoryMatchMessages: WorldCupMatchMessageRecord[] = [];
 
 function makeId(prefix: string) {
-  return `${prefix}-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  return `${prefix}-${Date.now()}-${randomUUID()}`;
 }
 
 function requirePluginDb(): PluginDb {
