@@ -5,6 +5,7 @@
  *   OTP_PROVIDER=console   (default — logs to stdout, non-production only)
  *   OTP_PROVIDER=sms       (uses SMS_PROVIDER-specific implementation)
  *   OTP_PROVIDER=android_sms_gateway (uses SMSGate on an Android phone)
+ *   OTP_PROVIDER=sms_api   (uses the internal SMS API as delivery transport)
  *   OTP_PROVIDER=whatsapp  (uses WhatsApp simulation or Cloud API delivery)
  */
 
@@ -71,6 +72,47 @@ export class TwilioSmsProvider implements SmsProvider {
     if (!response.ok) {
       const errorBody = await response.text().catch(() => "");
       throw new Error(`Twilio SMS request failed (${response.status}): ${errorBody}`);
+    }
+  }
+}
+
+export class SmsApiDeliveryProvider implements SmsProvider {
+  private readonly baseUrl: string;
+  private readonly apiKey: string;
+  private readonly timeoutMs: number;
+  private readonly sender?: string;
+
+  constructor(options?: { baseUrl?: string; apiKey?: string; timeoutMs?: number; sender?: string }) {
+    const configuredBaseUrl = options?.baseUrl?.trim() || requireEnv("SMS_API_BASE_URL");
+    this.baseUrl = configuredBaseUrl.replace(/\/$/, "");
+    this.apiKey = options?.apiKey?.trim() || requireEnv("SMS_API_KEY");
+    const configuredTimeout = options?.timeoutMs ?? Number(process.env.SMS_API_TIMEOUT_MS || "10000");
+    this.timeoutMs = Number.isFinite(configuredTimeout) && configuredTimeout > 0 ? configuredTimeout : 10000;
+    this.sender = options?.sender?.trim() || process.env.SMS_API_SENDER?.trim() || undefined;
+  }
+
+  private endpoint(path: string): string {
+    const suffix = path.startsWith("/") ? path : `/${path}`;
+    return this.baseUrl.endsWith("/v1") ? `${this.baseUrl}${suffix}` : `${this.baseUrl}/v1${suffix}`;
+  }
+
+  async sendOtp(phoneNumber: string, code: string): Promise<void> {
+    const body: Record<string, string> = { to: phoneNumber, body: buildOtpMessage(code) };
+    if (this.sender) body.sender = this.sender;
+
+    const response = await fetch(this.endpoint("/messages/send"), {
+      method: "POST",
+      headers: {
+        authorization: `Bearer ${this.apiKey}`,
+        "content-type": "application/json",
+      },
+      body: JSON.stringify(body),
+      signal: AbortSignal.timeout(this.timeoutMs),
+    });
+
+    if (!response.ok) {
+      const errorBody = await response.text().catch(() => "");
+      throw new Error(`SMS API request failed (${response.status}): ${errorBody}`);
     }
   }
 }
@@ -217,6 +259,8 @@ export function createSmsProvider(): SmsProvider {
       return new ConsoleMockProvider();
     case "sms":
       return createConfiguredSmsProvider();
+    case "sms_api":
+      return new SmsApiDeliveryProvider();
     case "android_sms_gateway":
       return new AndroidSmsGatewayProvider();
     case "whatsapp":
