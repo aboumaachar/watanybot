@@ -158,7 +158,7 @@ type SurveyRequest = {
   user?: {
     id?: string;
     role?: string;
-    email?: string;
+    email?: string | null;
   };
   headers?: Record<string, string | string[] | undefined>;
   ip?: string;

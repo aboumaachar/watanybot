@@ -62,7 +62,8 @@ export function hasPermission(role: UserRole, perm: Permission): boolean {
 export type CanonicalAdminPrincipal = {
   id: string;
   role: UserRole;
-  email: string;
+  /** null for phone-only (OTP) accounts. Identity is id + role (+ session on admin paths). */
+  email: string | null;
   capabilities: readonly string[];
   authenticated: true;
 };
@@ -84,11 +85,11 @@ function capabilitiesForRole(role: UserRole): string[] {
 
 export function getCanonicalAdminPrincipal(request: FastifyRequest): CanonicalAdminPrincipal | null {
   const user = request.user;
-  if (!user || !user.id || !user.email || !isUserRole(user.role)) {
+  if (!user || !user.id || !isUserRole(user.role)) {
     return null;
   }
 
-  return { id: user.id, role: user.role, email: user.email, capabilities: capabilitiesForRole(user.role), authenticated: true };
+  return { id: user.id, role: user.role, email: user.email ?? null, capabilities: capabilitiesForRole(user.role), authenticated: true };
 }
 
 export function authorizePrincipal(

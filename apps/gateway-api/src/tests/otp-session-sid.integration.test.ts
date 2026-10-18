@@ -6,7 +6,8 @@
  * database (active user + live session + sid), so an OTP-logged-in admin was
  * anonymous there until the token was refreshed.
  *
- * Needs DATABASE_URL (a disposable test database); skipped otherwise.
+ * Needs DATABASE_URL; skipped otherwise. When it is set, the run fails closed
+ * unless the target is a disposable local test database (helpers/disposable-db.ts).
  * The SMS provider is mocked; OTP_DEV_CODE fixes the code.
  */
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
@@ -21,6 +22,8 @@ process.env.OTP_DEV_CODE = "123456";
 process.env.OTP_RESEND_COOLDOWN_SECONDS = "0";
 
 vi.mock("../auth/sms.js", () => ({ createSmsProvider: () => ({ sendOtp: vi.fn().mockResolvedValue(undefined) }) }));
+
+import { assertDisposableTestDatabase } from "./helpers/disposable-db";
 
 const hasDb = Boolean(process.env.DATABASE_URL);
 const { query } = await import("../lib/db.js");
@@ -58,6 +61,7 @@ async function otpLogin(phone: string): Promise<{ status: number; accessToken?: 
 
 describe.skipIf(!hasDb)("OTP verify issues a session-backed access token (sid)", () => {
   beforeAll(async () => {
+    assertDisposableTestDatabase();
     app = Fastify({ logger: false });
     await app.register(cookie);
     registerAuthHook(app);
@@ -67,6 +71,7 @@ describe.skipIf(!hasDb)("OTP verify issues a session-backed access token (sid)",
   }, 60000);
 
   afterAll(async () => {
+    if (!app) return; // guard refused the database: nothing was created
     if (createdUserIds.length) {
       await query("DELETE FROM sessions WHERE user_id = ANY($1::uuid[])", [createdUserIds]);
       await query("DELETE FROM audit_log WHERE user_id = ANY($1::uuid[])", [createdUserIds]);
@@ -107,13 +112,32 @@ describe.skipIf(!hasDb)("OTP verify issues a session-backed access token (sid)",
     expect(res.statusCode).toBe(401);
   });
 
-  it("documents the OTP-only admin with no email (principal requires an email)", async () => {
+  it("lets an OTP-only admin with no email reach an admin path", async () => {
     const admin = await seedAdmin(null);
     const login = await otpLogin(admin.phone);
     expect(login.status).toBe(200);
     const res = await app.inject({ method: "GET", url: ADMIN_PROBE, headers: { authorization: `Bearer ${login.accessToken}` } });
-    // Recorded, not asserted as desired behaviour: see the slice report.
-    console.log(`E01_OTP_NO_EMAIL_ADMIN_STATUS=${res.statusCode}`);
-    expect([200, 401]).toContain(res.statusCode);
+    expect(res.statusCode).toBe(200);
+    const body = res.json() as { user: { id: string; role: string; email: string | null; sessionId?: string } };
+    expect(body.user.id).toBe(admin.id);
+    expect(body.user.role).toBe("admin");
+    expect(body.user.email).toBeNull(); // no invented email
+    expect(body.user.sessionId).toBe((jwt.decode(login.accessToken!) as { sid: string }).sid);
+  });
+
+  it("still rejects an email-less admin whose session was revoked", async () => {
+    const admin = await seedAdmin(null);
+    const login = await otpLogin(admin.phone);
+    await query("DELETE FROM sessions WHERE user_id = $1", [admin.id]);
+    const res = await app.inject({ method: "GET", url: ADMIN_PROBE, headers: { authorization: `Bearer ${login.accessToken}` } });
+    expect(res.statusCode).toBe(401);
+  });
+
+  it("still rejects an email-less user whose database role is not admin", async () => {
+    const admin = await seedAdmin(null);
+    const login = await otpLogin(admin.phone);
+    await query("UPDATE users SET role = 'public' WHERE id = $1", [admin.id]);
+    const res = await app.inject({ method: "GET", url: ADMIN_PROBE, headers: { authorization: `Bearer ${login.accessToken}` } });
+    expect(res.statusCode).toBe(403);
   });
 });

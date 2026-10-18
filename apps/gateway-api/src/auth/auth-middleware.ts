@@ -66,7 +66,8 @@ async function resolveFreshAdminUser(payload: JWTPayload): Promise<AuthUser | nu
       return null;
     }
 
-    const result = await query<{ id: string; email: string; role: UserRole }>(
+    // email is NULL for phone-only (OTP) accounts.
+    const result = await query<{ id: string; email: string | null; role: UserRole }>(
       "SELECT id, email, role FROM users WHERE id = $1 AND status = 'active'",
       [payload.sub],
     );
@@ -88,7 +89,8 @@ async function resolveFreshAdminUser(payload: JWTPayload): Promise<AuthUser | nu
 export interface AuthUser {
   id: string;
   role: UserRole;
-  email: string;
+  /** null for phone-only (OTP) accounts; never used for authorization. */
+  email: string | null;
   sessionId?: string;
 }
 
