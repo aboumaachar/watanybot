@@ -228,6 +228,11 @@ export async function createGenericCmsEntity(input: GenericCmsEntityInput): Prom
   return createWithExecutor(defaultExecutor, input);
 }
 
+// Explicit opt-in for a single-connection CMS + audit + version transaction.
+export async function createGenericCmsEntityInTransaction(client: PoolClient, input: GenericCmsEntityInput): Promise<GenericCmsEntity> {
+  return createWithExecutor(client, input);
+}
+
 async function updateWithExecutor(executor: QueryExecutor, domain: string, publicId: string, patch: GenericCmsEntityPatch): Promise<GenericCmsEntity | null> {
   const titleProvided = hasOwn(patch, "title");
   const payloadProvided = hasOwn(patch, "payload");
@@ -278,6 +283,10 @@ async function updateWithExecutor(executor: QueryExecutor, domain: string, publi
 
 export async function updateGenericCmsEntity(domain: string, publicId: string, patch: GenericCmsEntityPatch): Promise<GenericCmsEntity | null> {
   return updateWithExecutor(defaultExecutor, domain, publicId, patch);
+}
+
+export async function updateGenericCmsEntityInTransaction(client: PoolClient, domain: string, publicId: string, patch: GenericCmsEntityPatch): Promise<GenericCmsEntity | null> {
+  return updateWithExecutor(client, domain, publicId, patch);
 }
 
 export function statusForGenericCmsAction(action: GenericCmsAction): GenericCmsStatus {

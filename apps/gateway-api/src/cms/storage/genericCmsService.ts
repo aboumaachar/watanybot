@@ -136,7 +136,7 @@ function normalizeListFilters(input: Record<string, unknown>): GenericCmsListFil
   };
 }
 
-function toView(config: GenericCmsRouteConfig, entity: GenericCmsEntity, relationships?: GenericCmsRelationship[]): GenericCmsView {
+export function toView(config: GenericCmsRouteConfig, entity: GenericCmsEntity, relationships?: GenericCmsRelationship[]): GenericCmsView {
   return {
     id: entity.publicId,
     domain: entity.domain,
