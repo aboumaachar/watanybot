@@ -196,6 +196,14 @@ function articleCanonicalSlug(item: ReturnType<typeof toListItem>): string {
   return articleAsciiSlug(item.title);
 }
 function articleCanonicalPath(item: ReturnType<typeof toListItem>): string { return `/articles/${articleCategorySlug(item.categories,item.primaryCategory)}/${articleCanonicalSlug(item)}`; }
+function articleArchiveUrl(category="",page=1,q=""): string {
+  const query=new URLSearchParams();
+  if(category)query.set("category",category);
+  if(q)query.set("q",q);
+  if(page>1)query.set("page",String(page));
+  const suffix=query.toString();
+  return ARTICLE_PUBLIC_ORIGIN+"/articles"+(suffix?"?"+suffix:"");
+}
 function publicArticleItem(row: CmsRow) {
   const item=toListItem(row);
   return {...item,seo:{...item.seo,canonicalUrl:`${ARTICLE_PUBLIC_ORIGIN}${articleCanonicalPath(item)}`}};
@@ -233,7 +241,9 @@ function articleSearchPreviewHtml(row: CmsRow): string {
   const body=articleSearchBodyHtml(payload.bodyHtml);
   const canonical=`${ARTICLE_PUBLIC_ORIGIN}${articleCanonicalPath(item)}`;
   const byline=item.authorName?`<p>${articleHtmlEscape(item.authorName)}</p>`:"";
-  const fullBody=`<body><main><article><header><h1>${articleHtmlEscape(item.title)}</h1>${byline}</header>${body}<p><a href="${articleHtmlEscape(canonical)}">فتح المقال على موطني</a></p></article></main></body>`;
+  const category=item.primaryCategory||item.categories[0]||"";
+  const nav=`<nav aria-label="التنقل بين المقالات"><a href="${ARTICLE_PUBLIC_ORIGIN}/articles">كل المقالات</a>${category?` | <a href="${articleArchiveUrl(category)}">${articleHtmlEscape(category)}</a>`:""}</nav>`;
+  const fullBody=`<body><main>${nav}<article><header><h1>${articleHtmlEscape(item.title)}</h1>${byline}</header>${body}<p><a href="${articleHtmlEscape(canonical)}">فتح المقال على موطني</a></p></article></main></body>`;
   return articleSocialPreviewHtml(row).replace(/<body>[\s\S]*<\/body>/u,fullBody);
 }
 
@@ -381,6 +391,53 @@ export const articleRoutes: FastifyPluginAsync = async (app) => {
     await query(`INSERT INTO watany_analytics_events(event_type,event_data) VALUES ('article_comment',jsonb_build_object('articleId',$1::text,'commentId',$2::text))`, [articleId, row.id]);
     reply.header("Cache-Control", "no-store");
     return reply.code(201).send({ item: publicArticleComment(row) });
+  });
+
+  // Public search-crawler archive: real links for every page and active category.
+  app.get<{ Querystring: { category?: string; q?: string; page?: string } }>("/api/articles/search-archive", { config: { rateLimit: false } }, async (request, reply) => {
+    const category=String(request.query.category||"").trim();
+    const q=String(request.query.q||"").trim();
+    const requestedPage=Number(request.query.page||"1");
+    const page=Number.isInteger(requestedPage)&&requestedPage>=1&&requestedPage<=1000?requestedPage:1;
+    const pageSize=50;
+    const filters=["domain='articles'","status='PUBLISHED'","COALESCE(payload->>'robots','index,follow') NOT LIKE 'noindex%'"];
+    const bindings:unknown[]=[];
+    if(category){bindings.push(category);filters.push("payload->'categories' ? $"+bindings.length);}
+    if(q){
+      bindings.push("%"+q.replace(/[\\%_]/g,(character)=>"\\"+character)+"%");
+      const index=bindings.length;
+      filters.push("(title ILIKE $"+index+" ESCAPE '\\' OR COALESCE(payload->>'bodyHtml','') ILIKE $"+index+" ESCAPE '\\')");
+    }
+    bindings.push(pageSize+1,(page-1)*pageSize);
+    const rows=await query<CmsRow>(
+      "SELECT public_id,public_code,title,payload,published_at,updated_at FROM cms_content_entities WHERE "+
+      filters.join(" AND ")+" ORDER BY published_at DESC NULLS LAST,public_id ASC LIMIT $"+
+      (bindings.length-1)+" OFFSET $"+bindings.length,bindings,
+    );
+    const categories=await query<{title:string}>(
+      "SELECT title FROM cms_content_entities WHERE domain='article-categories' AND status='PUBLISHED' ORDER BY title",
+    );
+    const hasNext=rows.rows.length>pageSize;
+    const items=rows.rows.slice(0,pageSize);
+    const categoryLinks=categories.rows.map((row)=>
+      '<a href="'+articleHtmlEscape(articleArchiveUrl(row.title))+'">'+articleHtmlEscape(row.title)+"</a>"
+    ).join(" | ");
+    const articleLinks=items.map((row)=>{
+      const item=toListItem(row);
+      return '<li><a href="'+articleHtmlEscape(ARTICLE_PUBLIC_ORIGIN+articleCanonicalPath(item))+'">'+articleHtmlEscape(item.title)+"</a></li>";
+    }).join("");
+    const previous=page>1?'<a href="'+articleHtmlEscape(articleArchiveUrl(category,page-1,q))+'">الصفحة السابقة</a>':"";
+    const next=hasNext?'<a href="'+articleHtmlEscape(articleArchiveUrl(category,page+1,q))+'">الصفحة التالية</a>':"";
+    const canonical=articleArchiveUrl(category,page,q);
+    const title=category?"مقالات "+category+" | موطني":"المقالات والأرشيف | موطني";
+    const html='<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'+
+      '<title>'+articleHtmlEscape(title)+'</title><meta name="description" content="أرشيف مقالات موطني المنشورة">'+
+      '<meta name="robots" content="'+(q?"noindex,follow":"index,follow")+'"><link rel="canonical" href="'+articleHtmlEscape(canonical)+'"></head>'+
+      '<body><main><h1>'+articleHtmlEscape(title)+'</h1><nav aria-label="تصنيفات المقالات"><a href="'+ARTICLE_PUBLIC_ORIGIN+'/articles">الكل</a> | '+categoryLinks+
+      '</nav><ol>'+articleLinks+'</ol><nav aria-label="صفحات المقالات">'+previous+' <span>الصفحة '+page+'</span> '+next+
+      '</nav></main></body></html>';
+    reply.header("Cache-Control","public, max-age=300, must-revalidate");
+    return reply.type("text/html; charset=utf-8").send(html);
   });
 
   app.get("/api/articles/sitemap.xml", async (_request, reply) => {
