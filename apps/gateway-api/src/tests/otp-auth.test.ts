@@ -85,6 +85,7 @@ beforeEach(async () => {
   process.env.OTP_DAILY_LIMIT_PER_PHONE = "10";
   process.env.OTP_DAILY_LIMIT_PER_IP = "30";
   vi.clearAllMocks();
+  query.mockReset();
   sendOtpMock.mockReset();
   sendOtpMock.mockResolvedValue(undefined);
   fetchMock.mockReset();
@@ -102,19 +103,19 @@ afterEach(() => {
 
 describe("normalizePhone", () => {
   it("accepts E.164 format", () => {
-    expect(normalizePhone("+96103123456")).toBe("+96103123456");
+    expect(normalizePhone("+96103123456")).toBe("+9613123456");
   });
 
   it("normalises Lebanese 8-digit without prefix", () => {
-    expect(normalizePhone("03123456")).toBe("+96103123456");
+    expect(normalizePhone("03123456")).toBe("+9613123456");
   });
 
   it("normalises Lebanese 8-digit with 0 prefix", () => {
-    expect(normalizePhone("03 123 456")).toBe("+96103123456");
+    expect(normalizePhone("03 123 456")).toBe("+9613123456");
   });
 
   it("handles international 00 prefix", () => {
-    expect(normalizePhone("0096103123456")).toBe("+96103123456");
+    expect(normalizePhone("0096103123456")).toBe("+9613123456");
   });
 
   it("returns null for invalid input", () => {
@@ -144,7 +145,7 @@ describe("POST /api/auth/otp/request", () => {
 
     expect(res.statusCode).toBe(200);
     expect(res.json()).toMatchObject({ ok: true });
-    expect(sendOtpMock).toHaveBeenCalledWith("+96103123456", "123456");
+    expect(sendOtpMock).toHaveBeenCalledWith("+9613123456", "123456");
   });
 
   it("returns generic success even for invalid phone (no enumeration)", async () => {
@@ -284,7 +285,7 @@ describe("POST /api/auth/otp/verify", () => {
       id: MOCK_USER_ID,
       role: "public",
       full_name: "مستخدم واتني",
-      phone_number: "+96103123456",
+      phone_number: "+9613123456",
       profile_completed: false,
     };
 
@@ -292,7 +293,7 @@ describe("POST /api/auth/otp/verify", () => {
       .mockResolvedValueOnce({ rows: otpRow, rowCount: otpRow.length }) // select OTP
       .mockResolvedValueOnce({ rows: [], rowCount: 1 })                 // increment attempts
       .mockResolvedValueOnce({ rows: [userRow], rowCount: 1 })          // upsert user
-      .mockResolvedValueOnce({ rows: [], rowCount: 1 })                 // insert session
+      .mockResolvedValueOnce({ rows: [{ id: "session-uuid-0001" }], rowCount: 1 }) // insert session
       .mockResolvedValueOnce({ rows: [], rowCount: 1 })                 // consume OTP
       .mockResolvedValueOnce({ rows: [], rowCount: 1 });                // audit success
   }
@@ -310,7 +311,7 @@ describe("POST /api/auth/otp/verify", () => {
     expect(res.statusCode).toBe(200);
     const body = res.json();
     expect(body.accessToken).toBeTruthy();
-    expect(body.user.phoneNumber).toBe("+96103123456");
+    expect(body.user.phoneNumber).toBe("+9613123456");
     expect(body.user.role).toBe("public");
     expect(body.user.profileCompleted).toBe(false);
 
@@ -318,7 +319,7 @@ describe("POST /api/auth/otp/verify", () => {
       typeof sql === "string" && sql.includes("INSERT INTO users"),
     );
     expect(upsertCall[0]).toContain("(email, phone_number, phone, role, status, full_name, name, username, profile_completed, phone_verified_at)");
-    expect(upsertCall[1][0]).toBe("+96103123456");
+    expect(upsertCall[1][0]).toBe("+9613123456");
     expect(upsertCall[1][1]).toBe("مستخدم واتني");
 
     const sessionCall = query.mock.calls.find(([sql]) => typeof sql === "string" && sql.includes("INSERT INTO sessions"));
@@ -333,7 +334,7 @@ describe("POST /api/auth/otp/verify", () => {
         id: MOCK_USER_ID,
         role: "public",
         full_name: "أحمد سليمان",
-        phone_number: "+96103123456",
+        phone_number: "+9613123456",
         profile_completed: true,
       },
     });
@@ -505,7 +506,7 @@ describe("POST /api/auth/phone-verification/request", () => {
 
     fetchMock.mockResolvedValueOnce(jsonResponse(202, {
       requestId: "sms-api-request-1",
-      phone: "+96103123456",
+      phone: "+9613123456",
       channel: "sms",
       status: "pending",
       expiresAt: "2026-05-23T18:30:00.000Z",
@@ -523,7 +524,7 @@ describe("POST /api/auth/phone-verification/request", () => {
     expect(res.statusCode).toBe(200);
     expect(res.json()).toMatchObject({
       ok: true,
-      phoneNumber: "+96103123456",
+      phoneNumber: "+9613123456",
       message: "تم إرسال رمز التحقق إلى الرقم المطلوب.",
       expiresAt: "2026-05-23T18:30:00.000Z",
     });
@@ -537,10 +538,8 @@ describe("POST /api/auth/phone-verification/request", () => {
     );
   });
 
-  it("falls back to the local whatsapp OTP provider during the initial stage", async () => {
-    process.env.OTP_PROVIDER = "whatsapp";
-    process.env.WHATSAPP_OUTBOUND_MODE = "simulate";
-    process.env.WHATSAPP_ACCOUNT_NUMBER = "+96181396332";
+  it("uses the configured SMSGate provider for authenticated phone verification", async () => {
+    process.env.OTP_PROVIDER = "android_sms_gateway";
 
     query.mockResolvedValue({ rows: [], rowCount: 1 } as any);
 
@@ -555,14 +554,17 @@ describe("POST /api/auth/phone-verification/request", () => {
     expect(res.statusCode).toBe(200);
     expect(res.json()).toMatchObject({
       ok: true,
-      phoneNumber: "+96103123456",
+      phoneNumber: "+9613123456",
       message: "تم إرسال رمز التحقق إلى الرقم المطلوب.",
     });
-    expect(sendOtpMock).toHaveBeenCalledWith("+96103123456", "123456");
+    expect(sendOtpMock).toHaveBeenCalledWith("+9613123456", "123456");
+    const requestInsert = query.mock.calls.find(([sql]) => typeof sql === "string" && sql.includes("INSERT INTO phone_verification_requests"));
+    expect(requestInsert?.[1]?.[4]).toBe("local_provider");
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
   it("returns 503 when SMS API is not configured", async () => {
+    query.mockResolvedValueOnce({ rows: [{ total: 0 }], rowCount: 1 } as any);
     const app = buildApp();
     const res = await app.inject({
       method: "POST",
@@ -573,6 +575,20 @@ describe("POST /api/auth/phone-verification/request", () => {
 
     expect(res.statusCode).toBe(503);
     expect(res.json().error).toMatch(/خدمة التحقق الهاتفي/);
+  });
+
+  it("fails closed when the legacy-phone preflight query fails", async () => {
+    query.mockRejectedValueOnce(new Error("legacy lookup failed"));
+    const app = buildApp();
+    const res = await app.inject({
+      method: "POST",
+      url: "/api/auth/phone-verification/request",
+      headers: { authorization: `Bearer ${makeAuthToken()}` },
+      payload: { phoneNumber: "03123456" },
+    });
+    expect(res.statusCode).toBe(503);
+    expect(res.json().error).toMatch(/خدمة التحقق الهاتفي/);
+    expect(sendOtpMock).not.toHaveBeenCalled();
   });
 });
 
@@ -585,7 +601,7 @@ describe("POST /api/auth/phone-verification/verify", () => {
 
     fetchMock.mockResolvedValueOnce(jsonResponse(200, {
       requestId: "sms-api-request-1",
-      phone: "+96103123456",
+      phone: "+9613123456",
       status: "verified",
       verifiedAt: "2026-05-23T18:15:00.000Z",
     }));
@@ -594,7 +610,7 @@ describe("POST /api/auth/phone-verification/verify", () => {
       .mockResolvedValueOnce({
         rows: [{
           id: "local-request-1",
-          phone_number: "+96103123456",
+          phone_number: "+9613123456",
           sms_api_request_id: "sms-api-request-1",
           status: "pending",
           expires_at: "2026-05-23T18:30:00.000Z",
@@ -609,7 +625,7 @@ describe("POST /api/auth/phone-verification/verify", () => {
           full_name: "أحمد سليمان",
           name: "أحمد سليمان",
           email: "user@watany.test",
-          phone_number: "+96103123456",
+          phone_number: "+9613123456",
           profile_completed: true,
           phone_verified_at: "2026-05-23T18:15:00.000Z",
         }],
@@ -627,11 +643,11 @@ describe("POST /api/auth/phone-verification/verify", () => {
     expect(res.statusCode).toBe(200);
     expect(res.json()).toMatchObject({
       ok: true,
-      phoneNumber: "+96103123456",
+      phoneNumber: "+9613123456",
       verifiedAt: "2026-05-23T18:15:00.000Z",
       profile: {
         isAuthed: true,
-        phone: "+96103123456",
+        phone: "+9613123456",
         phoneVerified: true,
         phoneVerifiedAt: "2026-05-23T18:15:00.000Z",
       },
@@ -647,7 +663,7 @@ describe("POST /api/auth/phone-verification/verify", () => {
     query.mockResolvedValueOnce({
       rows: [{
         id: "local-request-1",
-        phone_number: "+96103123456",
+        phone_number: "+9613123456",
         sms_api_request_id: "sms-api-request-1",
         status: "pending",
         expires_at: "2026-05-23T18:30:00.000Z",
@@ -668,15 +684,15 @@ describe("POST /api/auth/phone-verification/verify", () => {
     expect(res.json().error).toBe("الرمز غير صحيح أو انتهت صلاحيته.");
   });
 
-  it("verifies through the local initial-stage whatsapp fallback when SMS API is absent", async () => {
+  it("verifies through the canonical local provider backend", async () => {
     query.mockResolvedValue({ rows: [], rowCount: 1 } as any);
     query
       .mockResolvedValueOnce({
         rows: [{
           id: "local-request-1",
-          phone_number: "+96103123456",
+          phone_number: "+9613123456",
           sms_api_request_id: "local-otp-1",
-          verification_backend: "local_whatsapp",
+          verification_backend: "local_provider",
           status: "pending",
           expires_at: "2026-05-23T18:30:00.000Z",
           verified_at: null,
@@ -700,7 +716,7 @@ describe("POST /api/auth/phone-verification/verify", () => {
           full_name: "أحمد سليمان",
           name: "أحمد سليمان",
           email: "user@watany.test",
-          phone_number: "+96103123456",
+          phone_number: "+9613123456",
           profile_completed: true,
           phone_verified_at: "2026-05-23T18:15:00.000Z",
         }],
@@ -718,10 +734,10 @@ describe("POST /api/auth/phone-verification/verify", () => {
     expect(res.statusCode).toBe(200);
     expect(res.json()).toMatchObject({
       ok: true,
-      phoneNumber: "+96103123456",
+      phoneNumber: "+9613123456",
       profile: {
         isAuthed: true,
-        phone: "+96103123456",
+        phone: "+9613123456",
         phoneVerified: true,
       },
     });
@@ -733,7 +749,7 @@ describe("POST /api/auth/phone-verification/verify", () => {
       .mockResolvedValueOnce({
         rows: [{
           id: "local-request-1",
-          phone_number: "+96103123456",
+          phone_number: "+9613123456",
           sms_api_request_id: "local-otp-1",
           verification_backend: "local_whatsapp",
           status: "pending",
@@ -773,7 +789,7 @@ describe("GET /api/me", () => {
   const MOCK_USER_ID = "user-uuid-0001";
 
   function makeToken(userId = MOCK_USER_ID) {
-    return signAccessToken({ sub: userId, role: "public", email: "+96103123456" });
+    return signAccessToken({ sub: userId, role: "public", email: "+9613123456" });
   }
 
   it("returns user profile for authenticated request", async () => {
@@ -781,7 +797,7 @@ describe("GET /api/me", () => {
       rows: [{
         id: MOCK_USER_ID,
         email: null,
-        phone_number: "+96103123456",
+        phone_number: "+9613123456",
         full_name: "",
         name: "",
         rank: null,
@@ -807,7 +823,7 @@ describe("GET /api/me", () => {
     });
 
     expect(res.statusCode).toBe(200);
-    expect(res.json().user.phone_number).toBe("+96103123456");
+    expect(res.json().user.phone_number).toBe("+9613123456");
     expect(res.json().user.phone_verified_at).toBe("2026-05-23T18:15:00.000Z");
   });
 
@@ -824,7 +840,7 @@ describe("PATCH /api/me/profile", () => {
   const MOCK_USER_ID = "user-uuid-0001";
 
   function makeToken(userId = MOCK_USER_ID) {
-    return signAccessToken({ sub: userId, role: "public", email: "+96103123456" });
+    return signAccessToken({ sub: userId, role: "public", email: "+9613123456" });
   }
 
   it("updates optional profile fields", async () => {
@@ -832,7 +848,7 @@ describe("PATCH /api/me/profile", () => {
       rows: [{
         id: MOCK_USER_ID,
         email: null,
-        phone_number: "+96103123456",
+        phone_number: "+9613123456",
         full_name: "أحمد سليمان",
         rank: "رائد",
         service_number: null,

@@ -1,17 +1,18 @@
-import { getSchoolAidRequiredItem } from "../school-aids-required-items";
+import { getSchoolAidRequiredItem, schoolAidFormItems } from "../school-aids-required-items";
 
 describe("school-aids data", () => {
-  test("annex items and certificate use PDF preview/download URLs", () => {
-    const annexZ = getSchoolAidRequiredItem("annex-z");
-    const annexJ = getSchoolAidRequiredItem("annex-j");
-    const cert = getSchoolAidRequiredItem("school-year-completion-certificate");
+  test("all public school-aid forms use image-only preview/download URLs", () => {
+    expect(schoolAidFormItems).toHaveLength(3);
+    expect(getSchoolAidRequiredItem("school-aid-application")).toBeUndefined();
 
-    expect(annexZ).toBeDefined();
-    expect(annexJ).toBeDefined();
-    expect(cert).toBeDefined();
-
-    expect(annexZ!.previewUrl.endsWith(".pdf") || annexZ!.previewUrl.endsWith(".html")).toBe(true);
-    expect(annexJ!.previewUrl.endsWith(".pdf") || annexJ!.previewUrl.endsWith(".html")).toBe(true);
-    expect(cert!.previewUrl.endsWith(".pdf") || cert!.previewUrl.endsWith(".html")).toBe(true);
+    const isImageUrl = (url: string) => /\.(?:png|jpe?g|webp)(?:$|[?#])/i.test(url);
+    for (const item of schoolAidFormItems) {
+      expect(item.sourceStatus).toBe("OFFICIAL_FILE_ATTACHED");
+      expect(isImageUrl(item.previewUrl)).toBe(true);
+      expect(isImageUrl(item.downloadUrl)).toBe(true);
+      expect(item.previewUrl.endsWith(".html")).toBe(false);
+      expect(item.previewUrl.endsWith(".pdf")).toBe(false);
+      expect(item.preferUniversal).toBe(true);
+    }
   });
 });

@@ -228,6 +228,13 @@ export const advancedRoutes: FastifyPluginAsync = async (app) => {
     Params: { userId: string };
   }>("/api/v2/user/:userId/profile", async (req, reply) => {
     const { userId } = req.params;
+    const actor = req.user;
+    if (!actor) {
+      return reply.code(401).send({ error: "AUTH_REQUIRED" });
+    }
+    if (actor.id !== userId && actor.role !== "admin" && actor.role !== "superadmin") {
+      return reply.code(403).send({ error: "FORBIDDEN" });
+    }
     
     try {
       const profile = feedbackLoop.buildUserProfile(userId);
@@ -264,7 +271,7 @@ export const advancedRoutes: FastifyPluginAsync = async (app) => {
    */
   app.get<{
     Querystring: { limit?: number };
-  }>("/api/v2/analytics/interactions", async (req, reply) => {
+  }>("/api/v2/analytics/interactions", { preHandler: [requireRole("admin")] }, async (req, reply) => {
     const limit = Math.min(req.query.limit || 50, 200);
     
     try {

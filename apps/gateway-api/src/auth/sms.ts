@@ -4,6 +4,7 @@
  * Configured via environment variable:
  *   OTP_PROVIDER=console   (default — logs to stdout, non-production only)
  *   OTP_PROVIDER=sms       (uses SMS_PROVIDER-specific implementation)
+ *   OTP_PROVIDER=android_sms_gateway (uses SMSGate on an Android phone)
  *   OTP_PROVIDER=whatsapp  (uses WhatsApp simulation or Cloud API delivery)
  */
 
@@ -70,6 +71,44 @@ export class TwilioSmsProvider implements SmsProvider {
     if (!response.ok) {
       const errorBody = await response.text().catch(() => "");
       throw new Error(`Twilio SMS request failed (${response.status}): ${errorBody}`);
+    }
+  }
+}
+
+export class AndroidSmsGatewayProvider implements SmsProvider {
+  private readonly endpoint: string;
+  private readonly authorizationHeader: string;
+  private readonly timeoutMs: number;
+
+  constructor(options?: { endpoint?: string; login?: string; password?: string; token?: string; timeoutMs?: number }) {
+    const base = options?.endpoint?.trim() || process.env.ANDROID_SMS_GATEWAY_ENDPOINT?.trim() || process.env.SMSGATE_ENDPOINT?.trim() || process.env.SMSGATE_API_URL?.trim() || requireEnv("ANDROID_SMS_GATEWAY_ENDPOINT");
+    this.endpoint = base.replace(/\/$/, "");
+    const token = options?.token?.trim() || process.env.ANDROID_SMS_GATEWAY_TOKEN?.trim() || process.env.SMSGATE_TOKEN?.trim();
+    if (token) this.authorizationHeader = `Bearer ${token}`;
+    else {
+      const login = options?.login?.trim() || process.env.ANDROID_SMS_GATEWAY_LOGIN?.trim() || process.env.SMSGATE_USERNAME?.trim() || requireEnv("ANDROID_SMS_GATEWAY_LOGIN");
+      const password = options?.password?.trim() || process.env.ANDROID_SMS_GATEWAY_PASSWORD?.trim() || process.env.SMSGATE_PASSWORD?.trim() || requireEnv("ANDROID_SMS_GATEWAY_PASSWORD");
+      this.authorizationHeader = `Basic ${Buffer.from(login + ":" + password).toString("base64")}`;
+    }
+    const configuredTimeout = options?.timeoutMs ?? Number(process.env.ANDROID_SMS_GATEWAY_TIMEOUT_MS || "10000");
+    this.timeoutMs = Number.isFinite(configuredTimeout) && configuredTimeout > 0 ? configuredTimeout : 10000;
+  }
+
+  private messagesUrl(): string {
+    if (/\/messages\/?$/.test(this.endpoint)) return this.endpoint;
+    return `${this.endpoint}/messages`;
+  }
+
+  async sendOtp(phoneNumber: string, code: string): Promise<void> {
+    const response = await fetch(this.messagesUrl(), {
+      method: "POST",
+      headers: { authorization: this.authorizationHeader, "content-type": "application/json" },
+      body: JSON.stringify({ textMessage: { text: buildOtpMessage(code) }, phoneNumbers: [phoneNumber], ttl: 300, priority: 100 }),
+      signal: AbortSignal.timeout(this.timeoutMs),
+    });
+    if (!response.ok) {
+      const errorBody = await response.text().catch(() => "");
+      throw new Error(`Android SMS Gateway request failed (${response.status}): ${errorBody}`);
     }
   }
 }
@@ -159,7 +198,7 @@ function createConfiguredWhatsAppProvider(): SmsProvider {
       return new WhatsAppSimulationProvider();
     case "live":
       if (!hasLiveCredentials) {
-        return new WhatsAppSimulationProvider();
+        throw new Error("WhatsApp live OTP requires WHATSAPP_API_TOKEN and WHATSAPP_PHONE_NUMBER_ID");
       }
       return new WhatsAppCloudProvider();
     default:
@@ -178,6 +217,8 @@ export function createSmsProvider(): SmsProvider {
       return new ConsoleMockProvider();
     case "sms":
       return createConfiguredSmsProvider();
+    case "android_sms_gateway":
+      return new AndroidSmsGatewayProvider();
     case "whatsapp":
       return createConfiguredWhatsAppProvider();
     default:

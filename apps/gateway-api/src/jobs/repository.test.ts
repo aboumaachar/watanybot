@@ -4,7 +4,7 @@ import type { JobApplicationRecord } from "./types";
 
 const application: JobApplicationRecord = {
   id: "app_test_marketplace_1",
-  job_id: "job_v2_001",
+  job_id: "job_test_fixture_001",
   veteran_name: "Test Applicant",
   phone: "70000010",
   email: "test@example.test",

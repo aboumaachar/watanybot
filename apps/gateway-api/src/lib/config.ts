@@ -33,7 +33,7 @@ export const erpNextSiteName = process.env.ERPNEXT_SITE_NAME || "frontend";
 export const erpNextCredentialFile = resolveConfiguredPath(process.env.ERPNEXT_CREDENTIAL_FILE);
 export const erpNextRequestTimeoutMs = Number(process.env.ERPNEXT_REQUEST_TIMEOUT_MS || "10000");
 
-export const usePython = (process.env.USE_PYTHON_API || "true").toLowerCase() === "true";
+export const usePython = (process.env.USE_PYTHON_API || "false").toLowerCase() === "true";
 let pythonBase = process.env.PYTHON_API_URL || "http://localhost:8010";
 export function setPythonBase(v: string) { pythonBase = v; }
 export function getPythonBase() { return pythonBase; }
@@ -118,8 +118,10 @@ export const dataDir = path.resolve(_dirname, "../../data");
 export const kbSalariesDir = path.join(path.resolve(_dirname, "../../.."), "kb", "salaries");
 export const kbStudioWorkspaceRoot = firstExistingPath([
   resolveConfiguredPath(process.env.KB_STUDIO_WORKSPACE_ROOT),
-  path.resolve(projectxRoot, "kb-studio"),
   path.resolve(repoRoot, "kb_studio"),
+  path.resolve(repoRoot, "kb-studio"),
+  path.resolve(projectxRoot, "kb-studio"),
+  path.resolve(projectxRoot, "kb_studio"),
 ]);
 export const kbStudioRoot = firstExistingPath([
   resolveConfiguredPath(process.env.KB_STUDIO_META_ROOT),
@@ -141,20 +143,34 @@ export const disablePluginDb = (process.env.DISABLE_PLUGIN_DB || "false").toLowe
 export const disableKbNodes = (process.env.DISABLE_KB_NODES || "false").toLowerCase() === "true";
 export const disableWebsockets = (process.env.DISABLE_WEBSOCKETS || "false").toLowerCase() === "true";
 
+function isUsableKbNodesDbPath(candidate: string): boolean {
+  try {
+    const stat = fs.statSync(candidate);
+    return stat.isFile() && stat.size > 0;
+  } catch {
+    return false;
+  }
+}
+
 function resolveKbNodesDbPath(): string {
   const configuredPath = process.env.KB_NODES_DB_PATH;
   const candidates = [
     configuredPath,
     kbStudioExportRoot ? path.join(kbStudioExportRoot, "kb_nodes.db") : undefined,
     kbStudioImportRoot ? path.join(kbStudioImportRoot, "kb_nodes.db") : undefined,
+    path.resolve(repoRoot, "kb_studio/runtime/exports/watanybot/kb_nodes.db"),
+    path.resolve(repoRoot, "kb-studio/runtime/exports/watanybot/kb_nodes.db"),
+    path.resolve(projectxRoot, "kb-studio/runtime/exports/watanybot/kb_nodes.db"),
+    path.resolve(projectxRoot, "kb_studio/runtime/exports/watanybot/kb_nodes.db"),
     path.resolve(_dirname, "../../../kb-studio/runtime/exports/watanybot/kb_nodes.db"),
     path.resolve(_dirname, "../../../kb_studio/runtime/exports/watanybot/kb_nodes.db"),
     path.resolve(process.cwd(), "../kb-studio/runtime/exports/watanybot/kb_nodes.db"),
     path.resolve(process.cwd(), "../../kb-studio/runtime/exports/watanybot/kb_nodes.db"),
+    path.resolve(_dirname, "../../kb_nodes.db"),
   ].filter((candidate): candidate is string => Boolean(candidate));
 
   for (const candidate of candidates) {
-    if (fs.existsSync(candidate)) {
+    if (isUsableKbNodesDbPath(candidate)) {
       return candidate;
     }
   }

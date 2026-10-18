@@ -9,6 +9,43 @@ const PHASE8_CANARY_PREFIX = "APEX-P8-FINAL-CANARY-";
 const client = new ErpNextClient();
 const superadminOnly = { preHandler: [requireRole("superadmin")] };
 
+const CRM_DELETE_RECONCILE_DELAYS_MS = [250, 750, 1500, 2500, 4000] as const;
+type ContactDeleteClient = Pick<ErpNextClient, "deleteContact" | "getContact">;
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function isAmbiguousDeleteError(error: unknown): error is ErpNextRequestError {
+  return error instanceof ErpNextRequestError
+    && error.statusCode === 502
+    && error.safeCode === "erpnext_unavailable";
+}
+
+export async function deleteContactWithReconciliation(
+  contactClient: ContactDeleteClient,
+  name: string,
+  delaysMs: readonly number[] = CRM_DELETE_RECONCILE_DELAYS_MS,
+): Promise<{ reconciled: boolean }> {
+  try {
+    await contactClient.deleteContact(name);
+    return { reconciled: false };
+  } catch (error) {
+    if (!isAmbiguousDeleteError(error)) throw error;
+    for (const delayMs of delaysMs) {
+      if (delayMs > 0) await sleep(delayMs);
+      try {
+        await contactClient.getContact(name);
+      } catch (checkError) {
+        if (checkError instanceof ErpNextRequestError && checkError.statusCode === 404) return { reconciled: true };
+        if (isAmbiguousDeleteError(checkError)) continue;
+        throw checkError;
+      }
+    }
+    throw error;
+  }
+}
+
 function isCanary(contact: ErpNextContact): boolean {
   return typeof contact.first_name === "string" && [PHASE7_CANARY_PREFIX, PHASE8_CANARY_PREFIX].some((prefix) => contact.first_name?.startsWith(prefix));
 }
@@ -119,8 +156,8 @@ export async function adminCrmContactsRoutes(app: FastifyInstance): Promise<void
       const contact = await client.getContact(request.params.name);
       if (!isCanary(contact)) return reply.code(403).send({ ok: false, error: "synthetic_canary_only" });
       await writeAudit(request, "crm.contact.canary_deleted", contact, "deleted", String(request.headers["x-apex-canary-run-id"] || "unknown"));
-      await client.deleteContact(contact.name);
-      return reply.send({ ok: true, deleted: contact.name, synthetic: true });
+      const deletion = await deleteContactWithReconciliation(client, contact.name);
+      return reply.send({ ok: true, deleted: contact.name, synthetic: true, reconciled: deletion.reconciled });
     } catch (error) {
       return handleErpError(reply, error);
     }

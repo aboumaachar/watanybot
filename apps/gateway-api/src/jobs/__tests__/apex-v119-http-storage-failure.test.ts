@@ -9,9 +9,12 @@ describe("V1.0.19 marketplace application HTTP failure boundary", () => {
     repository.save = async () => { throw new Error("storage unavailable"); };
     const app = Fastify({ logger: false });
     await app.register(jobsRoutes, { applicationsRepository: repository });
+    const created = await app.inject({ method: "POST", url: "/api/v2/jobs", payload: { employer_id: "emp_001", title_ar: "APEX storage failure fixture", description_ar: "synthetic fixture", category_id: 1 } });
+    expect(created.statusCode).toBe(200);
+    const jobId = created.json().job.id as string;
     const response = await app.inject({
       method: "POST",
-      url: "/api/v2/jobs/job_v2_001/apply",
+      url: `/api/v2/jobs/${jobId}/apply`,
       payload: { name: "Failure Test", phone: "70000012" },
     });
     expect(response.statusCode).toBeGreaterThanOrEqual(500);

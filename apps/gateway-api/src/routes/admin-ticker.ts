@@ -1,8 +1,21 @@
 import type { FastifyInstance } from "fastify";
 import { requireRole } from "../auth/rbac.js";
 import { randomUUID } from "crypto";
+import { MAX_TICKER_CYCLE_MS, MIN_TICKER_CYCLE_MS, readTickerSettings, writeTickerSettings } from "../lib/ticker-settings.js";
 
 export async function adminTickerRoutes(app: FastifyInstance): Promise<void> {
+  app.get("/api/admin/ticker/settings", { preHandler: [requireRole("admin")] }, async (_req, reply) => {
+    return reply.send({ settings: readTickerSettings(app.pluginDb), constraints: { minCycleMs: MIN_TICKER_CYCLE_MS, maxCycleMs: MAX_TICKER_CYCLE_MS } });
+  });
+
+  app.patch("/api/admin/ticker/settings", { preHandler: [requireRole("admin")] }, async (req, reply) => {
+    const cycleMs = Number((req.body as { cycleMs?: unknown } | undefined)?.cycleMs);
+    if (!Number.isFinite(cycleMs) || cycleMs < MIN_TICKER_CYCLE_MS || cycleMs > MAX_TICKER_CYCLE_MS) {
+      return reply.code(400).send({ error: "TICKER_CYCLE_MS_OUT_OF_RANGE", minCycleMs: MIN_TICKER_CYCLE_MS, maxCycleMs: MAX_TICKER_CYCLE_MS });
+    }
+    return reply.send({ settings: writeTickerSettings(app.pluginDb, cycleMs) });
+  });
+
   // list existing ticker items
   app.get("/api/admin/ticker/items", { preHandler: [requireRole("admin")] }, async (_req, reply) => {
     const rows = app.pluginDb.prepare("SELECT * FROM ticker_items ORDER BY priority DESC, created_at DESC").all();

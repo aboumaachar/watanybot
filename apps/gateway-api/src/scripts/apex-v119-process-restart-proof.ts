@@ -71,7 +71,12 @@ async function prove() {
     method: "POST", headers: { "content-type": "application/json" },
     body: JSON.stringify({ applicantName: "Restart Proof Civilian", applicantPhone: "70000022", applicantType: "VETERAN" }),
   });
-  const marketplace = await request("/api/v2/jobs/job_v2_001/apply", {
+  const marketplaceJob = await request("/api/v2/jobs", {
+    method: "POST", headers: { "content-type": "application/json" },
+    body: JSON.stringify({ employer_id: "emp_001", title_ar: "APEX restart proof job", description_ar: "synthetic fixture", category_id: 1 }),
+  });
+  const marketplaceJobId = (marketplaceJob.job as { id: string }).id;
+  const marketplace = await request(`/api/v2/jobs/${marketplaceJobId}/apply`, {
     method: "POST", headers: { "content-type": "application/json" },
     body: JSON.stringify({ name: "Restart Proof Marketplace", phone: "70000021" }),
   });

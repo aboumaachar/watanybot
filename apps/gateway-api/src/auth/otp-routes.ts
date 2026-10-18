@@ -11,7 +11,7 @@ import type { FastifyInstance } from "fastify";
 import type { UserProfile, UserRole } from "@watany/types";
 import { query } from "../lib/db.js";
 import { hashPassword, verifyPassword } from "./password.js";
-import { createAuthSession, signAccessToken, signRefreshToken } from "./auth-middleware.js";
+import { signAccessToken, signRefreshToken } from "./auth-middleware.js";
 import { createSmsProvider, type SmsProvider } from "./sms.js";
 import {
   SmsApiConfigError,
@@ -39,6 +39,7 @@ const PHONE_VERIFICATION_VERIFY_FAILURE_MESSAGE = "الرمز غير صحيح أ
 const PHONE_VERIFICATION_ATTEMPT_LIMIT_MESSAGE = "تجاوزت الحد الأقصى للمحاولات، اطلب رمزاً جديداً.";
 const PHONE_VERIFICATION_PHONE_IN_USE_MESSAGE = "رقم الهاتف مستخدم بالفعل في حساب آخر.";
 const PHONE_VERIFICATION_BACKEND_SMS_API = "sms_api";
+const PHONE_VERIFICATION_BACKEND_LOCAL_PROVIDER = "local_provider";
 const PHONE_VERIFICATION_BACKEND_LOCAL_WHATSAPP = "local_whatsapp";
 
 const REFRESH_COOKIE_NAME = "watany_refresh";
@@ -142,24 +143,18 @@ function isUsersPhoneNumberUniqueViolation(error: unknown): boolean {
 export function normalizePhone(raw: string): string | null {
   const cleaned = raw.replace(/[\s\-().]/g, "");
 
-  // Already E.164. Canonicalize the common Lebanese mistake +9610XXXXXXXX by removing the trunk 0.
   if (/^\+9610\d{7}$/.test(cleaned)) return "+961" + cleaned.slice(5);
   if (/^\+\d{8,15}$/.test(cleaned)) return cleaned;
-
-  // International without +: 00<digits>. Re-run through the E.164 canonicalizer.
   if (/^00\d{8,13}$/.test(cleaned)) return normalizePhone("+" + cleaned.slice(2));
-
-  // Lebanese domestic format: the leading 0 is a trunk prefix and must not appear after +961.
   if (/^0\d{7}$/.test(cleaned)) return "+961" + cleaned.slice(1);
-
-  // Lebanese local number without trunk prefix (mobile/landline forms used by the app).
   if (/^\d{7,8}$/.test(cleaned)) return "+961" + cleaned;
 
   return null;
 }
 
-function isInitialStageWhatsAppPhoneVerificationEnabled(): boolean {
-  return (process.env.OTP_PROVIDER ?? "").trim().toLowerCase() === "whatsapp";
+function isLocalPhoneVerificationProviderEnabled(): boolean {
+  const provider = (process.env.OTP_PROVIDER ?? "").trim().toLowerCase();
+  return provider === "sms" || provider === "sms_api" || provider === "android_sms_gateway" || provider === "whatsapp";
 }
 
 function isSmsApiPhoneVerificationConfigured(): boolean {
@@ -332,7 +327,7 @@ export async function otpRoutes(app: FastifyInstance): Promise<void> {
 
       try {
         const latestRequestResult = await query<{ created_at: string }>(
-        `SELECT created_at
+          `SELECT created_at
          FROM phone_otps
          WHERE phone_number = $1
          ORDER BY created_at DESC
@@ -455,13 +450,7 @@ export async function otpRoutes(app: FastifyInstance): Promise<void> {
         return reply.send(genericSuccess);
       } catch (error) {
         request.log.error(
-          {
-            err: error,
-            otpProvider: process.env.OTP_PROVIDER ?? "console",
-            smsProvider: process.env.OTP_PROVIDER === "sms" ? process.env.SMS_PROVIDER ?? "twilio" : null,
-            phoneNumber: maskPhoneForLogs(normalized),
-            requestIp,
-          },
+          { err: error, otpProvider: process.env.OTP_PROVIDER ?? "console", phoneNumber: maskPhoneForLogs(normalized), requestIp },
           "OTP request persistence/runtime failure",
         );
         return reply.code(503).send({ error: OTP_SEND_FAILURE_MESSAGE });
@@ -511,7 +500,7 @@ export async function otpRoutes(app: FastifyInstance): Promise<void> {
           const verification = await startSmsApiPhoneVerification(normalized);
           backendRequestId = verification.requestId;
           expiresAt = verification.expiresAt;
-        } else if (isInitialStageWhatsAppPhoneVerificationEnabled()) {
+        } else if (isLocalPhoneVerificationProviderEnabled()) {
           if (!sms) {
             throw new SmsApiConfigError();
           }
@@ -522,7 +511,7 @@ export async function otpRoutes(app: FastifyInstance): Promise<void> {
             userAgent: getHeaderValue(request.headers["user-agent"]),
           });
           backendRequestId = localVerification.backendRequestId;
-          backend = PHONE_VERIFICATION_BACKEND_LOCAL_WHATSAPP;
+          backend = PHONE_VERIFICATION_BACKEND_LOCAL_PROVIDER;
           expiresAt = localVerification.expiresAt;
         } else {
           throw new SmsApiConfigError();
@@ -686,20 +675,19 @@ export async function otpRoutes(app: FastifyInstance): Promise<void> {
 
       const user = upsertResult.rows[0];
 
-      const refreshToken = signRefreshToken({ sub: user.id });
-      const sessionId = await createAuthSession({
-        userId: user.id,
-        refreshToken,
-        ip: requestIp,
-        userAgent,
-      });
       const accessToken = signAccessToken({
         sub: user.id,
         role: user.role as UserRole,
         // Use phone_number as email placeholder for JWT compatibility
         email: user.phone_number,
-        sid: sessionId,
       });
+      const refreshToken = signRefreshToken({ sub: user.id });
+
+      // Store session
+      await query(
+        "INSERT INTO sessions (user_id, token, ip, user_agent, expires_at) VALUES ($1, $2, $3, $4, now() + interval '7 days')",
+        [user.id, refreshToken, requestIp, userAgent],
+      );
 
       await query("UPDATE phone_otps SET consumed_at = now() WHERE id = $1", [otp.id]);
       await recordOtpAudit({
@@ -788,7 +776,8 @@ export async function otpRoutes(app: FastifyInstance): Promise<void> {
       }
 
       try {
-        const verification = pending.verification_backend === PHONE_VERIFICATION_BACKEND_LOCAL_WHATSAPP
+        const useLocalProvider = pending.verification_backend === PHONE_VERIFICATION_BACKEND_LOCAL_PROVIDER || pending.verification_backend === PHONE_VERIFICATION_BACKEND_LOCAL_WHATSAPP;
+        const verification = useLocalProvider
           ? await verifyLocalPhoneVerificationOtp({
             backendRequestId: pending.sms_api_request_id,
             phoneNumber: pending.phone_number,

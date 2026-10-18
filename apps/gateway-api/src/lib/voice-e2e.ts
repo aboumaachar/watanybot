@@ -3,6 +3,7 @@
  * Extracted from server.ts.
  */
 import type { FastifyInstance, FastifyPluginAsync } from "fastify";
+import { requireRole } from "../auth/rbac.js";
 import fs from "node:fs";
 import path from "node:path";
 import nodemailer from "nodemailer";
@@ -271,28 +272,28 @@ interface VoiceE2ERoutesOptions {
 }
 
 export const voiceE2ERoutes: FastifyPluginAsync<VoiceE2ERoutesOptions> = async (app, { voiceE2E }) => {
-  app.get("/api/admin/voice-checks", async () => ({
+  app.get("/api/admin/voice-checks", { preHandler: [requireRole("admin")] }, async () => ({
     ok: true,
     history: voiceE2E.getHistory().slice(0, 100),
   }));
 
-  app.post("/api/admin/voice-checks/run", async () => {
+  app.post("/api/admin/voice-checks/run", { preHandler: [requireRole("admin")] }, async () => {
     const r = await voiceE2E.runCheck();
     return { ok: true, result: r };
   });
 
-  app.post("/api/admin/voice-checks/alert-test", async () => {
+  app.post("/api/admin/voice-checks/alert-test", { preHandler: [requireRole("admin")] }, async () => {
     const alert: VoiceE2EAlert = { ts: new Date().toISOString(), level: "info", message: "manual test alert", payload: { test: true } };
     const res = await voiceE2E.sendAlert(alert);
     return { ok: true, result: res };
   });
 
-  app.get("/api/admin/voice-alerts", async () => ({
+  app.get("/api/admin/voice-alerts", { preHandler: [requireRole("admin")] }, async () => ({
     ok: true,
     alerts: voiceE2E.getAlerts().slice(0, 200),
   }));
 
-  app.get("/api/admin/voice-config", async () => {
+  app.get("/api/admin/voice-config", { preHandler: [requireRole("admin")] }, async () => {
     const config = voiceE2E.getConfig();
     return {
       ok: true,
@@ -303,7 +304,7 @@ export const voiceE2ERoutes: FastifyPluginAsync<VoiceE2ERoutesOptions> = async (
     };
   });
 
-  app.post("/api/admin/voice-config", async (req) => {
+  app.post("/api/admin/voice-config", { preHandler: [requireRole("admin")] }, async (req) => {
     const body = (req.body || {}) as Partial<VoiceE2EConfig>;
     voiceE2E.setConfig(body);
     const config = voiceE2E.getConfig();

@@ -1,13 +1,14 @@
 import type { FastifyInstance, FastifyPluginAsync, FastifyRequest } from "fastify";
 
 import { ErpNextClient, ErpNextRequestError } from "../integrations/erpnext/client";
+import { getRequestNetworkContext } from "../auth/request-network.js";
 
 function isLoopbackAddress(address: string | undefined): boolean {
-  return address === "127.0.0.1" || address === "::1" || address === "::ffff:127.0.0.1";
+  return address === "127.0.0.1" || address === "::1";
 }
 
 function isLoopbackRequest(request: FastifyRequest): boolean {
-  return isLoopbackAddress(request.raw.socket.remoteAddress);
+  return isLoopbackAddress(getRequestNetworkContext(request).clientIp);
 }
 
 export const erpNextReadinessRoutes: FastifyPluginAsync = async (app: FastifyInstance): Promise<void> => {

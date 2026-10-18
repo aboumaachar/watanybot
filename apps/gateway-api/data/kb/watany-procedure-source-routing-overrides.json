@@ -1,4 +1,4 @@
-﻿{
+{
     "registry":  "watany-procedure-source-routing-overrides",
     "generatedBy":  "v1.3-csv-lock-fallback-effective-catalogue",
     "generatedAt":  "2026-06-17T13:39:48.8450567+03:00",
@@ -466,7 +466,7 @@
                                             ],
                      "matchedCurrentBucket":  "مصادر أخرى",
                      "evidencePath":  "C:\\xampp\\htdocs\\projectx\\watanybot\\apps\\web-user\\public\\watany-v1-tools-schools-public-access-v144.js",
-                     "endpoint":  "/school-aids/forms/school-aid-application.html",
+                     "endpoint":  "/school-aids/forms/images/annex-z.jpg",
                      "matchScore":  "16.67",
                      "routingStatus":  "force_expected_source_tabs",
                      "duplicatePolicy":  "do_not_duplicate_existing_content"
