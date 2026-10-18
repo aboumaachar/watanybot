@@ -18,6 +18,8 @@ describe("admin CRM contacts route", () => {
 
   async function buildApp() {
     process.env.NODE_ENV = "test";
+    // These cases impersonate superadmin through the dev role header, which is opt-in only.
+    process.env.WATANY_ALLOW_DEV_ROLE_HEADER = "true";
     process.env.JWT_SECRET = "crm-route-regression-secret";
     const { registerAuthHook } = await import("../auth/auth-middleware.js");
     const { adminCrmContactsRoutes } = await import("../routes/admin-crm-contacts.js");

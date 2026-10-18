@@ -5,6 +5,7 @@
  */
 import type { UserRole } from "@watany/types";
 import type { FastifyRequest, FastifyReply } from "fastify";
+import { isDevRoleHeaderEnabled } from "./dev-role-header.js";
 
 const ROLE_LEVEL: Record<UserRole, number> = {
   public: 0,
@@ -114,7 +115,7 @@ function isDevelopmentAuthBypassEnabled(): boolean {
 }
 
 function getDevelopmentSuperadminRole(request: FastifyRequest): UserRole | null {
-  if (process.env.NODE_ENV === "production") return null;
+  if (!isDevRoleHeaderEnabled()) return null;
   const headerRole = request.headers["x-watany-role"];
   return typeof headerRole === "string" && headerRole.trim().toLowerCase() === "superadmin" ? "superadmin" : null;
 }

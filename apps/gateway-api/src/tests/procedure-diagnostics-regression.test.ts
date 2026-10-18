@@ -1,6 +1,6 @@
 ﻿import { afterAll, describe, expect, it } from "vitest";
 import { normalizeArabic } from "@watany/shared/arabic";
-import { signAccessToken } from "../auth/auth-middleware";
+import { cleanupSessionUsers, createSessionToken } from "./helpers/session-auth";
 
 let appPromise: Promise<typeof import("../server").default> | null = null;
 
@@ -14,6 +14,7 @@ async function getApp() {
 }
 
 afterAll(async () => {
+  await cleanupSessionUsers();
   if (appPromise !== null) {
     const fastifyApp = await appPromise;
     await fastifyApp.close();
@@ -26,13 +27,8 @@ describe("procedure diagnostics regressions", () => {
     const response = await app.inject({
       method: "GET",
       url: "/api/admin/procedures/diagnostics",
-      headers: {
-        authorization: `Bearer ${signAccessToken({
-          sub: "procedure-diagnostics-superadmin",
-          role: "superadmin",
-          email: "procedure-diagnostics-user@example.invalid",
-        })}`,
-      },
+      // Admin paths resolve the principal from the database (active user + live session + sid).
+      headers: { authorization: `Bearer ${await createSessionToken("superadmin", "procedure-diagnostics")}` },
     });
 
     expect(response.statusCode).toBe(200);

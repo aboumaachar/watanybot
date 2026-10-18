@@ -3,6 +3,7 @@ import type { FastifyInstance } from "fastify";
 import os from "node:os";
 import path from "node:path";
 import { closePool } from "../lib/db.js";
+import { cleanupSessionUsers, createSessionToken } from "./helpers/session-auth";
 
 process.env.NODE_ENV = "test";
 const usePersistentDb = process.env.C6_NEWS_USE_PERSISTENT_DB === "1";
@@ -11,16 +12,10 @@ process.env.PLUGIN_DB_PATH = process.env.C6_NEWS_PLUGIN_DB_PATH || path.join(os.
 process.env.USE_PYTHON_API = "false";
 process.env.USE_KB_STUB = "true";
 
-const jwt = (await import("jsonwebtoken")).default;
-const secret = process.env.JWT_SECRET || "apex-cms-runtime-acceptance-local-secret-2026";
 const canaryId = `apex-c6-news-${Date.now()}`;
 const title = `Synthetic C6 News ${canaryId}`;
 let app: FastifyInstance;
 let activeId = "";
-
-function token(role: string, id: string): string {
-  return jwt.sign({ sub: id, role, email: `${role}@apex-c6.local` }, secret, { expiresIn: 3600 });
-}
 
 async function request(route: string, init: { method?: string; headers?: Record<string, string>; body?: unknown } = {}): Promise<{ status: number; body: any }> {
   const response = await app.inject({
@@ -35,14 +30,17 @@ async function request(route: string, init: { method?: string; headers?: Record<
 const headers = (value: string) => ({ Authorization: `Bearer ${value}`, "Content-Type": "application/json" });
 
 describe("C6 News CMS runtime", () => {
-  const superadmin = token("superadmin", "apex-c6-news-superadmin");
-  const admin = token("admin", "apex-c6-news-admin");
+  // /admin/* resolves the principal from the database (active user + live session + sid).
+  let superadmin = "";
+  let admin = "";
   let externalFetch: ReturnType<typeof vi.spyOn>;
 
   beforeAll(async () => {
     const server = await import("../server.js");
     app = server.app;
     await app.ready();
+    superadmin = await createSessionToken("superadmin", "apex-c6-news");
+    admin = await createSessionToken("admin", "apex-c6-news");
     app.pluginDb.prepare("DELETE FROM news_items WHERE id = ?").run(canaryId);
     externalFetch = vi.spyOn(globalThis, "fetch").mockImplementation(async () => new Response("upstream unavailable", { status: 503 }));
   }, 30000);
@@ -54,6 +52,7 @@ describe("C6 News CMS runtime", () => {
     }
     externalFetch.mockRestore();
     await app.close();
+    await cleanupSessionUsers();
     await closePool();
   });
 

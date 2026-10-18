@@ -11,7 +11,7 @@ import type { FastifyInstance } from "fastify";
 import type { UserProfile, UserRole } from "@watany/types";
 import { query } from "../lib/db.js";
 import { hashPassword, verifyPassword } from "./password.js";
-import { signAccessToken, signRefreshToken } from "./auth-middleware.js";
+import { createAuthSession, signAccessToken, signRefreshToken } from "./auth-middleware.js";
 import { createSmsProvider, type SmsProvider } from "./sms.js";
 import {
   SmsApiConfigError,
@@ -675,19 +675,22 @@ export async function otpRoutes(app: FastifyInstance): Promise<void> {
 
       const user = upsertResult.rows[0];
 
+      // Create the session first so the access token carries its id (sid):
+      // admin paths only accept tokens backed by a live session.
+      const refreshToken = signRefreshToken({ sub: user.id });
+      const sessionId = await createAuthSession({
+        userId: user.id,
+        refreshToken,
+        ip: requestIp,
+        userAgent,
+      });
       const accessToken = signAccessToken({
         sub: user.id,
         role: user.role as UserRole,
         // Use phone_number as email placeholder for JWT compatibility
         email: user.phone_number,
+        sid: sessionId,
       });
-      const refreshToken = signRefreshToken({ sub: user.id });
-
-      // Store session
-      await query(
-        "INSERT INTO sessions (user_id, token, ip, user_agent, expires_at) VALUES ($1, $2, $3, $4, now() + interval '7 days')",
-        [user.id, refreshToken, requestIp, userAgent],
-      );
 
       await query("UPDATE phone_otps SET consumed_at = now() WHERE id = $1", [otp.id]);
       await recordOtpAudit({

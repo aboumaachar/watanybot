@@ -5,11 +5,11 @@ import {
   SUPERADMIN_USER_MANAGEMENT_POLICY,
 } from "../superadmin/superadmin-users.policy";
 import { buildIpAuditRecord } from "../middleware/ip-audit";
+import { isDevRoleHeaderEnabled } from "../auth/dev-role-header";
 
 function hasSuperadminAccess(req: FastifyRequest): boolean {
-  // Dev-only guard: accepted via x-watany-role header in non-production.
-  // In production, replace with the real Watany JWT/RBAC guard (request.user).
-  if (process.env.NODE_ENV !== "production") {
+  // Dev/test-only guard: x-watany-role is honoured only when explicitly opted in.
+  if (isDevRoleHeaderEnabled()) {
     const devRole = req.headers["x-watany-role"];
     if (isSuperadminLike(devRole)) return true;
   }

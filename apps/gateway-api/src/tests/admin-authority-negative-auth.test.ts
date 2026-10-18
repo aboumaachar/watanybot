@@ -15,6 +15,7 @@ vi.mock("../admin-authority/adminAuthorityApproval.js", () => ({
 
 import { registerAuthHook, signAccessToken } from "../auth/auth-middleware";
 import { adminAuthorityRoutes } from "../admin-authority/adminAuthorityRoutes";
+import { cleanupSessionUsers, createSessionToken } from "./helpers/session-auth";
 
 process.env.JWT_SECRET = "admin-authority-negative-auth-test-secret";
 
@@ -33,6 +34,11 @@ function makeToken(role: "public" | "admin" | "superadmin", id = "test-user") {
   return signAccessToken({ sub: id, role, email: `${role}@test.local` });
 }
 
+// Admin paths resolve the principal from the database (active user + live session + sid),
+// so role tokens below are session-backed; makeToken() is kept only to prove bare JWTs are anonymous.
+const sessionTokens: Record<"public" | "admin" | "superadmin", string> = { public: "", admin: "", superadmin: "" };
+const bearer = (role: keyof typeof sessionTokens) => ({ authorization: `Bearer ${sessionTokens[role]}` });
+
 async function request(endpoint: string, headers?: Record<string, string>) {
   return app.inject({ method: "GET", url: endpoint, headers });
 }
@@ -42,9 +48,11 @@ beforeAll(async () => {
   registerAuthHook(app);
   await app.register(adminAuthorityRoutes, { prefix: "/api" });
   await app.ready();
-});
+  for (const role of ["public", "admin", "superadmin"] as const) sessionTokens[role] = await createSessionToken(role);
+}, 60000);
 
 afterAll(async () => {
+  await cleanupSessionUsers();
   await app.close();
 });
 
@@ -56,29 +64,36 @@ describe("Admin Authority - No token", () => {
   }
 });
 
-describe("Admin Authority - Public user token", () => {
-  const token = makeToken("public");
+describe("Admin Authority - Bare JWT without session", () => {
+  const token = makeToken("superadmin", "test-super");
   for (const endpoint of ENDPOINTS) {
-    it(`GET ${endpoint} with public token is denied`, async () => {
-      expect([401, 403]).toContain((await request(endpoint, { authorization: `Bearer ${token}` })).statusCode);
+    it(`GET ${endpoint} with a bare superadmin JWT (no sid/session) is anonymous`, async () => {
+      expect((await request(endpoint, { authorization: `Bearer ${token}` })).statusCode).toBe(401);
+    });
+  }
+});
+
+describe("Admin Authority - Public user token", () => {
+  for (const endpoint of ENDPOINTS) {
+    it(`GET ${endpoint} with public session token is forbidden`, async () => {
+      expect((await request(endpoint, bearer("public"))).statusCode).toBe(403);
     });
   }
 });
 
 describe("Admin Authority - Admin token", () => {
-  const token = makeToken("admin");
   for (const endpoint of ENDPOINTS) {
-    it(`GET ${endpoint} with admin token is denied`, async () => {
-      expect([401, 403]).toContain((await request(endpoint, { authorization: `Bearer ${token}` })).statusCode);
+    it(`GET ${endpoint} with admin session token is forbidden`, async () => {
+      expect((await request(endpoint, bearer("admin"))).statusCode).toBe(403);
     });
   }
 });
 
 describe("Admin Authority - Superadmin token", () => {
-  const headers = { authorization: `Bearer ${makeToken("superadmin", "test-super")}` };
+  const headers = () => bearer("superadmin");
 
   it("reads authority me", async () => {
-    const res = await request("/api/admin-authority/me", headers);
+    const res = await request("/api/admin-authority/me", headers());
     expect(res.statusCode).toBe(200);
     const body = res.json() as any;
     expect(body.ok).toBe(true);
@@ -87,7 +102,7 @@ describe("Admin Authority - Superadmin token", () => {
   });
 
   it("reads permissions", async () => {
-    const res = await request("/api/admin-authority/permissions", headers);
+    const res = await request("/api/admin-authority/permissions", headers());
     expect(res.statusCode).toBe(200);
     const body = res.json() as any;
     expect(body.ok).toBe(true);
@@ -96,7 +111,7 @@ describe("Admin Authority - Superadmin token", () => {
   });
 
   it("reads dashboard summary", async () => {
-    const res = await request("/api/admin-authority/dashboard/summary", headers);
+    const res = await request("/api/admin-authority/dashboard/summary", headers());
     expect(res.statusCode).toBe(200);
     const body = res.json() as any;
     expect(body.ok).toBe(true);
@@ -107,7 +122,7 @@ describe("Admin Authority - Superadmin token", () => {
   });
 
   it("reads audit events", async () => {
-    const res = await request("/api/admin-authority/audit-events", headers);
+    const res = await request("/api/admin-authority/audit-events", headers());
     expect(res.statusCode).toBe(200);
     const body = res.json() as any;
     expect(body.ok).toBe(true);
@@ -115,7 +130,7 @@ describe("Admin Authority - Superadmin token", () => {
   });
 
   it("reads approval requests", async () => {
-    const res = await request("/api/admin-authority/approval-requests", headers);
+    const res = await request("/api/admin-authority/approval-requests", headers());
     expect(res.statusCode).toBe(200);
     const body = res.json() as any;
     expect(body.ok).toBe(true);
@@ -123,7 +138,7 @@ describe("Admin Authority - Superadmin token", () => {
   });
 
   it("reads module health", async () => {
-    const res = await request("/api/admin-authority/module-health", headers);
+    const res = await request("/api/admin-authority/module-health", headers());
     expect(res.statusCode).toBe(200);
     const body = res.json() as any;
     expect(body.ok).toBe(true);
@@ -131,9 +146,24 @@ describe("Admin Authority - Superadmin token", () => {
   });
 });
 
-describe("Admin Authority - Dev bypass header", () => {
-  it("accepts or denies dev bypass by environment", async () => {
-    const res = await request("/api/admin-authority/me", { "x-watany-role": "superadmin" });
-    expect([200, 401, 403]).toContain(res.statusCode);
+describe("Admin Authority - Dev role header is opt-in only", () => {
+  it("ignores x-watany-role without WATANY_ALLOW_DEV_ROLE_HEADER", async () => {
+    const previous = process.env.WATANY_ALLOW_DEV_ROLE_HEADER;
+    delete process.env.WATANY_ALLOW_DEV_ROLE_HEADER;
+    try {
+      expect((await request("/api/admin-authority/me", { "x-watany-role": "superadmin" })).statusCode).toBe(401);
+    } finally {
+      if (previous !== undefined) process.env.WATANY_ALLOW_DEV_ROLE_HEADER = previous;
+    }
+  });
+
+  it("honours x-watany-role in test mode only when explicitly opted in", async () => {
+    const previous = process.env.WATANY_ALLOW_DEV_ROLE_HEADER;
+    process.env.WATANY_ALLOW_DEV_ROLE_HEADER = "true";
+    try {
+      expect((await request("/api/admin-authority/me", { "x-watany-role": "superadmin" })).statusCode).toBe(200);
+    } finally {
+      if (previous === undefined) delete process.env.WATANY_ALLOW_DEV_ROLE_HEADER; else process.env.WATANY_ALLOW_DEV_ROLE_HEADER = previous;
+    }
   });
 });

@@ -2,13 +2,17 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import app from '../server';
-import { signAccessToken } from '../auth/auth-middleware.js';
+import { cleanupSessionUsers, createSessionToken } from './helpers/session-auth';
 
 process.env.JWT_SECRET ||= 'test-jwt-secret-for-admin-tests-0123456789abcdef';
 
+// Admin paths resolve the principal from the database (active user + live session + sid).
+let adminToken = '';
+beforeAll(async () => { adminToken = await createSessionToken('admin'); }, 30000);
+afterAll(async () => { await cleanupSessionUsers(); });
+
 function adminHeaders() {
-  const token = signAccessToken({ sub: 'test-admin', role: 'admin', email: 'admin@test.com' });
-  return { authorization: `Bearer ${token}` };
+  return { authorization: `Bearer ${adminToken}` };
 }
 
 const runtimePath = path.resolve(__dirname, '..', 'data', 'kb', 'runtime_kb.json');

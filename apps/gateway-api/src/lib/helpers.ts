@@ -2,6 +2,7 @@
  * Shared helper utilities extracted from server.ts
  */
 import type { Role, UserProfile, DocumentItem, NotificationItem, SavedChatItem, PluginDb } from "../types/domain";
+import { isDevRoleHeaderEnabled } from "../auth/dev-role-header";
 
 export function makeId(prefix: string) {
   return `${prefix}_${Math.random().toString(16).slice(2)}_${Date.now().toString(16)}`;
@@ -17,7 +18,7 @@ export function hasSufficientRole(actual: Role, required: Role) {
 }
 
 function getDevelopmentHeaderRole(reply: any): Role | null {
-  if (process.env.NODE_ENV === "production") {
+  if (!isDevRoleHeaderEnabled()) {
     return null;
   }
 

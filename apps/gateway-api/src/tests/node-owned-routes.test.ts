@@ -20,13 +20,17 @@ import { describe, it, expect, beforeAll, afterAll } from "vitest";
 // so proxy calls fail fast and do not hang internal requests.
 import { restorePythonEnv, forcePythonDown } from "./setup/force-python-down";
 import { app } from "../server";
-import { signAccessToken } from "../auth/auth-middleware.js";
+import { cleanupSessionUsers, createSessionToken } from "./helpers/session-auth";
 
 process.env.JWT_SECRET ||= "test-jwt-secret-for-admin-tests-0123456789abcdef";
 
+// Admin paths resolve the principal from the database (active user + live session + sid).
+let adminToken = "";
+beforeAll(async () => { adminToken = await createSessionToken("admin"); }, 30000);
+afterAll(async () => { await cleanupSessionUsers(); });
+
 function adminHeaders() {
-  const token = signAccessToken({ sub: "test-admin", role: "admin", email: "admin@test.com" });
-  return { authorization: `Bearer ${token}` };
+  return { authorization: `Bearer ${adminToken}` };
 }
 
 beforeAll(async () => {

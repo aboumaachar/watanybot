@@ -35,8 +35,26 @@ describe("saved chats auth regression", () => {
     expect(response.statusCode).toBe(401);
   });
 
-  it("allows non-production dev superadmin headers without legacy profile login", async () => {
+  it("ignores dev superadmin headers in non-production unless explicitly opted in", async () => {
     const app = await getApp();
+    const previous = process.env.WATANY_ALLOW_DEV_ROLE_HEADER;
+    delete process.env.WATANY_ALLOW_DEV_ROLE_HEADER;
+    try {
+      const response = await app.inject({
+        method: "GET",
+        url: "/api/saved",
+        headers: { "x-watany-role": "superadmin", "x-superadmin": "1" },
+      });
+      expect(response.statusCode).toBe(401);
+    } finally {
+      if (previous !== undefined) process.env.WATANY_ALLOW_DEV_ROLE_HEADER = previous;
+    }
+  });
+
+  it("allows opted-in dev superadmin headers without legacy profile login", async () => {
+    const app = await getApp();
+    const previous = process.env.WATANY_ALLOW_DEV_ROLE_HEADER;
+    process.env.WATANY_ALLOW_DEV_ROLE_HEADER = "true";
 
     const response = await app.inject({
       method: "GET",
@@ -46,6 +64,7 @@ describe("saved chats auth regression", () => {
         "x-superadmin": "1",
       },
     });
+    if (previous === undefined) delete process.env.WATANY_ALLOW_DEV_ROLE_HEADER; else process.env.WATANY_ALLOW_DEV_ROLE_HEADER = previous;
 
     expect(response.statusCode).toBe(200);
     expect(response.json()).toEqual({
