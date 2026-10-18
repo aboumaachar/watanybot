@@ -34,7 +34,7 @@ type NewsRow = {
   archived_at?: number | null;
 };
 
-const STATUS_VALUES: NewsStatus[] = ["DRAFT", "PUBLISHED", "UNPUBLISHED", "ARCHIVED"];
+const STATUS_VALUES = new Set<NewsStatus>(["DRAFT", "PUBLISHED", "UNPUBLISHED", "ARCHIVED"]);
 const cmsPolicy = (key: string) => ({ preHandler: [buildAdminAuthorityPreHandler(getRoutePolicyByKey(key))] });
 
 function actorId(request: FastifyRequest): string {
@@ -43,7 +43,7 @@ function actorId(request: FastifyRequest): string {
 }
 
 function normalizeStatus(row: NewsRow): NewsStatus {
-  return row.status && STATUS_VALUES.includes(row.status) ? row.status : row.is_published === 1 ? "PUBLISHED" : "DRAFT";
+  return row.status && STATUS_VALUES.has(row.status) ? row.status : row.is_published === 1 ? "PUBLISHED" : "DRAFT";
 }
 
 function isPublished(status: NewsStatus): number {
@@ -55,7 +55,7 @@ function toAdminItem(row: NewsRow): NewsRow & { status: NewsStatus } {
 }
 
 function requestedStatus(body: NewsItemBody, fallback: NewsStatus): NewsStatus {
-  if (body.status && STATUS_VALUES.includes(body.status)) return body.status;
+  if (body.status && STATUS_VALUES.has(body.status)) return body.status;
   if (body.is_published !== undefined) return body.is_published === 1 ? "PUBLISHED" : "UNPUBLISHED";
   return fallback;
 }
@@ -209,7 +209,7 @@ export const adminNewsRoutes: FastifyPluginAsync = async (app) => {
       return reply.status(409).send({ error: "NEWS_VERSION_NOT_FOUND" });
     }
 
-    const status = snapshot.status && STATUS_VALUES.includes(snapshot.status) ? snapshot.status : snapshot.is_published === 1 ? "PUBLISHED" : "DRAFT";
+    const status = snapshot.status && STATUS_VALUES.has(snapshot.status) ? snapshot.status : snapshot.is_published === 1 ? "PUBLISHED" : "DRAFT";
     const next: NewsRow = {
       ...current,
       ...snapshot,

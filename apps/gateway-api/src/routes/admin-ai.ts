@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { randomUUID } from "node:crypto";
 import type { FastifyPluginAsync } from "fastify";
 import { requireRole } from "../auth/rbac.js";
 import {
@@ -50,7 +51,7 @@ export interface AdminAiRoutesOptions {
 const feedbackQueue: Map<string, FeedbackItem> = new Map();
 
 function generateId() {
-  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 9)}`;
+  return randomUUID();
 }
 
 function readTrainingExamples(trainingFilePath: string, warn: (payload: unknown, message: string) => void): TrainingExample[] {
