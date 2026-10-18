@@ -1,21 +1,11 @@
 import type { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
+import { authorizePrincipal } from "../auth/rbac.js";
 import { getSuperadminUsersDashboard, setSuperadminUserRole } from "../superadmin/superadmin-users.service";
-import {
-  isSuperadminLike,
-  SUPERADMIN_USER_MANAGEMENT_POLICY,
-} from "../superadmin/superadmin-users.policy";
+import { SUPERADMIN_USER_MANAGEMENT_POLICY } from "../superadmin/superadmin-users.policy";
 import { buildIpAuditRecord } from "../middleware/ip-audit";
-import { isDevRoleHeaderEnabled } from "../auth/dev-role-header";
 
 function hasSuperadminAccess(req: FastifyRequest): boolean {
-  // Dev/test-only guard: x-watany-role is honoured only when explicitly opted in.
-  if (isDevRoleHeaderEnabled()) {
-    const devRole = req.headers["x-watany-role"];
-    if (isSuperadminLike(devRole)) return true;
-  }
-  // Production path: real JWT user must have superadmin role.
-  const user = (req as FastifyRequest & { user?: { role?: string } }).user;
-  return isSuperadminLike(user?.role);
+  return authorizePrincipal(req, { minRole: "superadmin" }).allowed;
 }
 
 async function guardSuperadmin(request: FastifyRequest, reply: FastifyReply) {

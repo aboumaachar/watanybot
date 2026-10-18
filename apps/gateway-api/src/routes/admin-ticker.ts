@@ -1,6 +1,6 @@
 import type { FastifyInstance } from "fastify";
 import { requireRole } from "../auth/rbac.js";
-import { randomUUID } from "crypto";
+import { randomUUID } from "node:crypto";
 import { MAX_TICKER_CYCLE_MS, MIN_TICKER_CYCLE_MS, readTickerSettings, writeTickerSettings } from "../lib/ticker-settings.js";
 
 export async function adminTickerRoutes(app: FastifyInstance): Promise<void> {
@@ -38,8 +38,6 @@ export async function adminTickerRoutes(app: FastifyInstance): Promise<void> {
     if (!type || !title) {
       return reply.code(400).send({ error: "type and title required" });
     }
-    // normalize synonyms
-    const normType = type === "announcement" ? "announce" : type;
     const now = Date.now();
     const id = randomUUID();
     app.pluginDb
