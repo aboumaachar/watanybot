@@ -1,8 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { AndroidSmsGatewayProvider, createSmsProvider } from "../auth/sms.js";
+import { AndroidSmsGatewayProvider, createSmsProvider } from "../auth/sms";
 
 const fetchMock = vi.fn();
 vi.stubGlobal("fetch", fetchMock);
+
 const keys = [
   "NODE_ENV", "OTP_PROVIDER", "ANDROID_SMS_GATEWAY_ENDPOINT", "ANDROID_SMS_GATEWAY_LOGIN",
   "ANDROID_SMS_GATEWAY_PASSWORD", "ANDROID_SMS_GATEWAY_TOKEN", "ANDROID_SMS_GATEWAY_TIMEOUT_MS",
@@ -14,6 +15,7 @@ beforeEach(() => {
   fetchMock.mockReset();
   fetchMock.mockResolvedValue({ ok: true, status: 202, text: async () => "" } as Response);
 });
+
 afterEach(() => {
   for (const key of keys) {
     const value = original.get(key);
@@ -22,7 +24,7 @@ afterEach(() => {
   vi.clearAllMocks();
 });
 describe("AndroidSmsGatewayProvider", () => {
-  it("sends OTP text through the SMSGate messages endpoint with Basic auth", async () => {
+  it("sends OTP text through the private SMSGate messages endpoint with Basic auth", async () => {
     const provider = new AndroidSmsGatewayProvider({ endpoint: "http://127.0.0.1:3000/api/3rdparty/v1", login: "watany", password: "secret" });
     await provider.sendOtp("+9613156789", "123456");
     const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
@@ -45,6 +47,7 @@ describe("AndroidSmsGatewayProvider", () => {
     await provider.sendOtp("+9613156789", "654321");
     expect((fetchMock.mock.calls[0]?.[1]?.headers as Record<string, string>).authorization).toBe("Bearer scoped-token");
   });
+
   it("fails closed when authentication is not configured", () => {
     delete process.env.ANDROID_SMS_GATEWAY_TOKEN;
     delete process.env.ANDROID_SMS_GATEWAY_LOGIN;
