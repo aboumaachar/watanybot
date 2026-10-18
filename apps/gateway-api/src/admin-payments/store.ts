@@ -1,87 +1,74 @@
 import fs from "node:fs";
 import path from "node:path";
+import { randomUUID } from "node:crypto";
 import type { AdminPaymentsStore } from "./types.js";
-import {
-  adminPaymentsStoreSchema,
-  announcementSchema,
-  paymentAnswerSchema,
-  paymentQuestionSchema,
-} from "./schemas.js";
+import { adminPaymentsStoreSchema } from "./schemas.js";
 
 const STORE_DIR = path.join(process.cwd(), "data");
 const STORE_PATH = path.join(STORE_DIR, "admin-payments.json");
 
 function createInitialStore(): AdminPaymentsStore {
-  return {
-    questions: [],
-    answers: [],
-    announcements: [],
-  };
+  return { questions: [], answers: [], announcements: [] };
 }
 
 function ensureStoreDir(): void {
-  if (!fs.existsSync(STORE_DIR)) {
-    fs.mkdirSync(STORE_DIR, { recursive: true });
+  fs.mkdirSync(STORE_DIR, { recursive: true });
+}
+
+function validateStore(input: unknown): AdminPaymentsStore {
+  if (!input || typeof input !== "object" || Array.isArray(input)) {
+    throw new Error("admin_payments_store_invalid_shape");
   }
-}
-
-function normalizeCollection<T>(items: unknown, normalizeItem: (value: unknown) => T | null): T[] {
-  if (!Array.isArray(items)) {
-    return [];
+  const value = input as Record<string, unknown>;
+  if (!Array.isArray(value.questions) || !Array.isArray(value.answers) || !Array.isArray(value.announcements)) {
+    throw new Error("admin_payments_store_invalid_collections");
   }
-
-  return items
-    .map((item) => normalizeItem(item))
-    .filter((item): item is T => item !== null);
+  // Never silently discard malformed records from an existing payment store.
+  return adminPaymentsStoreSchema.parse(input);
 }
 
-function normalizeStore(input: unknown): AdminPaymentsStore {
-  const source = input && typeof input === "object" ? input as Record<string, unknown> : {};
-
-  return adminPaymentsStoreSchema.parse({
-    questions: normalizeCollection(source.questions, (value) => {
-      const result = paymentQuestionSchema.safeParse(value);
-      return result.success ? result.data : null;
-    }),
-    answers: normalizeCollection(source.answers, (value) => {
-      const result = paymentAnswerSchema.safeParse(value);
-      return result.success ? result.data : null;
-    }),
-    announcements: normalizeCollection(source.announcements, (value) => {
-      const result = announcementSchema.safeParse(value);
-      return result.success ? result.data : null;
-    }),
-  });
-}
-
-function resetStoreFile(): AdminPaymentsStore {
+function createStoreOnlyIfMissing(): AdminPaymentsStore {
   const initial = createInitialStore();
-  fs.writeFileSync(STORE_PATH, JSON.stringify(initial, null, 2), "utf-8");
+  fs.writeFileSync(STORE_PATH, JSON.stringify(initial, null, 2), { encoding: "utf8", flag: "wx" });
   return initial;
 }
 
-function ensureStore(): AdminPaymentsStore {
-  ensureStoreDir();
-
-  if (!fs.existsSync(STORE_PATH)) {
-    return resetStoreFile();
-  }
-
-  try {
-    const raw = fs.readFileSync(STORE_PATH, "utf-8");
-    return normalizeStore(JSON.parse(raw));
-  } catch {
-    return resetStoreFile();
-  }
-}
-
 export function readStore(): AdminPaymentsStore {
-  return ensureStore();
+  ensureStoreDir();
+  let raw: string;
+  try {
+    raw = fs.readFileSync(STORE_PATH, "utf8");
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === "ENOENT") {
+      // Exclusive creation prevents a missing-file race from overwriting data.
+      return createStoreOnlyIfMissing();
+    }
+    throw error;
+  }
+  // A corrupt, inaccessible or invalid existing store must never be reset.
+  return validateStore(JSON.parse(raw));
 }
 
 export function writeStore(data: AdminPaymentsStore): void {
+  const valid = validateStore(data);
   ensureStoreDir();
-  fs.writeFileSync(STORE_PATH, JSON.stringify(normalizeStore(data), null, 2), "utf-8");
+  // Direct writers must not silently overwrite an unreadable existing store.
+  try {
+    const current = fs.readFileSync(STORE_PATH, "utf8");
+    validateStore(JSON.parse(current));
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
+  }
+
+  const tempPath = path.join(STORE_DIR, ".admin-payments-" + process.pid + "-" + randomUUID() + ".tmp");
+  try {
+    fs.writeFileSync(tempPath, JSON.stringify(valid, null, 2), { encoding: "utf8", flag: "wx" });
+    fs.renameSync(tempPath, STORE_PATH);
+  } catch (error) {
+    // Clean up only the unique temporary file created by this invocation.
+    if (fs.existsSync(tempPath)) fs.unlinkSync(tempPath);
+    throw error;
+  }
 }
 
 export { STORE_PATH };
