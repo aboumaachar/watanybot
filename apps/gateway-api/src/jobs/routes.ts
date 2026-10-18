@@ -16,7 +16,10 @@ import {
   listCivilianOpportunities,
   listCivilianOpportunityApplications,
 } from "../civilian-jobs/civilian-jobs.service.js";
-import { civilianJobsRepository, type CivilianJobsRepository } from "../civilian-jobs/civilian-jobs.repository.js";
+import {
+  civilianJobsRepository,
+  type CivilianJobsRepository,
+} from "../civilian-jobs/civilian-jobs.repository.js";
 import type { CivilianOpportunity } from "../civilian-jobs/civilian-jobs.types.js";
 
 let idCounter = 1;
@@ -202,15 +205,30 @@ function toCivilianJobSearchResult(item: CivilianOpportunity): JobSearchResult {
 function toCivilianJobDetail(item: CivilianOpportunity) {
   const categoryId = legacyCategoryIdForOpportunity(item) ?? 4;
   return {
-    id: item.id, category_id: categoryId, title_ar: item.title, description_ar: item.description,
-    summary_ar: item.summary, requirements_ar: item.requirements.join(" | ") || undefined,
-    job_type: legacyJobTypeForOpportunity(item.type), location_city: item.location || undefined,
-    salary_currency: "USD", show_salary: false,
+    id: item.id,
+    category_id: categoryId,
+    title_ar: item.title,
+    description_ar: item.description,
+    summary_ar: item.summary,
+    requirements_ar: item.requirements.join(" | ") || undefined,
+    job_type: legacyJobTypeForOpportunity(item.type),
+    location_city: item.location || undefined,
+    salary_currency: "USD",
+    show_salary: false,
     veteran_only: item.audience.length === 1 && item.audience[0] === "VETERAN",
-    veteran_preferred: item.audience.includes("VETERAN"), remote_work: false, hybrid_work: false,
-    application_deadline: item.deadline, status: "active" as const, featured: item.adminVerified, urgent: false,
-    views_count: 0, applications_count: 0, published_at: item.createdAt, created_at: item.createdAt,
-    source_name: item.sourceName ?? null, source_url: item.sourceUrl ?? null,
+    veteran_preferred: item.audience.includes("VETERAN"),
+    remote_work: false,
+    hybrid_work: false,
+    application_deadline: item.deadline,
+    status: "active" as const,
+    featured: item.adminVerified,
+    urgent: false,
+    views_count: 0,
+    applications_count: 0,
+    published_at: item.createdAt,
+    created_at: item.createdAt,
+    source_name: item.sourceName ?? null,
+    source_url: item.sourceUrl ?? null,
   };
 }
 
@@ -219,7 +237,9 @@ function civilianOpportunityMatchesLegacyFilters(
   filters: { q: string; categoryId?: number; jobType: string; city: string; veteranOnly: boolean },
 ): boolean {
   if (filters.q) {
-    const haystack = [item.title, item.organization, item.location, item.category, item.summary, item.description, ...item.requirements].join(" ").toLowerCase();
+    const haystack = [item.title, item.organization, item.location, item.category, item.summary, item.description, ...item.requirements]
+      .join(" ")
+      .toLowerCase();
     if (!haystack.includes(filters.q)) return false;
   }
   if (filters.categoryId && legacyCategoryIdForOpportunity(item) !== filters.categoryId) return false;
@@ -325,9 +345,9 @@ export async function jobsRoutes(
       const emp = SEED_EMPLOYERS.find((e) => e.id === j.employer_id);
       const tags = j.skills_required?.slice(0, 4) || [];
       if (explicitPublicCardShaping) {
-        return toPublicJobCard(j, emp?.company_name || "—", emp?.logo_url, tags);
+        return toPublicJobCard(j, emp?.company_name || "-", emp?.logo_url, tags);
       }
-      return toPublicJobCard(j, emp?.company_name || "—", emp?.logo_url, tags);
+      return toPublicJobCard(j, emp?.company_name || "-", emp?.logo_url, tags);
     });
 
     const persistedOpportunities = await listCivilianOpportunities({}, civilianRepository);
@@ -447,7 +467,6 @@ export async function jobsRoutes(
       if (!opportunity) {
         reply.code(404);
         return { error: "الوظيفة غير موجودة" };
-
       }
       const categoryId = legacyCategoryIdForOpportunity(opportunity) ?? 4;
       return {
@@ -587,15 +606,27 @@ export async function jobsRoutes(
       if (!opportunity) {
         reply.code(404);
         return { error: "الوظيفة غير موجودة" };
-
       }
       const application = await createCivilianOpportunityApplication({
-        opportunityId: id, applicantName: name, applicantPhone: phone, applicantType: "PUBLIC", note: cover || undefined,
+        opportunityId: id,
+        applicantName: name,
+        applicantPhone: phone,
+        applicantType: "PUBLIC",
+        note: cover || undefined,
       }, civilianRepository);
-      return { ok: true, application: {
-        id: application.id, job_id: id, veteran_name: name, phone, email: email || undefined,
-        cover_letter: cover || undefined, status: "pending" as const, applied_at: application.createdAt,
-      } };
+      return {
+        ok: true,
+        application: {
+          id: application.id,
+          job_id: id,
+          veteran_name: name,
+          phone,
+          email: email || undefined,
+          cover_letter: cover || undefined,
+          status: "pending" as const,
+          applied_at: application.createdAt,
+        },
+      };
     }
     const dup = await applicationsRepository.findByJobAndPhone(id, phone);
     if (dup) {
@@ -757,13 +788,19 @@ export async function jobsRoutes(
   /* ─── GET /api/v2/jobs/stats — admin stats ─────────── */
   app.get(`${prefix}/stats`, async () => {
     const [persistedJobs, persistedApplications, legacyApplications] = await Promise.all([
-      listCivilianOpportunities({}, civilianRepository), listCivilianOpportunityApplications(civilianRepository), applicationsRepository.listAll(),
+      listCivilianOpportunities({}, civilianRepository),
+      listCivilianOpportunityApplications(civilianRepository),
+      applicationsRepository.listAll(),
     ]);
     return {
       total_jobs: SEED_JOBS.filter((j) => j.status === "active").length + persistedJobs.length,
       total_applications: legacyApplications.length + persistedApplications.length,
-      total_saved: savedJobs.length, categories: SEED_CATEGORIES.length,
-      employers: new Set([...SEED_JOBS.filter((j) => j.status === "active").map((job) => job.employer_id), ...persistedJobs.map((job) => job.organization)]).size,
+      total_saved: savedJobs.length,
+      categories: SEED_CATEGORIES.length,
+      employers: new Set([
+        ...SEED_JOBS.filter((j) => j.status === "active").map((job) => job.employer_id),
+        ...persistedJobs.map((job) => job.organization),
+      ]).size,
     };
   });
 }
