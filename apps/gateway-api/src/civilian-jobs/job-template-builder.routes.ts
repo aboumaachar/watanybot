@@ -112,7 +112,10 @@ async function loadPublishedSharedForm(formId: string) {
   if (!formId) return null;
   const result = await query<any>(`SELECT f.id,f.current_version,v.fields_json FROM universal_forms f JOIN universal_form_versions v ON v.form_id=f.id AND v.version=f.current_version WHERE f.id=$1 AND f.status='PUBLISHED' LIMIT 1`, [formId]);
   const row=result.rows[0]; if(!row){const error:any=new Error("APPLICATION_FORM_NOT_PUBLISHED");error.statusCode=400;throw error;}
-  const fields=normalizeFields((row.fields_json||[]).map((field:any)=>({fieldKey:field.key,label:field.label,fieldType:field.type,required:field.required,placeholder:field.placeholder,helpText:field.helpText,options:field.options})));
+  const rawFields = Array.isArray(row.fields_json) ? row.fields_json : [];
+  const incompatible = rawFields.some((field:any) => !fieldTypes.includes(field?.type) || field?.condition || field?.pageBreakBefore);
+  if (incompatible) { const error:any=new Error("APPLICATION_FORM_NOT_JOB_COMPATIBLE");error.statusCode=400;throw error; }
+  const fields=normalizeFields(rawFields.map((field:any)=>({fieldKey:field.key,label:field.label,fieldType:field.type,required:field.required,placeholder:field.placeholder,helpText:field.helpText,options:field.options})));
   return { id:row.id, version:Number(row.current_version), fields };
 }
 export async function registerJobTemplateBuilderRoutes(app: FastifyInstance) {
