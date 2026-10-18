@@ -10,8 +10,6 @@ import type {
   MiddleEastSecurityAdminPatch,
   MiddleEastSecurityInput,
 } from "./middleEastSecurity.types.js";
-import { query } from "../../../lib/db.js";
-import { ensureAndLinkJobApplicant } from "../../../civilian-jobs/job-applicant-accounts.js";
 
 const CLIENT_ERRORS = new Set([
   "MISSING_REQUIRED_FIELD",
@@ -55,31 +53,6 @@ async function mesAdminPreHandler(request: any, reply: any): Promise<void> {
   requireAdminOrSuperadmin(request, reply);
 }
 
-
-async function linkMiddleEastSecurityApplicantAccount(request: any, application: any) {
-  const applicationId = String(application?.id ?? "").trim();
-  if (!applicationId) throw new Error("MES_APPLICATION_ID_MISSING");
-  const authenticatedUserId = String(request.user?.id ?? "").trim();
-  if (authenticatedUserId) {
-    await query("UPDATE middle_east_security_applications SET user_id=$2,updated_at=NOW() WHERE id=$1", [applicationId, authenticatedUserId]);
-    await query(`
-      INSERT INTO job_application_user_links(user_id,campaign_id,application_id,source)
-      VALUES ($1,'middle-east-security',$2,'job_application')
-      ON CONFLICT(campaign_id,application_id) DO UPDATE SET user_id=EXCLUDED.user_id
-    `, [authenticatedUserId, applicationId]);
-    return { userId: authenticatedUserId, created: false };
-  }
-  const linked = await ensureAndLinkJobApplicant({
-    applicationId,
-    campaignId: "middle-east-security",
-    name: String(application?.full_name ?? ""),
-    phone: String(application?.phone ?? ""),
-    email: null,
-  });
-  await query("UPDATE middle_east_security_applications SET user_id=$2,updated_at=NOW() WHERE id=$1", [applicationId, linked.userId]);
-  return linked;
-}
-
 export async function registerMiddleEastSecurityRoutes(app: FastifyInstance) {
   app.post("/api/jobs/middle-east-security/applications", async (request: any, reply) => {
     try {
@@ -91,14 +64,7 @@ export async function registerMiddleEastSecurityRoutes(app: FastifyInstance) {
           idempotencyKey: firstHeader(request.headers["idempotency-key"]) || firstHeader(request.headers["x-mes-idempotency-key"]),
         },
       );
-      let accountLinkPending = false;
-      try {
-        await linkMiddleEastSecurityApplicantAccount(request, result.item);
-      } catch (linkError) {
-        accountLinkPending = true;
-        request.log.error({ err: linkError, applicationId: result.item?.id }, "middle_east_security_account_link_pending");
-      }
-      return reply.code(result.idempotent ? 200 : 201).send({ ...result, accountLinkPending });
+      return reply.code(result.idempotent ? 200 : 201).send(result);
     } catch (error) {
       const code = errorCode(error);
       if (code.startsWith("ADDRESS_DATA_UNAVAILABLE")) return reply.code(503).send({ error: "address_data_unavailable" });
