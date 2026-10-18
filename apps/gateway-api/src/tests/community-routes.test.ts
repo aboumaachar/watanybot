@@ -10,6 +10,7 @@ import { query } from "../lib/db";
 import { buildCommunityNotificationId, communityRoutes, type CommunityTelemetryRecord } from "../routes/community";
 import { notificationRoutes } from "../routes/notifications";
 import { acquireCommunityDbTestLock } from "./community-db-test-lock";
+import { deleteCommunityAuditEvents } from "./helpers/community-audit-cleanup";
 import { COMMUNITY_ATTACHMENT_MAX_BYTES } from "../community/attachment-security";
 
 process.env.JWT_SECRET ||= "test-jwt-secret-for-community-routes-0123456789";
@@ -188,7 +189,8 @@ beforeAll(async () => {
 beforeEach(async () => {
   releaseDbTestLock = await acquireCommunityDbTestLock();
   await resetCommunityStore();
-  await query("TRUNCATE admin_audit_events");
+  // Only community-owned audit rows: admin_audit_events is shared with other suites.
+  await deleteCommunityAuditEvents();
 });
 
 afterEach(async () => {
