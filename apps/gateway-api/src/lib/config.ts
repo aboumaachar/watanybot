@@ -89,6 +89,7 @@ export function resolveRagPath(): string {
 export function resolveKbPath(): string {
   let kbPath = process.env.KB_SQLITE_PATH || "./data/kb.sqlite";
   const candidates = [
+    path.resolve(repoRoot, "watany_kb_tables_v4", "Watany_KB_v4.sqlite"),
     path.resolve(_dirname, "../../../watany_kb_tables_v4/Watany_KB_v4.sqlite"),
     path.resolve(_dirname, "./data/kb.sqlite"),
   ];

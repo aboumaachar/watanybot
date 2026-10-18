@@ -9,8 +9,6 @@ import {
   advancedChatHandler,
   feedbackLoop,
   queryUnderstanding,
-  confidenceAssessment,
-  type AdvancedChatRequest,
 } from "../ai/index";
 
 import { requireRole } from "../auth/rbac.js";

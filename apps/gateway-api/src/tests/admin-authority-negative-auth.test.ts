@@ -13,6 +13,24 @@ vi.mock("../admin-authority/adminAuthorityApproval.js", () => ({
   listPendingAdminApprovalRequests: vi.fn().mockResolvedValue([]),
 }));
 
+vi.mock("../lib/db.js", () => ({
+  query: vi.fn(async (sql: string, params: unknown[] = []) => {
+    if (sql.includes("FROM sessions WHERE id = $1 AND user_id = $2 AND expires_at > now()")) {
+      return { rows: [{ id: String(params[0] ?? "") }], rowCount: 1 };
+    }
+
+    const id = String(params[0] ?? "");
+    const role = id === "test-super" || id.startsWith("superadmin-") ? "superadmin"
+      : id.startsWith("admin-") ? "admin"
+        : id.startsWith("public-") ? "public"
+          : null;
+    return {
+      rows: role ? [{ id, email: `${id}@test.local`, role }] : [],
+      rowCount: role ? 1 : 0,
+    };
+  }),
+}));
+
 import { registerAuthHook, signAccessToken } from "../auth/auth-middleware";
 import { adminAuthorityRoutes } from "../admin-authority/adminAuthorityRoutes";
 import { cleanupSessionUsers, createSessionToken } from "./helpers/session-auth";
@@ -31,7 +49,8 @@ const ENDPOINTS = [
 ] as const;
 
 function makeToken(role: "public" | "admin" | "superadmin", id = "test-user") {
-  return signAccessToken({ sub: id, role, email: `${role}@test.local` });
+  const principalId = id === "test-user" ? `${role}-test-user` : id;
+  return signAccessToken({ sub: principalId, role, email: `${role}@test.local`, sid: `${principalId}-session` });
 }
 
 // Admin paths resolve the principal from the database (active user + live session + sid),
