@@ -10,7 +10,7 @@
  * - Structured (SQL-like for calculations)
  */
 
-import type { QueryUnderstanding, ComplexityLevel, Intent } from './query-understanding';
+import type { QueryUnderstanding } from './query-understanding';
 import type { KbChunk } from './types';
 import { retrieveChunks as baseRetrieveChunks } from './rag';
 
@@ -87,7 +87,7 @@ export function selectStrategy(understanding: QueryUnderstanding): RetrievalStra
       numResults: 5,
       rerank: true,
       filters: {
-        chunkTypes: ['steps', 'requirements', 'transaction_overview'],
+        chunkTypes: ['steps', 'documents', 'overview', 'requirements', 'transaction_overview'],
         ...buildFiltersFromEntities(entities),
       },
     };
@@ -273,6 +273,7 @@ async function executeHybridSearch(
   
   // In production, would also get semantic results
   // For now, we enhance keyword results with query token matching
+  const asksForDocuments = isRequiredDocumentsQuery(understanding.originalQuery);
   const enhancedResults = keywordResults.map(r => {
     let boost = 1.0;
     
@@ -283,10 +284,13 @@ async function executeHybridSearch(
       }
     }
     
-    // Boost based on chunk type relevance
+    // Boost based on chunk type relevance. Direct document questions prefer
+    // concrete document chunks over generic procedural steps.
     if (understanding.queryType === 'procedural') {
-      if (r.chunk_type === 'steps') boost *= 1.3;
-      if (r.chunk_type === 'requirements') boost *= 1.2;
+      if (r.chunk_type === 'steps') boost *= asksForDocuments ? 1.1 : 1.3;
+      if (r.chunk_type === 'documents' || r.chunk_type === 'requirements') {
+        boost *= asksForDocuments ? 1.6 : 1.2;
+      }
     }
     
     return {
@@ -423,7 +427,7 @@ function reciprocalRankFusion(results: ScoredChunk[], k = 60): ScoredChunk[] {
   // Calculate RRF scores
   const rrfScores = new Map<string, number>();
   
-  for (const [method, methodResults] of byMethod) {
+  for (const [, methodResults] of byMethod) {
     // Sort by score within method
     methodResults.sort((a, b) => b.score - a.score);
     
@@ -479,6 +483,7 @@ function applyWeightedRanking(
   results: ScoredChunk[],
   understanding: QueryUnderstanding
 ): ScoredChunk[] {
+  const asksForDocuments = isRequiredDocumentsQuery(understanding.originalQuery);
   return results.map(r => {
     let weight = 1.0;
     
@@ -486,9 +491,11 @@ function applyWeightedRanking(
     const chunkType = r.chunk_type || '';
     
     if (understanding.queryType === 'procedural') {
-      if (chunkType === 'steps') weight *= 1.4;
-      if (chunkType === 'requirements') weight *= 1.3;
-      if (chunkType === 'transaction_overview') weight *= 1.2;
+      if (chunkType === 'steps') weight *= asksForDocuments ? 1.1 : 1.4;
+      if (chunkType === 'documents' || chunkType === 'requirements') {
+        weight *= asksForDocuments ? 1.7 : 1.3;
+      }
+      if (chunkType === 'overview' || chunkType === 'transaction_overview') weight *= 1.2;
     } else if (understanding.queryType === 'calculation') {
       if (chunkType.includes('salary') || chunkType.includes('pension')) weight *= 1.4;
     }
@@ -511,6 +518,7 @@ async function rerankResults(
   // For now, simulate with query-document relevance scoring
   
   const queryTokens = new Set(understanding.queryTokens);
+  const asksForDocuments = isRequiredDocumentsQuery(understanding.originalQuery);
   
   return results.map(r => {
     let rerankScore = 0;
@@ -531,7 +539,9 @@ async function rerankResults(
     }
     
     // Intent relevance
-    if (understanding.primaryIntent === 'get_procedure' && r.chunk_type === 'steps') {
+    if (asksForDocuments && (r.chunk_type === 'documents' || r.chunk_type === 'requirements')) {
+      rerankScore += 4;
+    } else if (understanding.primaryIntent === 'get_procedure' && r.chunk_type === 'steps') {
       rerankScore += 3;
     }
     
@@ -549,6 +559,10 @@ async function rerankResults(
 // ─────────────────────────────────────────────────────────────────────
 // Helper Functions
 // ─────────────────────────────────────────────────────────────────────
+
+function isRequiredDocumentsQuery(query: string): boolean {
+  return /(المستندات|مستندات|الأوراق|اوراق|الوراق)/i.test(query);
+}
 
 function buildFiltersFromEntities(entities: QueryUnderstanding['entities']): RetrievalFilters {
   const filters: RetrievalFilters = {};

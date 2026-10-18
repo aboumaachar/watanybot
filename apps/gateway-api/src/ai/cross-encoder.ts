@@ -63,7 +63,7 @@ export interface CrossEncoderProvider {
 // ─────────────────────────────────────────────────────────────────────
 
 export class LLMCrossEncoder implements CrossEncoderProvider {
-  private config: CrossEncoderConfig;
+  private readonly config: CrossEncoderConfig;
 
   constructor(config: CrossEncoderConfig) {
     this.config = config;
@@ -163,8 +163,8 @@ ${passagesList}
     // Extract numbers from response
     const numbers = response.match(/[\d.]+/g) || [];
     const scores = numbers
-      .map(n => parseFloat(n))
-      .filter(n => !isNaN(n) && n >= 0 && n <= 1);
+      .map(n => Number.parseFloat(n))
+      .filter(n => !Number.isNaN(n) && n >= 0 && n <= 1);
 
     // Pad or truncate to expected count
     while (scores.length < expectedCount) {
@@ -306,8 +306,8 @@ export class LocalCrossEncoder implements CrossEncoderProvider {
 // ─────────────────────────────────────────────────────────────────────
 
 export class NeuralCrossEncoderReranker {
-  private provider: CrossEncoderProvider;
-  private config: CrossEncoderConfig;
+  private readonly provider: CrossEncoderProvider;
+  private readonly config: CrossEncoderConfig;
 
   constructor(config?: CrossEncoderConfig) {
     this.config = config || {
@@ -480,8 +480,8 @@ export function getNeuralReranker(): NeuralCrossEncoderReranker {
         model: process.env.CROSS_ENCODER_MODEL || 'gpt-3.5-turbo',
         baseUrl: process.env.CROSS_ENCODER_BASE_URL,
         apiKey: process.env.CROSS_ENCODER_API_KEY,
-        batchSize: parseInt(process.env.CROSS_ENCODER_BATCH_SIZE || '10'),
-        scoreThreshold: parseFloat(process.env.CROSS_ENCODER_THRESHOLD || '0.3'),
+        batchSize: Number.parseInt(process.env.CROSS_ENCODER_BATCH_SIZE || '10'),
+        scoreThreshold: Number.parseFloat(process.env.CROSS_ENCODER_THRESHOLD || '0.3'),
       });
     } else {
       rerankerInstance = new NeuralCrossEncoderReranker();

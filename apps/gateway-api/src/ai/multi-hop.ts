@@ -9,9 +9,8 @@
  */
 
 import type { QueryUnderstanding, Intent, Entity } from './query-understanding';
-import { queryUnderstanding, normalizeArabic } from './query-understanding';
+import { queryUnderstanding } from './query-understanding';
 import { adaptiveRetrieval, type ScoredChunk } from './adaptive-retrieval';
-import type { KbChunk } from './types';
 
 export interface SubQuestion {
   question: string;
@@ -43,14 +42,37 @@ export interface MultiHopResult {
 // ─────────────────────────────────────────────────────────────────────
 
 /** Patterns that indicate query should be decomposed */
-const DECOMPOSITION_TRIGGERS = [
-  // Explicit conjunction with different topics
-  /(.+?)\s*(?:و|وكمان|وكذلك|وأيضاً)\s*(.+)/,
-  // Sequential actions
-  /(.+?)\s*(?:ثم|بعدها|ومن ثم|بعد ذلك)\s*(.+)/,
-  // Question combinations
-  /(.+؟)\s*(?:و|وكمان)?\s*(.+؟)/,
-];
+const DECOMPOSITION_CONNECTORS = [
+  'وكذلك',
+  'وأيضاً',
+  'وكمان',
+  'بعد ذلك',
+  'ومن ثم',
+  'بعدها',
+  'ثم',
+  'و',
+] as const;
+
+function splitDecompositionQuery(query: string): [string, string] | null {
+  for (const connector of DECOMPOSITION_CONNECTORS) {
+    const separator = ` ${connector} `;
+    const separatorIndex = query.indexOf(separator);
+    if (separatorIndex > 0) {
+      const left = query.slice(0, separatorIndex).trim();
+      const right = query.slice(separatorIndex + separator.length).trim();
+      if (left && right) return [left, right];
+    }
+  }
+
+  const questionSeparator = query.indexOf('؟');
+  if (questionSeparator > 0) {
+    const left = query.slice(0, questionSeparator + 1).trim();
+    const right = query.slice(questionSeparator + 1).trim();
+    if (right.endsWith('؟')) return [left, right];
+  }
+
+  return null;
+}
 
 /** Intent combinations that suggest multi-hop */
 const MULTI_HOP_INTENT_PAIRS: Array<[Intent, Intent]> = [
@@ -87,14 +109,7 @@ export class MultiHopReasoningEngine {
       }
     }
     
-    // Check decomposition triggers
-    for (const trigger of DECOMPOSITION_TRIGGERS) {
-      if (trigger.test(understanding.originalQuery)) {
-        return true;
-      }
-    }
-    
-    return false;
+    return splitDecompositionQuery(understanding.originalQuery) !== null;
   }
   
   /**
@@ -102,7 +117,7 @@ export class MultiHopReasoningEngine {
    */
   async execute(understanding: QueryUnderstanding): Promise<MultiHopResult> {
     const reasoningTrace: string[] = [];
-    reasoningTrace.push(`[Multi-Hop] Starting analysis of: "${understanding.originalQuery}"`);
+      reasoningTrace.push(`[Multi-Hop] Starting analysis of: "${understanding.originalQuery}"`);
     
     // Step 1: Decompose the query into sub-questions
     const subQuestions = await this.decompose(understanding);
@@ -112,7 +127,8 @@ export class MultiHopReasoningEngine {
     const subAnswers: SubQuestionAnswer[] = [];
     const allChunks: ScoredChunk[] = [];
     
-    for (const subQ of subQuestions.sort((a, b) => a.order - b.order)) {
+    const orderedSubQuestions = [...subQuestions].sort((a, b) => a.order - b.order);
+    for (const subQ of orderedSubQuestions) {
       reasoningTrace.push(`[Multi-Hop] Processing sub-question ${subQ.order}: "${subQ.question}"`);
       
       // Get context from previous answers if needed
@@ -170,28 +186,27 @@ export class MultiHopReasoningEngine {
     const query = understanding.originalQuery;
     
     // Try pattern-based decomposition first
-    for (const pattern of DECOMPOSITION_TRIGGERS) {
-      const match = query.match(pattern);
-      if (match && match.length >= 3) {
+    const match = splitDecompositionQuery(query);
+    if (match) {
         // Found decomposition pattern
-        subQuestions.push({
-          question: match[1].trim(),
+        subQuestions.push(
+          {
+          question: match[0].trim(),
           order: 1,
           dependsOn: [],
           intent: understanding.primaryIntent,
-          entities: this.extractEntitiesForSegment(match[1], understanding.entities),
-        });
+          entities: this.extractEntitiesForSegment(match[0], understanding.entities),
+          },
         
-        subQuestions.push({
-          question: match[2].trim(),
+          {
+          question: match[1].trim(),
           order: 2,
           dependsOn: [1], // May depend on first answer
           intent: understanding.secondaryIntents[0] || 'find_information',
-          entities: this.extractEntitiesForSegment(match[2], understanding.entities),
-        });
-        
-        return subQuestions;
-      }
+          entities: this.extractEntitiesForSegment(match[1], understanding.entities),
+          },
+        );
+      return subQuestions;
     }
     
     // Intent-based decomposition
@@ -250,16 +265,18 @@ export class MultiHopReasoningEngine {
       case 'get_procedure':
         return `ما هي إجراءات ${entityValues}`;
       
-      case 'retrieve_history':
+      case 'retrieve_history': {
         const yearEntity = entities.find(e => e.type === 'year');
         return yearEntity ? `ما كان ${entityValues} في ${yearEntity.value}` : originalQuery;
+      }
       
       case 'request_action':
         return `كيف أطلب ${entityValues}`;
       
-      case 'download_form':
+      case 'download_form': {
         const formEntity = entities.find(e => e.type === 'form_code');
         return formEntity ? `أين أجد نموذج ${formEntity.value}` : `أين أجد النموذج المطلوب`;
+      }
       
       case 'check_eligibility':
         return `هل يحق لي ${entityValues}`;
@@ -316,13 +333,14 @@ export class MultiHopReasoningEngine {
       return chunk.text;
     }
     
-    // For requirements, extract requirements section
-    if (chunk.chunk_type === 'requirements') {
+    // For required documents, prefer the active v4 `documents` chunk.
+    // Keep `requirements` as a legacy alias for older KB artifacts.
+    if (chunk.chunk_type === 'documents' || chunk.chunk_type === 'requirements') {
       return `المستندات المطلوبة:\n${chunk.text}`;
     }
     
-    // For overview, use the overview
-    if (chunk.chunk_type === 'transaction_overview') {
+    // For overview, use the active v4 chunk name with the legacy alias retained.
+    if (chunk.chunk_type === 'overview' || chunk.chunk_type === 'transaction_overview') {
       return chunk.text;
     }
     
