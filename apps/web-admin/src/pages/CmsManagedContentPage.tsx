@@ -282,11 +282,12 @@ export default function CmsManagedContentPage({ domain, onDomainChange }: CmsMan
         payload: payload.payload,
         sourceMeta: payload.sourceMeta,
       };
-      const saved = creating
-        ? await createCmsGenericEntity(domain, payload)
-        : selected
-          ? await updateCmsGenericEntity(domain, selected.id, patch)
-          : null;
+      let saved: CmsGenericItem | null = null;
+      if (creating) {
+        saved = await createCmsGenericEntity(domain, payload);
+      } else if (selected) {
+        saved = await updateCmsGenericEntity(domain, selected.id, patch);
+      }
       if (!saved) throw new Error("لم يتم تحديد محتوى للحفظ.");
       setCreating(false);
       setDirty(false);
@@ -340,7 +341,7 @@ export default function CmsManagedContentPage({ domain, onDomainChange }: CmsMan
     if (mutation === "bulk_delete") throw new Error("الحذف غير متاح لهذا السطح.");
     if (mutation === "bulk_archive") {
       const updated = await runCmsGenericBulkArchive(domain, ids);
-      setItems((current) => current.map((item) => updated.find((next) => next.id === item.id) || item));
+      setItems((current) => current.map((item) => updated.find((next) => next.id === item.id) ?? item));
       setNotice(`تمت أرشفة ${updated.length} عناصر.`);
       selection.clear();
       setRefreshToken((value) => value + 1);
@@ -352,7 +353,7 @@ export default function CmsManagedContentPage({ domain, onDomainChange }: CmsMan
     if (bulkPayloadText.trim()) patch.payload = parseJsonObject(bulkPayloadText, "بيانات التعديل الجماعي");
     if (Object.keys(patch).length === 0) throw new Error("أدخل عنواناً أو بيانات لتطبيق التعديل الجماعي.");
     const updated = await runCmsGenericBulkEdit(domain, ids, patch);
-    setItems((current) => current.map((item) => updated.find((next) => next.id === item.id) || item));
+    setItems((current) => current.map((item) => updated.find((next) => next.id === item.id) ?? item));
     setNotice(`تم تعديل ${updated.length} عناصر.`);
     selection.clear();
     setRefreshToken((value) => value + 1);
@@ -434,6 +435,7 @@ export default function CmsManagedContentPage({ domain, onDomainChange }: CmsMan
 
       <div className="cms-managed-tabs" role="tablist" aria-label="أقسام CMS">
         <button type="button" className="ghost" onClick={() => navigateTo("procedures")}><AdminFluentIcon name="document" /> الإجراءات · Payload</button>
+
         <button type="button" className="ghost" onClick={() => navigateTo("editorial-documents")}><AdminFluentIcon name="document" /> وثائق Payload</button>
         <button type="button" className={domain === "forms" ? "accent" : "ghost"} onClick={() => navigateTo("forms")}><AdminFluentIcon name="form" /> النماذج</button>
         <button type="button" className={domain === "announcements" ? "accent" : "ghost"} onClick={() => navigateTo("announcements")}><AdminFluentIcon name="news" /> التعاميم</button>

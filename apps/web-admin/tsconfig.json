@@ -2,7 +2,18 @@
   "extends": "../../packages/config/tsconfig.base.json",
   "compilerOptions": {
     "jsx": "react-jsx",
-    "types": ["vite/client"]
+    "types": [
+      "vite/client"
+    ]
   },
-  "include": ["src"]
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "src/pages/ArticlePublishingStudioV2Page.tsx",
+    "src/pages/ArticlesPublishingPage.tsx",
+    "src/pages/ArticlePublishingWorkspacePage.tsx",
+    "src/pages/ArticleCmsPage.tsx",
+    "src/pages/ArticlePublishingFinalPage.tsx"
+  ]
 }

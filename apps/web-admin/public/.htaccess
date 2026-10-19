@@ -1,11 +1,11 @@
-# SPA Routing — admin dashboard
+# SPA Routing - web-admin /ops
 <IfModule mod_rewrite.c>
   RewriteEngine On
-  RewriteBase /mcp/admin/
+  RewriteBase /ops/
   RewriteRule ^index\.html$ - [L]
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
-  RewriteRule . /mcp/admin/index.html [L]
+  RewriteRule . /ops/index.html [L]
 </IfModule>
 
 <IfModule mod_expires.c>
@@ -19,3 +19,9 @@
     Header set Cache-Control "no-cache, no-store, must-revalidate"
   </FilesMatch>
 </IfModule>
+
+# KOUDAMA_OPS_NOINDEX_V1_BEGIN
+<IfModule mod_headers.c>
+  Header always set X-Robots-Tag "noindex, nofollow"
+</IfModule>
+# KOUDAMA_OPS_NOINDEX_V1_END

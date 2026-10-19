@@ -7,17 +7,17 @@ type CollectionKind = "official-services" | "ticker" | "ai-training" | "abusive-
 type CollectionRow = Record<string, unknown> & { id: string };
 
 const definitions: Record<CollectionKind, { title: string; endpoint: string; responseKey: string; columns: readonly string[]; fields: readonly string[]; idField?: string }> = {
-  "official-services": { title: "Official Services", endpoint: "/api/admin/official-services", responseKey: "items", columns: ["Name", "Category", "URL", "Status"], fields: ["name", "category", "sourceUrl", "lastHealthOk"] },
-  ticker: { title: "Ticker Items", endpoint: "/api/admin/ticker/items", responseKey: "items", columns: ["Title", "Type", "Priority", "Start", "End"], fields: ["title", "type", "priority", "starts_at", "ends_at"] },
-  "ai-training": { title: "AI Training", endpoint: "/api/admin/ai/training", responseKey: "examples", columns: ["Input", "Output", "Status", "Source"], fields: ["input", "output", "status", "source"] },
-  "abusive-events": { title: "Abusive Events", endpoint: "/api/admin/abusive-events", responseKey: "events", columns: ["Actor", "Reason", "Created", "Status"], fields: ["actorId", "reason", "createdAt", "status"] },
-  "chat-inputs": { title: "Chat Inputs", endpoint: "/api/admin/chat-inputs", responseKey: "items", columns: ["Input", "Intent", "Status", "Created"], fields: ["input", "intent", "status", "createdAt"] },
-  "answer-overrides": { title: "Answer Overrides", endpoint: "/api/admin/answer-overrides", responseKey: "overrides", columns: ["Pattern", "Answer", "Active", "Source"], fields: ["matchPattern", "answer", "active", "sourceUrl"] },
-  "chat-sessions": { title: "Chat Sessions", endpoint: "/api/admin/chat-sessions", responseKey: "sessions", columns: ["User", "Channel", "Messages", "Status"], fields: ["user_email", "channel", "message_count", "status"] },
-  "crm-contacts": { title: "CRM Contacts", endpoint: "/api/admin-authority/crm/contacts", responseKey: "items", columns: ["Name", "Email", "Phone", "Organization"], fields: ["name", "email_id", "phone", "company_name"] },
-  "erm-assets": { title: "ERM Assets", endpoint: "/api/admin/erm/assets", responseKey: "items", columns: ["Title", "Type", "Format", "File"], fields: ["title", "asset_type", "file_format", "file_name"] },
-  rules: { title: "Content Filter Rules", endpoint: "/api/admin/rules", responseKey: "rules", columns: ["Name", "Pattern", "Severity", "Action", "Enabled"], fields: ["name", "pattern", "severity", "action", "enabled"] },
-  news: { title: "News", endpoint: "/admin/news", responseKey: "__root", columns: ["Title", "Category", "Status", "Published"], fields: ["title", "category", "status", "published_at"] },
+  "official-services": { title: "الخدمات الرسمية", endpoint: "/api/admin/official-services", responseKey: "items", columns: ["الاسم", "الفئة", "الرابط", "الحالة"], fields: ["name", "category", "sourceUrl", "lastHealthOk"] },
+  ticker: { title: "عناصر الشريط الإخباري", endpoint: "/api/admin/ticker/items", responseKey: "items", columns: ["العنوان", "النوع", "الأولوية", "البداية", "النهاية"], fields: ["title", "type", "priority", "starts_at", "ends_at"] },
+  "ai-training": { title: "تدريب الذكاء الاصطناعي", endpoint: "/api/admin/ai/training", responseKey: "examples", columns: ["المدخل", "المخرج", "الحالة", "المصدر"], fields: ["input", "output", "status", "source"] },
+  "abusive-events": { title: "الأحداث المسيئة", endpoint: "/api/admin/abusive-events", responseKey: "events", columns: ["المشغّل", "السبب", "تاريخ الإنشاء", "الحالة"], fields: ["actorId", "reason", "createdAt", "status"] },
+  "chat-inputs": { title: "مدخلات المحادثة", endpoint: "/api/admin/chat-inputs", responseKey: "items", columns: ["المدخل", "النية", "الحالة", "تاريخ الإنشاء"], fields: ["input", "intent", "status", "createdAt"] },
+  "answer-overrides": { title: "بدائل الإجابات", endpoint: "/api/admin/answer-overrides", responseKey: "overrides", columns: ["النمط", "الإجابة", "نشط", "المصدر"], fields: ["matchPattern", "answer", "active", "sourceUrl"] },
+  "chat-sessions": { title: "جلسات المحادثة", endpoint: "/api/admin/chat-sessions", responseKey: "sessions", columns: ["المستخدم", "القناة", "الرسائل", "الحالة"], fields: ["user_email", "channel", "message_count", "status"] },
+  "crm-contacts": { title: "جهات اتصال CRM", endpoint: "/api/admin-authority/crm/contacts", responseKey: "items", columns: ["الاسم", "البريد الإلكتروني", "الهاتف", "المؤسسة"], fields: ["name", "email_id", "phone", "company_name"] },
+  "erm-assets": { title: "أصول ERM", endpoint: "/api/admin/erm/assets", responseKey: "items", columns: ["العنوان", "النوع", "الصيغة", "الملف"], fields: ["title", "asset_type", "file_format", "file_name"] },
+  rules: { title: "قواعد تصفية المحتوى", endpoint: "/api/admin/rules", responseKey: "rules", columns: ["الاسم", "النمط", "درجة الخطورة", "الإجراء", "مفعّل"], fields: ["name", "pattern", "severity", "action", "enabled"] },
+  news: { title: "الأخبار", endpoint: "/admin/news", responseKey: "__root", columns: ["العنوان", "الفئة", "الحالة", "منشور"], fields: ["title", "category", "status", "published_at"] },
 };
 
 export default function UniversalCollectionPage({ kind }: Readonly<{ kind: CollectionKind }>) {
@@ -30,7 +30,7 @@ export default function UniversalCollectionPage({ kind }: Readonly<{ kind: Colle
   const load = useCallback(async () => {
     setLoading(true); setError(null);
     try { const response = await adminFetch(definition.endpoint); const body = await response.json(); const values = definition.responseKey === "__root" ? body : body[definition.responseKey]; setRows((values ?? []).map((row: Record<string, unknown>) => ({ ...row, id: String(row[definition.idField ?? "id"] ?? "") })).filter((row: CollectionRow) => row.id)); }
-    catch (reason) { setError(reason instanceof Error ? reason.message : "Unable to load collection"); }
+    catch (reason) { setError(reason instanceof Error ? reason.message : "تعذر تحميل المجموعة"); }
     finally { setLoading(false); }
   }, [definition.endpoint]);
   useEffect(() => { void load(); }, [load]);
@@ -76,7 +76,7 @@ export default function UniversalCollectionPage({ kind }: Readonly<{ kind: Colle
   };
   let content = <div className="table-wrap"><ManageableList adapter={{ ...adapter, selectionEnabled: bulkEnabled }} rows={rows} onSelectionChange={setSelectedIds} /></div>;
   if (bulkEnabled) content = <>{selectedIds.length > 0 ? <button className="accent" onClick={() => void approveSelected()} disabled={bulkPending}>{bulkPending ? `${bulkLabel}...` : bulkLabel}</button> : null}{content}</>;
-  if (loading) content = <p className="muted center">Loading...</p>;
-  else if (rows.length === 0) content = <p className="muted center">No records found.</p>;
-  return <section><div className="page-header"><h2>{definition.title}</h2><p className="muted">Canonical administrative collection.</p></div>{error ? <div className="alert">{error}</div> : null}{content}</section>;
+  if (loading) content = <p className="muted center">جارٍ التحميل...</p>;
+  else if (rows.length === 0) content = <p className="muted center">لا توجد سجلات.</p>;
+  return <section><div className="page-header"><h2>{definition.title}</h2><p className="muted">مجموعة إدارية معتمدة.</p></div>{error ? <div className="alert">{error}</div> : null}{content}</section>;
 }

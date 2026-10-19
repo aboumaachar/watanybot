@@ -146,12 +146,12 @@ export default function DashboardFeatureSettingsCard() {
 
   function discardDashboardFeatureChanges() {
     setFeatureFlags(savedFeatureFlags);
-    setFeatureMessage("Unsaved dashboard feature changes were discarded.");
+    setFeatureMessage("تم تجاهل تغييرات ميزات لوحة التحكم غير المحفوظة.");
     setFeatureError("");
   }
 
   const lastSavedLabel = useMemo(() => {
-    if (!lastSavedAt) return "Not saved yet";
+    if (!lastSavedAt) return "لم يُحفظ بعد";
 
     try {
       return new Date(lastSavedAt).toLocaleString();
@@ -164,29 +164,29 @@ export default function DashboardFeatureSettingsCard() {
     <div className="card span-12">
       <div className="section-head">
         <div>
-          <h3>Feature Propagation</h3>
-          <p className="muted">Admin-selected feature settings stay pending until saved, then propagate to the web-user experience.</p>
+          <h3>نشر إعدادات الميزات</h3>
+          <p className="muted">تبقى إعدادات الميزات التي يحددها المشرف معلقة حتى حفظها، ثم تنتقل إلى تجربة المستخدم.</p>
         </div>
-        <div className="pill">{enabledFeatureCount} / {FEATURES.length} enabled</div>
+        <div className="pill">{enabledFeatureCount} / {FEATURES.length} مفعّلة</div>
       </div>
 
       <div className="feature-overview" style={{ marginTop: 12 }}>
         <div>
-          <div className="eyebrow">Published Controls</div>
+          <div className="eyebrow">الضوابط المنشورة</div>
           <div className="feature-overview__title">
-            {hasPendingFeatureChanges ? "Pending admin changes" : "Published settings are in sync"}
+            {hasPendingFeatureChanges ? "تغييرات المشرف معلقة" : "الإعدادات المنشورة متزامنة"}
           </div>
-          <p className="muted">Last saved: {lastSavedLabel}</p>
+          <p className="muted">آخر حفظ: {lastSavedLabel}</p>
           <p className="muted">
-            Use Save Settings to enforce the feature selections chosen here across the user-facing application.
+            استخدم حفظ الإعدادات لتطبيق اختيارات الميزات هنا على التطبيق الظاهر للمستخدم.
           </p>
         </div>
         <div className="feature-overview__actions">
           <button className="ghost" onClick={discardDashboardFeatureChanges} disabled={!hasPendingFeatureChanges || featureSaving || featureLoading}>
-            Discard Changes
+            تجاهل التغييرات
           </button>
           <button className="accent" onClick={saveDashboardFeatureFlags} disabled={!hasPendingFeatureChanges || featureSaving || featureLoading}>
-            {featureSaving ? "Saving…" : "Save Settings"}
+            {featureSaving ? "جارٍ الحفظ..." : "حفظ الإعدادات"}
           </button>
         </div>
       </div>
@@ -195,7 +195,7 @@ export default function DashboardFeatureSettingsCard() {
       {featureError ? <div className="feature-banner feature-banner--error">{featureError}</div> : null}
 
       {featureLoading ? (
-        <div className="page-loading">Loading feature settings…</div>
+        <div className="page-loading">جارٍ تحميل إعدادات الميزات...</div>
       ) : (
         <div className="feature-groups" style={{ marginTop: 16 }}>
           {featureGroups.map((group) => {
@@ -206,14 +206,14 @@ export default function DashboardFeatureSettingsCard() {
                 <div className="feature-group__header">
                   <div>
                     <h3>{group.label}</h3>
-                    <p className="muted">{groupEnabledCount} / {group.features.length} enabled</p>
+                    <p className="muted">{groupEnabledCount} / {group.features.length} مفعّلة</p>
                   </div>
                   <div className="feature-group__actions">
                     <button className="ghost sm" onClick={() => setDashboardFeatureGroup(group.features, true)} disabled={featureSaving}>
-                      Enable All
+                      تفعيل الكل
                     </button>
                     <button className="ghost sm" onClick={() => setDashboardFeatureGroup(group.features, false)} disabled={featureSaving}>
-                      Disable All
+                      تعطيل الكل
                     </button>
                   </div>
                 </div>
@@ -236,13 +236,13 @@ export default function DashboardFeatureSettingsCard() {
 
       {hasPendingFeatureChanges && (
         <div className="feature-save-bar">
-          <span className="feature-save-bar__label">⚠ Unsaved changes — publish to apply</span>
+          <span className="feature-save-bar__label">⚠ تغييرات غير محفوظة، انشر لتطبيقها</span>
           <div className="feature-save-bar__actions">
             <button className="ghost sm" onClick={discardDashboardFeatureChanges} disabled={featureSaving}>
-              Discard
+              تجاهل التغييرات
             </button>
             <button className="accent" onClick={saveDashboardFeatureFlags} disabled={featureSaving}>
-              {featureSaving ? "Saving…" : "Save & Publish"}
+              {featureSaving ? "جارٍ الحفظ..." : "حفظ ونشر"}
             </button>
           </div>
         </div>

@@ -55,7 +55,7 @@ export default function AdminLoginPage({ onLogin }: Readonly<{ onLogin: () => vo
 
   const handleSubmit = async (e: { preventDefault(): void }) => {
     e.preventDefault();
-    if (!activeUrl) { setError("Server URL is required"); return; }
+    if (!activeUrl) { setError("عنوان الخادم مطلوب"); return; }
     setError("");
     setLoading(true);
 
@@ -73,7 +73,7 @@ export default function AdminLoginPage({ onLogin }: Readonly<{ onLogin: () => vo
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error || "Login failed");
+        setError(data.error || "فشل تسجيل الدخول");
         return;
       }
 
@@ -101,12 +101,12 @@ export default function AdminLoginPage({ onLogin }: Readonly<{ onLogin: () => vo
         <div style={{ textAlign: "center", marginBottom: 24 }}>
           <div style={{ fontSize: 48, marginBottom: 8 }}>🛡️</div>
           <h1 style={{ color: "#f1f5f9", fontSize: 22, margin: 0 }}>Watany Ops</h1>
-          <p style={{ color: "#94a3b8", fontSize: 14, margin: "4px 0 0" }}>Admin Control Room</p>
+          <p style={{ color: "#94a3b8", fontSize: 14, margin: "4px 0 0" }}>غرفة تحكم الإدارة</p>
         </div>
 
         {/* Server selector */}
         <div style={{ marginBottom: 20 }}>
-          <label htmlFor="server-url" style={{ display: "block", color: "#94a3b8", fontSize: 13, marginBottom: 8 }}>Server</label>
+          <label htmlFor="server-url" style={{ display: "block", color: "#94a3b8", fontSize: 13, marginBottom: 8 }}>الخادم</label>
           <div style={{ display: "flex", gap: 8, marginBottom: 8 }}>
             {SERVERS.map(s => (
               <button
@@ -162,7 +162,7 @@ export default function AdminLoginPage({ onLogin }: Readonly<{ onLogin: () => vo
 
         <form onSubmit={handleSubmit}>
           <div style={{ marginBottom: 16 }}>
-            <label htmlFor="login-email" style={{ display: "block", color: "#94a3b8", fontSize: 13, marginBottom: 4 }}>Email</label>
+            <label htmlFor="login-email" style={{ display: "block", color: "#94a3b8", fontSize: 13, marginBottom: 4 }}>البريد الإلكتروني</label>
             <input
               id="login-email"
               type="email"
@@ -175,7 +175,7 @@ export default function AdminLoginPage({ onLogin }: Readonly<{ onLogin: () => vo
           </div>
 
           <div style={{ marginBottom: 16 }}>
-            <label htmlFor="login-password" style={{ display: "block", color: "#94a3b8", fontSize: 13, marginBottom: 4 }}>Password</label>
+            <label htmlFor="login-password" style={{ display: "block", color: "#94a3b8", fontSize: 13, marginBottom: 4 }}>كلمة المرور</label>
             <input
               id="login-password"
               type="password"
@@ -205,7 +205,7 @@ export default function AdminLoginPage({ onLogin }: Readonly<{ onLogin: () => vo
               border: "none", fontSize: 15, fontWeight: 600, cursor: loading ? "default" : "pointer",
             }}
           >
-            {loading ? "Signing in…" : "Sign In"}
+            {loading ? "جارٍ تسجيل الدخول..." : "تسجيل الدخول"}
           </button>
 
           {activeUrl === LOCAL_URL && allowDevAdminFallback && (

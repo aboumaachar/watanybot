@@ -70,21 +70,21 @@ export default function AdminProceduresPage() {
   return (
     <div>
       <div className="page-header">
-        <h2>Admin Procedures</h2>
-        <p className="muted">source-backed procedures</p>
+        <h2>إجراءات الإدارة</h2>
+        <p className="muted">إجراءات موثقة بالمصادر</p>
         <p className="muted">loaded procedure count: {proceduresCount}</p>
         <p className="muted">loaded procedure file count: {procedureFilesCount}</p>
       </div>
 
-      {loading && <div className="muted">Loading procedures…</div>}
+      {loading && <div className="muted">جارٍ تحميل الإجراءات...</div>}
       {error && <div className="muted">{error}</div>}
 
       {!loading && !error && (
         <div className="grid" style={{ gridTemplateColumns: "1fr 1fr", gap: 16 }}>
           <div className="card span-6" style={{ minHeight: 220 }}>
-            <h3>Procedures</h3>
+            <h3>الإجراءات</h3>
             {proceduresCount === 0 ? (
-              <p className="muted">No procedures returned.</p>
+              <p className="muted">لم تُرجع أي إجراءات.</p>
             ) : (
               <ul>
                 {procedures.slice(0, 20).map((row, idx) => (
@@ -95,9 +95,9 @@ export default function AdminProceduresPage() {
           </div>
 
           <div className="card span-6" style={{ minHeight: 220 }}>
-            <h3>Procedure Files</h3>
+            <h3>ملفات الإجراءات</h3>
             {procedureFilesCount === 0 ? (
-              <p className="muted">No procedure files returned.</p>
+              <p className="muted">لم تُرجع أي ملفات إجراءات.</p>
             ) : (
               <ul>
                 {procedureFiles.slice(0, 20).map((row, idx) => (

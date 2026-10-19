@@ -165,21 +165,21 @@ export default function FeatureControlsPage() {
   return (
     <div className="feature-page">
       <div className="page-header">
-        <h2>Feature Controls</h2>
-        <p className="muted">Global switches for the public web-user application. Changes only go live after save.</p>
+        <h2>التحكم بالميزات</h2>
+        <p className="muted">مفاتيح عامة لتطبيق المستخدم. لا تصبح التغييرات نافذة إلا بعد الحفظ.</p>
       </div>
 
       <div className="feature-overview card">
         <div>
-          <div className="eyebrow">Web User Controls</div>
-          <div className="feature-overview__title">{enabledCount} / {FEATURES.length} features enabled</div>
-          <p className="muted">Last saved: {lastSavedLabel}</p>
-          <p className="muted">This panel is independent from the public app and controls what end users can see and use.</p>
+          <div className="eyebrow">ضوابط المستخدم</div>
+          <div className="feature-overview__title">{enabledCount} / {FEATURES.length} ميزات مفعّلة</div>
+          <p className="muted">آخر حفظ: {lastSavedLabel}</p>
+          <p className="muted">هذه اللوحة مستقلة عن التطبيق العام وتتحكم بما يمكن للمستخدمين رؤيته واستعماله.</p>
         </div>
         <div className="feature-overview__actions">
-          <button className="ghost" onClick={() => setPendingBroadAction({ label: "Reset locally", message: "Restore all controls to their default local values. Nothing is published until Save & Publish.", run: handleReset })} disabled={saving}>Reset Locally</button>
+          <button className="ghost" onClick={() => setPendingBroadAction({ label: "إعادة الضبط محلياً", message: "استعادة جميع الضوابط إلى قيمها المحلية الافتراضية. لا يُنشر شيء قبل الحفظ والنشر.", run: handleReset })} disabled={saving}>إعادة الضبط محلياً</button>
           <button className="accent" onClick={handleSave} disabled={saving || loading}>
-            {saving ? "Saving..." : "Publish to Web User"}
+            {saving ? "جارٍ الحفظ..." : "نشر للمستخدم"}
           </button>
         </div>
       </div>
@@ -188,7 +188,7 @@ export default function FeatureControlsPage() {
       {error ? <div className="feature-banner feature-banner--error">{error}</div> : null}
 
       {loading ? (
-        <div className="page-loading">Loading feature controls...</div>
+        <div className="page-loading">جارٍ تحميل ضوابط الميزات...</div>
       ) : (
         <div className="feature-groups">
           {grouped.map((group) => {
@@ -202,8 +202,8 @@ export default function FeatureControlsPage() {
                     <p className="muted">{groupEnabled} / {group.features.length} enabled</p>
                   </div>
                   <div className="feature-group__actions">
-                    <button className="ghost sm" onClick={() => setPendingBroadAction({ label: `Enable all ${group.label}`, message: `Change every unlockable feature in ${group.label} locally. Locked features stay unchanged and nothing is published yet.`, run: () => toggleAll(group.features, true) })}>Enable All</button>
-                    <button className="ghost sm" onClick={() => setPendingBroadAction({ label: `Disable all ${group.label}`, message: `Change every unlockable feature in ${group.label} locally. Locked features stay unchanged and nothing is published yet.`, run: () => toggleAll(group.features, false) })}>Disable All</button>
+                    <button className="ghost sm" onClick={() => setPendingBroadAction({ label: `تفعيل كل ميزات ${group.label}`, message: `تغيير كل ميزة قابلة للفتح في ${group.label} محلياً. تبقى الميزات المقفلة دون تغيير ولا يُنشر شيء بعد.`, run: () => toggleAll(group.features, true) })}>تفعيل الكل</button>
+                    <button className="ghost sm" onClick={() => setPendingBroadAction({ label: `تعطيل كل ميزات ${group.label}`, message: `تغيير كل ميزة قابلة للفتح في ${group.label} محلياً. تبقى الميزات المقفلة دون تغيير ولا يُنشر شيء بعد.`, run: () => toggleAll(group.features, false) })}>تعطيل الكل</button>
                   </div>
                 </div>
 
@@ -225,10 +225,10 @@ export default function FeatureControlsPage() {
 
       {hasPendingChanges && (
         <div className="feature-save-bar">
-          <span className="feature-save-bar__label">Warning: Unsaved changes - publish to apply</span>
+          <span className="feature-save-bar__label">تنبيه: تغييرات غير محفوظة، انشر لتطبيقها</span>
           <div className="feature-save-bar__actions">
             <button className="ghost sm" onClick={discardChanges} disabled={saving}>
-              Discard
+              تجاهل التغييرات
             </button>
             <button className="accent" onClick={handleSave} disabled={saving}>
               {saving ? "Saving..." : "Save & Publish"}
@@ -236,7 +236,7 @@ export default function FeatureControlsPage() {
           </div>
         </div>
       )}
-      {pendingBroadAction ? <AdminConfirmDialog title={pendingBroadAction.label} message={pendingBroadAction.message} confirmLabel="Apply locally" onCancel={() => setPendingBroadAction(null)} onConfirm={() => { pendingBroadAction.run(); setPendingBroadAction(null); }} /> : null}
+      {pendingBroadAction ? <AdminConfirmDialog title={pendingBroadAction.label} message={pendingBroadAction.message} confirmLabel="تطبيق محلياً" onCancel={() => setPendingBroadAction(null)} onConfirm={() => { pendingBroadAction.run(); setPendingBroadAction(null); }} /> : null}
     </div>
   );
 }

@@ -1,4 +1,4 @@
-﻿const API_BASE = import.meta.env.VITE_GATEWAY_BASE_URL || "http://localhost:4000";
+﻿import { getApiUrl } from "../../lib/api";
 
 export interface AdminMarketListing {
   id: string;
@@ -57,33 +57,37 @@ async function readJson<T>(response: Response): Promise<T> {
   return data as T;
 }
 
+async function postAction(path: string, body: unknown = {}): Promise<void> {
+  await readJson<Record<string, unknown>>(await fetch(`${getApiUrl()}${path}`, { method: "POST", headers: adminHeaders(), body: JSON.stringify(body) }));
+}
+
 export async function fetchAdminMarketListings(status?: string): Promise<AdminMarketListing[]> {
   const qs = status ? `?status=${encodeURIComponent(status)}` : "";
-  const response = await fetch(`${API_BASE}/api/market/admin/listings${qs}`, { headers: adminHeaders() });
+  const response = await fetch(`${getApiUrl()}/api/market/admin/listings${qs}`, { headers: adminHeaders() });
   const data = await readJson<{ listings: AdminMarketListing[] }>(response);
   return data.listings || [];
 }
 
 export async function fetchAdminMarketReports(): Promise<AdminMarketReport[]> {
-  const response = await fetch(`${API_BASE}/api/market/admin/reports`, { headers: adminHeaders() });
+  const response = await fetch(`${getApiUrl()}/api/market/admin/reports`, { headers: adminHeaders() });
   const data = await readJson<{ reports: AdminMarketReport[] }>(response);
   return data.reports || [];
 }
 
 export async function fetchAdminMarketCategories(): Promise<AdminMarketCategory[]> {
-  const response = await fetch(`${API_BASE}/api/market/admin/categories`, { headers: adminHeaders() });
+  const response = await fetch(`${getApiUrl()}/api/market/admin/categories`, { headers: adminHeaders() });
   const data = await readJson<{ categories: AdminMarketCategory[] }>(response);
   return data.categories || [];
 }
 
 export async function fetchAdminMarketOutbox(): Promise<AdminMarketOutboxEvent[]> {
-  const response = await fetch(`${API_BASE}/api/market/admin/outbox`, { headers: adminHeaders() });
+  const response = await fetch(`${getApiUrl()}/api/market/admin/outbox`, { headers: adminHeaders() });
   const data = await readJson<{ events: AdminMarketOutboxEvent[] }>(response);
   return data.events || [];
 }
 
 export async function saveAdminMarketCategory(input: Partial<AdminMarketCategory> & { labelAr: string }): Promise<AdminMarketCategory> {
-  const response = await fetch(`${API_BASE}/api/market/admin/categories`, {
+  const response = await fetch(`${getApiUrl()}/api/market/admin/categories`, {
     method: "POST",
     headers: superadminHeaders(),
     body: JSON.stringify(input),
@@ -93,21 +97,21 @@ export async function saveAdminMarketCategory(input: Partial<AdminMarketCategory
 }
 
 export async function approveMarketListing(id: string): Promise<void> {
-  await fetch(`${API_BASE}/api/market/admin/listings/${id}/approve`, { method: "POST", headers: adminHeaders(), body: JSON.stringify({}) });
+  await postAction(`/api/market/admin/listings/${id}/approve`);
 }
 
 export async function rejectMarketListing(id: string, reason: string, note = ""): Promise<void> {
-  await fetch(`${API_BASE}/api/market/admin/listings/${id}/reject`, { method: "POST", headers: adminHeaders(), body: JSON.stringify({ reason, note }) });
+  await postAction(`/api/market/admin/listings/${id}/reject`, { reason, note });
 }
 
 export async function removeMarketListing(id: string, note = ""): Promise<void> {
-  await fetch(`${API_BASE}/api/market/admin/listings/${id}/remove`, { method: "POST", headers: adminHeaders(), body: JSON.stringify({ note }) });
+  await postAction(`/api/market/admin/listings/${id}/remove`, { note });
 }
 
 export async function updateMarketTrust(id: string, input: { verifiedByWatany?: boolean; featuredVeteranSeller?: boolean; sellerTrustLevel?: "NEW" | "TRUSTED" | "FEATURED"; note?: string }): Promise<void> {
-  await fetch(`${API_BASE}/api/market/admin/listings/${id}/trust`, { method: "POST", headers: adminHeaders(), body: JSON.stringify(input) });
+  await postAction(`/api/market/admin/listings/${id}/trust`, input);
 }
 
 export async function compactMarketStore(): Promise<void> {
-  await fetch(`${API_BASE}/api/market/admin/maintenance/compact`, { method: "POST", headers: adminHeaders(), body: JSON.stringify({}) });
+  await postAction("/api/market/admin/maintenance/compact");
 }

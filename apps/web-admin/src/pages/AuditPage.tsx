@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { adminFetch, getAdminErrorMessage } from "../lib/api";
-import { AdminDataTable, AdminErrorState, AdminPagination, AdminSearchInput, AdminStatusBadge } from "../components/admin/AdminPrimitives";
+import { AdminDataTable, AdminErrorState, AdminPageHeader, AdminPageSection, AdminPagination, AdminSearchInput, AdminStatusBadge } from "../components/admin/AdminPrimitives";
 
 type AuditEntry = {
   id: string;
@@ -45,14 +45,12 @@ export default function AuditPage() {
   const actions = [...new Set(entries.map((e) => e.action))];
 
   return (
-    <div>
-      <div className="page-header">
-        <h2>Audit Log</h2>
-        <p className="muted">Searchable history of all administrative and system actions.</p>
-      </div>
+    <div className="ops-page-stack">
+      <AdminPageHeader title="سجل التدقيق" description="سجل قابل للبحث للإجراءات الإدارية والنظامية المملوك لـ Gateway." actions={<button className="ghost" type="button" onClick={() => void load()}>تحديث</button>} />
+      <AdminPageSection title="النشاط" description="صفِّ سجل تدقيق Gateway المعتمد.">
 
       <div className="toolbar">
-        <AdminSearchInput value={search} onChange={(value) => { setSearch(value); setPage(1); }} placeholder="Search actions, resources, user ID" />
+        <AdminSearchInput value={search} onChange={(value) => { setSearch(value); setPage(1); }} placeholder="ابحث في الإجراءات والموارد ومعرّف المستخدم" />
         <select
           value={actionFilter}
           onChange={(e) => {
@@ -61,24 +59,22 @@ export default function AuditPage() {
           }}
           className="filter-select"
         >
-          <option value="">All actions</option>
+          <option value="">كل الإجراءات</option>
           {actions.map((a) => (
             <option key={a} value={a}>{a}</option>
           ))}
         </select>
-        <button className="ghost" onClick={load}>
-          Refresh
-        </button>
       </div>
 
       {error ? <AdminErrorState message={error} /> : null}
       <div className="table-wrap">
-        <AdminDataTable rows={entries} columns={["Timestamp", "Action", "Resource", "User", "IP", "Details"]} loading={loading} error={error} empty="No audit entries." renderRow={(e) => <>
-                  <td className="mono">{new Date(e.created_at).toLocaleString()}</td><td><AdminStatusBadge status={e.action} /></td><td>{e.resource || "—"}</td><td className="mono truncate">{e.user_id ? `${e.user_id.slice(0, 8)}…` : "System"}</td><td className="muted">{e.ip || "—"}</td><td><details><summary>View details</summary><pre className="detail-json">{JSON.stringify(e.details, null, 2)}</pre></details></td>
+        <AdminDataTable rows={entries} columns={["الوقت", "الإجراء", "المورد", "المستخدم", "عنوان IP", "التفاصيل"]} loading={loading} error={error} empty="لا توجد سجلات تدقيق." renderRow={(e) => <>
+            <td className="mono">{new Date(e.created_at).toLocaleString()}</td><td><AdminStatusBadge status={e.action} /></td><td>{e.resource || "—"}</td><td className="mono truncate">{e.user_id ? `${e.user_id.slice(0, 8)}…` : "النظام"}</td><td className="muted">{e.ip || "—"}</td><td><details><summary>عرض التفاصيل</summary><pre className="detail-json">{JSON.stringify(e.details, null, 2)}</pre></details></td>
                 </>} />
       </div>
 
       <AdminPagination page={page} pageSize={PER_PAGE} total={total} onPageChange={setPage} />
+      </AdminPageSection>
     </div>
   );
 }

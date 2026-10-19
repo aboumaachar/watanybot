@@ -1,15 +1,20 @@
 /** Static fallback (used by legacy imports). Live code should call getApiUrl() instead. */
 const LOCAL_ADMIN_API_URL = import.meta.env.VITE_LOCAL_ADMIN_API_URL || "http://127.0.0.1:8099";
-export const API = import.meta.env.VITE_API_URL || LOCAL_ADMIN_API_URL;
+const PRODUCTION_ADMIN_API_URL = "https://koudama.com/mcp";
+
+function isProductionAdminHost(): boolean {
+  if (typeof globalThis.location === "undefined") return false;
+  const hostname = globalThis.location.hostname.toLowerCase();
+  return hostname === "koudama.com" || hostname.endsWith(".koudama.com");
+}
+
+export const API = import.meta.env.VITE_API_URL || (isProductionAdminHost() ? PRODUCTION_ADMIN_API_URL : LOCAL_ADMIN_API_URL);
 
 /** Returns the currently active admin API base URL (respects runtime server switch). */
 export function getApiUrl(): string {
   const storedUrl = localStorage.getItem("admin_api_url");
   if (storedUrl === "http://localhost:8010") {
-    localStorage.setItem("admin_api_url", LOCAL_ADMIN_API_URL);
-    return LOCAL_ADMIN_API_URL;
-  }
-  if (import.meta.env.DEV && storedUrl?.startsWith("https://koudama.com/")) {
+    localStorage.setItem("admin_api_url", API);
     return API;
   }
   return storedUrl || API;
@@ -17,9 +22,8 @@ export function getApiUrl(): string {
 
 export const SERVERS = [
   { label: "Local", url: LOCAL_ADMIN_API_URL },
-  { label: "Production (koudama.com)", url: "https://koudama.com/mcp" },
+  { label: "Production (koudama.com)", url: PRODUCTION_ADMIN_API_URL },
 ] as const;
-
 const CSRF_COOKIE_KEY = "watany_csrf";
 
 export type FeatureFlagsResponse = {

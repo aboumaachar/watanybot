@@ -107,7 +107,7 @@ export default function DashboardWebUserSettingsCard() {
   const hasPendingChanges = useMemo(() => JSON.stringify(settings) !== JSON.stringify(savedSettings), [settings, savedSettings]);
 
   const lastSavedLabel = useMemo(() => {
-    if (!lastSavedAt) return "Not saved yet";
+    if (!lastSavedAt) return "لم يُحفظ بعد";
 
     try {
       return new Date(lastSavedAt).toLocaleString();
@@ -143,26 +143,26 @@ export default function DashboardWebUserSettingsCard() {
     <div className="card span-12">
       <div className="section-head">
         <div>
-          <h3>Web User Component Settings</h3>
-          <p className="muted">Publish global defaults for the public app shell, chat controls, and design presets.</p>
+          <h3>إعدادات مكونات المستخدم</h3>
+          <p className="muted">انشر الإعدادات العامة الافتراضية لقشرة التطبيق وضوابط المحادثة وقوالب التصميم.</p>
         </div>
-        <div className="pill">Last saved {lastSavedLabel}</div>
+        <div className="pill">آخر حفظ: {lastSavedLabel}</div>
       </div>
 
       <div className="feature-overview" style={{ marginTop: 12 }}>
         <div>
-          <div className="eyebrow">Published Defaults</div>
+          <div className="eyebrow">الإعدادات الافتراضية المنشورة</div>
           <div className="feature-overview__title">
-            {hasPendingChanges ? "Pending component setting changes" : "Published defaults are in sync"}
+            {hasPendingChanges ? "تغييرات إعدادات المكونات معلقة" : "الإعدادات الافتراضية المنشورة متزامنة"}
           </div>
-          <p className="muted">These values are fetched by the web-user app on startup and applied to its existing component settings.</p>
+          <p className="muted">يجلب تطبيق المستخدم هذه القيم عند بدء التشغيل ويطبقها على إعدادات مكوناته الحالية.</p>
         </div>
         <div className="feature-overview__actions">
-          <button className="ghost" onClick={() => { setSettings(savedSettings); setMessage("Unsaved component setting changes were discarded."); setError(""); }} disabled={!hasPendingChanges || loading || saving}>
-            Discard Changes
+          <button className="ghost" onClick={() => { setSettings(savedSettings); setMessage("تم تجاهل تغييرات إعدادات المكونات غير المحفوظة."); setError(""); }} disabled={!hasPendingChanges || loading || saving}>
+            تجاهل التغييرات
           </button>
           <button className="accent" onClick={handleSave} disabled={!hasPendingChanges || loading || saving}>
-            {saving ? "Saving…" : "Save Settings"}
+            {saving ? "جارٍ الحفظ..." : "حفظ الإعدادات"}
           </button>
         </div>
       </div>
@@ -171,14 +171,14 @@ export default function DashboardWebUserSettingsCard() {
       {error ? <div className="feature-banner feature-banner--error">{error}</div> : null}
 
       {loading ? (
-        <div className="page-loading">Loading web-user settings…</div>
+        <div className="page-loading">جارٍ تحميل إعدادات المستخدم...</div>
       ) : (
         <div style={{ display: "grid", gap: 16, marginTop: 16 }}>
           <section className="feature-group">
             <div className="feature-group__header">
               <div>
-                <h3>Appearance</h3>
-                <p className="muted">Theme, contrast, and font controls used in the web-user shell.</p>
+                <h3>المظهر</h3>
+                <p className="muted">ضوابط السمة والتباين والخط المستخدمة في واجهة المستخدم.</p>
               </div>
             </div>
             <div style={{ display: "grid", gap: 12, gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))" }}>
@@ -191,8 +191,8 @@ export default function DashboardWebUserSettingsCard() {
           <section className="feature-group">
             <div className="feature-group__header">
               <div>
-                <h3>Chat Behavior</h3>
-                <p className="muted">Defaults for source visibility, voice behavior, and initial channel mode.</p>
+                <h3>سلوك المحادثة</h3>
+                <p className="muted">الإعدادات الافتراضية لظهور المصادر وسلوك الصوت ووضع القناة الأولي.</p>
               </div>
             </div>
             <div style={{ display: "grid", gap: 12, gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}>
@@ -206,8 +206,8 @@ export default function DashboardWebUserSettingsCard() {
           <section className="feature-group">
             <div className="feature-group__header">
               <div>
-                <h3>Design Preset</h3>
-                <p className="muted">The same theme, layout, and navigation values used by the public design selector.</p>
+                <h3>قالب التصميم</h3>
+                <p className="muted">قيم السمة والتخطيط والتنقل نفسها المستخدمة في محدد التصميم العام.</p>
               </div>
             </div>
             <div style={{ display: "grid", gap: 12, gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))" }}>

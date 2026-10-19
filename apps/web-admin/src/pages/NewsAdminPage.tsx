@@ -1,7 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { adminFetch, getAdminErrorMessage } from "../lib/api";
-import { AdminFluentIcon } from "../components/AdminFluentIcon";
-import { AdminEmptyState, AdminErrorState, AdminLoadingState } from "../components/admin/AdminPrimitives";
+import { AdminEmptyState, AdminErrorState, AdminLoadingState, AdminNotice, AdminPageHeader } from "../components/admin/AdminPrimitives";
 
 interface NewsItem {
   id: string;
@@ -36,6 +35,7 @@ export default function NewsAdminPage() {
   const [editId, setEditId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [saveErr, setSaveErr] = useState<string | null>(null);
+  const [actionError, setActionError] = useState("");
   const formRef = useRef<HTMLDivElement>(null);
 
   const load = () => {
@@ -91,13 +91,11 @@ export default function NewsAdminPage() {
 
   const togglePublish = async (item: NewsItem) => {
     const next = item.status === "PUBLISHED" || item.is_published ? "unpublish" : "publish";
-    await adminFetch(`/admin/news/${item.id}/actions/${next}`, { method: "POST" });
-    load();
+    try { setActionError(""); await adminFetch(`/admin/news/${item.id}/actions/${next}`, { method: "POST" }); load(); } catch (reason) { setActionError(getAdminErrorMessage(reason, "Unable to change announcement status.")); }
   };
 
   const runLifecycle = async (item: NewsItem, action: "archive" | "restore") => {
-    await adminFetch(`/admin/news/${item.id}/actions/${action}`, { method: "POST" });
-    load();
+    try { setActionError(""); await adminFetch(`/admin/news/${item.id}/actions/${action}`, { method: "POST" }); load(); } catch (reason) { setActionError(getAdminErrorMessage(reason, "Unable to change announcement lifecycle.")); }
   };
 
   const openPublic = () => {
@@ -105,11 +103,10 @@ export default function NewsAdminPage() {
   };
 
   return (
-    <div style={{ padding: "20px 24px", maxWidth: 900 }}>
-      <h2 style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 20 }}>
-        <AdminFluentIcon name="news" />
-        إدارة الأخبار
-      </h2>
+    <div className="ops-page-stack news-admin-page" dir="rtl">
+      <AdminPageHeader title="التعاميم" description="نشر التعاميم ودورة حياتها ومعاينتها العامة مملوكة لـ Gateway." actions={<button className="ghost" type="button" onClick={load} disabled={loading}>تحديث</button>} />
+      {actionError && <AdminErrorState message={actionError} />}
+      <AdminNotice tone="info">يبقى المحتوى التحريري مملوكاً لـ Gateway هنا؛ وتنعكس إجراءات النشر عبر واجهة التعاميم المعتمدة.</AdminNotice>
 
       {/* ── Form ── */}
       <div

@@ -52,3 +52,12 @@ The script:
 9. Rolls back the static admin tree if a post-copy verification step fails.
 
 This mechanism does not deploy or restart the gateway and does not run database migrations.
+## Fail-closed `/ops` artifact gate
+
+The deployment controller must run `apps/web-admin/scripts/verify-ops-build.mjs` before staging and again against the staged/live tree. The gate rejects a build unless the emitted main bundle is rooted at `/ops/`, the compiled React Router basename resolves to `/ops`, all emitted lazy dependencies exist, and the current Jobs + Universal Forms + Form Creator chunks retain their locator/form tokens. A deliberately `/superadmin/`-built candidate must fail this gate.
+
+The Vite configuration now defaults to `/ops/`; `VITE_BASE` remains an explicit override for controlled non-production builds. This makes an omitted production environment variable fail safe for the live admin surface rather than silently producing a `/superadmin/` bundle.
+
+If the live index references a versioned `ops-runtime-extension-v2-*.js`, the deployment controller preserves that exact referenced file and script tag in the staged release, then proves public byte parity after cutover. Post-cutover failure paths call rollback directly and restore the frozen live backup before returning failure.
+
+The documented cPanel checkout is a deployment prerequisite, not a source of truth when stale: it must contain `scripts/cpanel-deploy-web-admin.sh`, the emitted-build verifier, the expected branch, and an otherwise clean worktree before deployment. If any of those checks fail, do not deploy from that checkout.

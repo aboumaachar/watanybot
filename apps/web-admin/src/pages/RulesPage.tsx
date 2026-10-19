@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import type { FilterRule } from "@watany/types";
-import { adminFetch } from "../lib/api";
+import { adminFetch, getAdminErrorMessage } from "../lib/api";
+import { AdminErrorState, AdminPageSection, AdminNotice } from "../components/admin/AdminPrimitives";
 
 const SEVERITIES = ["low", "medium", "high", "critical"] as const;
 const ACTIONS = ["warn", "redact", "block"] as const;
@@ -20,15 +21,18 @@ export default function RulesPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [draft, setDraft] = useState<Omit<FilterRule, "id">>(emptyRule);
   const [creating, setCreating] = useState(false);
+  const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
 
   const load = useCallback(async () => {
     setLoading(true);
+    setError("");
     try {
       const res = await adminFetch("/api/admin/rules");
       const body = await res.json();
       setRules(body.rules ?? []);
     } catch (err) {
-      console.error("Failed to load rules", err);
+      setError(getAdminErrorMessage(err, "Unable to load content rules."));
     } finally {
       setLoading(false);
     }
@@ -56,6 +60,7 @@ export default function RulesPage() {
   }
 
   async function save() {
+    setError("");
     try {
       if (creating) {
         await adminFetch("/api/admin/rules", {
@@ -69,9 +74,10 @@ export default function RulesPage() {
         });
       }
       cancel();
-      load();
+      setMessage(creating ? "Rule created." : "Rule updated.");
+      await load();
     } catch (err) {
-      console.error("Save failed", err);
+      setError(getAdminErrorMessage(err, "Unable to save this rule."));
     }
   }
 
@@ -81,9 +87,10 @@ export default function RulesPage() {
       await adminFetch(`/api/admin/rules/${id}`, {
         method: "DELETE",
       });
-      load();
+      setMessage("تم حذف القاعدة.");
+      await load();
     } catch (err) {
-      console.error("Delete failed", err);
+      setError(getAdminErrorMessage(err, "تعذر حذف هذه القاعدة."));
     }
   }
 
@@ -93,47 +100,43 @@ export default function RulesPage() {
         method: "PUT",
         body: JSON.stringify({ ...rule, enabled: !rule.enabled }),
       });
-      load();
+      setMessage(rule.enabled ? "تم تعطيل القاعدة." : "تم تفعيل القاعدة.");
+      await load();
     } catch (err) {
-      console.error("Toggle failed", err);
+      setError(getAdminErrorMessage(err, "تعذر تغيير حالة القاعدة."));
     }
   }
 
   return (
+    <AdminPageSection title="قواعد تصفية المحتوى" description="قواعد إشراف مملوكة لـ Gateway بدرجة خطورة وإجراء وحالة تفعيل واضحة." action={<button className="accent" type="button" onClick={startCreate}>إضافة قاعدة</button>}>
+      {error && <AdminErrorState message={error} />}
+      {message && <AdminNotice tone="success">{message}</AdminNotice>}
     <div>
-      <div className="page-header">
-        <h2>Content Filter Rules</h2>
-        <p className="muted">Manage regex-based content filtering and moderation rules.</p>
-      </div>
-
       <div className="toolbar">
-        <button className="accent" onClick={startCreate}>
-          + Add Rule
-        </button>
         <button className="ghost" onClick={load}>
-          Refresh
+          تحديث
         </button>
       </div>
 
       {/* Create/Edit form */}
       {(creating || editingId) && (
         <div className="card rule-form">
-          <h3>{creating ? "New Rule" : "Edit Rule"}</h3>
+          <h3>{creating ? "قاعدة جديدة" : "تعديل القاعدة"}</h3>
           <div className="form-grid">
             <div>
-              <label>Name</label>
+              <label>الاسم</label>
               <input value={draft.name} onChange={(e) => setDraft({ ...draft, name: e.target.value })} />
             </div>
             <div>
-              <label>Description</label>
+              <label>الوصف</label>
               <input value={draft.description} onChange={(e) => setDraft({ ...draft, description: e.target.value })} />
             </div>
             <div className="span-full">
-              <label>Regex Pattern</label>
+              <label>نمط Regex</label>
               <input value={draft.pattern} onChange={(e) => setDraft({ ...draft, pattern: e.target.value })} className="mono" />
             </div>
             <div>
-              <label>Severity</label>
+              <label>درجة الخطورة</label>
               <select value={draft.severity} onChange={(e) => setDraft({ ...draft, severity: e.target.value as FilterRule["severity"] })}>
                 {SEVERITIES.map((s) => (
                   <option key={s} value={s}>{s}</option>
@@ -141,7 +144,7 @@ export default function RulesPage() {
               </select>
             </div>
             <div>
-              <label>Action</label>
+              <label>الإجراء</label>
               <select value={draft.action} onChange={(e) => setDraft({ ...draft, action: e.target.value as FilterRule["action"] })}>
                 {ACTIONS.map((a) => (
                   <option key={a} value={a}>{a}</option>
@@ -151,13 +154,13 @@ export default function RulesPage() {
             <div>
               <label>
                 <input type="checkbox" checked={draft.enabled} onChange={(e) => setDraft({ ...draft, enabled: e.target.checked })} />
-                {" "}Enabled
+                {" "}مفعّل
               </label>
             </div>
           </div>
           <div className="form-actions">
-            <button className="accent" onClick={save}>Save</button>
-            <button className="ghost" onClick={cancel}>Cancel</button>
+            <button className="accent" onClick={save}>حفظ</button>
+            <button className="ghost" onClick={cancel}>إلغاء</button>
           </div>
         </div>
       )}
@@ -167,19 +170,19 @@ export default function RulesPage() {
         <table className="admin-table">
           <thead>
             <tr>
-              <th>Name</th>
-              <th>Pattern</th>
-              <th>Severity</th>
-              <th>Action</th>
-              <th>Enabled</th>
-              <th>Actions</th>
+              <th>الاسم</th>
+              <th>النمط</th>
+              <th>درجة الخطورة</th>
+              <th>الإجراء</th>
+              <th>مفعّل</th>
+              <th>الإجراءات</th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
-              <tr><td colSpan={6} className="muted center">Loading…</td></tr>
+              <tr><td colSpan={6} className="muted center">جارٍ التحميل...</td></tr>
             ) : rules.length === 0 ? (
-              <tr><td colSpan={6} className="muted center">No rules configured.</td></tr>
+              <tr><td colSpan={6} className="muted center">لا توجد قواعد مهيأة.</td></tr>
             ) : (
               rules.map((r) => (
                 <tr key={r.id} className={r.enabled ? "" : "disabled-row"}>
@@ -193,8 +196,8 @@ export default function RulesPage() {
                     </button>
                   </td>
                   <td>
-                    <button className="ghost sm" onClick={() => startEdit(r)}>Edit</button>
-                    <button className="ghost sm danger" onClick={() => remove(r.id)}>Delete</button>
+                    <button className="ghost sm" onClick={() => startEdit(r)}>تعديل</button>
+                    <button className="ghost sm danger" onClick={() => remove(r.id)}>حذف</button>
                   </td>
                 </tr>
               ))
@@ -203,5 +206,6 @@ export default function RulesPage() {
         </table>
       </div>
     </div>
+    </AdminPageSection>
   );
 }

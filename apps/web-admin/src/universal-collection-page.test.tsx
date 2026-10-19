@@ -37,7 +37,7 @@ describe("universal collection owner adapters", () => {
     await settleLoad();
     expect(adminFetch).toHaveBeenCalledWith("/api/admin/official-services");
     expect(view.container.textContent).toContain("Portal");
-    expect(view.container.textContent).toContain("URL");
+    expect(view.container.textContent).toContain("الرابط");
     expect(view.container.textContent).not.toContain("Priority");
     act(() => view.root.unmount());
   });
@@ -48,7 +48,7 @@ describe("universal collection owner adapters", () => {
     await settleLoad();
     expect(adminFetch).toHaveBeenCalledWith("/api/admin/ticker/items");
     expect(view.container.textContent).toContain("Notice");
-    expect(view.container.textContent).toContain("Priority");
+    expect(view.container.textContent).toContain("الأولوية");
     expect(view.container.textContent).not.toContain("URL");
     act(() => view.root.unmount());
   });
@@ -79,7 +79,7 @@ describe("universal collection owner adapters", () => {
     adminFetch.mockResolvedValueOnce(response([]));
     const empty = await mount(<UniversalCollectionPage kind="ticker" />);
     await settleLoad();
-    expect(empty.container.textContent).toContain("No records found.");
+    expect(empty.container.textContent).toContain("لا توجد سجلات.");
     act(() => empty.root.unmount());
 
     adminFetch.mockRejectedValueOnce(new Error("gateway unavailable"));

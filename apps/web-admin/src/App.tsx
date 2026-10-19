@@ -30,6 +30,13 @@ const AinMreissehApplicationsAdminPage = lazy(() => import("./pages/AinMreissehA
 const MiddleEastSecurityApplicationsAdminPage = lazy(() => import("./pages/MiddleEastSecurityApplicationsAdminPage"));
 const Veterans2019ApplicationsAdminPage = lazy(() => import("./pages/Veterans2019ApplicationsAdminPage"));
 const SeasonalAppleApplicationsAdminPage = lazy(() => import("./pages/SeasonalAppleApplicationsAdminPage"));
+const ContentStudioPage = lazy(() => import("./pages/ContentStudioPage"));
+const FaqEditorialAdminPage = lazy(() => import("./pages/FaqEditorialAdminPage"));
+const AdminSalaryPage = lazy(() => import("./pages/AdminSalaryPage"));
+const PaymentIntelligencePage = lazy(() => import("./pages/PaymentIntelligencePage"));
+const AdminAdsPage = lazy(() => import("./pages/AdminAdsPage"));
+const AdminAnalyticsPage = lazy(() => import("./pages/AdminAnalyticsPage"));
+const AdminDiagnosticsPage = lazy(() => import("./pages/AdminDiagnosticsPage"));
 
 function RedirectToWebUser() {
   const location = useLocation();
@@ -55,6 +62,8 @@ const NAV_SECTIONS = [
     { path: "/kb", label: "قاعدة المعرفة", icon: "knowledge" },
     { path: "/news", label: "الأخبار", icon: "news" },
     { path: "/superadmin/cms/articles", label: "المقالات", icon: "news" },
+    { path: "/content-studio", label: "استوديو المحتوى", icon: "document" },
+    { path: "/admin/faqs", label: "الأسئلة الشائعة", icon: "faq" },
   ] },
   { id: "operations", label: "العمليات", items: [
     { path: "/jobs", label: "الوظائف والطلبات", icon: "briefcase" },
@@ -62,6 +71,9 @@ const NAV_SECTIONS = [
     { path: "/market", label: "السوق", icon: "apps" },
     { path: "/network", label: "الشبكة", icon: "location" },
     { path: "/chat", label: "مراقبة المحادثة", icon: "chat" },
+    { path: "/salary", label: "الراتب", icon: "calculator" },
+    { path: "/payments", label: "ذكاء الدفعات", icon: "money" },
+    { path: "/ads", label: "الإعلانات", icon: "megaphone" },
   ] },
   { id: "users", label: "المستخدمون", items: [
     { path: "/users", label: "إدارة المستخدمين", icon: "users" },
@@ -85,6 +97,8 @@ const NAV_SECTIONS = [
     { path: "/superadmin/system/health", label: "صحة النظام", icon: "settings" },
     { path: "/superadmin/approvals", label: "مركز الموافقات", icon: "audit" },
     { path: "/superadmin/authority-audit", label: "تدقيق الصلاحيات", icon: "audit" },
+    { path: "/analytics", label: "التحليلات", icon: "dashboard" },
+    { path: "/diagnostics", label: "التشخيص", icon: "health" },
   ] },
 ];
 
@@ -158,10 +172,17 @@ const ROUTE_META: Record<string, { title: string; section: string }> = {
   "/superadmin/system/health": { title: "صحة الوحدات", section: "النظام والحوكمة" },
   "/superadmin/system/integrations": { title: "التكاملات", section: "النظام والحوكمة" },
   "/superadmin/authority-audit": { title: "تدقيق الصلاحيات", section: "النظام والحوكمة" },
+  "/content-studio": { title: "استوديو المحتوى", section: "المحتوى والمعرفة" },
+  "/admin/faqs": { title: "إدارة الأسئلة الشائعة", section: "المحتوى والمعرفة" },
+  "/salary": { title: "الراتب", section: "العمليات" },
+  "/payments": { title: "ذكاء الدفعات", section: "العمليات" },
+  "/ads": { title: "إدارة الإعلانات", section: "العمليات" },
+  "/analytics": { title: "التحليلات", section: "النظام" },
+  "/diagnostics": { title: "التشخيص", section: "النظام" },
 };
 
 function Loading() {
-  return <div className="page-loading">Loading...</div>;
+  return <div className="page-loading">جارٍ التحميل...</div>;
 }
 
 const routerBasename =
@@ -173,6 +194,10 @@ export default function App() {
   const [token, setToken] = useState(() => localStorage.getItem("admin_token"));
   const [sidebarCollapsed, setSidebarCollapsed] = useState(() => localStorage.getItem("admin_sidebar_collapsed") === "true");
   const [mobileOpen, setMobileOpen] = useState(false);
+  useEffect(() => {
+    document.documentElement.lang = "ar";
+    document.documentElement.dir = "rtl";
+  }, []);
   useEffect(() => {
     if (!mobileOpen) return;
     const closeOnEscape = (event: KeyboardEvent) => { if (event.key === "Escape") setMobileOpen(false); };
@@ -227,7 +252,7 @@ export default function App() {
                   {connected ? "متصل" : "غير متصل"}
                 </div>
                 {messages.length > 0 && (
-                  <div className="ws-count">{messages.length} events</div>
+                  <div className="ws-count">{messages.length} أحداث</div>
                 )}
                 <button type="button" className="ghost" onClick={handleLogout} style={{ marginTop: 8, fontSize: 12, width: "100%" }}>
                   تسجيل الخروج
@@ -263,6 +288,13 @@ export default function App() {
                     <Route path="/kb" element={<KBEditorPage />} />
                     <Route path="/news" element={<NewsAdminPage />} />
                     <Route path="/network" element={<NetworkAdminPage />} />
+                    <Route path="/content-studio" element={<ContentStudioPage />} />
+                    <Route path="/admin/faqs" element={<FaqEditorialAdminPage />} />
+                    <Route path="/salary" element={<AdminSalaryPage />} />
+                    <Route path="/payments" element={<PaymentIntelligencePage />} />
+                    <Route path="/ads" element={<AdminAdsPage />} />
+                    <Route path="/analytics" element={<AdminAnalyticsPage />} />
+                    <Route path="/diagnostics" element={<AdminDiagnosticsPage />} />
                     <Route path="/jobs" element={<JobsAdminPage />} />
                     <Route path="/forms" element={<UniversalFormsAdminPage />} />
                     <Route path="/jobs/ainelhafeh" element={<SeasonalAppleApplicationsAdminPage />} />

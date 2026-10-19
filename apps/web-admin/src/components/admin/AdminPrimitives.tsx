@@ -19,7 +19,7 @@ export function AdminStatusBadge({ status }: { status: string }) {
   const labels: Record<string, string> = {
     healthy: "سليم", available: "متاح", degraded: "متدهور", unavailable: "غير متاح", enabled: "مفعّل", disabled: "معطّل",
     active: "نشط", suspended: "موقوف", banned: "محظور", pending: "قيد الانتظار", approved: "مقبول", rejected: "مرفوض", published: "منشور", draft: "مسودة",
-    not_configured: "غير مهيأ", ready: "جاهز", connecting: "جارٍ الاتصال", connected: "متصل", gateway: "البوابة", "gateway index": "فهرس البوابة",
+    not_configured: "غير مهيأ", ready: "جاهز", blocked: "محظور", intentionally_disabled: "معطّل قصداً", connecting: "جارٍ الاتصال", connected: "متصل", gateway: "البوابة", "gateway index": "فهرس البوابة",
   };
   return <span className={`admin-status-badge status-${normalized}`}><span aria-hidden="true" className="status-dot" />{labels[normalized] ?? status}</span>;
 }
