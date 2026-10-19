@@ -364,7 +364,16 @@ export async function listMiddleEastSecurityApplicationsForOwner(input: {
   const userId = clean(input.userId);
   const trackingToken = clean(input.trackingToken);
   if (!userId && !trackingToken) return [];
-  const rows = userId
+  // Each supplied credential is an independently proven ownership scope; a signed-in owner who also
+  // holds an anonymous tracking token sees both scopes, each row once.
+  const rows = userId && trackingToken
+    ? await query(
+      `SELECT * FROM middle_east_security_applications
+       WHERE (user_id = $1 OR anonymous_tracking_token_hash = $2)
+       ORDER BY created_at DESC, id DESC`,
+      [userId, hashMiddleEastSecuritySecret(trackingToken)],
+    )
+    : userId
     ? await query(
       `SELECT * FROM middle_east_security_applications
        WHERE user_id = $1

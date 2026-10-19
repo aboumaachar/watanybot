@@ -10,6 +10,7 @@ import {
 import type { JobApplicationRecord, JobPosting, SavedJob, JobSearchResult } from "./types.js";
 import { marketplaceJobApplicationsRepository, type MarketplaceJobApplicationsRepository } from "./repository.js";
 import { listUniversalJobApplicationsForOwner } from "../civilian-jobs/universal-job-applications.repository.js";
+import { listMiddleEastSecurityApplicationsForOwner } from "../koudama/surveys/middle-east-security/middleEastSecurity.repository.js";
 import {
   createCivilianOpportunityApplication,
   getCivilianOpportunity,
@@ -657,28 +658,52 @@ export async function jobsRoutes(
       return { applications: [] };
     }
 
-    const qs = req.query as Record<string, string>;
-    const phone = normalize(qs.phone);
-    const mine = phone ? await applicationsRepository.listByPhone(phone) : [];
-    const trackingToken = normalize(req.headers["x-job-tracking-token"] || qs.job_tracking_token);
-    const universal = await listUniversalJobApplicationsForOwner({
-      userId: normalize(req.user?.id) || undefined,
-      trackingToken: trackingToken || undefined,
-    }).catch((error) => {
-      req.log?.error?.({ err: error }, "universal_job_applied_jobs_lookup_failed");
-      return [];
-    });
-    const enriched = mine.map((a) => {
-      const job = SEED_JOBS.find((j) => j.id === a.job_id);
-      const emp = job ? SEED_EMPLOYERS.find((e) => e.id === job.employer_id) : null;
-      return {
-        ...a,
-        job_title: job?.title_ar || "—",
-        company_name: emp?.company_name || "—",
-      };
-    });
-    enriched.push(...universal.map((a) => ({
+    // Ownership is proven only by the authenticated user id or a per-subsystem tracking token sent as a
+    // header (query strings reach access logs). Legacy marketplace rows have no owner link, and a phone
+    // number is not proof of ownership, so they are not listed here.
+    const userId = normalize(req.user?.id) || undefined;
+    const universalTrackingToken = normalize(req.headers["x-job-tracking-token"]) || undefined;
+    const mesTrackingToken = normalize(req.headers["x-mes-tracking-token"]) || undefined;
+    const [universal, mes] = await Promise.all([
+      listUniversalJobApplicationsForOwner({ userId, trackingToken: universalTrackingToken }).catch((error) => {
+        req.log?.error?.({ err: error }, "universal_job_applied_jobs_lookup_failed");
+        return [];
+      }),
+      listMiddleEastSecurityApplicationsForOwner({ userId, trackingToken: mesTrackingToken }).catch((error) => {
+        req.log?.error?.({ err: error }, "middle_east_security_applied_jobs_lookup_failed");
+        return [];
+      }),
+    ]);
+    const mesItems = mes.map((a) => ({
       id: a.id,
+      source: "middle_east_security" as const,
+      source_key: `middle_east_security:${a.id}`,
+      job_id: "middle-east-security",
+      status: (a.status === "approved" ? "accepted" : a.status === "rejected" ? "rejected" : "pending") as JobApplicationRecord["status"],
+      veteran_name: a.full_name,
+      phone: a.phone,
+      applied_at: a.createdAt,
+      job_title: "فرصة عمل في الأمن والحماية",
+      company_name: "ميدل إيست سيكوريتي لبنان",
+      preferred_location: a.preferred_location,
+      address: a.address,
+      mohafaza: a.mohafaza,
+      mohafaza_id: a.mohafaza_id,
+      caza: a.caza,
+      caza_id: a.caza_id,
+      village: a.village,
+      village_id: a.village_id,
+      village_pcode: a.village_pcode,
+      location_dataset_version: a.location_dataset_version,
+      location_approval_status: a.location_approval_status,
+      updated_at: a.updatedAt,
+      follow_up_status: a.followUpStatus,
+      reference: a.id,
+    }));
+    const universalItems = universal.map((a) => ({
+      id: a.id,
+      source: "universal" as const,
+      source_key: `universal:${a.id}`,
       job_id: a.templateSlug,
       status: (a.status === "approved" || a.status === "hired" ? "accepted" : a.status === "rejected" || a.status === "withdrawn" ? "rejected" : "pending") as JobApplicationRecord["status"],
       veteran_name: a.applicantName,
@@ -699,8 +724,12 @@ export async function jobsRoutes(
       updated_at: a.updatedAt,
       follow_up_status: a.followUpStatus,
       reference: a.reference,
-    })));
-    return { applications: enriched };
+    }));
+    const seen = new Set<string>();
+    const applications = [...mesItems, ...universalItems]
+      .filter((item) => (seen.has(item.source_key) ? false : (seen.add(item.source_key), true)))
+      .sort((x, y) => String(y.applied_at).localeCompare(String(x.applied_at)) || x.source_key.localeCompare(y.source_key));
+    return { applications };
   });
 
   /* ─── POST /api/v2/jobs/:id/save — save job ───────── */

@@ -430,9 +430,13 @@ export async function listUniversalJobApplicationsForOwner(input: { userId?: str
   const trackingToken = clean(input.trackingToken);
   if (!userId && !trackingToken) return [];
   const baseSql = `SELECT s.*,t.title_ar,t.employer_name,t.slug FROM job_application_submissions s JOIN job_application_templates t ON t.id=s.template_id`;
-  const result = userId
-    ? await query(`${baseSql} WHERE s.applicant_user_id=$1 ORDER BY s.created_at DESC,s.id DESC`, [userId])
-    : await query(`${baseSql} WHERE s.anonymous_tracking_token_hash=$1 ORDER BY s.created_at DESC,s.id DESC`, [hashSecret(trackingToken)]);
+  // Each supplied credential is an independently proven ownership scope; a signed-in owner who also
+  // holds an anonymous tracking token sees both scopes, each row once.
+  const result = userId && trackingToken
+    ? await query(`${baseSql} WHERE (s.applicant_user_id=$1 OR s.anonymous_tracking_token_hash=$2) ORDER BY s.created_at DESC,s.id DESC`, [userId, hashSecret(trackingToken)])
+    : userId
+      ? await query(`${baseSql} WHERE s.applicant_user_id=$1 ORDER BY s.created_at DESC,s.id DESC`, [userId])
+      : await query(`${baseSql} WHERE s.anonymous_tracking_token_hash=$1 ORDER BY s.created_at DESC,s.id DESC`, [hashSecret(trackingToken)]);
   return result.rows.map((row) => ({ ...mapApplication(row), templateTitle: clean(row.title_ar), employerName: clean(row.employer_name), templateSlug: clean(row.slug) }));
 }
 
