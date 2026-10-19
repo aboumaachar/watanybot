@@ -120,7 +120,7 @@ export function WatanyPublicShellV20() {
     <div className="watany-recovery-shell" data-watany-recovery-shell="true">
       <header className="watany-recovery-topbar" data-watany-topbar="true">
         <NavLink className="watany-recovery-logo-link" to="/home" aria-label="الصفحة الرئيسية">
-          <img className="watany-recovery-logo" src="/logo.png" alt="شعار موطني" />
+          <img className="watany-recovery-logo" src="/logo-shell.webp" alt="شعار موطني" />
         </NavLink>
         <div className="watany-recovery-ticker" aria-label="شريط المعلومات">
           <Ticker
@@ -220,7 +220,9 @@ export function WatanyPublicShellV20() {
         {bottomItems.map((item) => (
           <NavLink key={item.to} to={item.to} end={item.to === "/home"} aria-label={item.label} title={item.label}>
             {item.icon === "house" ? (
-              <img className="watany-recovery-home-sign" src="/watany-v4/icons/home-sign.png" alt="" aria-hidden="true" width={22} height={22} />
+              <img className="watany-recovery-home-sign" src="/watany-v4/icons/nav/home-sign.webp" alt="" aria-hidden="true" width={22} height={22} />
+            ) : item.icon === "profile" || item.icon === "community" ? (
+              <img className="watany-v4-icon" src={`/watany-v4/icons/nav/${item.icon}.webp`} alt="" aria-hidden="true" width={20} height={20} />
             ) : (
               <WatanyV4Icon name={item.icon} aria-hidden="true" width={20} height={20} />
             )}
@@ -234,11 +236,11 @@ export function WatanyPublicShellV20() {
           title="تثبيت التطبيق"
           onClick={() => globalThis.dispatchEvent(new Event("watany-open-install-prompt"))}
         >
-          <WatanyV4Icon name="install" aria-hidden="true" width={20} height={20} />
+          <img className="watany-v4-icon" src="/watany-v4/icons/nav/install.webp" alt="" aria-hidden="true" width={20} height={20} />
           <span className="watany-recovery-bottom__label">تثبيت</span>
         </button>
         <button type="button" aria-label="فتح مساعد موطني" aria-expanded={chatOpen} onClick={() => setChatOpen((value) => !value)}>
-          <WatanyV4Icon name="ask-watany" aria-hidden="true" width={20} height={20} />
+          <img className="watany-v4-icon" src="/watany-v4/icons/nav/ask-watany.webp" alt="" aria-hidden="true" width={20} height={20} />
           <span className="watany-recovery-bottom__label">المساعد</span>
         </button>
       </nav>

@@ -81,7 +81,7 @@ export function HomeScreen({ onNavigate }: Props) {
             className="hybrid-hero__button hybrid-hero__button--primary hybrid-hero__button--wide"
             onClick={() => onNavigate("chat")}
           >
-            <KoudamaFeatureIcon featureId="assistant" size="sm" renderMode="filled" />
+            <KoudamaFeatureIcon featureId="assistant" size="sm" renderMode="filled" /> اسأل وطني
           </button>
           <button className="hybrid-hero__button" onClick={() => navigate("/")}>
             <KoudamaFeatureIcon featureId="home" size="sm" renderMode="filled" /> جرّب Mobile OS

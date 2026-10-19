@@ -18,12 +18,43 @@ type FaqItem = {
   lastAskedAt?: string | null;
 };
 
+type CuratedLists = { latest: FaqItem[]; trending: FaqItem[] };
+
+function CuratedFaqSection({ title, items, expandedIds, onToggle }: Readonly<{
+  title: string;
+  items: FaqItem[];
+  expandedIds: Record<string, boolean>;
+  onToggle: (id: string) => void;
+}>) {
+  if (!items.length) return null;
+  return <article className="procedures-browser__section" data-r025-public-curated="true">
+    <div className="procedures-browser__section-caption">
+      <span className="procedures-browser__section-title">{title}</span>
+      <span className="procedures-browser__section-meta-label">{items.length} سؤال معتمد</span>
+    </div>
+    <div className="procedures-browser__items">
+      {items.map((item) => <article className="procedures-browser__item" key={item.id} data-curated-id={item.id}>
+        <button className="procedures-browser__item-row" type="button"
+          aria-expanded={Boolean(expandedIds[item.id])} onClick={() => onToggle(item.id)}>
+          <h2 className="procedures-browser__item-title">{item.question}</h2>
+          <span className="procedures-browser__item-toggle" aria-hidden="true">{expandedIds[item.id] ? "−" : "+"}</span>
+        </button>
+        {expandedIds[item.id] && <div className="procedures-browser__item-main">
+          <p className="procedures-browser__item-summary">{item.answer}</p>
+          <span className="procedures-browser__item-kind">سؤال معتمد · {item.category || "عام"}</span>
+        </div>}
+      </article>)}
+    </div>
+  </article>;
+}
+
 function FaqLandingPageBody() {
   const DEFAULT_VISIBLE_COUNT = 10;
   const LOAD_MORE_STEP = 10;
   const { apiBaseUrl } = useApp();
   const navigate = useNavigate();
   const [items, setItems] = useState<FaqItem[]>([]);
+  const [curated, setCurated] = useState<CuratedLists>({ latest: [], trending: [] });
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
   const [error, setError] = useState("");
@@ -49,6 +80,22 @@ function FaqLandingPageBody() {
   useEffect(() => {
     void loadFaqs("");
   }, [apiBaseUrl]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    let active = true;
+    const controller = new AbortController();
+    // This optional endpoint never replaces the existing generated FAQs.
+    void fetch(`${apiBaseUrl}/api/v2/faq/curated`, { signal: controller.signal })
+      .then((response) => { if (!response.ok) throw new Error("Curated FAQ unavailable"); return response.json(); })
+      .then((data: CuratedLists) => {
+        if (active) setCurated({
+          latest: Array.isArray(data.latest) ? data.latest : [],
+          trending: Array.isArray(data.trending) ? data.trending : [],
+        });
+      })
+      .catch(() => { if (active) setCurated({ latest: [], trending: [] }); });
+    return () => { active = false; controller.abort(); };
+  }, [apiBaseUrl]);
 
   const filteredItems = useMemo(() => {
     const normalized = query.trim().toLowerCase();
@@ -83,6 +130,12 @@ function FaqLandingPageBody() {
   }, [items, query]);
 
   const visibleItems = useMemo(() => filteredItems.slice(0, visibleCount), [filteredItems, visibleCount]);
+  const visibleCurated = useMemo(() => {
+    const normalized = query.trim().toLowerCase();
+    const filter = (rows: FaqItem[]) => !normalized ? rows : rows.filter((item) =>
+      [item.question, item.answer, item.category || "", ...(item.tags || [])].join(" ").toLowerCase().includes(normalized));
+    return { latest: filter(curated.latest), trending: filter(curated.trending) };
+  }, [curated, query]);
   const canLoadMore = visibleCount < filteredItems.length;
 
   useEffect(() => {
@@ -113,6 +166,10 @@ function FaqLandingPageBody() {
 
       {!loading && !error ? (
         <section className="procedures-browser__sections" aria-label="الأسئلة الشائعة">
+          <CuratedFaqSection title="أحدث الأسئلة المعتمدة" items={visibleCurated.latest}
+            expandedIds={expandedItemIds} onToggle={toggleItemExpanded} />
+          <CuratedFaqSection title="الأسئلة الرائجة المعتمدة" items={visibleCurated.trending}
+            expandedIds={expandedItemIds} onToggle={toggleItemExpanded} />
           <article className="procedures-browser__section">
             <div className="procedures-browser__section-caption">
               <span className="procedures-browser__section-title">كل الأسئلة الشائعة</span>

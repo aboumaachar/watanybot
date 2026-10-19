@@ -30,6 +30,7 @@ const FEATURE_ICON_NAMES: Record<string, WatanyV4IconName> = {
   salary: "salary",
   transactions: "transactions",
   forms: "forms",
+  surveys: "forms",
   schools: "schools",
   network: "network",
   taxi: "taxi",

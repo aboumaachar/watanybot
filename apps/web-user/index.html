@@ -38,12 +38,11 @@
     </script>
     <meta name="color-scheme" content="light dark" />
     <meta name="theme-color" content="#faf7f0" />
-    <link rel="icon" type="image/png" sizes="1024x1024" href="/logo.png" />
-    <link rel="apple-touch-icon" href="/logo.png" />
+    <link rel="icon" type="image/webp" sizes="64x64" href="/favicon-64.webp" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <!-- Cairo Font - All Weights -->
 <!-- Phosphor Icons -->
   <title>موطني | مساعد المحاربين القدامى الذكي</title>
-  <link rel="canonical" href="https://koudama.com/" />
   <meta name="description" content="مساعد موطني لخدمات ومعلومات المحاربين القدامى." />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="موطني" />
@@ -63,6 +62,8 @@
   <meta name="twitter:description" content="مساعد موطني لخدمات ومعلومات المحاربين القدامى." />
   <meta name="twitter:image" content="https://koudama.com/logo.png?v=20260827-1" />
   <meta name="twitter:image:alt" content="شعار موطني" />
+  <link rel="preload" as="image" href="/logo-welcome.webp" type="image/webp" fetchpriority="high" media="(max-width: 900px)" />
+  <script defer src="/koudama-canonical-v1.js?v=20261004-perf-v1"></script>
     <link rel="manifest" href="/manifest.webmanifest" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -86,21 +87,51 @@
 </script>
 <!-- WATANY_V1_INTERIM_STABILIZER_BOOTSTRAP_END -->
 <script src="/watany-public-runtime-scope-v1.js?v=20260922-public-api-base-origin-v1" data-watany-public-runtime-scope="v1" data-watany-public-api-base="same-origin"></script>
+<script defer src="/watany-feature-ads-v6.js?v=20260927-bottom-ad-1454512385-v7" data-watany-feature-ads="v7-bottom-1454512385"></script>
 <!-- APEX:WATANY_V1_UNIVERSAL_FORM_VIEWER_TEMPLATE_BEGIN -->
 <script defer data-apex="watany-v1-universal-form-viewer-v183" src="/watany-v1-universal-form-viewer-v183.js"></script>
 <!-- APEX:WATANY_V1_UNIVERSAL_FORM_VIEWER_TEMPLATE_END -->
-<!-- APEX:WATANY_V1_FULL_WIDTH_SNAPPED_POPUP_CONSISTENCY_AUDIT_BEGIN -->
-<script defer data-apex="watany-v1-full-width-snapped-popup-consistency-v210" src="/watany-v1-full-width-snapped-popup-consistency-v210.js"></script>
-<!-- APEX:WATANY_V1_FULL_WIDTH_SNAPPED_POPUP_CONSISTENCY_AUDIT_END -->
-<!-- APEX:WATANY_V1_FULL_WIDTH_SNAPPED_POPUP_HEADER_SNAP_CLOSEOUT_BEGIN -->
-<script defer data-apex="watany-v1-full-width-snapped-popup-header-snap-closeout-v211" src="/watany-v1-full-width-snapped-popup-header-snap-closeout-v211.js"></script>
-<!-- APEX:WATANY_V1_FULL_WIDTH_SNAPPED_POPUP_HEADER_SNAP_CLOSEOUT_END -->
-<!-- APEX:WATANY_V1_FULL_WIDTH_SNAPPED_POPUP_BODY_PORTAL_CLOSEOUT_BEGIN -->
-<script defer data-apex="watany-v1-full-width-snapped-popup-body-portal-closeout-v212" src="/watany-v1-full-width-snapped-popup-body-portal-closeout-v212.js"></script>
-<!-- APEX:WATANY_V1_FULL_WIDTH_SNAPPED_POPUP_BODY_PORTAL_CLOSEOUT_END -->
-<!-- APEX:WATANY_V1_HOME_HEIGHT_PUBLISHED_ICONS_CLOSEOUT_BEGIN -->
-<script defer data-apex="watany-v1-home-height-published-icons-closeout-v220" src="/watany-v1-home-height-published-icons-closeout-v220.js"></script>
-<!-- APEX:WATANY_V1_HOME_HEIGHT_PUBLISHED_ICONS_CLOSEOUT_END -->
+<!-- APEX:WATANY_V1_POPUP_RUNTIME_LAZY_BOOT_V213_BEGIN -->
+<script data-apex="watany-v1-popup-runtime-lazy-boot-v213">
+(function () {
+  var runtimeScripts = [
+    ["watany-v1-full-width-snapped-popup-consistency-v210", "/watany-v1-full-width-snapped-popup-consistency-v210.js"],
+    ["watany-v1-full-width-snapped-popup-header-snap-closeout-v211", "/watany-v1-full-width-snapped-popup-header-snap-closeout-v211.js"],
+    ["watany-v1-full-width-snapped-popup-body-portal-closeout-v212", "/watany-v1-full-width-snapped-popup-body-portal-closeout-v212.js"],
+    ["watany-v1-home-height-published-icons-closeout-v220", "/watany-v1-home-height-published-icons-closeout-v220.js"]
+  ];
+
+  if (location.pathname !== "/") {
+    document.write(runtimeScripts.map(function (item) {
+      return '<script defer data-apex="' + item[0] + '" src="' + item[1] + '"><\/script>';
+    }).join(""));
+    return;
+  }
+
+  var started = false;
+  function loadPopupRuntime() {
+    if (started) return;
+    started = true;
+    var index = 0;
+    function loadNext() {
+      if (index >= runtimeScripts.length) return;
+      var item = runtimeScripts[index++];
+      var script = document.createElement("script");
+      script.src = item[1];
+      script.dataset.apex = item[0];
+      script.onload = loadNext;
+      script.onerror = loadNext;
+      document.head.appendChild(script);
+    }
+    loadNext();
+  }
+
+  addEventListener("pointerdown", loadPopupRuntime, { once: true, capture: true });
+  addEventListener("keydown", loadPopupRuntime, { once: true, capture: true });
+  setTimeout(loadPopupRuntime, 10000);
+})();
+</script>
+<!-- APEX:WATANY_V1_POPUP_RUNTIME_LAZY_BOOT_V213_END -->
 <!-- WATANY_V1_LANDING_STABILITY_BOOT_V320 -->
 <style id="watany-v1-landing-stability-boot-style-v320">
 html.watany-v1-first-paint-stabilizing #root { visibility: hidden !important; }
@@ -176,14 +207,46 @@ html.watany-no-theme-transitions *, html.watany-no-theme-transitions *::before, 
   })();
 </script>
   <meta name="watany-theme-contract" content="v2.3.5" />
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-EET1ZRFHB4"></script>
+  <!-- Google tag (gtag.js): queue immediately; load after first paint on mobile. -->
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
     gtag('config', 'G-EET1ZRFHB4');
+    (function () {
+      var loaded = false;
+      function loadGoogleTag() {
+        if (loaded) return;
+        loaded = true;
+        var script = document.createElement('script');
+        script.async = true;
+        script.src = 'https://www.googletagmanager.com/gtag/js?id=G-EET1ZRFHB4';
+        document.head.appendChild(script);
+      }
+      function scheduleGoogleTag() {
+        var isMobile = globalThis.matchMedia && globalThis.matchMedia('(max-width: 900px)').matches;
+        globalThis.setTimeout(loadGoogleTag, isMobile ? 3000 : 0);
+      }
+      if (document.readyState === 'complete') scheduleGoogleTag();
+      else globalThis.addEventListener('load', scheduleGoogleTag, { once: true });
+    })();
   </script>
+  <style data-apex-salary-medals-visual-viewport="20260921">
+    @media (max-width: 640px) {
+      html[data-apex-theme="v274"] body .popup-overlay:has(.sc-medals-step) {
+        padding-block-start: 8px !important;
+        padding-block-end: max(8px, env(safe-area-inset-bottom)) !important;
+      }
+      html[data-apex-theme="v274"] body .popup-overlay:has(.sc-medals-step) .popup-body {
+        flex: 1 1 auto !important;
+        min-height: 0 !important;
+        padding-bottom: max(24px, calc(env(safe-area-inset-bottom) + 16px)) !important;
+        scroll-padding-bottom: max(24px, calc(env(safe-area-inset-bottom) + 16px));
+        overscroll-behavior-y: contain;
+        -webkit-overflow-scrolling: touch;
+      }
+    }
+  </style>
 </head>
 <body data-watany-theme="canonical-v2">
     <div id="root">

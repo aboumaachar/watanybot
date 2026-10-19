@@ -66,9 +66,9 @@ describe("WatanyLegacyLauncherPage", () => {
       );
     });
 
-    expect(container.textContent).toContain("الاكثر طلبا");
-    expect(container.textContent).toContain("الاحدث");
-    expect(container.textContent).toContain("ممكن يهمك");
+    expect(container.textContent).toContain("الأكثر طلباً");
+    expect(container.textContent).toContain("جديد");
+    expect(container.textContent).toContain("يهمك");
 
     const shortcuts = Array.from(container.querySelectorAll("a.watany-app-icon")) as HTMLAnchorElement[];
     expect(shortcuts.length).toBeGreaterThan(0);

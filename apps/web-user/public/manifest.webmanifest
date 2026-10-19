@@ -1,4 +1,4 @@
-﻿{
+{
   "name": "WatanyBot",
   "short_name": "WatanyBot",
   "description": "Mobile civic assistant for services, documents, benefits, alerts, and chat.",
@@ -12,6 +12,8 @@
   "lang": "ar-LB",
   "categories": ["government", "productivity", "utilities"],
   "icons": [
-    { "src": "/logo.png", "sizes": "1024x1024", "type": "image/png", "purpose": "any" }
+    { "src": "/favicon-64.webp", "sizes": "64x64", "type": "image/webp", "purpose": "any" },
+    { "src": "/pwa-icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/pwa-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
   ]
 }

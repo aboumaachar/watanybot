@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { api, type FormListItem } from "../lib/api";
 import { getDefaultApiBaseUrl } from "../lib/api-base";
 import { normalizeSearchableArabicInput } from "../lib/lang";
+import { findAcceptedGreenDaleelTopic, getDaleelTopic, searchDaleelTopics } from "../data/daleelApril2026Topics";
 import { isVeteranRelevantProcedure, sortByProcedureVeteranRelevance, type ProcedureRankable } from "../lib/procedures-veteran-ranking";
 import { openWatanyUniversalFormViewer } from "../lib/watanyUniversalFormViewer";
 import { useApp } from "../store/app";
@@ -459,6 +460,9 @@ export default function ProceduresPage() {
   const { apiBaseUrl } = useApp();
   const location = useLocation();
   const navigate = useNavigate();
+  const guideNumberParam = new URLSearchParams(location.search).get("guide");
+  const selectedGuideTopic = guideNumberParam && /^\d{1,3}$/.test(guideNumberParam) ? getDaleelTopic(Number(guideNumberParam)) : null;
+  const [guideLinkedProcedure, setGuideLinkedProcedure] = useState<ProcedureCatalogItem | null>(null);
   const [sections, setSections] = useState<ProcedureCatalogSection[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -483,6 +487,19 @@ export default function ProceduresPage() {
     const nextSearchQuery = params.get("search") || params.get("q") || params.get("query") || "";
     setSearchQuery((current) => (current === nextSearchQuery ? current : nextSearchQuery));
   }, [location.search]);
+
+  useEffect(() => {
+    let cancelled = false;
+    setGuideLinkedProcedure(null);
+    const kbId = selectedGuideTopic?.kbId;
+    if (!kbId) return () => { cancelled = true; };
+    void fetch(`${API_BASE}/api/v2/procedures/${encodeURIComponent(kbId)}`, { credentials: "include" })
+      .then((response) => response.ok ? response.json() : null)
+      .then((body: { procedure?: ProcedureCatalogItem & { requirements?: string[] } } | null) => {
+        if (!cancelled) setGuideLinkedProcedure(body?.procedure || null);
+      }).catch(() => { if (!cancelled) setGuideLinkedProcedure(null); });
+    return () => { cancelled = true; };
+  }, [selectedGuideTopic?.kbId]);
 
   useEffect(() => {
     const updateCompactMode = () => setIsCompactMobile(window.innerWidth <= 560);
@@ -577,6 +594,7 @@ export default function ProceduresPage() {
   }, [searchQuery, apiBaseUrl]);
 
   const trimmedSearchQuery = searchQuery.trim();
+  const guideSearchResults = useMemo(() => searchDaleelTopics(trimmedSearchQuery), [trimmedSearchQuery]);
   const unifiedSearchActive = trimmedSearchQuery.length > 0;
   const normalizedSearchQuery = useMemo(() => normalizeProcedureSearchText(trimmedSearchQuery), [trimmedSearchQuery]);
 
@@ -808,7 +826,13 @@ export default function ProceduresPage() {
   });
 
   const isMofActive = activeSourceId === "mof";
-  const unifiedSearchTotal = procedureSearchResults.total + searchFormsTotal + searchFaqsTotal;
+  const acceptedGreenFallback = procedureSearchResults.total === 0 && searchFormsTotal === 0 && searchFaqsTotal === 0
+    ? findAcceptedGreenDaleelTopic(trimmedSearchQuery)
+    : null;
+  const effectiveGuideSearchResults = acceptedGreenFallback
+    ? [...guideSearchResults, acceptedGreenFallback]
+    : guideSearchResults;
+  const unifiedSearchTotal = procedureSearchResults.total + searchFormsTotal + searchFaqsTotal + effectiveGuideSearchResults.length;
 
   const searchFilterNode = (
     <section className="procedures-browser__top-filter" aria-label="البحث داخل المعاملات والنماذج والأسئلة الشائعة">
@@ -843,6 +867,38 @@ export default function ProceduresPage() {
       {searchLoading ? <div className="procedures-browser__state">جارٍ تحديث نتائج البحث...</div> : null}
       {unifiedSearchTotal === 0 && !searchLoading ? (
         <div className="procedures-browser__empty">لا توجد نتائج مطابقة في المعاملات أو النماذج أو الأسئلة الشائعة.</div>
+      ) : null}
+
+      {effectiveGuideSearchResults.length > 0 ? (
+        <section className="procedures-browser__sections" aria-label="مواضيع دليل المعاملات نيسان 2026">
+          <article className="procedures-browser__section">
+            <div className="procedures-browser__section-caption">
+              <span className="procedures-browser__section-title">مواضيع دليل المعاملات — نيسان 2026</span>
+              <span className="procedures-browser__section-meta-label">{effectiveGuideSearchResults.length} موضوع</span>
+            </div>
+            <div className="procedures-browser__items">
+              {effectiveGuideSearchResults.map((topic) => (
+                <article key={topic.guideNo} className="procedures-browser__item" data-daleel-topic={topic.guideNo}>
+                  <div className="procedures-browser__item-main">
+                    <h2 className="procedures-browser__item-title">{topic.title}</h2>
+                    <p className="procedures-browser__item-summary">
+                      دليل المعاملات الإدارية والمالية، نيسان 2026 — الموضوع رقم {topic.guideNo}، صفحة PDF {topic.pdfPage}.
+                    </p>
+                    <p className="procedures-browser__item-summary">
+                      {topic.kbId ? "موضوع مربوط بسجل في قاعدة المعرفة؛ تحقق من التفاصيل عند فتحه." : "هذا الموضوع مفهرس من الدليل، لكن تعليماته المفصلة غير مثبتة في قاعدة المعرفة بعد."}
+                    </p>
+                  </div>
+                  <div className="procedures-browser__item-actions">
+                    <button className="procedures-browser__item-open procedures-browser__item-open--primary" type="button"
+                      onClick={() => navigate(`/procedures?guide=${topic.guideNo}`)}>
+                      فتح صفحة الموضوع
+                    </button>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </article>
+        </section>
       ) : null}
 
       {procedureSearchResults.total > 0 ? (
@@ -1024,6 +1080,58 @@ export default function ProceduresPage() {
     </>
   ) : null;
 
+  const guideLandingView = selectedGuideTopic ? (
+    <section className="procedures-browser__sections" aria-label="تفاصيل موضوع دليل المعاملات" data-daleel-landing={selectedGuideTopic.guideNo}>
+      <article className="procedures-browser__section">
+        <div className="procedures-browser__section-caption">
+          <span className="procedures-browser__section-title">دليل المعاملات الإدارية والمالية — نيسان 2026</span>
+          <span className="procedures-browser__section-meta-label">صفحة PDF {selectedGuideTopic.pdfPage}</span>
+        </div>
+        <div className="procedures-browser__items">
+          <article className="procedures-browser__item">
+            <div className="procedures-browser__item-main">
+              <h1 className="procedures-browser__item-title">{selectedGuideTopic.title}</h1>
+              <p className="procedures-browser__item-summary">الموضوع رقم {selectedGuideTopic.guideNo} من الدليل — صفحة PDF {selectedGuideTopic.pdfPage}.</p>
+              {guideLinkedProcedure ? (
+                <>
+                  <p className="procedures-browser__item-summary">{guideLinkedProcedure.summary_lb || "لا يوجد ملخص معتمد لهذا الإجراء."}</p>
+                  {guideLinkedProcedure.steps?.length ? (
+                    <div className="procedures-browser__item-steps">
+                      <strong className="procedures-browser__item-subtitle">الخطوات المدرجة في قاعدة المعرفة</strong>
+                      <ol>{guideLinkedProcedure.steps.map((step, index) => <li key={index}>{step}</li>)}</ol>
+                    </div>
+                  ) : null}
+                  {(guideLinkedProcedure as ProcedureCatalogItem & { requirements?: string[] }).requirements?.length ? (
+                    <div className="procedures-browser__item-steps">
+                      <strong className="procedures-browser__item-subtitle">المستندات المدرجة في قاعدة المعرفة</strong>
+                      <ul>{(guideLinkedProcedure as ProcedureCatalogItem & { requirements?: string[] }).requirements?.map((requirement, index) => <li key={index}>{requirement}</li>)}</ul>
+                    </div>
+                  ) : null}
+                  <p className="procedures-browser__item-summary">المعلومات أعلاه من السجل المتاح حالياً وقد تتطلب مراجعة الدليل والمرجع الإداري المختص قبل الاعتماد.</p>
+                </>
+              ) : (
+                <p className="procedures-browser__item-summary">
+                  {selectedGuideTopic.kbId
+                    ? "العنوان وارد في دليل نيسان 2026 وله مرجع في قاعدة المعرفة، لكن التفاصيل لم تتوفر من الخادم حالياً. لا تُعرض خطوات غير موثقة."
+                    : "الموضوع مدرج في دليل نيسان 2026، لكن لم تتوفر بعد بيانات إجرائية مُراجعة لعرضها هنا. هذه صفحة فهرسة وليست تأكيداً لشروط أو خطوات المعاملة."}
+                </p>
+              )}
+            </div>
+            <div className="procedures-browser__item-actions">
+              <button className="procedures-browser__item-open procedures-browser__item-open--primary" type="button"
+                onClick={() => navigate(`/procedures?search=${encodeURIComponent(selectedGuideTopic.title)}`)}>
+                البحث عن الموضوع في وطني
+              </button>
+              <button className="procedures-browser__item-open" type="button" onClick={() => navigate("/procedures")}>
+                العودة إلى جميع المعاملات
+              </button>
+            </div>
+          </article>
+        </div>
+      </article>
+    </section>
+  ) : null;
+
   return h(
     "div",
     { className: getProceduresRootClassName(isCompactMobile), dir: "rtl", "data-viewer-route": "/procedures", "data-watany-procedures-page": "true", "data-watany-procedure-total": String(activeSectionList.reduce((total, section) => total + collectSectionItems(section).length, 0)) },
@@ -1059,7 +1167,9 @@ export default function ProceduresPage() {
           ),
         )
       : null,
-    unifiedSearchActive
+    selectedGuideTopic
+      ? guideLandingView
+      : unifiedSearchActive
       ? unifiedSearchView
       : isMofActive
       ? h(

@@ -1550,7 +1550,7 @@ html[data-apex-theme="v274"] body .sc-page .sc-result-tabs button.active {
 }
 
 html[data-apex-theme="v274"] body .sc-page .sc-result-tabs {
-  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
 }
 
 html[data-apex-theme="v274"] body .sc-page .sc-result-tabs button {
@@ -1913,3 +1913,325 @@ body.school-grants-feature-active .popup-overlay .popup-cancel:has(img)::before 
   font-size: 24px;
   line-height: 1;
 }
+
+/* APEX salary medals + result-tab polish 2026-09-19 — unified final */
+html[data-apex-theme="v274"] body .sc-result-tabs button {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 2px !important;
+}
+html[data-apex-theme="v274"] body .sc-result-tab__line {
+  display: block;
+  width: 100%;
+  white-space: nowrap;
+  text-align: center;
+}
+html[data-apex-theme="v274"] body .sc-result-tab__date {
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+@media (max-width: 640px) {
+  html[data-apex-theme="v274"] body .popup-overlay:has(.sc-medals-step) .sc-medals-picker .sc-medals-grid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 6px !important;
+    margin-top: 0 !important;
+    padding: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+  html[data-apex-theme="v274"] body .popup-overlay:has(.sc-medals-step) .sc-medals-picker .sc-medal-item:not(.sc-medal-unknown) {
+    display: flex !important;
+    flex-direction: row !important;
+    min-height: 68px !important;
+    height: 68px !important;
+    max-height: 68px !important;
+    padding: 6px 10px !important;
+    gap: 8px !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+  }
+  html[data-apex-theme="v274"] body .popup-overlay:has(.sc-medals-step) .sc-medals-picker .sc-medal-item:not(.sc-medal-unknown) .sc-medal-check {
+    flex: 0 0 24px !important;
+    width: 24px !important;
+    height: 24px !important;
+    margin: 0 !important;
+    align-self: center !important;
+  }
+  html[data-apex-theme="v274"] body .popup-overlay:has(.sc-medals-step) .sc-medals-picker .sc-medal-item:not(.sc-medal-unknown) .sc-medal-info {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    width: auto !important;
+    max-width: none !important;
+    align-items: flex-start !important;
+    text-align: right !important;
+    gap: 1px !important;
+  }
+  html[data-apex-theme="v274"] body .popup-overlay:has(.sc-medals-step) .sc-medals-picker .sc-medal-item:not(.sc-medal-unknown) .sc-medal-name,
+  html[data-apex-theme="v274"] body .popup-overlay:has(.sc-medals-step) .sc-medals-picker .sc-medal-item:not(.sc-medal-unknown) .sc-medal-val {
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    white-space: nowrap !important;
+    overflow: visible !important;
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+    text-align: right !important;
+  }
+  html[data-apex-theme="v274"] body .popup-overlay:has(.sc-medals-step) .sc-medals-picker .sc-medal-name {
+    font-size: 0.82rem !important;
+    line-height: 1.15 !important;
+  }
+  html[data-apex-theme="v274"] body .popup-overlay:has(.sc-medals-step) .sc-medals-picker .sc-medal-val {
+    font-size: 0.72rem !important;
+    line-height: 1.15 !important;
+  }
+  html[data-apex-theme="v274"] body .popup-overlay:has(.sc-medals-step) .sc-medals-picker .sc-medal-unknown {
+    display: flex !important;
+    min-height: 48px !important;
+    height: 48px !important;
+    max-height: 48px !important;
+    padding: 4px 10px !important;
+  }
+  html[data-apex-theme="v274"] body .popup-overlay:has(.sc-medals-step) .sc-medals-picker .sc-medal-unknown .sc-medal-info {
+    align-items: center !important;
+    text-align: center !important;
+    gap: 1px !important;
+  }
+  html[data-apex-theme="v274"] body .popup-overlay:has(.sc-medals-step) .sc-medals-picker .sc-medal-unknown .sc-medal-name,
+  html[data-apex-theme="v274"] body .popup-overlay:has(.sc-medals-step) .sc-medals-picker .sc-medal-unknown .sc-medal-val {
+    text-align: center !important;
+  }
+  html[data-apex-theme="v274"] body .popup-overlay:has(.sc-medals-step) .sc-medals-picker .sc-medal-item input[type="radio"] {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    clip-path: inset(50%) !important;
+  }
+}
+
+@media (max-width: 640px) and (max-height: 720px) {
+  html[data-apex-theme="v274"] body .popup-overlay:has(.sc-medals-step) .sc-medals-picker .sc-medals-grid {
+    gap: 4px !important;
+  }
+  html[data-apex-theme="v274"] body .popup-overlay:has(.sc-medals-step) .sc-medals-picker .sc-medal-item:not(.sc-medal-unknown) {
+    min-height: 46px !important;
+    height: 46px !important;
+    max-height: 46px !important;
+    padding: 4px 10px !important;
+  }
+  html[data-apex-theme="v274"] body .popup-overlay:has(.sc-medals-step) .sc-medals-picker .sc-medal-unknown {
+    min-height: 44px !important;
+    height: 44px !important;
+    max-height: 44px !important;
+    padding: 3px 10px !important;
+  }
+}
+
+
+/* APEX salary three-scenario result authority + family choice fit 2026-09-25 */
+html[data-apex-theme="v274"] body .sc-page .sc-result-tabs {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  width: 100% !important;
+  gap: 6px !important;
+}
+html[data-apex-theme="v274"] body .sc-page .sc-result-tabs > button {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  flex: none !important;
+}
+html[data-apex-theme="v274"] body .sc-page .sc-result-tab__date {
+  font-size: 0.68rem !important;
+  letter-spacing: -0.02em;
+  white-space: nowrap !important;
+}
+html[data-apex-theme="v274"] body .sc-page .sc-result-tab__secondary {
+  display: block !important;
+  font-size: 0.74rem !important;
+  font-weight: 900 !important;
+  line-height: 1.15 !important;
+  white-space: nowrap !important;
+}
+html[data-apex-theme="v274"] body .sc-page .sc-family-grid .sc-family-choice {
+  min-height: 56px;
+  white-space: normal;
+  line-height: 1.25;
+}
+/* SALARY_INPUT_PROMPT_AND_START_CTA_V1 */
+.popup-overlay:has(.sc-tab-header) .sc-tab-header,
+.popup-overlay:has(.sc-medals-step) .sc-tab-header {
+  text-align: center;
+  font-weight: 900;
+}
+
+.popup-overlay:has([data-testid="salary-initial-veteran-base"]) .sc-input-prompt {
+  width: 100%;
+  margin-inline: auto;
+  color: #173f33;
+  font-size: 1.08rem;
+  font-weight: 900;
+  line-height: 1.8;
+  text-align: center;
+}
+
+.popup-overlay:has([data-testid="salary-initial-veteran-base"]) .sc-calc-btn {
+  display: block;
+  width: min(100%, 340px);
+  margin-inline: auto;
+  min-height: 62px;
+  padding: 16px 24px !important;
+  border: 1px solid #d6a72a !important;
+  border-radius: 14px;
+  background: #063f30 !important;
+  color: #ffffff !important;
+  font-size: 1.22rem !important;
+  font-weight: 900 !important;
+  box-shadow: 0 8px 22px rgba(6, 63, 48, 0.28);
+  animation: sc-salary-start-attention 1.8s ease-in-out infinite;
+}
+
+.popup-overlay:has([data-testid="salary-initial-veteran-base"]) .sc-calc-btn__label {
+  color: #ffffff !important;
+  font-weight: 900 !important;
+}
+
+.popup-overlay:has([data-testid="salary-initial-veteran-base"]) .sc-calc-btn:hover:not(:disabled),
+.popup-overlay:has([data-testid="salary-initial-veteran-base"]) .sc-calc-btn:focus-visible {
+  background: #0b6048 !important;
+}
+
+@keyframes sc-salary-start-attention {
+  0%, 100% { box-shadow: 0 8px 22px rgba(6, 63, 48, 0.28), 0 0 0 0 rgba(214, 167, 42, 0.28); filter: brightness(1); }
+  50% { box-shadow: 0 10px 28px rgba(6, 63, 48, 0.38), 0 0 0 5px rgba(214, 167, 42, 0.16); filter: brightness(1.06); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .popup-overlay:has([data-testid="salary-initial-veteran-base"]) .sc-calc-btn { animation: none; filter: none; }
+}
+
+/* SALARY_RESULTS_THREE_TABS_READABILITY_V2 */
+.sc-page .sc-result-tabs,
+html[data-apex-theme="v274"] body .sc-page .sc-result-tabs {
+  width: 100% !important;
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 8px !important;
+  padding: 7px !important;
+  overflow: visible !important;
+  background: #fffdf4 !important;
+  border: 1px solid rgba(214, 167, 42, 0.44) !important;
+  border-radius: 14px !important;
+}
+.sc-page .sc-result-tabs button,
+html[data-apex-theme="v274"] body .sc-page .sc-result-tabs button {
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 72px !important;
+  padding: 10px 6px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 5px !important;
+  border: 1px solid rgba(7, 57, 46, 0.18) !important;
+  border-radius: 11px !important;
+  background: #ffffff !important;
+  color: #0b2f24 !important;
+  text-align: center !important;
+  white-space: normal !important;
+  box-shadow: 0 3px 9px rgba(5, 49, 36, 0.08) !important;
+}
+.sc-page .sc-result-tab__line { display: block; width: 100%; }
+.sc-page .sc-result-tab__primary {
+  font-size: 0.78rem !important;
+  font-weight: 800 !important;
+  line-height: 1.2 !important;
+  color: inherit !important;
+}
+.sc-page .sc-result-tab__secondary {
+  font-size: 1rem !important;
+  font-weight: 950 !important;
+  line-height: 1.1 !important;
+  color: inherit !important;
+}
+.sc-page .sc-result-tab__date { direction: ltr; unicode-bidi: isolate; }
+.sc-page .sc-result-tabs button.active,
+html[data-apex-theme="v274"] body .sc-page .sc-result-tabs button.active {
+  background: #063f30 !important;
+  border-color: #d6a72a !important;
+  color: #fffdf2 !important;
+  box-shadow: 0 6px 14px rgba(6, 63, 48, 0.24) !important;
+}
+.sc-page .sc-result-tabs button:hover:not(.active),
+.sc-page .sc-result-tabs button:focus-visible:not(.active) {
+  background: #f1f8ef !important;
+  border-color: #0b6048 !important;
+}
+@media (max-width: 430px) {
+  .sc-page .sc-result-tabs,
+  html[data-apex-theme="v274"] body .sc-page .sc-result-tabs { gap: 5px !important; padding: 5px !important; }
+  .sc-page .sc-result-tabs button,
+  html[data-apex-theme="v274"] body .sc-page .sc-result-tabs button { min-height: 68px !important; padding: 8px 3px !important; }
+  .sc-page .sc-result-tab__primary { font-size: 0.7rem !important; }
+  .sc-page .sc-result-tab__secondary { font-size: 0.9rem !important; }
+}
+
+/* SALARY_RESULTS_UX_V3 — 2026-09-26 */
+.popup-overlay:has([data-testid="salary-initial-veteran-base"]) [data-testid="salary-initial-veteran-base"] {
+  min-height: 64px !important; padding: 12px 14px !important; font-size: clamp(1.55rem, 7vw, 1.95rem) !important; font-weight: 900 !important; line-height: 1.15 !important; text-align: center !important; direction: ltr; unicode-bidi: isolate; letter-spacing: 0.02em;
+}
+.popup-overlay:has([data-testid="salary-initial-veteran-base"]) [data-testid="salary-initial-veteran-base"]::placeholder { font-size: 1rem; font-weight: 700; opacity: 0.68; }
+html[data-apex-theme="v274"] body .sc-page .sc-result-tabs > button { min-height: 74px !important; padding: 8px 4px !important; display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; gap: 5px !important; overflow: hidden; }
+html[data-apex-theme="v274"] body .sc-page .sc-result-tab__line { display: block !important; width: 100%; text-align: center !important; white-space: nowrap !important; unicode-bidi: isolate; }
+html[data-apex-theme="v274"] body .sc-page .sc-result-tab__primary { font-size: clamp(0.82rem, 3.3vw, 0.98rem) !important; font-weight: 900 !important; line-height: 1.1 !important; }
+html[data-apex-theme="v274"] body .sc-page .sc-result-tab__date { direction: ltr; letter-spacing: 0 !important; }
+html[data-apex-theme="v274"] body .sc-page .sc-result-tab__secondary { direction: rtl; font-size: clamp(0.95rem, 4vw, 1.14rem) !important; font-weight: 950 !important; line-height: 1.05 !important; }
+.sc-page .sc-result-metrics { display: none !important; }
+.sc-results .ratio-card { display: grid; gap: 10px; padding: 14px; border: 1px solid rgba(214, 167, 42, 0.72); border-radius: 14px; background: #fffdf4; box-shadow: 0 5px 16px rgba(5, 49, 36, 0.10); color: #0b2f24; }
+.sc-results .ratio-top { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 10px; }
+.sc-results .ratio-copy { min-width: 0; }
+.sc-results .ratio-title { font-size: 1rem; font-weight: 950; line-height: 1.35; }
+.sc-results .ratio-caption { margin-top: 3px; color: #517166; font-size: 0.75rem; font-weight: 700; line-height: 1.45; }
+.sc-results .ratio-badge { min-width: 66px; padding: 8px 10px; border-radius: 999px; background: #063f30; color: #fffdf2; font-size: 1.15rem; font-weight: 950; text-align: center; border: 1px solid #d6a72a; }
+.sc-results .progress { height: 10px; overflow: hidden; border-radius: 999px; background: rgba(7, 57, 46, 0.10); }
+.sc-results .progress .bar { display: block; height: 100%; border-radius: inherit; background: #0b6048; transition: width 220ms ease; }
+.sc-results .compare { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.sc-results .mini { display: grid; gap: 3px; padding: 9px 10px; border-radius: 10px; background: #ffffff; border: 1px solid rgba(7, 57, 46, 0.10); text-align: center; }
+.sc-results .mini span { color: #517166; font-size: 0.75rem; font-weight: 800; }
+.sc-results .mini strong { color: #063f30; font-size: 0.96rem; font-weight: 950; }
+.sc-results .statement { padding-top: 2px; color: #244f42; font-size: 0.82rem; font-weight: 800; line-height: 1.5; text-align: center; }
+@media (max-width: 380px) { html[data-apex-theme="v274"] body .sc-page .sc-result-tabs > button { min-height: 70px !important; } .sc-results .ratio-top { grid-template-columns: 1fr; text-align: center; } .sc-results .ratio-badge { justify-self: center; } }
+@media (prefers-reduced-motion: reduce) { .sc-results .progress .bar { transition: none; } }
+
+
+/* SALARY_RESULTS_UI_V5 — 2026-09-26 */
+.sc-page > .sc-card { min-height: 0 !important; padding: 10px 12px !important; margin: 0 0 8px !important; }
+.sc-page > .sc-card .sc-card__title-row { min-height: 0 !important; padding: 0 !important; margin: 0 !important; display: block !important; }
+.sc-page > .sc-card .sc-card__eyebrow { margin: 0 0 2px !important; font-size: 0.68rem !important; line-height: 1.15 !important; }
+.sc-page > .sc-card .sc-card__header { margin: 0 0 4px !important; font-size: 1.55rem !important; line-height: 1.15 !important; }
+.sc-page > .sc-card .sc-card__subheader.sc-card__disclaimer { margin: 0 !important; padding: 0 !important; color: #7a5200 !important; font-size: 0.82rem !important; font-weight: 800 !important; line-height: 1.35 !important; }
+html[data-apex-theme="v274"] body .sc-page .sc-result-tabs > button { min-height: 82px !important; padding: 9px 5px !important; gap: 7px !important; }
+html[data-apex-theme="v274"] body .sc-page .sc-result-tab__line, html[data-apex-theme="v274"] body .sc-page .sc-result-tab__primary, html[data-apex-theme="v274"] body .sc-page .sc-result-tab__secondary, html[data-apex-theme="v274"] body .sc-page .sc-result-tab__date { background: transparent !important; border: 0 !important; box-shadow: none !important; text-shadow: none !important; max-width: 100% !important; }
+html[data-apex-theme="v274"] body .sc-page .sc-result-tab__primary { font-size: clamp(0.82rem, 3.35vw, 1rem) !important; font-weight: 900 !important; line-height: 1.12 !important; white-space: nowrap !important; overflow: visible !important; text-overflow: clip !important; }
+html[data-apex-theme="v274"] body .sc-page .sc-result-tab__date { direction: ltr !important; unicode-bidi: isolate !important; letter-spacing: -0.02em !important; }
+html[data-apex-theme="v274"] body .sc-page .sc-result-tab__secondary { font-size: clamp(0.96rem, 4vw, 1.14rem) !important; line-height: 1.05 !important; white-space: nowrap !important; }
+.sc-page .sc-total-banner { position: relative !important; overflow: hidden !important; }
+.sc-page .sc-total-banner__ratio-badge { position: absolute; left: 10px; bottom: 10px; width: 54px; height: 54px; display: grid; place-items: center; border-radius: 50%; background: #063f30; border: 2px solid #d6a72a; color: #fffdf2; box-shadow: 0 5px 13px rgba(5,49,36,.24); font-size: 1rem; font-weight: 950; line-height: 1; z-index: 2; }
+.sc-results .ratio-card { display: none !important; }
+.sc-page .sc-results-disclaimer { display: none !important; }
+.sc-page .sc-salary-ad-top { margin-top: 0; }
+.sc-page .sc-salary-ad-top > aside { margin-top: 0 !important; }
+.sc-page .sc-results-ad-bottom { margin-top: 14px; padding-top: 2px; padding-bottom: calc(var(--wmo-dock-height, 78px) + 24px); }
+.sc-page .sc-results-ad-bottom > aside { margin-bottom: 0 !important; }
+@media (max-width: 390px) { html[data-apex-theme="v274"] body .sc-page .sc-result-tabs > button { min-height: 78px !important; padding: 8px 3px !important; } html[data-apex-theme="v274"] body .sc-page .sc-result-tab__primary { font-size: .82rem !important; } html[data-apex-theme="v274"] body .sc-page .sc-result-tab__secondary { font-size: .94rem !important; } .sc-page .sc-total-banner__ratio-badge { width: 50px; height: 50px; left: 8px; bottom: 8px; font-size: .94rem; } }

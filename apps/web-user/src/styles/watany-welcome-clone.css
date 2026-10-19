@@ -1,18 +1,22 @@
 .watany-welcome-page {
-  height: 100%;
-  min-height: 0;
+  min-height: 100dvh;
   display: grid;
   place-items: start center;
   padding: 0 16px;
-  background: linear-gradient(180deg, #f5f0df 0%, #f4edd9 100%);
+  background: var(--watany-bg, #f5efe3);
   color: #14231f;
+}
+
+html:has(.watany-welcome-page),
+html:has(.watany-welcome-page) body,
+html:has(.watany-welcome-page) #root {
+  background: var(--watany-bg, #f5efe3) !important;
 }
 
 .screen.welcome.active {
   width: min(100%, 389px);
-  height: max(0px, calc(100dvh - 143px));
+  min-height: 100dvh;
   flex: 0 0 auto;
-  min-height: 0;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -28,7 +32,7 @@
 
 .welcome-top-half {
   flex-basis: 42%;
-  padding-top: 8px;
+  padding-top: 0;
 }
 
 .welcome-logo {
@@ -45,7 +49,7 @@
 
 .welcome-cta-group {
   width: 100%;
-  max-width: 310px;
+  max-width: 340px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -71,8 +75,11 @@
 }
 
 .welcome-cta-group button {
-  width: min(310px, 100%);
-  height: 44px;
+  width: min(340px, 100%);
+  min-height: 68px;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   border: 0;
   border-radius: 13px;
   padding: 0;
@@ -81,6 +88,9 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 12px;
+  direction: ltr;
+  text-align: center;
   font: inherit;
   font-size: 16px;
   font-weight: 900;
@@ -104,7 +114,7 @@
 }
 
 .welcome-cta-group .primary {
-  height: 44px;
+  min-height: 68px;
   border-radius: 13px;
   color: #fff;
   background: linear-gradient(180deg, #0b644a 0%, #084937 100%);
@@ -112,11 +122,46 @@
 }
 
 .welcome-cta-group .secondary {
-  height: 44px;
+  min-height: 68px;
   border-radius: 13px;
   color: #074932;
   background: rgba(255, 255, 255, 0.78);
   border: 1px solid rgba(7, 73, 50, 0.28);
+}
+
+.welcome-cta-group button::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border: 2px solid transparent;
+  border-radius: inherit;
+  background: linear-gradient(110deg, transparent 20%, rgba(232, 194, 91, 0.85) 48%, transparent 72%) border-box;
+  -webkit-mask: linear-gradient(#000 0 0) padding-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  transform: translateX(120%);
+  animation: welcome-cta-edge-light 3.8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.welcome-cta-arrow {
+  flex: 0 0 auto;
+  color: currentColor;
+  font-size: 38px;
+  line-height: 0.7;
+  transform: translateY(-1px);
+}
+
+.welcome-cta-label {
+  direction: rtl;
+  font-size: 20px;
+  font-weight: 950;
+}
+
+@keyframes welcome-cta-edge-light {
+  0%, 28% { transform: translateX(120%); }
+  68%, 100% { transform: translateX(-120%); }
 }
 
 @media (max-width: 390px) {
@@ -143,8 +188,106 @@
     transition: none;
   }
 
+  .welcome-cta-label { font-size: 21px; }
+
+  .welcome-cta-group button::after { animation: none; }
+
   .welcome-cta-group button:hover,
   .welcome-cta-group button:active {
     transform: none;
   }
+}
+
+/* Final Welcome sizing overrides the recovery shell's generic mobile rules. */
+main.watany-welcome-page .screen.welcome.active .welcome-top-half {
+  flex: 1 1 50% !important;
+  align-items: flex-start !important;
+  justify-content: flex-start !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+main.watany-welcome-page .screen.welcome.active .welcome-bottom-half {
+  flex: 1 1 50% !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+@media (max-width: 600px) {
+  main.watany-welcome-page .screen.welcome.active .welcome-top-half {
+    flex: 0 0 220px !important;
+    padding-top: 42px !important;
+  }
+
+  main.watany-welcome-page .screen.welcome.active .welcome-bottom-half {
+    flex: 1 1 auto !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    padding-top: 0 !important;
+  }
+
+  main.watany-welcome-page .screen.welcome.active .welcome-cta-group {
+    margin-top: -60px !important;
+  }
+}
+
+.screen.welcome.active .welcome-cta-group button {
+  min-height: 76px;
+  font-size: 22px;
+}
+
+.screen.welcome.active .welcome-cta-label {
+  font-size: 25px;
+}
+
+.screen.welcome.active .welcome-cta-arrow {
+  font-size: 42px;
+}
+
+/* The Welcome route is a standalone entry surface, not a shell page. */
+.watany-recovery-shell:has(.watany-welcome-page) {
+  grid-template-rows: 0 minmax(0, 1fr) 0 !important;
+}
+
+.watany-recovery-shell:has(.watany-welcome-page) > .watany-recovery-topbar,
+.watany-recovery-shell:has(.watany-welcome-page) > .watany-recovery-bottom {
+  display: none !important;
+}
+
+html body .watany-recovery-shell:has(.watany-welcome-page) > .watany-recovery-bottom {
+  display: none !important;
+}
+
+.watany-recovery-shell:has(.watany-welcome-page) > .watany-recovery-main {
+  min-height: 100dvh !important;
+  height: 100dvh !important;
+  padding: 0 !important;
+}
+
+main.watany-welcome-page {
+  width: 100%;
+  min-height: 100dvh;
+  padding: 0 16px;
+}
+
+main.watany-welcome-page .screen.welcome.active {
+  width: min(100%, 389px);
+  height: 100dvh;
+  min-height: 100dvh;
+}
+
+main.watany-welcome-page .screen.welcome.active .welcome-top-half,
+main.watany-welcome-page .screen.welcome.active .welcome-bottom-half {
+  flex: 1 1 50% !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 22px !important;
+}
+
+main.watany-welcome-page .screen.welcome.active .welcome-logo {
+  margin: 0 auto;
+}
+
+main.watany-welcome-page .screen.welcome.active .welcome-cta-group {
+  margin: 0 !important;
 }

@@ -83,11 +83,21 @@ function finalCascadePlugin(): Plugin {
           else if (candidate.toLowerCase().endsWith(".css")) cssFiles.push(candidate);
         }
       }
-      if (cssFiles.length !== 1) {
-        this.error(`V1.19.0.22 output expected one CSS asset; observed ${cssFiles.length}`);
+      const finalCascadeCssFiles = cssFiles.filter((candidate) => {
+        const css = readFileSync(candidate, "utf8");
+        return css.includes(FINAL_CASCADE_BEGIN) || css.includes(FINAL_CASCADE_END);
+      });
+      if (finalCascadeCssFiles.length !== 1) {
+        this.error(`V1.19.0.22 output expected one final-cascade CSS asset; observed ${finalCascadeCssFiles.length}`);
         return;
       }
-      if (!readFileSync(cssFiles[0], "utf8").trimEnd().endsWith(`/* ${FINAL_CASCADE_END} */`)) {
+      const finalCss = readFileSync(finalCascadeCssFiles[0], "utf8");
+      const finalBeginCount = finalCss.split(FINAL_CASCADE_BEGIN).length - 1;
+      const finalEndCount = finalCss.split(FINAL_CASCADE_END).length - 1;
+      if (finalBeginCount !== 1 || finalEndCount !== 1) {
+        this.error("V1.19.0.22 final cascade markers are missing or duplicated in the generated CSS asset");
+      }
+      if (!finalCss.trimEnd().endsWith(`/* ${FINAL_CASCADE_END} */`)) {
         this.error("V1.19.0.22 final cascade is not last in the generated CSS asset");
       }
     },

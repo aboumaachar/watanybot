@@ -477,7 +477,7 @@ function resolveClientHistorySessionId(options?: ChatHistoryOptions): string {
   return explicitSessionId || getClientChatSessionId();
 }
 
-function sanitizeChatKbHits(hits: any[]): KBHit[] {
+export function sanitizeChatKbHits(hits: any[]): KBHit[] {
   return hits.map((hit: any) => {
     let title = "مرجع من قاعدة المعرفة";
     if (typeof hit.title === "string" && hit.title.trim() && !/^(rag|law|doc|kb)_[a-z0-9]+$/i.test(hit.title.trim())) {
@@ -492,6 +492,12 @@ function sanitizeChatKbHits(hits: any[]): KBHit[] {
       title,
       body: hit.body || hit.text || "",
       score: hit.score ?? 0,
+      // Preserve the actual API source link; the reference UI separately rejects unsafe URLs.
+      ...(typeof hit.sourceUrl === "string" && hit.sourceUrl.trim()
+        ? { sourceUrl: hit.sourceUrl.trim() }
+        : typeof hit.url === "string" && hit.url.trim()
+          ? { sourceUrl: hit.url.trim() }
+          : {}),
     };
   });
 }
@@ -2152,20 +2158,16 @@ export const api = {
   },
 
   async updateProfile(patch: Partial<UserProfile>, baseUrl = API_URL): Promise<UserProfile> {
-    try {
-      const res = await authFetch(`${baseUrl}/api/profile`, {
-        method: "PATCH",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify(patch),
-      });
-      if (!res.ok) throw new Error("profile update failed");
-      const data = (await res.json()) as { profile: UserProfile };
-      return data.profile;
-    } catch {
-      // Fallback: merge locally
-      const current = profileFromToken() ?? { isAuthed: false };
-      return { ...current, ...patch };
+    const res = await authFetch(`${baseUrl}/api/profile`, {
+      method: "PATCH",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(patch),
+    });
+    if (!res.ok) {
+      throw new Error(await readApiError(res, "تعذر حفظ البيانات."));
     }
+    const data = (await res.json()) as { profile: UserProfile };
+    return data.profile;
   },
 
   async getSurveyBridgeStatus(baseUrl = API_URL): Promise<SurveyBridgeStatus> {
@@ -4584,7 +4586,7 @@ export const api = {
 
   /* ── Ticker / Suggestions ────────────────────────────────────────── */
 
-  async getTicker(baseUrl = API_URL): Promise<{
+  async getTicker(baseUrl = API_URL, options?: { mode?: "default" | "latest" }): Promise<{
     items: Array<{
       kind: string;
       title: string;
@@ -4593,9 +4595,13 @@ export const api = {
       linkType?: string;
       linkId?: string;
     }>;
+    mode?: string;
+    generatedAt?: number;
+    settings?: { cycleMs?: number };
   }> {
     try {
-      const res = await fetch(`${baseUrl}/api/ticker`);
+      const suffix = options?.mode === "latest" ? "?mode=latest" : "";
+      const res = await fetch(`${baseUrl}/api/ticker${suffix}`, { cache: "no-store" });
       if (!res.ok) throw new Error("ticker fetch failed");
       return (await res.json()) as {
         items: Array<{
@@ -4606,6 +4612,9 @@ export const api = {
           linkType?: string;
           linkId?: string;
         }>;
+        mode?: string;
+        generatedAt?: number;
+        settings?: { cycleMs?: number };
       };
     } catch {
       return { items: [] };

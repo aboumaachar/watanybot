@@ -1,0 +1,43 @@
+/* Watany engagement + surveys bounded live-compatibility runtime v1.0.0 */
+.w20-engagement-surface { width: min(1120px, calc(100% - 24px)); margin: 18px auto 96px; }
+.w20-engagement-header { display: block; padding: 18px 18px 8px; text-align: right; }
+.w20-engagement-header h1 { margin: 0 0 8px; font-size: clamp(1.45rem, 3vw, 2rem); }
+.w20-engagement-description { margin: 0; color: var(--ink-secondary, #52605a); line-height: 1.85; font-size: 1rem; }
+.w20-engagement-empty { grid-column: 1 / -1; padding: 28px 20px; border: 1px dashed var(--border, #d9dfdc); border-radius: 18px; background: var(--bg-secondary, #f7faf8); color: var(--ink-secondary, #52605a); text-align: center; line-height: 1.8; }
+.ticker-latest { color: var(--accent-secondary, #0b6b4c); font-weight: 700; }
+
+body.w20-standalone-shell { padding-top: 68px !important; padding-bottom: 82px !important; }
+.w20-standalone-topbar { position: fixed; z-index: 10020; inset: 0 0 auto 0; height: 60px; display: grid; grid-template-columns: 52px 1fr auto; align-items: center; gap: 10px; padding: 4px 12px; box-sizing: border-box; background: rgba(10, 70, 51, .97); color: #fff; box-shadow: 0 2px 14px rgba(0,0,0,.18); direction: rtl; }
+.w20-shell-menu, .w20-shell-close { min-width: 44px; min-height: 44px; border: 0; border-radius: 12px; background: rgba(255,255,255,.12); color: #fff; font: inherit; font-size: 24px; cursor: pointer; }
+.w20-shell-brand { justify-self: center; font-weight: 800; font-size: 1.05rem; }
+.w20-shell-login { justify-self: start; font-size: .88rem; }
+
+.w20-shell-link { color: inherit; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 44px; }
+.w20-shell-icon { width: 25px; height: 25px; object-fit: contain; }
+.w20-shell-brand .w20-shell-icon { width: 34px; height: 34px; border-radius: 10px; }
+.w20-shell-backdrop { position: fixed; z-index: 10021; inset: 0; background: rgba(0,0,0,.42); opacity: 0; pointer-events: none; transition: opacity .18s ease; }
+.w20-shell-backdrop.is-open { opacity: 1; pointer-events: auto; }
+.w20-shell-drawer { position: fixed; z-index: 10022; top: 0; right: 0; bottom: 0; width: min(340px, 88vw); padding: 14px; box-sizing: border-box; background: #fffdf8; color: #17372d; box-shadow: -8px 0 32px rgba(0,0,0,.22); transform: translateX(105%); transition: transform .2s ease; direction: rtl; overflow-y: auto; }
+.w20-shell-drawer.is-open { transform: translateX(0); }
+.w20-shell-drawer-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-bottom: 12px; border-bottom: 1px solid #dde5e0; font-size: 1.15rem; }
+.w20-shell-close { color: #17372d; background: #eef4f0; }
+.w20-shell-drawer-list { display: grid; gap: 5px; padding-top: 12px; }
+.w20-shell-drawer-list .w20-shell-link { justify-content: flex-start; padding: 8px 12px; border-radius: 12px; font-weight: 700; }
+.w20-shell-drawer-list .w20-shell-link:hover, .w20-shell-drawer-list .w20-shell-link:focus-visible { background: #eaf4ef; outline: 2px solid #b38a2f; outline-offset: 1px; }
+
+.w20-standalone-bottom { position: fixed; z-index: 10020; inset: auto 0 0 0; min-height: 70px; display: grid; grid-template-columns: repeat(5, minmax(0,1fr)); align-items: stretch; padding: 5px max(5px, env(safe-area-inset-right)) max(5px, env(safe-area-inset-bottom)) max(5px, env(safe-area-inset-left)); box-sizing: border-box; background: rgba(255,253,248,.98); border-top: 1px solid #d7dfda; box-shadow: 0 -4px 18px rgba(0,0,0,.12); color: #184a3a; direction: rtl; }
+.w20-standalone-bottom .w20-shell-link { min-width: 44px; min-height: 54px; flex-direction: column; gap: 2px; padding: 3px; box-sizing: border-box; font-size: .76rem; font-weight: 750; border-radius: 12px; }
+.w20-standalone-bottom .w20-shell-link:nth-child(3) { color: #fff; background: #0d6044; margin: -12px 4px 4px; border-radius: 18px; box-shadow: 0 4px 14px rgba(13,96,68,.28); }
+.w20-standalone-bottom .w20-shell-link:nth-child(3) .w20-shell-icon { width: 32px; height: 32px; border-radius: 9px; }
+.w20-standalone-bottom .w20-shell-link:focus-visible, .w20-standalone-topbar .w20-shell-link:focus-visible, .w20-shell-menu:focus-visible, .w20-shell-close:focus-visible { outline: 3px solid #e6bd5a; outline-offset: 2px; }
+
+@media (max-width: 640px) {
+  .w20-engagement-surface { width: calc(100% - 14px); margin-top: 10px; }
+  .w20-engagement-header { padding: 14px 10px 7px; }
+  .w20-standalone-topbar { padding-inline: 8px; }
+  .w20-shell-login span { display: none; }
+  .w20-standalone-bottom .w20-shell-link { font-size: .68rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .w20-shell-backdrop, .w20-shell-drawer { transition: none; }
+}

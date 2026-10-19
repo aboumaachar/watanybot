@@ -129,7 +129,9 @@ export function FeatureFlagsProvider({ children }: Readonly<{ children: ReactNod
         try {
           const message = JSON.parse(event.data as string) as FeatureFlagsSocketEvent;
           if (message.type === "feature-flags.snapshot" || message.type === "feature-flags.updated") {
-            applyPublishedFlags(message.payload);
+            // WebSocket payloads are global. Re-resolve the authenticated effective
+            // snapshot so account overrides remain authoritative after broadcasts.
+            void api.getFeatureFlags().then(applyPublishedFlags).catch(() => {});
           }
         } catch {
           // ignore non-feature websocket events

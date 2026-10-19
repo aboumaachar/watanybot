@@ -7,7 +7,7 @@ export function ChatFirstWindow(props: HybridDefaultSurfaceProps) {
     <WatanyHybridDefaultChat
       {...props}
       surfaceId="chat-first-window"
-      title="مساعد موطني"
+      title="مساعد وطني"
       preserveCommunityChat={true}
     />
   );

@@ -7,7 +7,7 @@ export function ChatScreen(props: HybridDefaultSurfaceProps) {
     <WatanyHybridDefaultChat
       {...props}
       surfaceId="chat-screen"
-      title="مساعد موطني"
+      title="مساعد وطني"
       preserveCommunityChat={true}
     />
   );

@@ -62,6 +62,7 @@ export const DRAWER_MENU_GROUPS: readonly UniversalFeatureMenuGroup[] = [
     items: [
       { id: "community", label: "مجتمعي", route: "/community", iconFeatureId: "community" },
       { id: "vote", label: "صوّت", route: "/voting", iconFeatureId: "voting" },
+      { id: "surveys", label: "الاستبيانات", route: "/surveys", iconFeatureId: "forms" },
       { id: "fake", label: "زائف", route: "/fake-fact", iconFeatureId: "fake-fact" },
       { id: "news", label: "أخبار", route: "/news", iconFeatureId: "news" },
       { id: "articles", label: "مقالات", route: "/news", iconFeatureId: "news" },

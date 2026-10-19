@@ -12,6 +12,11 @@ export type TickerItem = {
 };
 
 const OFFICIAL_DEATHS_TICKER_PREFIX = "تم تحديث الوفيات الرسمية";
+const LATEST_TICKER_REFRESH_MS = 30 * 1000;
+const OFFICIAL_DEATHS_REFRESH_MS = 5 * 60 * 1000;
+const DEFAULT_TICKER_CYCLE_MS = 240 * 1000;
+const MIN_TICKER_CYCLE_MS = 60 * 1000;
+const MAX_TICKER_CYCLE_MS = 300 * 1000;
 
 const DEFAULT_TICKER_ITEMS: TickerItem[] = [
   { kind: "announce", title: "📢 آخر التحديثات والخدمات متاحة الآن عبر موطني" },
@@ -27,11 +32,6 @@ const DEFAULT_TICKER_ITEMS: TickerItem[] = [
 function withOfficialDeathsTicker(items: TickerItem[], total: number): TickerItem[] {
   if (!Number.isFinite(total) || total <= 0) return items;
 
-  const hasOfficialDeathsUpdate = items.some((item) =>
-    item.title?.includes(OFFICIAL_DEATHS_TICKER_PREFIX)
-  );
-  if (hasOfficialDeathsUpdate) return items;
-
   const officialDeathsItem: TickerItem = {
     kind: "announce",
     title: `${OFFICIAL_DEATHS_TICKER_PREFIX} (${total})`,
@@ -39,8 +39,11 @@ function withOfficialDeathsTicker(items: TickerItem[], total: number): TickerIte
     linkType: "route",
     linkId: "/al-wafiyat",
   };
+  const withoutPreviousOfficialDeaths = items.filter(
+    (item) => !item.title?.includes(OFFICIAL_DEATHS_TICKER_PREFIX),
+  );
 
-  return [officialDeathsItem, ...items];
+  return [officialDeathsItem, ...withoutPreviousOfficialDeaths];
 }
 
 /** Extract the actual question text from a ticker string for pasting into composer */
@@ -72,34 +75,59 @@ export function Ticker({
   const [activeIndex, setActiveIndex] = useState(0);
   const trackRef = useRef<HTMLDivElement | null>(null);
   const [tickerOffset, setTickerOffset] = useState(0);
+  const [tickerCycleMs, setTickerCycleMs] = useState(DEFAULT_TICKER_CYCLE_MS);
 
   useEffect(() => {
     let cancelled = false;
+    let tickerLoadInFlight = false;
+    let officialDeathsTotal = 0;
+
     const loadTicker = async () => {
+      if (tickerLoadInFlight) return;
+      tickerLoadInFlight = true;
       try {
-        const tickerRes = await api.getTicker(apiBaseUrl);
+        const tickerRes = await api.getTicker(apiBaseUrl, { mode: "latest" });
         if (cancelled) return;
-
-        setItems(tickerRes.items?.length ? tickerRes.items : DEFAULT_TICKER_ITEMS);
-
-        const deathsRes = await api.listAlWafiyat({ limit: 1 }, apiBaseUrl).catch(() => null);
-        if (cancelled) return;
-
-        const deathsTotal = Number(deathsRes?.total || 0);
-        if (deathsTotal > 0) {
-          setItems((currentItems) => withOfficialDeathsTicker(currentItems, deathsTotal));
+        const latestItems = tickerRes.items?.length ? tickerRes.items : DEFAULT_TICKER_ITEMS;
+        const serverCycleMs = Number(tickerRes.settings?.cycleMs);
+        if (Number.isFinite(serverCycleMs) && serverCycleMs >= MIN_TICKER_CYCLE_MS && serverCycleMs <= MAX_TICKER_CYCLE_MS) {
+          setTickerCycleMs(serverCycleMs);
         }
+        setItems(withOfficialDeathsTicker(latestItems, officialDeathsTotal));
       } catch {
-        if (!cancelled) setItems(DEFAULT_TICKER_ITEMS);
+        if (!cancelled) setItems(withOfficialDeathsTicker(DEFAULT_TICKER_ITEMS, officialDeathsTotal));
+      } finally {
+        tickerLoadInFlight = false;
       }
     };
 
+    const loadOfficialDeaths = async () => {
+      const deathsRes = await api.listAlWafiyat({ limit: 1 }, apiBaseUrl).catch(() => null);
+      if (cancelled) return;
+      officialDeathsTotal = Number(deathsRes?.total || 0);
+      if (officialDeathsTotal > 0) {
+        setItems((currentItems) => withOfficialDeathsTicker(currentItems, officialDeathsTotal));
+      }
+    };
+
+    const refreshVisibleTicker = () => {
+      if (document.visibilityState === "visible") void loadTicker();
+    };
+
     void loadTicker();
-    // Refresh every 5 minutes
-    const iv = setInterval(() => {
-      void loadTicker();
-    }, 5 * 60 * 1000);
-    return () => { cancelled = true; clearInterval(iv); };
+    void loadOfficialDeaths();
+    const tickerInterval = window.setInterval(() => void loadTicker(), LATEST_TICKER_REFRESH_MS);
+    const deathsInterval = window.setInterval(() => void loadOfficialDeaths(), OFFICIAL_DEATHS_REFRESH_MS);
+    document.addEventListener("visibilitychange", refreshVisibleTicker);
+    window.addEventListener("focus", refreshVisibleTicker);
+
+    return () => {
+      cancelled = true;
+      window.clearInterval(tickerInterval);
+      window.clearInterval(deathsInterval);
+      document.removeEventListener("visibilitychange", refreshVisibleTicker);
+      window.removeEventListener("focus", refreshVisibleTicker);
+    };
   }, [apiBaseUrl]);
 
   const displayItems = items.filter(i => !disabledKinds.includes(i.kind));
@@ -112,7 +140,7 @@ export function Ticker({
       setTickerOffset((offset) => {
         const loopWidth = (trackRef.current?.scrollWidth || 0) / 2;
         if (loopWidth <= 0) return offset;
-        const ticksPerCycle = (40 * 1000) / 50;
+        const ticksPerCycle = tickerCycleMs / 50;
         const pixelsPerTick = loopWidth / ticksPerCycle;
         const nextOffset = offset + pixelsPerTick;
         return nextOffset >= loopWidth ? 0 : nextOffset;
@@ -120,7 +148,7 @@ export function Ticker({
     }, 50);
 
     return () => window.clearInterval(intervalId);
-  }, [displayItems.length, loop, paused]);
+  }, [displayItems.length, loop, paused, tickerCycleMs]);
 
   useEffect(() => {
     if (loop || displayItems.length < 2) return undefined;
@@ -140,7 +168,7 @@ export function Ticker({
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
-      <div ref={trackRef} style={loop ? { transform: `translate3d(${-tickerOffset}px, 0, 0)` } : undefined} className={`ticker-track ${loop ? "ticker-manual-motion" : "ticker-single"} ${paused ? "ticker-paused" : ""}`}>
+      <div ref={trackRef} style={loop ? { transform: `translate3d(${tickerOffset}px, 0, 0)` } : undefined} className={`ticker-track ${loop ? "ticker-manual-motion" : "ticker-single"} ${paused ? "ticker-paused" : ""}`}>
         {/* Duplicate items for seamless looping */}
         {renderedItems.map((item, idx) => {
           const isSuggestType = item.kind === "suggest" || item.kind === "popular" || item.kind === "qotd";

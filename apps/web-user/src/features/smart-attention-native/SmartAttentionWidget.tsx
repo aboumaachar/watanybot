@@ -4,19 +4,22 @@ import {
   getSmartAttentionFeature,
   loadSmartAttentionItems,
   recordSmartAttentionEvent,
+  recordEngagementOpen,
   type SmartAttentionFeatureKey,
   type SmartAttentionItem,
 } from "./smartAttentionNativeData";
 import { WatanyListingCard } from "../../components/listings/WatanyListingCard";
 import { smartAttentionNativeTheme } from "./smartAttentionNativeTheme";
+import { useApp } from "../../store/app";
 
 type SmartAttentionWidgetProps = {
   featureKey: SmartAttentionFeatureKey;
   limit?: number;
 };
 
-function openSmartAttentionItem(item: SmartAttentionItem, navigate: (to: string) => void): void {
+function openSmartAttentionItem(item: SmartAttentionItem, navigate: (to: string) => void, apiBaseUrl: string): void {
   recordSmartAttentionEvent("open_item", item.id);
+  recordEngagementOpen(item, apiBaseUrl);
   if (!item.href || item.href === "#") {
     return;
   }
@@ -33,12 +36,13 @@ function openSmartAttentionItem(item: SmartAttentionItem, navigate: (to: string)
 
 export function SmartAttentionWidget({ featureKey, limit = 3 }: SmartAttentionWidgetProps): React.ReactElement {
   const navigate = useNavigate();
+  const { apiBaseUrl } = useApp();
   const feature = getSmartAttentionFeature(featureKey);
   const [items, setItems] = React.useState<SmartAttentionItem[]>(feature.items);
 
   React.useEffect(() => {
     let isMounted = true;
-    loadSmartAttentionItems(featureKey).then((loadedItems) => {
+    loadSmartAttentionItems(featureKey, apiBaseUrl).then((loadedItems) => {
       if (isMounted) {
         setItems(loadedItems);
       }
@@ -47,7 +51,7 @@ export function SmartAttentionWidget({ featureKey, limit = 3 }: SmartAttentionWi
     return () => {
       isMounted = false;
     };
-  }, [featureKey]);
+  }, [apiBaseUrl, featureKey]);
 
   return (
     <section dir="rtl" aria-label={feature.title} className={smartAttentionNativeTheme.section}>
@@ -55,6 +59,7 @@ export function SmartAttentionWidget({ featureKey, limit = 3 }: SmartAttentionWi
         <h2 className={smartAttentionNativeTheme.title}>{feature.title}</h2>
       </header>
 
+      {items.length === 0 ? <p className="wt-muted">لم تتكوّن بيانات استخدام كافية بعد لعرض ترتيب موثوق.</p> : null}
       <div className={smartAttentionNativeTheme.grid}>
         {items.slice(0, limit).map((item) => (
           <WatanyListingCard
@@ -65,7 +70,7 @@ export function SmartAttentionWidget({ featureKey, limit = 3 }: SmartAttentionWi
               { label: item.kind },
               ...(item.source ? [{ label: item.source, tone: "gold" as const }] : []),
             ]}
-            primaryAction={{ label: "افتح", onClick: () => openSmartAttentionItem(item, navigate) }}
+            primaryAction={{ label: "افتح", onClick: () => openSmartAttentionItem(item, navigate, apiBaseUrl) }}
           />
         ))}
       </div>

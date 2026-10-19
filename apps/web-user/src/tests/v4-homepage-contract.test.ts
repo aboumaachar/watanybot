@@ -9,38 +9,16 @@ import { getWatanyV4IconName } from "../theme/watany-v4/featureIconMap";
 import { WATANY_V4_ICONS } from "../theme/watany-v4/iconRegistry";
 
 const expectedIds = [
-  "for-you",
-  "latest",
-  "popular",
-  "salary",
-  "procedures",
-  "schools",
-  "marketplace",
-  "jobs",
-  "taxi",
-  "circulars",
-  "network",
-  "forms",
-  "useful-links",
-  "deaths",
-  "community",
-  "voting",
-  "news",
-  "laws",
-  "faq",
-  "fake-fact",
-  "profile",
-  "settings",
-  "children",
-  "sports",
+  "for-you", "latest", "popular", "surveys", "salary", "procedures", "schools", "marketplace", "jobs", "taxi", "circulars", "network",
+  "forms", "useful-links", "articles", "deaths", "community", "voting", "news", "laws", "faq", "fake-fact", "profile", "settings", "children", "sports",
 ] as const;
 
 describe("V4 authorized homepage contract", () => {
-  it("exposes exactly the authorized 24 entries in order", () => {
-    expect(watanyV4HomepageItems).toHaveLength(24);
+  it("exposes exactly the authorized 26 entries in order", () => {
+    expect(watanyV4HomepageItems).toHaveLength(26);
     expect(watanyV4HomepageItems.map((item) => item.id)).toEqual(expectedIds);
-    expect(new Set(watanyV4HomepageItems.map((item) => item.id)).size).toBe(24);
-    expect(new Set(watanyV4HomepageItems.map((item) => item.route)).size).toBe(24);
+    expect(new Set(watanyV4HomepageItems.map((item) => item.id)).size).toBe(26);
+    expect(new Set(watanyV4HomepageItems.map((item) => item.route)).size).toBe(26);
     expect(watanyV4HomepageItems.map((item) => item.id)).not.toContain("voice");
     expect(watanyV4HomepageItems.map((item) => item.labelAr)).not.toContain("كأس العالم 2026");
     expect(watanyV4HomepageItems.map((item) => item.labelAr)).not.toContain("خدمات موطني");
@@ -124,7 +102,7 @@ describe("V4 authorized homepage contract", () => {
     expect(shellSource).toContain('event.key === "Enter" || event.key === " "');
     expect(shellSource).toContain('className="watany-recovery-menu-glyph"');
     expect(shellSource).toContain('className="watany-recovery-home-sign"');
-    expect(shellSource).toContain('src="/watany-v4/icons/home-sign.png"');
+    expect(shellSource).toContain('src="/watany-v4/icons/nav/home-sign.webp"');
     expect(shellSource).not.toContain('label: "الإعدادات"');
     expect(shellSource).not.toContain("bottomItems.slice");
   });
@@ -165,7 +143,7 @@ describe("V4 authorized homepage contract", () => {
     expect(DRAWER_MENU_GROUPS[0].id).toBe("procedures");
     expect(DRAWER_MENU_GROUPS[1]).toEqual(expect.objectContaining({ id: "daily-services" }));
     expect(DRAWER_MENU_GROUPS[1]).not.toHaveProperty("drawerLevel", "top-level");
-    expect(DRAWER_MENU_GROUPS.reduce((total, group) => total + group.items.length, 0)).toBe(21);
+    expect(DRAWER_MENU_GROUPS.reduce((total, group) => total + group.items.length, 0)).toBe(22);
     expect(DRAWER_MENU_GROUPS.every((group) => group.items.every((item) => item.route.startsWith("/")))).toBe(true);
     expect(DRAWER_MENU_GROUPS.at(-1)?.id).toBe("account");
   });

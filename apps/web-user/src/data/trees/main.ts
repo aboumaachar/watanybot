@@ -14,7 +14,8 @@ export const mainTree: DecisionTree = {
       title: "كيف بقدر ساعدك اليوم؟",
       body: "اختر من الخيارات التالية أو اكتب سؤالك مباشرة",
       buttons: [
-        { label: "محادثة موطني", icon: "chat", nextNodeId: "freeform" },
+        { label: "محادثة وطني", icon: "chat", nextNodeId: "freeform" },
+        { label: "او شي تاني", icon: "chat", nextNodeId: "freeform" },
         { label: "معاملاتي وطلباتي", icon: "document", nextNodeId: "procedures" },
         { label: "الصحة والاستشفاء", icon: "health", nextNodeId: "health" },
         { label: "المستندات والإفادات", icon: "document", nextNodeId: "documents" },

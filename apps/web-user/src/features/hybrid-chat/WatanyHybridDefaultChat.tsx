@@ -3,10 +3,12 @@ import type { FormEvent } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { api } from "../../lib/api";
 import { resolveContextualChat } from "../chat/contextualChatRuntime";
+import { getChatProvenance, type ChatProvenance } from "./chatProvenance";
 
 type ChatMessage = {
   role: "user" | "assistant";
   text: string;
+  provenance?: ChatProvenance;
 };
 
 type WatanyHybridDefaultChatProps = {
@@ -45,17 +47,18 @@ export function WatanyHybridDefaultChat(props: Readonly<WatanyHybridDefaultChatP
   const navigate = useNavigate();
   const contextual = useMemo(() => resolveContextualChat(location.pathname), [location.pathname]);
   const endpoint = props.endpoint;
-  const title = props.title || "مساعد موطني";
+  const title = props.title || "مساعد وطني";
   const surfaceId = props.surfaceId || "watany-hybrid-default";
   const quickChoices = useMemo(() => ["معاشي وتعويضاتي", "الطبابة والاستشفاء", "المدارس والمنح", "المعاملات والمستندات", "او شي تاني"], []);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const appliedStateRef = useRef<string>("");
+  const inputRef = useRef<HTMLInputElement>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       role: "assistant",
-      text: "أهلاً بك. اسألني عن التقاعد، المعاش، التعويضات، الطبابة، المدارس، أو المعاملات. سأجيب اعتماداً على قاعدة معرفة موطني قدر الإمكان.",
+      text: "أهلاً بك. اسألني عن التقاعد، المعاش، التعويضات، الطبابة، المدارس، أو المعاملات. سأجيب اعتماداً على قاعدة معرفة وطني قدر الإمكان.",
     },
   ]);
 
@@ -87,8 +90,9 @@ export function WatanyHybridDefaultChat(props: Readonly<WatanyHybridDefaultChatP
         try { payload = await api.chatV2Stream(trimmed); }
         catch { payload = await api.chatGatewayV2(trimmed, chatContext); }
       }
-      const answer = extractAnswer(payload);
-      setMessages((current) => [...current, { role: "assistant", text: answer }]);
+      const answer = extractAnswer(payload) || "لم يصل جواب قابل للعرض. حاول صياغة سؤالك بتفاصيل أكثر.";
+      const provenance = getChatProvenance(payload);
+      setMessages((current) => [...current, { role: "assistant", text: answer, provenance }]);
     } catch (err) {
       const detail = err instanceof Error ? err.message : "Unknown error";
       setError(detail);
@@ -96,12 +100,20 @@ export function WatanyHybridDefaultChat(props: Readonly<WatanyHybridDefaultChatP
         ...current,
         {
           role: "assistant",
-          text: "تعذر الاتصال بمساعد موطني حالياً. تحقق من تشغيل بوابة API ثم حاول مجدداً.",
+          text: "تعذر الاتصال بمساعد وطني حالياً. تحقق من تشغيل بوابة API ثم حاول مجدداً.",
         },
       ]);
     } finally {
       setLoading(false);
     }
+  }
+
+  function handleQuickChoice(choice: string) {
+    if (choice === "او شي تاني") {
+      inputRef.current?.focus();
+      return;
+    }
+    void submitQuestion(choice);
   }
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -163,7 +175,7 @@ export function WatanyHybridDefaultChat(props: Readonly<WatanyHybridDefaultChatP
       <header style={{ padding: "18px 20px", borderBottom: "1px solid rgba(15, 23, 42, 0.08)" }}>
         <strong style={{ display: "block", fontSize: "1.18rem" }}>{title}</strong>
         <span style={{ display: "block", marginTop: "4px", color: "#475569", fontSize: "0.92rem" }}>
-          مساعد موطني الذكي — محادثة موحّدة مع البحث المعرفي والتوجيه والذكاء الاصطناعي
+          مساعد وطني الذكي — محادثة موحّدة مع البحث المعرفي والتوجيه والذكاء الاصطناعي
         </span>
       </header>
 
@@ -186,6 +198,32 @@ export function WatanyHybridDefaultChat(props: Readonly<WatanyHybridDefaultChatP
             }}
           >
             {message.text}
+            {message.role === "assistant" && message.provenance ? (
+              <div data-chat-source-status={message.provenance.status} style={{ marginTop: 12, paddingTop: 10, borderTop: "1px solid #cbd5e1", fontSize: "0.88rem" }}>
+                {message.provenance.references.length > 0 ? (
+                  <>
+                    <strong>مراجع أرفقتها خدمة البحث (ليست تحققاً مستقلاً من صحة الجواب):</strong>
+                    <ul style={{ margin: "6px 0 0", paddingInlineStart: 18 }}>
+                      {message.provenance.references.map((reference) => (
+                        <li key={reference.id + reference.title}>
+                          {reference.href ? (
+                            <a href={reference.href} target="_blank" rel="noopener noreferrer">{reference.title}</a>
+                          ) : <span>{reference.title}</span>}
+                          {reference.excerpt ? <p style={{ margin: "3px 0 8px" }}>{reference.excerpt}</p> : null}
+                        </li>
+                      ))}
+                    </ul>
+                  </>
+                ) : (
+                  <span>لم تُرفق مراجع قابلة للمراجعة مع هذا الرد. تحقّق من المعلومات لدى الجهة المختصة قبل الاعتماد عليها.</span>
+                )}
+                {message.provenance.reviewWarnings?.length ? (
+                  <ul data-chat-review-warnings="true" role="alert" style={{ marginTop: 8, paddingInlineStart: 18, color: "#9a3412" }}>
+                    {message.provenance.reviewWarnings.map((warning) => <li key={warning}>{warning}</li>)}
+                  </ul>
+                ) : null}
+              </div>
+            ) : null}
           </article>
         ))}
         {loading ? <div style={{ color: "#475569" }}>جاري إعداد الجواب...</div> : null}
@@ -197,7 +235,7 @@ export function WatanyHybridDefaultChat(props: Readonly<WatanyHybridDefaultChatP
           <button
             key={choice}
             type="button"
-            onClick={() => void submitQuestion(choice)}
+            onClick={() => handleQuickChoice(choice)}
             style={{
               border: "1px solid rgba(15, 23, 42, 0.12)",
               borderRadius: "999px",
@@ -214,10 +252,11 @@ export function WatanyHybridDefaultChat(props: Readonly<WatanyHybridDefaultChatP
       <form onSubmit={handleSubmit} style={{ display: "flex", gap: "10px", padding: "14px 18px 18px", borderTop: "1px solid rgba(15, 23, 42, 0.08)" }}>
         <input
           data-hybrid-default-input="true"
+          ref={inputRef}
           value={input}
           onChange={(event) => setInput(event.target.value)}
           placeholder="اكتب سؤالك هنا..."
-          aria-label="اكتب سؤالك إلى مساعد موطني"
+          aria-label="اكتب سؤالك إلى مساعد وطني"
           style={{
             flex: 1,
             minWidth: 0,

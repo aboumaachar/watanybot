@@ -1,4 +1,4 @@
-﻿import type { LandingConfig } from "./MobileFeatureLandingPage";
+import type { LandingConfig } from "./MobileFeatureLandingPage";
 
 export const marketMobileLandingConfig: LandingConfig = {
   id: "market",
@@ -30,6 +30,7 @@ export const marketMobileLandingConfig: LandingConfig = {
     { icon: "⚙️", label: "التصفية", value: "filter" },
   ],
   shortcuts: [
+    { icon: "🛡️", label: "الأمن والحماية", description: "فرصة عمل لدى ميدل إيست سيكوريتي لبنان", href: "/jobs/middle-east-security" },
     { icon: "🛍️", label: "تصفح السوق", description: "آخر الإعلانات المقبولة والموثوقة", href: "/marketplace?section=browse" },
     { icon: "➕", label: "إنشاء إعلان", description: "أضف بيعاً أو خدمة أو طلب شراء", href: "/marketplace?section=create" },
     { icon: "📋", label: "إعلاناتي", description: "راجع المنشور والمعلّق والمطلوب تعديله", href: "/marketplace?section=my-listings" },
@@ -156,17 +157,21 @@ export const jobsMobileLandingConfig: LandingConfig = {
   primaryActionLabel: "ابحث عن وظيفة",
   primaryActionHref: "/jobs?section=search",
   secondaryActionLabel: "طلباتي",
-  secondaryActionHref: "/jobs?section=applications",
+  secondaryActionHref: "/jobs/applications",
   navItems: [
     { icon: "🔎", label: "الوظائف", href: "/jobs" },
-    { icon: "📨", label: "طلباتي", href: "/jobs?section=applications" },
+    { icon: "📨", label: "طلباتي", href: "/jobs/applications" },
     { icon: "🔖", label: "المحفوظة", href: "/jobs?section=saved" },
     { icon: "📄", label: "السيرة الذاتية", href: "/jobs?section=cv" },
   ],
   filters: [
     { icon: "✨", label: "الكل", value: "all" },
   ],
-  shortcuts: [],
+  shortcuts: [
+    { icon: "🧑‍💼", label: "جاهز للعمل", description: "انشر جاهزيتك ليعثر عليك أصحاب العمل المعتمدون", href: "/jobs/readiness" },
+    { icon: "🔎", label: "البحث عن مرشحين", description: "بحث الشركات المعتمدة عن المرشحين الجاهزين للعمل", href: "/jobs/candidates" },
+    { icon: "🏢", label: "بوابة أصحاب العمل", description: "اعتماد الشركة والوصول إلى أدوات التوظيف", href: "/jobs/employer" },
+  ],
   categories: [
     { icon: "🏛️", label: "إدارة", description: "مكاتب وإدارة", href: "/jobs?sector=administration" },
     { icon: "🛡️", label: "أمن", description: "حراسة وسلامة", href: "/jobs?sector=security" },
@@ -178,7 +183,7 @@ export const jobsMobileLandingConfig: LandingConfig = {
     { icon: "🧰", label: "حرف", description: "مهارات ومهن", href: "/jobs?sector=trades" },
   ],
   statusCards: [
-    { icon: "📨", label: "طلبات قيد المتابعة", description: "حالة التقديم", href: "/jobs?section=applications" },
+    { icon: "📨", label: "طلبات قيد المتابعة", description: "حالة التقديم", href: "/jobs/applications" },
     { icon: "✨", label: "مطابقات جديدة", description: "فرص حسب ملفك", href: "/jobs?section=recommended" },
     { icon: "🔖", label: "محفوظة", description: "فرص تريد حفظها", href: "/jobs?section=saved" },
     { icon: "🔔", label: "تنبيهات مفعّلة", description: "لا تفوت الفرص", href: "/jobs?section=alerts" },
@@ -199,7 +204,24 @@ export const jobsMobileLandingConfig: LandingConfig = {
       summary: "مساعد مدير مبنى – عين المريسة",
       badge: "تسجيل مفتوح",
       href: "/jobs/ain-mreisseh-building-assistant",
-    }
+},
+{
+  title: "فرصة عمل في الأمن والحماية",
+  company: "ميدل إيست سيكوريتي لبنان",
+  companyEnglish: "Middle East Security Lebanon",
+  location: "لبنان",
+  summary: "طلب انضمام إلى فريق ميدل إيست سيكوريتي لبنان بمعاش محترم وبحسب المؤهلات.",
+  badge: "تسجيل مفتوح",
+  href: "/jobs/middle-east-security",
+},
+{
+  title: "فرصة عمل – سائق جرافة معتمد",
+  company: "جهة توظيف خاصة",
+  location: "لبنان",
+  summary: "طلب توظيف لسائق جرافة معتمد مع خبرة في تشغيل الآليات الثقيلة.",
+  badge: "تسجيل مفتوح",
+  href: "/jobs/accredited-bulldozer-driver/application/",
+},
   ],
   sections: [
     {
@@ -214,7 +236,7 @@ export const jobsMobileLandingConfig: LandingConfig = {
     {
       title: "متابعة التقديم",
       actionLabel: "طلباتي",
-      actionHref: "/jobs?section=applications",
+      actionHref: "/jobs/applications",
       items: [
         { title: "طلبات مفتوحة", meta: "تابع الحالة من مكان واحد", badge: "متابعة" },
         { title: "وظائف بتقديم سريع", meta: "استخدم ملفك أو سيرتك الذاتية", badge: "سريع" },

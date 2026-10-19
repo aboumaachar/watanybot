@@ -65,6 +65,7 @@ describe("HomeScreen", () => {
     container = document.createElement("div");
     document.body.appendChild(container);
     root = createRoot(container);
+    const onNavigate = vi.fn();
 
     await act(async () => {
       root.render(
@@ -73,15 +74,20 @@ describe("HomeScreen", () => {
             initialEntries={["/"]}
             future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
           >
-            <HomeScreen onNavigate={() => {}} />
+            <HomeScreen onNavigate={onNavigate} />
           </MemoryRouter>
         </FeatureFlagsContext.Provider>,
       );
     });
     await flushEffects();
 
-    expect(container.textContent).toContain("الاكثر طلبا");
-    expect(container.textContent).toContain("الاحدث");
-    expect(container.textContent).toContain("ممكن يهمك");
+    expect(container.textContent).toContain("الأكثر طلباً");
+    expect(container.textContent).toContain("اسأل وطني");
+    const chatButton = Array.from(container.querySelectorAll("button")).find((button) => button.textContent?.includes("اسأل وطني"));
+    expect(chatButton).toBeTruthy();
+    await act(async () => chatButton!.click());
+    expect(onNavigate).toHaveBeenCalledWith("chat");
+    expect(container.textContent).toContain("جديد");
+    expect(container.textContent).toContain("يهمك");
   });
 });

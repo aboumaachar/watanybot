@@ -37,14 +37,16 @@ declare global {
   }
 }
 
-export function FeatureAdSensePlacement({ featureId, placement = "bottom" }: { featureId: string; placement?: string }) {
+export function FeatureAdSensePlacement({ featureId, placement = "bottom", responsiveMobile = false }: { featureId: string; placement?: string; responsiveMobile?: boolean }) {
   const slot = featureAdSlot();
   const requestedRef = useRef(false);
   const isMobile = typeof window !== "undefined" && window.matchMedia(MOBILE_AD_QUERY).matches;
   const isNarrowMobile = typeof window !== "undefined" && window.matchMedia("(max-width: 375px)").matches;
   const mobileAdWidth = isNarrowMobile ? 300 : 320;
   useEffect(() => {
-    if (!slot || requestedRef.current) return;
+    // Local development renders the labeled ad placement without executing
+    // third-party ad scripts. Production retains normal AdSense initialization.
+    if (import.meta.env.DEV || !slot || requestedRef.current) return;
     requestedRef.current = true;
     ensureAdSenseScript();
     try {
@@ -58,19 +60,20 @@ export function FeatureAdSensePlacement({ featureId, placement = "bottom" }: { f
 
   if (!slot) return null;
 
-  const adProps = isMobile
-    ? {}
-    : { "data-ad-format": "auto", "data-full-width-responsive": "true" };
+  const useResponsive = responsiveMobile || !isMobile;
+  const adProps = useResponsive
+    ? { "data-ad-format": "auto", "data-full-width-responsive": "true" }
+    : {};
 
   return (
     <aside data-feature-key={`feature.adsense.${featureId}.${placement}`} data-adsense-status="configured" aria-label="إعلان" style={containerStyle}>
       <div style={labelStyle}>إعلان</div>
-      <div style={isMobile ? mobileFrameStyle(mobileAdWidth) : desktopFrameStyle}>
+      <div style={useResponsive ? desktopFrameStyle : mobileFrameStyle(mobileAdWidth)}>
         <ins
           className="adsbygoogle"
-          style={isMobile
-            ? { display: "inline-block", width: `${mobileAdWidth}px`, height: "100px" }
-            : { display: "block", width: "100%" }}
+          style={useResponsive
+            ? { display: "block", width: "100%" }
+            : { display: "inline-block", width: `${mobileAdWidth}px`, height: "100px" }}
           data-ad-client={ADSENSE_CLIENT}
           data-ad-slot={slot}
           {...adProps}

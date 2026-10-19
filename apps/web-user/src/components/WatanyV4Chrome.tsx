@@ -55,7 +55,7 @@ export function WatanyV4Chrome({ title, navigate, onMenu }: ChromeProps) {
           <span /><span /><span />
         </button>
         <div className="wv4-ticker">{title}</div>
-        <img className="wv4-logo" src="/logo.png" alt="موطني" />
+        <img className="wv4-logo" src="/logo-shell.webp" alt="موطني" />
       </div>
 
       <form className="wv4-fixed-chat" data-wv4-fixed="chat" dir="rtl" onSubmit={(event) => event.preventDefault()}>

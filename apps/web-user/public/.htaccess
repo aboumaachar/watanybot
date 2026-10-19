@@ -2,17 +2,32 @@
 <IfModule mod_rewrite.c>
   RewriteEngine On
 
+  # SCHOOL_GRANTS_IMAGE_ONLY_V9_1_BEGIN
+  # Keep retired School Grants text/PDF form aliases out of the SPA HTML fallback.
+  RewriteRule ^school-aids/forms/annex-z\.(?:html|pdf)$ /school-aids/forms/images/annex-z.jpg [R=302,L,NE]
+  RewriteRule ^school-aids/forms/annex-j\.(?:html|pdf)$ /school-aids/forms/images/annex-j.jpg [R=302,L,NE]
+  RewriteRule ^school-aids/forms/school-year-completion-certificate\.(?:html|pdf)$ /school-aids/forms/images/school-year-completion-certificate.jpg [R=302,L,NE]
+  RewriteRule ^school-aids/forms/school-aid-papers-conditions\.html$ /school-aids/guides/school-aid-papers-conditions.html [R=302,L,NE]
+  RewriteRule ^school-aids/forms/school-aid-application\.html$ - [G,L]
+  # SCHOOL_GRANTS_IMAGE_ONLY_V9_1_END
+
   # ARTICLE_SITEMAP_V2_BEGIN
   RewriteRule ^sitemap-articles\.xml$ /mcp/api/articles/sitemap.xml [L,QSA]
   # ARTICLE_SITEMAP_V2_END
 
   # ARTICLE_SOCIAL_PREVIEW_V5_BEGIN
   # Social/share crawlers receive compact server-rendered OpenGraph metadata.
-  RewriteCond %{HTTP_USER_AGENT} "(facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|Pinterestbot|BingPreview)" [NC]
+  RewriteCond %{HTTP_USER_AGENT} "(facebookexternalhit|Facebot|meta-externalagent|meta-externalfetcher|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|Pinterestbot|BingPreview)" [NC]
   RewriteRule ^articles/([^/]+)/([^/]+)/?$ /mcp/api/articles/social-preview/$1/$2 [B,L,QSA]
-  RewriteCond %{HTTP_USER_AGENT} "(facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|Pinterestbot|BingPreview)" [NC]
+  RewriteCond %{HTTP_USER_AGENT} "(facebookexternalhit|Facebot|meta-externalagent|meta-externalfetcher|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|Pinterestbot|BingPreview)" [NC]
   RewriteRule ^articles/([^/]+)/?$ /mcp/api/articles/social-preview-legacy/$1 [B,L,QSA]
   # ARTICLE_SOCIAL_PREVIEW_V5_END
+
+  # ARTICLE_SEARCH_ARCHIVE_V1_BEGIN
+  # Search crawlers receive real paginated/category archive links, while visitors keep the React view.
+  RewriteCond %{HTTP_USER_AGENT} "(Googlebot|Google-InspectionTool|bingbot|DuckDuckBot|Applebot|YandexBot)" [NC]
+  RewriteRule ^articles/?$ /mcp/api/articles/search-archive [L,QSA]
+  # ARTICLE_SEARCH_ARCHIVE_V1_END
 
   # ARTICLE_SEARCH_PREVIEW_V1_BEGIN
   # Search crawlers receive equivalent full article content plus canonical SEO metadata.
@@ -28,6 +43,10 @@
 
   # Keep the canonical React JobsPage from being shadowed by the static jobs directory.
   RewriteRule ^jobs/?$ index.html [L]
+
+  # Keep the canonical React FormsPage from being shadowed by the physical forms archive directory.
+  # Nested static archives such as /forms/laf/* and /forms/mof/* remain direct files.
+  RewriteRule ^forms/?$ index.html [L]
 
   # Keep the canonical React Announcements page from being shadowed by the legacy static announcements directory.
   RewriteRule ^announcements/?$ index.html [L]
@@ -51,7 +70,6 @@
 <IfModule mod_setenvif.c>
   SetEnvIf Request_URI "^/share/jobs/middle-east-security/" MES_SHARE_DOCUMENT=1
 </IfModule>
-
 <IfModule mod_headers.c>
   Header always set Cache-Control "no-store" env=MES_SHARE_DOCUMENT
   Header always set Referrer-Policy "no-referrer" env=MES_SHARE_DOCUMENT
@@ -72,3 +90,22 @@
   AddOutputFilterByType DEFLATE text/html text/plain text/css text/javascript
   AddOutputFilterByType DEFLATE application/javascript application/json application/manifest+json image/svg+xml
 </IfModule>
+
+# KOUDAMA_PRIVATE_NOINDEX_V1_BEGIN
+<IfModule mod_setenvif.c>
+  SetEnvIf Request_URI "^/(login|register|profile|settings|saved|bookmarks|chat-sessions|notifications|messages|superadmin|ops|share|chat|hybrid-kb-chat|admin-authority-demo)(/|$)" KOUDAMA_PRIVATE_NOINDEX=1
+  SetEnvIf Request_URI "^/jobs/(readiness|candidates|employer)(/|$)" KOUDAMA_PRIVATE_NOINDEX=1
+  SetEnvIf Request_URI "^/jobs/[^/]+/application(/|$)" KOUDAMA_PRIVATE_NOINDEX=1
+</IfModule>
+<IfModule mod_headers.c>
+  Header always set X-Robots-Tag "noindex, nofollow" env=KOUDAMA_PRIVATE_NOINDEX
+</IfModule>
+# KOUDAMA_PRIVATE_NOINDEX_V1_END
+
+# KOUDAMA_PRIVATE_NOINDEX_V2_BEGIN
+<IfModule mod_headers.c>
+  Header always set X-Robots-Tag "noindex, nofollow" "expr=%{THE_REQUEST} =~ m#\s/+((login|register|profile|settings|saved|bookmarks|chat-sessions|notifications|messages|superadmin|ops|share|chat|hybrid-kb-chat|admin-authority-demo)(/|[?\s]))#"
+  Header always set X-Robots-Tag "noindex, nofollow" "expr=%{THE_REQUEST} =~ m#\s/+jobs/(readiness|candidates|employer)(/|[?\s])#"
+  Header always set X-Robots-Tag "noindex, nofollow" "expr=%{THE_REQUEST} =~ m#\s/+jobs/[^/?\s]+/application(/|[?\s])#"
+</IfModule>
+# KOUDAMA_PRIVATE_NOINDEX_V2_END

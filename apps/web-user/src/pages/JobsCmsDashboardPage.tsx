@@ -1,0 +1,18 @@
+import { FormEvent, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { authFetch } from "../lib/api";
+import { useApp } from "../store/app";
+
+type Item={campaign_id:string;application_id:string;name:string;phone:string;email?:string;status:string;follow_up_status:string;created_at:string;user_id?:string};
+type Employer={user_id:string;organization_name:string;status:string;account_name?:string;email?:string};
+export default function JobsCmsDashboardPage(){
+ const {apiBaseUrl}=useApp(); const [items,setItems]=useState<Item[]>([]); const [employers,setEmployers]=useState<Employer[]>([]); const [q,setQ]=useState(""); const [campaign,setCampaign]=useState(""); const [loading,setLoading]=useState(false);
+ async function load(){setLoading(true);try{const p=new URLSearchParams();if(q.trim())p.set("q",q.trim());if(campaign)p.set("campaign",campaign);const [apps,access]=await Promise.all([authFetch(`${apiBaseUrl}/api/admin/jobs/applications?${p}`),authFetch(`${apiBaseUrl}/api/jobs/employer-access/admin?status=PENDING`)]);if(apps.ok){const d=await apps.json();setItems(d.items??[])}if(access.ok){const d=await access.json();setEmployers(d.items??[])}}finally{setLoading(false)}}
+ useEffect(()=>{void load()},[apiBaseUrl]);
+ function submit(e:FormEvent){e.preventDefault();void load()}
+ async function review(userId:string,status:"APPROVED"|"REJECTED"){const r=await authFetch(`${apiBaseUrl}/api/jobs/employer-access/${encodeURIComponent(userId)}/status`,{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({status})});if(r.ok)await load()}
+ return <main className="page-shell" dir="rtl"><section className="profile-section-card"><h1>لوحة متابعة طلبات الوظائف</h1><p>عرض موحّد لطلبات الوظائف وربطها بحسابات المستخدمين واعتماد أصحاب العمل للبحث عن المرشحين.</p>
+ <form onSubmit={submit} style={{display:"grid",gridTemplateColumns:"minmax(0,1fr) minmax(180px,.5fr) auto",gap:8}}><input className="input" value={q} onChange={e=>setQ(e.target.value)} placeholder="اسم، هاتف، بريد…"/><select className="input" value={campaign} onChange={e=>setCampaign(e.target.value)}><option value="">كل الحملات</option><option value="seasonal-apple-job-2026-tannourine">قطاف التفاح</option><option value="ain-mreisseh-building-assistant">عين المريسة</option></select><button className="btn btn-primary">بحث</button></form></section>
+ <section className="profile-section-card"><h2>طلبات اعتماد أصحاب العمل</h2>{employers.length===0?<p>لا توجد طلبات اعتماد معلّقة.</p>:null}{employers.map(e=><article key={e.user_id} className="utility-action-card utility-action-card--static" style={{marginBlock:8}}><strong>{e.organization_name}</strong><span>{e.account_name||e.email}</span><div style={{display:"flex",gap:8}}><button className="btn btn-primary" onClick={()=>void review(e.user_id,"APPROVED")}>اعتماد</button><button className="btn btn-secondary" onClick={()=>void review(e.user_id,"REJECTED")}>رفض</button></div></article>)}</section>
+ <section className="profile-section-card"><h2>طلبات التوظيف</h2>{loading?<p>جارٍ التحميل…</p>:null}{items.map(item=><article key={`${item.campaign_id}:${item.application_id}`} className="utility-action-card utility-action-card--static" style={{marginBlock:8}}><strong>{item.name}</strong><span dir="ltr">{item.phone}</span><span>{item.status} · {item.follow_up_status}</span><span>{item.user_id?"مرتبط بحساب":"غير مرتبط"}</span><Link to={item.campaign_id==="seasonal-apple-job-2026-tannourine"?"/superadmin/ainelhafeh/applications":"/superadmin/ain-mreisseh-building-assistant/applications"}>فتح لوحة الحملة</Link></article>)}</section></main>
+}

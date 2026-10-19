@@ -56,6 +56,7 @@ export type MarketCategoryRail = {
 export type FeaturedJobListing = {
   title: string;
   company: string;
+  companyEnglish?: string;
   location: string;
   summary: string;
   badge: string;
@@ -589,6 +590,7 @@ function MobileFeatureLandingPageImpl({ config }: { readonly config: LandingConf
                       <strong className="mj-job-card__title">{listing.title}</strong>
                       <span className="mj-job-card__badge mj-job-card__badge--new">{listing.badge}</span>
                       <small className="mj-job-card__company">{listing.company} · {listing.location}</small>
+                      {listing.companyEnglish ? <small className="mj-job-card__company">{listing.companyEnglish}</small> : null}
                     </div>
                   </div>
                   <div className="mj-job-card__body">
@@ -903,5 +905,4 @@ function MobileFeatureLandingPageImpl({ config }: { readonly config: LandingConf
     </WatanyLandingBodyTemplate>
   );
 }
-
 
