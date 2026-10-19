@@ -10,6 +10,11 @@ __pycache__
 **/.env
 !.env.example
 !**/.env.example
+# Any .env.<variant> (e.g. .env.production) is local-only; *.example templates stay tracked
+.env.*
+**/.env.*
+!.env*.example
+!**/.env*.example
 
 # Build artifacts
 dist
