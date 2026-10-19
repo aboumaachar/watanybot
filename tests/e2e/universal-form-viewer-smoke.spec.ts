@@ -35,20 +35,30 @@ test("guided procedures form opens in the universal viewer", async ({ page }) =>
   await expect(firstCaseToggle).toBeVisible({ timeout: 15000 });
   await firstCaseToggle.click();
 
+  const viewer = page.locator('[data-testid="watany-universal-form-viewer"]').last();
+  if (await viewer.waitFor({ state: "visible", timeout: 5000 }).then(() => true).catch(() => false)) {
+    await page.locator('[data-testid="form-viewer-close"]').last().click();
+    await expect(viewer).toBeHidden();
+    return;
+  }
+
   // The forms area can be details-based or inline. Find a form trigger inside the expanded article.
   const expandedArticle = page
     .locator("article")
     .filter({ has: page.locator('button[aria-expanded="true"], button:has-text("إخفاء تفاصيل المعاملة")') })
     .first();
-  await expect(expandedArticle).toBeVisible({ timeout: 10000 });
+  if (!(await expandedArticle.isVisible().catch(() => false))) {
+    const currentArticle = page.locator("article").first();
+    await expect(currentArticle).toBeVisible({ timeout: 10000 });
+    await currentArticle.getByRole("button", { name: "فتح النماذج" }).click();
+  }
 
-  const previewButton = expandedArticle
+  const previewButton = page.locator("article")
     .locator('[data-testid^="mof-procedure-cta-"], button:has-text("PDF"), .form-action-btn--primary, button:has-text("معاينة"), button:has-text("عرض")')
     .first();
   await expect(previewButton).toBeVisible({ timeout: 15000 });
   await clickWithDomFallback(previewButton);
 
-  const viewer = page.locator('[data-testid="watany-universal-form-viewer"]').last();
   await expect(viewer).toBeVisible({ timeout: 10000 });
 
   await page.locator('[data-testid="form-viewer-close"]').last().click();

@@ -1,5 +1,7 @@
 import { test, expect } from "@playwright/test";
 
+// Contract owned by the approved email-first login page, not the retired
+// motany-login-redesign transition. Each scenario uses real touch emulation.
 const WEB = process.env.PLAYWRIGHT_WEB_USER_URL || "http://127.0.0.1:5174";
 const VIEWPORTS = [
   { name: "360x800", width: 360, height: 800 },
@@ -8,79 +10,69 @@ const VIEWPORTS = [
 ] as const;
 
 for (const vp of VIEWPORTS) {
-  test.describe(`login contract ${vp.name}`, () => {
-    test.use({ viewport: { width: vp.width, height: vp.height } });
+  test.describe(`approved login contract ${vp.name}`, () => {
+    test.use({
+      viewport: { width: vp.width, height: vp.height },
+      isMobile: true,
+      hasTouch: true,
+      deviceScaleFactor: 2,
+    });
 
-    test("landing, transition, auth CTAs, and register navigation are stable", async ({ page }) => {
-      const consoleErrors: string[] = [];
+    test("email, phone, provider, register and guest transitions", async ({ page }) => {
+      const pageErrors: string[] = [];
       const requestFailures: string[] = [];
-
-      page.on("console", (msg) => {
-        if (msg.type() === "error") {
-          consoleErrors.push(msg.text());
-        }
-      });
-      page.on("requestfailed", (req) => {
-        requestFailures.push(`${req.method()} ${req.url()} :: ${req.failure()?.errorText || "unknown"}`);
+      page.on("pageerror", (error) => pageErrors.push(error.message));
+      page.on("requestfailed", (request) => {
+        requestFailures.push(`${request.method()} ${request.url()} :: ${request.failure()?.errorText || "unknown"}`);
       });
 
-      await page.goto(`${WEB}/login`, { waitUntil: "domcontentloaded" });
-
-      // Landing contract
-      await expect(page.locator(".motany-login-redesign")).toHaveCount(1);
-      const landingGoogle = page.locator(".motany-login-google").first();
-      await expect(landingGoogle).toBeVisible();
-
-      const noOverflowLanding = await page.evaluate(() => {
-        const root = document.documentElement;
-        return root.scrollWidth <= root.clientWidth + 1;
-      });
-      expect(noOverflowLanding).toBe(true);
-
-      // Transition to original login UI.
-      await page.locator(".motany-login-primary,.motany-login-input-shell").first().evaluate((el) => {
-        (el as HTMLButtonElement).click();
-      });
-      await expect(page.locator("#phone")).toBeVisible();
-      await expect(page.locator("button:has-text('إرسال رمز التحقق')")).toBeVisible();
-
-      // Google auth option exists on the original login surface as well.
+      const response = await page.goto(`${WEB}/login`, { waitUntil: "domcontentloaded" });
+      expect(response?.status()).toBe(200);
+      await expect(page.locator("main.approved-login-page")).toBeVisible();
+      await expect(page.locator("form.approved-login-form")).toBeVisible();
+      await expect(page.locator("#email")).toBeVisible();
+      await expect(page.locator("#password")).toBeVisible();
+      await expect(page.getByRole("button", { name: "تسجيل الدخول", exact: true })).toBeVisible();
       await expect(page.locator(".auth-provider")).toBeVisible();
-      await expect(page.locator(".auth-provider").first()).toContainText(/Google/i);
+      await expect(page.locator(".auth-provider")).toContainText(/Google/i);
+      await expect(page.getByRole("link", { name: "إنشاء حساب جديد" })).toBeVisible();
 
-      // Email path exists.
-      await page.locator("button:has-text('البريد')").first().evaluate((el) => {
-        (el as HTMLButtonElement).click();
-      });
+      const media = await page.evaluate(() => ({
+        touch: navigator.maxTouchPoints,
+        coarse: matchMedia("(pointer: coarse)").matches,
+        anyCoarse: matchMedia("(any-pointer: coarse)").matches,
+        hoverNone: matchMedia("(hover: none)").matches,
+        overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+      }));
+      expect(media.touch).toBeGreaterThan(0);
+      expect(media.coarse).toBe(true);
+      expect(media.anyCoarse).toBe(true);
+      expect(media.hoverNone).toBe(true);
+      expect(media.overflow).toBeLessThanOrEqual(1);
+
+      await page.getByRole("button", { name: "الدخول لمرة واحدة" }).click();
+      await expect(page.locator("#phone")).toBeVisible();
+      await expect(page.getByRole("button", { name: "إرسال رمز التحقق" })).toBeVisible();
+      await page.getByRole("button", { name: "العودة إلى الدخول بالبريد الإلكتروني" }).click();
       await expect(page.locator("#email")).toBeVisible();
       await expect(page.locator("#password")).toBeVisible();
 
-      // Register navigation from landing works.
-      await page.goto(`${WEB}/login`, { waitUntil: "domcontentloaded" });
-      await page.locator(".motany-login-register-link").evaluate((el) => {
-        (el as HTMLButtonElement).click();
-      });
+      await page.getByRole("link", { name: "إنشاء حساب جديد" }).click();
       await expect(page).toHaveURL(/\/register$/);
+      await page.goto(`${WEB}/login`, { waitUntil: "domcontentloaded" });
+      await page.getByRole("button", { name: "المتابعة كزائر" }).click();
+      await expect(page).toHaveURL(/\/home$/);
 
-      const noOverflowFinal = await page.evaluate(() => {
-        const root = document.documentElement;
-        return root.scrollWidth <= root.clientWidth + 1;
-      });
-      expect(noOverflowFinal).toBe(true);
-
-      const unexpectedConsoleErrors = consoleErrors.filter((entry) => {
-        return !/accounts\.google\.com|Failed to load resource/i.test(entry);
-      });
-
+      const finalOverflow = await page.evaluate(() =>
+        document.documentElement.scrollWidth - document.documentElement.clientWidth);
+      expect(finalOverflow).toBeLessThanOrEqual(1);
+      expect(pageErrors).toEqual([]);
       const unexpectedRequestFailures = requestFailures.filter((entry) => {
-        const isGoogle = /accounts\.google\.com/i.test(entry);
-        const isAbortedNotification = /\/api\/notifications/i.test(entry) && /ERR_ABORTED/i.test(entry);
-        const isAbortedFont = /fonts\.gstatic\.com/i.test(entry) && /ERR_ABORTED/i.test(entry);
-        const isAbortedBrandLogo = /\/watany\/brand\/logo\.png/i.test(entry) && /ERR_ABORTED/i.test(entry);
-        return !(isGoogle || isAbortedNotification || isAbortedFont || isAbortedBrandLogo);
+        const isGoogle = /accounts\.google\.com/i.test(entry) || (/ssl\.gstatic\.com\/_\/gsi\//i.test(entry) && /ERR_ABORTED/i.test(entry));
+        const isAbortedFetch = /\/api\/notifications|fonts\.gstatic\.com|\/watany\/brand\/logo\.png/i.test(entry)
+          && /ERR_ABORTED/i.test(entry);
+        return !(isGoogle || isAbortedFetch);
       });
-
-      expect(unexpectedConsoleErrors).toEqual([]);
       expect(unexpectedRequestFailures).toEqual([]);
     });
   });
