@@ -120,7 +120,9 @@ export async function bootstrapKb(app: FastifyInstance): Promise<KbBootstrapResu
       // before KB health can claim the SQLite store is available.
       const initialStats = await candidate.stats();
       if (initialStats.tables.length === 0) {
-        throw new Error("KB_SQLITE_METADATA_NOT_READABLE");
+        throw new Error(
+          `KB_SQLITE_METADATA_NOT_READABLE${initialStats.error ? `: ${initialStats.error}` : ""}`,
+        );
       }
       kbStore = candidate;
     } catch (e) {
