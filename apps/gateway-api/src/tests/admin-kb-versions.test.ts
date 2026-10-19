@@ -4,6 +4,31 @@ import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
 import app from '../server';
 import { cleanupSessionUsers, createSessionToken } from './helpers/session-auth';
 
+// runtime-save and rollback write files. Point them at a temp copy so the
+// tracked src/data/kb/runtime_kb.json and data/kb_versions stay untouched.
+// Hoisted so RUNTIME_KB_JSON is set before ../server bootstraps the KB.
+const isolated = await vi.hoisted(async () => {
+  const fs = await import('node:fs');
+  const os = await import('node:os');
+  const path = await import('node:path');
+  const { fileURLToPath } = await import('node:url');
+  const here = path.dirname(fileURLToPath(import.meta.url));
+  const trackedRuntime = path.resolve(here, '..', 'data', 'kb', 'runtime_kb.json');
+  // restoreVersion() writes to <versionsDir>/../../<file>, so nest versions two levels under root.
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'watany-kb-versions-'));
+  const versionsDir = path.join(root, 'data', 'kb_versions');
+  const runtimePath = path.join(root, 'runtime_kb.json');
+  fs.mkdirSync(versionsDir, { recursive: true });
+  fs.copyFileSync(trackedRuntime, runtimePath);
+  process.env.RUNTIME_KB_JSON = runtimePath;
+  return { root, versionsDir, runtimePath, trackedRuntime };
+});
+
+vi.mock('../lib/versioning', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../lib/versioning')>();
+  return { ...actual, createVersioningService: () => actual.createVersioningService(isolated.versionsDir) };
+});
+
 vi.mock('../lib/db.js', async (importOriginal) => {
   const actual = await importOriginal<typeof import('../lib/db.js')>();
   return {
@@ -31,17 +56,19 @@ function adminHeaders() {
   return { authorization: `Bearer ${adminToken}` };
 }
 
-const runtimePath = path.resolve(__dirname, '..', 'data', 'kb', 'runtime_kb.json');
-const backupPath = path.join(path.dirname(runtimePath), '..', 'kb_versions');
-
 describe('KB versions & rollback', () => {
-  let orig: any = null;
+  let trackedBefore: Buffer;
   beforeAll(() => {
-    try { orig = JSON.parse(fs.readFileSync(runtimePath, 'utf8')); } catch (_) { orig = null; }
+    trackedBefore = fs.readFileSync(isolated.trackedRuntime);
   });
   afterAll(() => {
-    // restore original runtime if possible
-    try { if (orig) fs.writeFileSync(runtimePath, JSON.stringify(orig, null, 2), 'utf8'); } catch (_) {}
+    fs.rmSync(isolated.root, { recursive: true, force: true });
+  });
+
+  it('uses the temp runtime KB copy, not the tracked file', async () => {
+    const res = await app.inject({ method: 'GET', url: '/api/admin/kb/runtime', headers: adminHeaders() });
+    expect(res.statusCode).toBe(200);
+    expect(path.resolve(JSON.parse(res.payload).path)).toBe(path.resolve(isolated.runtimePath));
   });
 
   it('GET /api/admin/kb/versions returns array', async () => {
@@ -69,5 +96,10 @@ describe('KB versions & rollback', () => {
     expect(rb.statusCode).toBe(200);
     const rbBody = JSON.parse(rb.payload || '{}');
     expect(rbBody.ok).toBe(true);
+    expect(path.resolve(rbBody.restored)).toBe(path.resolve(isolated.root, 'runtime_kb.json'));
+  });
+
+  it('leaves the tracked runtime_kb.json byte-identical', () => {
+    expect(fs.readFileSync(isolated.trackedRuntime).equals(trackedBefore)).toBe(true);
   });
 });
