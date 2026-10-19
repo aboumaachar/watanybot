@@ -1,0 +1,35 @@
+{
+    "kb_id":  "rabita_laws_regulations_universal",
+    "category":  "laws-regulations/rabita",
+    "display_ar":  "أنظمة الرابطة",
+    "display_en":  "Rabita governing documents",
+    "documents":  [
+                      {
+                          "doc_id":  "rabita_internal_rules",
+                          "title_ar":  "النظام الداخلي للرابطة",
+                          "title_en":  "Rabita Internal Rules",
+                          "source_pdf":  "kb/sources/laws-regulations/rabita/source-pdfs/rabita_internal_rules.pdf",
+                          "extracted_text":  "kb/sources/laws-regulations/rabita/extracted-text/rabita_internal_rules.txt",
+                          "extraction_scope":  "index_excerpt_only",
+                          "authoritative_full_content":  "source_pdf",
+                          "kb_doc":  "kb/sources/laws-regulations/rabita/kb-docs/rabita_internal_rules.kb.md",
+                          "sha256":  "8DDC6FEAF4F246CF0D7D705FAE62A349EEFBEB1904FC4629FB7D912ABEE2B1F8"
+                      },
+                      {
+                          "doc_id":  "rabita_basic_statute",
+                          "title_ar":  "النظام الأساسي للرابطة",
+                          "title_en":  "Rabita Basic Statute",
+                          "source_pdf":  "kb/sources/laws-regulations/rabita/source-pdfs/rabita_basic_statute.pdf",
+                          "extracted_text":  "kb/sources/laws-regulations/rabita/extracted-text/rabita_basic_statute.txt",
+                          "extraction_scope":  "index_excerpt_only",
+                          "authoritative_full_content":  "source_pdf",
+                          "kb_doc":  "kb/sources/laws-regulations/rabita/kb-docs/rabita_basic_statute.kb.md",
+                          "sha256":  "EA50177337ADC933878162F663731FE15BA9E55675638943815F3DA2D46601D5"
+                      }
+                  ],
+    "recommended_listing":  [
+                                "القوانين والأنظمة \u003e الرابطة",
+                                "النظام الأساسي للرابطة",
+                                "النظام الداخلي للرابطة"
+                            ]
+}
