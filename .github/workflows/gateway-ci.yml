@@ -69,29 +69,12 @@ jobs:
         working-directory: apps/gateway-api
         # The gate below decides pass/fail from the report, so a crash that
         # writes no report still fails there.
-        run: npx vitest run --reporter=default --reporter=json --outputFile.json=vitest-report.json || true
+        run: npx vitest run --no-file-parallelism --reporter=default --reporter=json --outputFile.json=vitest-report.json || true
 
       - name: Gate on report
-        working-directory: apps/gateway-api
-        run: |
-          node -e '
-            const fs = require("fs");
-            if (!fs.existsSync("vitest-report.json")) { console.error("no vitest report"); process.exit(1); }
-            const r = JSON.parse(fs.readFileSync("vitest-report.json", "utf8"));
-            const s = {
-              total: r.numTotalTests, passed: r.numPassedTests, failed: r.numFailedTests,
-              pending: r.numPendingTests, todo: r.numTodoTests,
-              failedSuites: r.numFailedTestSuites, pendingSuites: r.numPendingTestSuites,
-              success: r.success,
-            };
-            console.log(JSON.stringify(s));
-            const badFiles = (r.testResults || []).filter(t => t.status !== "passed").map(t => t.status + " " + t.name);
-            if (badFiles.length) console.error(badFiles.join("\n"));
-            const ok = r.success === true && s.total > 0 && s.passed === s.total &&
-              s.failed === 0 && s.pending === 0 && s.todo === 0 &&
-              s.failedSuites === 0 && s.pendingSuites === 0 && badFiles.length === 0;
-            process.exit(ok ? 0 : 1);
-          '
+        # Per-test statuses, not vitest's summary counters (which count skips as
+        # passed). Fails on failed/pending/todo, unlisted skips, or lost tests.
+        run: node .github/gateway-ci/gate.mjs apps/gateway-api/vitest-report.json .github/gateway-ci/expected-skips.json
 
       - name: Tracked files unchanged
         if: always()

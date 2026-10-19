@@ -1,0 +1,23 @@
+{
+  "description": "Tests that skip on purpose because they need an environment CI does not provide (a dedicated DB on port 5433 with no DATABASE_URL, APEX_V119_TEST_DATABASE_URL, APEX_WAVE5A_DATABASE_URL, a real KB SQLite copy, or the attachment-complete KB export). Any skip not listed here fails CI. Remove an entry once its test runs in CI.",
+  "minPassed": 918,
+  "skipped": [
+    "src/cms/faqs/faqs-cms-atomic.integration.test.ts ::  R025 transactional FAQ CMS all-or-nothing PostgreSQL validation commits the complete draft-to-approved-to-ranked publication with identical audit/version counts",
+    "src/cms/faqs/faqs-cms-atomic.integration.test.ts ::  R025 transactional FAQ CMS all-or-nothing PostgreSQL validation does not publish an approved item if its publish audit insert fails",
+    "src/cms/faqs/faqs-cms-atomic.integration.test.ts ::  R025 transactional FAQ CMS all-or-nothing PostgreSQL validation rolls back a new FAQ row and version if audit insertion is forced to fail",
+    "src/cms/faqs/faqs-cms-atomic.integration.test.ts ::  R025 transactional FAQ CMS all-or-nothing PostgreSQL validation rolls back a new FAQ row if version insertion is forced to fail",
+    "src/cms/faqs/faqs-cms-db.integration.test.ts ::  R025 real PostgreSQL FAQ editorial readback on a dedicated database only enforces authentication and cannot bypass draft source approval",
+    "src/cms/faqs/faqs-cms-db.integration.test.ts ::  R025 real PostgreSQL FAQ editorial readback on a dedicated database only persists draft, partial edit, reviewed approval, published ranking, audit and versions",
+    "src/cms/faqs/faqs-cms-db.integration.test.ts ::  R025 real PostgreSQL FAQ editorial readback on a dedicated database only persists rejected review and prevents publishing the rejected draft",
+    "src/db/__tests__/apex-v119-migration-031.test.ts ::  APEX V1.0.19 migration 031 runtime proof runs the repository migration chain and remains idempotent",
+    "src/db/__tests__/ud3-import-plan-migration.test.ts ::  UD-3 import-plan migration authority applies 038 through the canonical runner and proves metadata",
+    "src/routes/faq-curated.integration.test.ts ::  R025 curated FAQ real PostgreSQL read-only public route preserves the original generated endpoint contract",
+    "src/routes/faq-curated.integration.test.ts ::  R025 curated FAQ real PostgreSQL read-only public route returns only published approved and source-grounded FAQs",
+    "src/tests/ain-mreisseh-building-assistant.integration.test.ts ::  Ain Mreisseh real PostgreSQL mutation consistency persists status, follow-up, and notes mutations with matching history",
+    "src/tests/ain-mreisseh-building-assistant.integration.test.ts ::  Ain Mreisseh real PostgreSQL mutation consistency rolls back application and history when audit persistence fails",
+    "src/tests/kb-sqlite-store.test.ts ::  createSqliteV3Store reads a disposable copy of the real KB v4 database",
+    "src/tests/procedures-attachments-regression.test.ts ::  Gateway procedure attachment regressions loads the attachment-complete KB export and preserves mapped docs for all procedures",
+    "src/tests/procedures-attachments-regression.test.ts ::  Gateway procedure attachment regressions renders docx previews as HTML while keeping downloads as the original file",
+    "src/tests/procedures-attachments-regression.test.ts ::  Gateway procedure attachment regressions serves preview and download endpoints for every mapped attached document"
+  ]
+}
