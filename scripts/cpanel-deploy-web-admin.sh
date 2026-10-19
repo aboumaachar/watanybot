@@ -12,7 +12,7 @@ BACKUP="/home/koudama/watany-admin-ops-${STAMP}.tar.gz"
 DEPLOYED=0
 HTTP_PROOF_DIR=""
 
-EXPECTED_BRANCH="integration/theme-upgrade-20260728"
+EXPECTED_BRANCH="integration/theme-upgrade-20260728-published"
 PUBLIC_BASE="/ops/"
 PUBLIC_URL="https://koudama.com/ops/"
 API_URL="https://koudama.com/mcp"
