@@ -2,7 +2,7 @@
  * @watany/kb — Lightweight SQLite KB store for the gateway.
  *
  * Provides a `createSqliteV3Store` factory that wraps the
- * Watany KB v4 SQLite database (read-only, WAL mode).
+ * Watany KB v4 SQLite database (read-only).
  */
 import Database from "better-sqlite3";
 import { statSync } from "node:fs";
@@ -19,6 +19,8 @@ export interface KbStats {
   salaryRecords: number;
   knowledgeChunks: number;
   dbSizeKb: number;
+  /** Set when the database could not be opened or read. */
+  error?: string;
 }
 
 export function createSqliteV3Store(opts: SqliteV3StoreOptions) {
@@ -26,9 +28,16 @@ export function createSqliteV3Store(opts: SqliteV3StoreOptions) {
 
   function getDb(): Database.Database {
     if (!db) {
-      db = new Database(opts.dbPath, { readonly: true });
-      db.pragma("journal_mode = WAL");
-      db.pragma("cache_size = -8192");
+      // Read-only connection: the KB file is a rollback-journal database and
+      // switching it to WAL is a write, which fails with SQLITE_READONLY.
+      const conn = new Database(opts.dbPath, { readonly: true, fileMustExist: true });
+      try {
+        conn.pragma("cache_size = -8192");
+      } catch (e) {
+        conn.close();
+        throw e;
+      }
+      db = conn;
     }
     return db;
   }
@@ -59,7 +68,7 @@ export function createSqliteV3Store(opts: SqliteV3StoreOptions) {
         knowledgeChunks: safeCount("knowledge_chunks"),
         dbSizeKb: Math.round((statSync(opts.dbPath).size || 0) / 1024),
       };
-    } catch {
+    } catch (e) {
       return {
         tables: [],
         transactions: 0,
@@ -68,9 +77,15 @@ export function createSqliteV3Store(opts: SqliteV3StoreOptions) {
         salaryRecords: 0,
         knowledgeChunks: 0,
         dbSizeKb: 0,
+        error: (e as { code?: string })?.code || (e as Error)?.message || String(e),
       };
     }
   }
 
-  return { stats };
+  function close(): void {
+    db?.close();
+    db = null;
+  }
+
+  return { stats, close };
 }

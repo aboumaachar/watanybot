@@ -2201,6 +2201,38 @@ async function buildLegacyFallbackResponse(deps: ChatServiceDeps): Promise<ChatR
   };
 }
 
+function isExplicitRequiredDocumentsQuery(query: string): boolean {
+  return /(المستندات|مستندات|الأوراق|اوراق|الوراق)/i.test(query);
+}
+
+async function buildLocalRequiredDocumentsResponse(
+  deps: ChatServiceDeps,
+  body: ChatRequest,
+): Promise<ChatResponse | null> {
+  if (!isExplicitRequiredDocumentsQuery(body.message)) return null;
+
+  const agentInput = prepareWatanyAgentInput(body.message);
+  let kbChunks: KbChunk[] = [];
+  try {
+    kbChunks = deps.retrieveChunks(body.message, deps.aiRagTopK, agentInput.kbScopes);
+  } catch (err) {
+    deps.log.warn({ err }, "local_required_documents_rag_failed");
+    return null;
+  }
+
+  const topChunk = kbChunks[0];
+  if (!topChunk || (topChunk.chunk_type !== "documents" && topChunk.chunk_type !== "requirements")) return null;
+
+  return buildDeterministicChatResponse(deps, {
+    kbAnswer: "", kbConfidence: 0, kbHits: [], kbChunks,
+    sources: buildChatSources(kbChunks), elapsedMs: 0,
+  }, {
+    localRequiredDocuments: true,
+    ragChunks: kbChunks.length,
+    ragTotal: deps.getRagChunkCount(),
+  });
+}
+
 function buildAgentDebug(agentInput: ReturnType<typeof prepareWatanyAgentInput>): Record<string, unknown> {
   return {
     tagIds: agentInput.tags.map((tag) => tag.tagId),
@@ -3365,6 +3397,18 @@ export function createChatService(deps: ChatServiceDeps) {
 
     const deterministic = await resolveDeterministicChatResponse(body);
     if (deterministic.response) return deterministic.response;
+
+    if (!deps.useAi) {
+      const localDocumentsResponse = await buildLocalRequiredDocumentsResponse(deps, body);
+      if (localDocumentsResponse) {
+        deps.log.info({ chunkType: "documents" }, "local_required_documents_shortcut");
+        return finalizeChatResponse({
+          conversationKey, response: localDocumentsResponse, module: "documents",
+          startedAt, timings: deterministic.timings, question: body.message,
+          preserveOriginalQuestion: deterministic.preserveOriginalQuestion,
+        });
+      }
+    }
 
     if (deps.useAi) {
       return fetchChatResponseAi(body, {

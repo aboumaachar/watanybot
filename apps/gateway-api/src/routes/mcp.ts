@@ -16,6 +16,7 @@
  *   ping                — health check
  */
 import type { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
+import { randomUUID } from "node:crypto";
 
 /* ── JSON-RPC types ── */
 interface JsonRpcRequest {
@@ -144,7 +145,7 @@ const SERVER_CAPABILITIES = {
 const sessions = new Map<string, { initialized: boolean; ts: number }>();
 
 function generateSessionId(): string {
-  return `mcp-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+  return `mcp-${Date.now()}-${randomUUID().slice(0, 6)}`;
 }
 
 /* ── Route registration ── */

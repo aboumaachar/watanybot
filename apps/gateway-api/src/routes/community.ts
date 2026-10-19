@@ -81,7 +81,7 @@ type CommunityFeatureFlag =
 
 type CommunityTelemetryLevel = "info" | "warn" | "error";
 type FeatureFlagResolver = (flagId: string, defaultValue?: boolean) => Promise<boolean>;
-type CommunityRequest = { user?: { id: string; role: string; email: string } };
+type CommunityRequest = { user?: { id: string; role: string; email: string | null } };
 type CommunityReply = { code: (statusCode: number) => { send: (body: unknown) => unknown } };
 type CommunityTelemetryContext = {
   action: string;
@@ -471,8 +471,8 @@ function buildInlineContentDisposition(filename: string): string {
   return `inline; filename*=UTF-8''${encodeURIComponent(filename)}`;
 }
 
-function authenticatedActorDisplayName(email: string, actorId: string): string {
-  const localPart = email.split("@")[0]?.trim();
+function authenticatedActorDisplayName(email: string | null, actorId: string): string {
+  const localPart = email?.split("@")[0]?.trim();
   return localPart || actorId;
 }
 

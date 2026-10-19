@@ -9,6 +9,19 @@ import {
 } from "./seed.js";
 import type { JobApplicationRecord, JobPosting, SavedJob, JobSearchResult } from "./types.js";
 import { marketplaceJobApplicationsRepository, type MarketplaceJobApplicationsRepository } from "./repository.js";
+import { listUniversalJobApplicationsForOwner } from "../civilian-jobs/universal-job-applications.repository.js";
+import { listMiddleEastSecurityApplicationsForOwner } from "../koudama/surveys/middle-east-security/middleEastSecurity.repository.js";
+import {
+  createCivilianOpportunityApplication,
+  getCivilianOpportunity,
+  listCivilianOpportunities,
+  listCivilianOpportunityApplications,
+} from "../civilian-jobs/civilian-jobs.service.js";
+import {
+  civilianJobsRepository,
+  type CivilianJobsRepository,
+} from "../civilian-jobs/civilian-jobs.repository.js";
+import type { CivilianOpportunity } from "../civilian-jobs/civilian-jobs.types.js";
 
 let idCounter = 1;
 function makeId(prefix: string) {
@@ -149,11 +162,100 @@ function toPublicEmployerDetail(employer: {
   };
 }
 
-  export async function jobsRoutes(
+function legacyJobTypeForOpportunity(type: CivilianOpportunity["type"]): "full_time" | "part_time" | "contract" | "freelance" {
+  if (type === "PART_TIME_JOB") return "part_time";
+  if (type === "CONTRACT_JOB") return "contract";
+  if (type === "FREELANCE_SERVICE") return "freelance";
+  return "full_time";
+}
+
+function legacyCategoryIdForOpportunity(item: CivilianOpportunity): number | undefined {
+  const haystack = [item.category, item.title, item.summary].join(" ").toLowerCase();
+  const mappings: Array<[number, string[]]> = [
+    [1, ["security", "guard"]],
+    [2, ["transport", "driver", "driving"]],
+    [3, ["maintenance", "repair"]],
+    [4, ["admin", "office"]],
+    [5, ["technology", "cyber", "it"]],
+    [6, ["education", "training"]],
+    [7, ["health", "medical"]],
+    [8, ["trades", "construction", "building"]],
+    [9, ["hospitality", "tourism"]],
+    [10, ["sales", "marketing"]],
+  ];
+  return mappings.find(([, terms]) => terms.some((term) => haystack.includes(term)))?.[0];
+}
+
+function toCivilianJobSearchResult(item: CivilianOpportunity): JobSearchResult {
+  return {
+    id: item.id,
+    title_ar: item.title,
+    company_name: item.organization,
+    location_city: item.location || undefined,
+    job_type: getJobTypeLabel(legacyJobTypeForOpportunity(item.type)),
+    salary_currency: "USD",
+    show_salary: false,
+    veteran_preferred: item.audience.includes("VETERAN"),
+    urgent: false,
+    featured: item.adminVerified,
+    published_at: item.createdAt,
+    tags: Array.from(new Set([item.category, item.type, ...item.audience].filter(Boolean))),
+  };
+}
+
+function toCivilianJobDetail(item: CivilianOpportunity) {
+  const categoryId = legacyCategoryIdForOpportunity(item) ?? 4;
+  return {
+    id: item.id,
+    category_id: categoryId,
+    title_ar: item.title,
+    description_ar: item.description,
+    summary_ar: item.summary,
+    requirements_ar: item.requirements.join(" | ") || undefined,
+    job_type: legacyJobTypeForOpportunity(item.type),
+    location_city: item.location || undefined,
+    salary_currency: "USD",
+    show_salary: false,
+    veteran_only: item.audience.length === 1 && item.audience[0] === "VETERAN",
+    veteran_preferred: item.audience.includes("VETERAN"),
+    remote_work: false,
+    hybrid_work: false,
+    application_deadline: item.deadline,
+    status: "active" as const,
+    featured: item.adminVerified,
+    urgent: false,
+    views_count: 0,
+    applications_count: 0,
+    published_at: item.createdAt,
+    created_at: item.createdAt,
+    source_name: item.sourceName ?? null,
+    source_url: item.sourceUrl ?? null,
+  };
+}
+
+function civilianOpportunityMatchesLegacyFilters(
+  item: CivilianOpportunity,
+  filters: { q: string; categoryId?: number; jobType: string; city: string; veteranOnly: boolean },
+): boolean {
+  if (filters.q) {
+    const haystack = [item.title, item.organization, item.location, item.category, item.summary, item.description, ...item.requirements]
+      .join(" ")
+      .toLowerCase();
+    if (!haystack.includes(filters.q)) return false;
+  }
+  if (filters.categoryId && legacyCategoryIdForOpportunity(item) !== filters.categoryId) return false;
+  if (filters.jobType && legacyJobTypeForOpportunity(item.type) !== filters.jobType) return false;
+  if (filters.city && !item.location.toLowerCase().includes(filters.city)) return false;
+  if (filters.veteranOnly && !item.audience.includes("VETERAN")) return false;
+  return true;
+}
+
+export async function jobsRoutes(
     app: FastifyInstance,
-    options: { applicationsRepository?: MarketplaceJobApplicationsRepository } = {},
+    options: { applicationsRepository?: MarketplaceJobApplicationsRepository; civilianJobsRepository?: CivilianJobsRepository } = {},
   ) {
     const applicationsRepository = options.applicationsRepository ?? marketplaceJobApplicationsRepository;
+    const civilianRepository = options.civilianJobsRepository ?? civilianJobsRepository;
   const prefix = "/api/v2/jobs";
   const requireDetailsAuth = readFlag("JOBS_DETAILS_REQUIRE_AUTH", false);
   const requireActionsAuth = readFlag("JOBS_ACTIONS_REQUIRE_AUTH", false);
@@ -240,17 +342,25 @@ function toPublicEmployerDetail(employer: {
     if (city) filtered = filtered.filter((j) => (j.location_city || "").toLowerCase().includes(city));
     if (veteranOnly) filtered = filtered.filter((j) => j.veteran_only || j.veteran_preferred);
 
-    const total = filtered.length;
-    const page = filtered.slice(offset, offset + limit);
-
-    const results: JobSearchResult[] = page.map((j) => {
+    const seedResults: JobSearchResult[] = filtered.map((j) => {
       const emp = SEED_EMPLOYERS.find((e) => e.id === j.employer_id);
       const tags = j.skills_required?.slice(0, 4) || [];
       if (explicitPublicCardShaping) {
-        return toPublicJobCard(j, emp?.company_name || "—", emp?.logo_url, tags);
+        return toPublicJobCard(j, emp?.company_name || "-", emp?.logo_url, tags);
       }
-      return toPublicJobCard(j, emp?.company_name || "—", emp?.logo_url, tags);
+      return toPublicJobCard(j, emp?.company_name || "-", emp?.logo_url, tags);
     });
+
+    const persistedOpportunities = await listCivilianOpportunities({}, civilianRepository);
+    const persistedResults = persistedOpportunities
+      .filter((item) => civilianOpportunityMatchesLegacyFilters(item, { q, categoryId, jobType, city, veteranOnly }))
+      .map(toCivilianJobSearchResult);
+
+    const deduped = new Map<string, JobSearchResult>();
+    for (const item of [...seedResults, ...persistedResults]) deduped.set(item.id, item);
+    const combined = [...deduped.values()].sort((left, right) => right.published_at.localeCompare(left.published_at));
+    const total = combined.length;
+    const results = combined.slice(offset, offset + limit);
 
     return { total, offset, limit, results };
   });
@@ -354,8 +464,25 @@ function toPublicEmployerDetail(employer: {
     const { id } = req.params as { id: string };
     const job = SEED_JOBS.find((j) => j.id === id);
     if (!job) {
-      reply.code(404);
-      return { error: "الوظيفة غير موجودة" };
+      const opportunity = await getCivilianOpportunity(id, civilianRepository);
+      if (!opportunity) {
+        reply.code(404);
+        return { error: "الوظيفة غير موجودة" };
+      }
+      const categoryId = legacyCategoryIdForOpportunity(opportunity) ?? 4;
+      return {
+        job: toCivilianJobDetail(opportunity),
+        employer: {
+          id: `civilian:${opportunity.organization}`,
+          company_name: opportunity.organization,
+          industry: opportunity.category || undefined,
+          city: opportunity.location || undefined,
+          verified: opportunity.adminVerified,
+          veteran_friendly: opportunity.audience.includes("VETERAN"),
+        },
+        category: SEED_CATEGORIES.find((entry) => entry.id === categoryId) || null,
+        detail_access: "public_persisted",
+      };
     }
     const emp = SEED_EMPLOYERS.find((e) => e.id === job.employer_id);
     const cat = SEED_CATEGORIES.find((c) => c.id === job.category_id);
@@ -476,10 +603,32 @@ function toPublicEmployerDetail(employer: {
 
     const job = SEED_JOBS.find((j) => j.id === id);
     if (!job) {
-      reply.code(404);
-      return { error: "الوظيفة غير موجودة" };
+      const opportunity = await getCivilianOpportunity(id, civilianRepository);
+      if (!opportunity) {
+        reply.code(404);
+        return { error: "الوظيفة غير موجودة" };
+      }
+      const application = await createCivilianOpportunityApplication({
+        opportunityId: id,
+        applicantName: name,
+        applicantPhone: phone,
+        applicantType: "PUBLIC",
+        note: cover || undefined,
+      }, civilianRepository);
+      return {
+        ok: true,
+        application: {
+          id: application.id,
+          job_id: id,
+          veteran_name: name,
+          phone,
+          email: email || undefined,
+          cover_letter: cover || undefined,
+          status: "pending" as const,
+          applied_at: application.createdAt,
+        },
+      };
     }
-
     const dup = await applicationsRepository.findByJobAndPhone(id, phone);
     if (dup) {
       reply.code(409);
@@ -509,21 +658,78 @@ function toPublicEmployerDetail(employer: {
       return { applications: [] };
     }
 
-    const qs = req.query as Record<string, string>;
-    const phone = normalize(qs.phone);
-    if (!phone) return { applications: [] };
-
-    const mine = await applicationsRepository.listByPhone(phone);
-    const enriched = mine.map((a) => {
-      const job = SEED_JOBS.find((j) => j.id === a.job_id);
-      const emp = job ? SEED_EMPLOYERS.find((e) => e.id === job.employer_id) : null;
-      return {
-        ...a,
-        job_title: job?.title_ar || "—",
-        company_name: emp?.company_name || "—",
-      };
-    });
-    return { applications: enriched };
+    // Ownership is proven only by the authenticated user id or a per-subsystem tracking token sent as a
+    // header (query strings reach access logs). Legacy marketplace rows have no owner link, and a phone
+    // number is not proof of ownership, so they are not listed here.
+    const userId = normalize(req.user?.id) || undefined;
+    const universalTrackingToken = normalize(req.headers["x-job-tracking-token"]) || undefined;
+    const mesTrackingToken = normalize(req.headers["x-mes-tracking-token"]) || undefined;
+    const [universal, mes] = await Promise.all([
+      listUniversalJobApplicationsForOwner({ userId, trackingToken: universalTrackingToken }).catch((error) => {
+        req.log?.error?.({ err: error }, "universal_job_applied_jobs_lookup_failed");
+        return [];
+      }),
+      listMiddleEastSecurityApplicationsForOwner({ userId, trackingToken: mesTrackingToken }).catch((error) => {
+        req.log?.error?.({ err: error }, "middle_east_security_applied_jobs_lookup_failed");
+        return [];
+      }),
+    ]);
+    const mesItems = mes.map((a) => ({
+      id: a.id,
+      source: "middle_east_security" as const,
+      source_key: `middle_east_security:${a.id}`,
+      job_id: "middle-east-security",
+      status: (a.status === "approved" ? "accepted" : a.status === "rejected" ? "rejected" : "pending") as JobApplicationRecord["status"],
+      veteran_name: a.full_name,
+      phone: a.phone,
+      applied_at: a.createdAt,
+      job_title: "فرصة عمل في الأمن والحماية",
+      company_name: "ميدل إيست سيكوريتي لبنان",
+      preferred_location: a.preferred_location,
+      address: a.address,
+      mohafaza: a.mohafaza,
+      mohafaza_id: a.mohafaza_id,
+      caza: a.caza,
+      caza_id: a.caza_id,
+      village: a.village,
+      village_id: a.village_id,
+      village_pcode: a.village_pcode,
+      location_dataset_version: a.location_dataset_version,
+      location_approval_status: a.location_approval_status,
+      updated_at: a.updatedAt,
+      follow_up_status: a.followUpStatus,
+      reference: a.id,
+    }));
+    const universalItems = universal.map((a) => ({
+      id: a.id,
+      source: "universal" as const,
+      source_key: `universal:${a.id}`,
+      job_id: a.templateSlug,
+      status: (a.status === "approved" || a.status === "hired" ? "accepted" : a.status === "rejected" || a.status === "withdrawn" ? "rejected" : "pending") as JobApplicationRecord["status"],
+      veteran_name: a.applicantName,
+      phone: a.phone,
+      applied_at: a.createdAt,
+      job_title: a.templateTitle,
+      company_name: a.employerName,
+      address: a.address,
+      mohafaza: a.mohafaza,
+      mohafaza_id: a.mohafazaId,
+      caza: a.caza,
+      caza_id: a.cazaId,
+      village: a.village,
+      village_id: a.villageId,
+      village_pcode: a.villagePcode,
+      location_dataset_version: a.locationDatasetVersion,
+      location_approval_status: a.locationApprovalStatus,
+      updated_at: a.updatedAt,
+      follow_up_status: a.followUpStatus,
+      reference: a.reference,
+    }));
+    const seen = new Set<string>();
+    const applications = [...mesItems, ...universalItems]
+      .filter((item) => (seen.has(item.source_key) ? false : (seen.add(item.source_key), true)))
+      .sort((x, y) => String(y.applied_at).localeCompare(String(x.applied_at)) || x.source_key.localeCompare(y.source_key));
+    return { applications };
   });
 
   /* ─── POST /api/v2/jobs/:id/save — save job ───────── */
@@ -540,7 +746,8 @@ function toPublicEmployerDetail(employer: {
     const notes = normalize(body.notes);
 
     const job = SEED_JOBS.find((j) => j.id === id);
-    if (!job) {
+    const persistedOpportunity = job ? null : await getCivilianOpportunity(id, civilianRepository);
+    if (!job && !persistedOpportunity) {
       reply.code(404);
       return { error: "الوظيفة غير موجودة" };
     }
@@ -590,30 +797,39 @@ function toPublicEmployerDetail(employer: {
     const qs = req.query as Record<string, string>;
     const userId = normalize(req.user?.id) || normalize(qs.user_id) || "anon";
 
-    const saved = savedJobs
+    const saved = await Promise.all(savedJobs
       .filter((item) => (normalize(item.user_id) || "anon") === userId)
-      .map((item) => {
+      .map(async (item) => {
         const job = SEED_JOBS.find((entry) => entry.id === item.job_id);
         const employer = job ? SEED_EMPLOYERS.find((entry) => entry.id === job.employer_id) : null;
+        const persistedOpportunity = job ? null : await getCivilianOpportunity(item.job_id, civilianRepository);
         return {
           ...item,
-          title_ar: job?.title_ar,
-          company_name: employer?.company_name,
-          location_city: job?.location_city,
+          title_ar: job?.title_ar || persistedOpportunity?.title,
+          company_name: employer?.company_name || persistedOpportunity?.organization,
+          location_city: job?.location_city || persistedOpportunity?.location || undefined,
         };
-      });
+      }));
 
     return { saved };
   });
 
   /* ─── GET /api/v2/jobs/stats — admin stats ─────────── */
   app.get(`${prefix}/stats`, async () => {
+    const [persistedJobs, persistedApplications, legacyApplications] = await Promise.all([
+      listCivilianOpportunities({}, civilianRepository),
+      listCivilianOpportunityApplications(civilianRepository),
+      applicationsRepository.listAll(),
+    ]);
     return {
-      total_jobs: SEED_JOBS.filter((j) => j.status === "active").length,
-      total_applications: (await applicationsRepository.listAll()).length,
+      total_jobs: SEED_JOBS.filter((j) => j.status === "active").length + persistedJobs.length,
+      total_applications: legacyApplications.length + persistedApplications.length,
       total_saved: savedJobs.length,
       categories: SEED_CATEGORIES.length,
-      employers: SEED_EMPLOYERS.length,
+      employers: new Set([
+        ...SEED_JOBS.filter((j) => j.status === "active").map((job) => job.employer_id),
+        ...persistedJobs.map((job) => job.organization),
+      ]).size,
     };
   });
 }

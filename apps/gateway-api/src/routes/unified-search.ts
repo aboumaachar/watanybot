@@ -47,7 +47,7 @@ export async function unifiedSearchRoutes(app: FastifyInstance) {
               url: `/api/kb-nodes/search?q=${encodeURIComponent(query)}&limit=${limit}`,
             });
             const body = JSON.parse(kbRes.body);
-            results.kb = body.hits || body.results || [];
+            results.kb = body.nodes || body.hits || body.results || [];
           } catch (err: any) {
             errors.push(`kb: ${err.message}`);
             results.kb = [];
@@ -65,7 +65,7 @@ export async function unifiedSearchRoutes(app: FastifyInstance) {
               url: `/api/v2/search?q=${encodeURIComponent(query)}&limit=${limit}`,
             });
             const body = JSON.parse(v2Res.body);
-            results.v2 = body.hits || body.results || [];
+            results.v2 = body.items || body.hits || body.results || [];
           } catch (err: any) {
             errors.push(`v2: ${err.message}`);
             results.v2 = [];

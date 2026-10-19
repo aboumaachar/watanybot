@@ -3,7 +3,7 @@ import { buildAdminAuthorityPreHandler, getRoutePolicyByKey } from "../../admin-
 import { registerGenericCmsRoutes } from "../storage/genericCmsRoutes.js";
 import { GenericCmsService, type GenericCmsRouteConfig } from "../storage/genericCmsService.js";
 import { replaceArticleMedia, writeArticleMedia } from "./articleMediaStorage.js";
-import { analyzeArticleSeo, type ArticleSeoAgentInput } from "./articleSeoAgent.js";
+import { analyzeArticleSeo, auditPublishedArticlesSeo, buildArticleSeoSafeFixes, type ArticleSeoAgentInput } from "./articleSeoAgent.js";
 
 const articleConfig: GenericCmsRouteConfig = {
   domain: "articles",
@@ -184,6 +184,16 @@ export function registerArticlesCmsRoutes(app: FastifyInstance): void {
       }
     },
   );
+
+  app.post<{ Body: ArticleSeoAgentInput }>("/api/admin/cms/articles/seo-agent/safe-fix", { preHandler: [buildAdminAuthorityPreHandler(getRoutePolicyByKey("cms.edit"))], bodyLimit: 3 * 1024 * 1024 }, async (request, reply) => {
+    try { const title=typeof request.body?.title==="string"?request.body.title.trim():""; const slug=typeof request.body?.slug==="string"?request.body.slug.trim():""; if(!title||!slug)return reply.code(400).send({ok:false,error:"ARTICLE_SEO_SAFE_FIX_TITLE_SLUG_REQUIRED"}); const fix=await buildArticleSeoSafeFixes({...request.body,title,slug}); return reply.send({ok:true,fix}); }
+    catch(error){ app.log.error({err:error},"article_seo_safe_fix_failed"); return reply.code(500).send({ok:false,error:"ARTICLE_SEO_SAFE_FIX_FAILED"}); }
+  });
+
+  app.get<{ Querystring: { limit?: string } }>("/api/admin/cms/articles/seo-audit/bulk", { preHandler: [buildAdminAuthorityPreHandler(getRoutePolicyByKey("cms.read"))] }, async (request, reply) => {
+    try { const limit=Math.min(Math.max(Number(request.query?.limit||300)||300,1),500); const report=await auditPublishedArticlesSeo(limit); return reply.send({ok:true,report}); }
+    catch(error){ app.log.error({err:error},"article_seo_bulk_audit_failed"); return reply.code(500).send({ok:false,error:"ARTICLE_SEO_BULK_AUDIT_FAILED"}); }
+  });
 
   registerGenericCmsRoutes(app, articleConfig);
   registerGenericCmsRoutes(app, categoryConfig);

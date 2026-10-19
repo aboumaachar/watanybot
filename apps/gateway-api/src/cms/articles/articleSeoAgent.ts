@@ -43,6 +43,24 @@ export type ArticleSeoAudit = {
   media: { checked: number; broken: string[] };
   indexing: { publicationStatus: string; robots: string; indexable: boolean; sitemapEligible: boolean; sitemapIncluded: boolean; expectedCanonical: string; canonicalMatches: boolean };
 };
+export type ArticleSeoSafeFix = {
+  patch: { permalinkSlug: string; seoTitle: string; seoDescription: string; focusKeyphrase: string; canonicalUrl: string; robots: string; ogTitle: string; ogDescription: string; ogImage: string; excerpt: string; bodyHtml: string };
+  changes: string[];
+  scoreBefore: number;
+  scoreAfter: number;
+  audit: ArticleSeoAudit;
+};
+export type ArticleSeoPerformance = { views30d: number; shares30d: number; pdfDownloads30d: number; internalLinkClicks30d: number };
+export type ArticleSeoBulkItem = {
+  id: string; title: string; url: string; score: number; indexable: boolean; sitemapIncluded: boolean;
+  issues: string[]; performance: ArticleSeoPerformance; duplicateRisk: number;
+};
+export type ArticleSeoBulkReport = {
+  generatedAt: string;
+  summary: { total: number; averageScore: number; perfectCount: number; needsAttention: number; indexable: number; sitemapIncluded: number; canonicalIssues: number; missingAlt: number; brokenInternalLinks: number; brokenMedia: number; duplicateRisks: number; performance: ArticleSeoPerformance };
+  items: ArticleSeoBulkItem[];
+};
+
 export type ArticleSeoAgentProposal = {
   mode: "ai" | "heuristic";
   provider: string;
@@ -207,9 +225,9 @@ function attrValue(attrs:string,name:string):string{const re=new RegExp('\\b'+na
 function internalPath(value:string):string|null{try{const u=new URL(value,'https://koudama.com');if(u.origin!=='https://koudama.com')return null;return decodeURIComponent(u.pathname).replace(/\/+$/u,'')||'/';}catch{return null;}}
 function inspectArticleHtml(bodyHtml:string){const headings:number[]=[];for(const m of bodyHtml.matchAll(/<h([1-6])\b[^>]*>/giu))headings.push(Number(m[1]));let skippedLevels=0;for(let i=1;i<headings.length;i++){if(headings[i]>headings[i-1]+1)skippedLevels+=1;}let totalImages=0;let missingAlt=0;for(const m of bodyHtml.matchAll(/<img\b([^>]*)>/giu)){totalImages+=1;if(!attrValue(m[1]||'', 'alt'))missingAlt+=1;}const hrefs:string[]=[];for(const m of bodyHtml.matchAll(/<a\b([^>]*)>/giu)){const href=attrValue(m[1]||'','href');if(href)hrefs.push(href);}const srcs:string[]=[];for(const m of bodyHtml.matchAll(/<(?:img|source|video|audio)\b([^>]*)>/giu)){const src=attrValue(m[1]||'','src');if(src)srcs.push(src);}return {headings,skippedLevels,totalImages,missingAlt,hrefs,srcs};}
 function check(id:string,label:string,status:ArticleSeoAuditCheck['status'],severity:ArticleSeoAuditCheck['severity'],detail:string):ArticleSeoAuditCheck{return{id,label,status,severity,detail};}
-async function analyzeSeoAudit(input:ArticleSeoAgentInput):Promise<ArticleSeoAudit>{
-  const result=await query<ArticleCandidate>(`SELECT public_id,public_code,title,status,payload FROM cms_content_entities WHERE domain='articles' AND (status='PUBLISHED' OR public_id=COALESCE($1,'')) ORDER BY published_at DESC NULLS LAST,updated_at DESC LIMIT 200`,[input.id||'']);
-  const rows=result.rows;const current=rows.find((row)=>row.public_id===input.id);const publicationStatus=cleanText(current?.status)||cleanText(input.status)||'DRAFT';
+async function analyzeSeoAudit(input:ArticleSeoAgentInput, rowsOverride?:ArticleCandidate[]):Promise<ArticleSeoAudit>{
+  const rows=rowsOverride ?? (await query<ArticleCandidate>(`SELECT public_id,public_code,title,status,payload FROM cms_content_entities WHERE domain='articles' AND (status='PUBLISHED' OR public_id=COALESCE($1,'')) ORDER BY published_at DESC NULLS LAST,updated_at DESC LIMIT 300`,[input.id||''])).rows;
+  const current=rows.find((row)=>row.public_id===input.id);const publicationStatus=cleanText(current?.status)||cleanText(input.status)||'DRAFT';
   const expectedCanonical=canonicalArticleUrl(input);const currentCanonical=cleanText(input.canonicalUrl)||expectedCanonical;const canonicalMatches=currentCanonical===expectedCanonical;const robots=cleanText(input.robots)||'index,follow';const indexable=!robots.startsWith('noindex');const sitemapEligible=publicationStatus==='PUBLISHED'&&indexable;
   const html=inspectArticleHtml(input.bodyHtml||'');const canonicalPaths=new Set<string>();const legacyPaths=new Set<string>();
   for(const row of rows.filter((item)=>item.status==='PUBLISHED')){canonicalPaths.add(candidateCanonicalPath(row));if(row.public_code)legacyPaths.add('/articles/'+row.public_code.replace(/^\/+|\/+$/gu,''));}canonicalPaths.add(new URL(expectedCanonical).pathname);
@@ -235,6 +253,63 @@ async function analyzeSeoAudit(input:ArticleSeoAgentInput):Promise<ArticleSeoAud
   ];
   let score=100;for(const item of checks){if(item.status==='fail')score-=item.severity==='blocking'?16:12;else if(item.status==='warn')score-=6;}score=Math.max(0,Math.min(100,score));
   return {score,checks,duplicateCandidates:topDuplicates,heading:{count:html.headings.length,bodyH1Count,skippedLevels:html.skippedLevels},images:{total:html.totalImages,missingAlt:html.missingAlt},links:{internal,external,brokenInternal:[...new Set(brokenInternal)].slice(0,12),malformed:[...new Set(malformed)].slice(0,12)},media:{checked:new Set(mediaRefs).size,broken:[...new Set(brokenMedia)].slice(0,12)},indexing:{publicationStatus,robots,indexable,sitemapEligible,sitemapIncluded:sitemapEligible,expectedCanonical,canonicalMatches}};
+}
+
+function demoteBodyH1(value:string):string{return value.replace(/<h1\b([^>]*)>/giu,"<h2$1>").replace(/<\/h1\s*>/giu,"</h2>");}
+function candidateToSeoInput(row:ArticleCandidate):ArticleSeoAgentInput{
+  const p=row.payload&&typeof row.payload==="object"?row.payload:{};
+  const categories=stringArray((p as Record<string,unknown>).categories,20);
+  return {
+    id:row.public_id,status:cleanText(row.status)||"PUBLISHED",title:row.title,slug:cleanText(row.public_code)||cleanText((p as Record<string,unknown>).slug)||row.public_id,
+    permalinkSlug:cleanText((p as Record<string,unknown>).permalinkSlug)||articleAsciiSlug(row.title),primaryCategory:cleanText((p as Record<string,unknown>).primaryCategory)||categories[0]||"",
+    excerpt:cleanText((p as Record<string,unknown>).excerpt),bodyHtml:typeof (p as Record<string,unknown>).bodyHtml==="string"?String((p as Record<string,unknown>).bodyHtml):"",
+    categories,tags:stringArray((p as Record<string,unknown>).tags,30),featuredImage:cleanText((p as Record<string,unknown>).featuredImage),seoTitle:cleanText((p as Record<string,unknown>).seoTitle),
+    seoDescription:cleanText((p as Record<string,unknown>).seoDescription),focusKeyphrase:cleanText((p as Record<string,unknown>).focusKeyphrase),canonicalUrl:cleanText((p as Record<string,unknown>).canonicalUrl),
+    robots:cleanText((p as Record<string,unknown>).robots)||"index,follow",ogTitle:cleanText((p as Record<string,unknown>).ogTitle),ogDescription:cleanText((p as Record<string,unknown>).ogDescription),ogImage:cleanText((p as Record<string,unknown>).ogImage),
+  };
+}
+
+export async function buildArticleSeoSafeFixes(input:ArticleSeoAgentInput):Promise<ArticleSeoSafeFix>{
+  const auditBefore=await analyzeSeoAudit(input);
+  const permalinkSlug=articleAsciiSlug(cleanText(input.permalinkSlug)||input.title);
+  const heuristic=buildHeuristicFields({...input,permalinkSlug});
+  const fields={...heuristic,ogImage:heuristic.ogImage||"https://koudama.com/logo.png?v=20260827-1"};
+  let bodyHtml=input.bodyHtml||"";const changes:string[]=[];
+  if(cleanText(input.permalinkSlug)!==permalinkSlug)changes.push("توحيد الرابط الدائم بصيغة ASCII آمنة.");
+  if(!auditBefore.indexing.canonicalMatches)changes.push("تصحيح Canonical URL ليتطابق مع الرابط الدائم.");
+  if(cleanText(input.seoTitle)!==fields.seoTitle)changes.push("ضبط عنوان SEO ضمن الحد الموصى به.");
+  if(cleanText(input.seoDescription)!==fields.seoDescription)changes.push("ضبط وصف Meta ضمن الحد الموصى به.");
+  if(!cleanText(input.focusKeyphrase)&&fields.focusKeyphrase)changes.push("إضافة عبارة مفتاحية أساسية.");
+  if(!cleanText(input.ogTitle)&&fields.ogTitle)changes.push("إكمال OG Title.");
+  if(!cleanText(input.ogDescription)&&fields.ogDescription)changes.push("إكمال OG Description.");
+  if(!cleanText(input.ogImage)&&fields.ogImage)changes.push("إكمال OG Image بصورة المقال أو شعار موطني.");
+  if(!cleanText(input.excerpt)&&fields.excerpt)changes.push("إكمال مقتطف المقال.");
+  if(auditBefore.heading.bodyH1Count>0){bodyHtml=demoteBodyH1(bodyHtml);changes.push("تحويل H1 داخل جسم المقال إلى H2 لأن عنوان الصفحة هو H1 الوحيد.");}
+  const patch={permalinkSlug,seoTitle:fields.seoTitle,seoDescription:fields.seoDescription,focusKeyphrase:fields.focusKeyphrase,canonicalUrl:canonicalArticleUrl({...input,permalinkSlug}),robots:fields.robots,ogTitle:fields.ogTitle,ogDescription:fields.ogDescription,ogImage:fields.ogImage,excerpt:fields.excerpt,bodyHtml};
+  const auditAfter=await analyzeSeoAudit({...input,...patch});
+  return {patch,changes:Array.from(new Set(changes)),scoreBefore:auditBefore.score,scoreAfter:auditAfter.score,audit:auditAfter};
+}
+
+type ArticlePerformanceRow={article_id:string|null;event_type:string;count:number|string};
+async function performanceByArticle(ids:string[]):Promise<Map<string,ArticleSeoPerformance>>{
+  const map=new Map<string,ArticleSeoPerformance>();for(const id of ids)map.set(id,{views30d:0,shares30d:0,pdfDownloads30d:0,internalLinkClicks30d:0});
+  if(!ids.length)return map;
+  try{
+    const result=await query<ArticlePerformanceRow>(`SELECT event_data->>'articleId' AS article_id,event_type,COUNT(*)::int AS count FROM watany_analytics_events WHERE created_at>=NOW()-INTERVAL '30 days' AND event_type IN ('article_view','article_share','article_pdf_download','article_internal_link') AND event_data->>'articleId'=ANY($1::text[]) GROUP BY event_data->>'articleId',event_type`,[ids]);
+    for(const row of result.rows){if(!row.article_id||!map.has(row.article_id))continue;const item=map.get(row.article_id)!;const count=Number(row.count)||0;if(row.event_type==='article_view')item.views30d=count;else if(row.event_type==='article_share')item.shares30d=count;else if(row.event_type==='article_pdf_download')item.pdfDownloads30d=count;else if(row.event_type==='article_internal_link')item.internalLinkClicks30d=count;}
+  }catch{return map;}
+  return map;
+}
+
+export async function auditPublishedArticlesSeo(limit=300):Promise<ArticleSeoBulkReport>{
+  const safeLimit=Math.min(Math.max(Math.trunc(limit)||300,1),500);
+  const rows=(await query<ArticleCandidate>(`SELECT public_id,public_code,title,status,payload FROM cms_content_entities WHERE domain='articles' AND status='PUBLISHED' ORDER BY published_at DESC NULLS LAST,updated_at DESC LIMIT $1`,[safeLimit])).rows;
+  const performance=await performanceByArticle(rows.map((row)=>row.public_id));
+  const items=await Promise.all(rows.map(async(row)=>{const input=candidateToSeoInput(row);const audit=await analyzeSeoAudit(input,rows);return {id:row.public_id,title:row.title,url:candidateCanonicalPath(row),score:audit.score,indexable:audit.indexing.indexable,sitemapIncluded:audit.indexing.sitemapIncluded,issues:audit.checks.filter((item)=>item.status!=='pass').map((item)=>item.label),performance:performance.get(row.public_id)||{views30d:0,shares30d:0,pdfDownloads30d:0,internalLinkClicks30d:0},duplicateRisk:audit.duplicateCandidates[0]?.similarity||0,audit};}));
+  items.sort((a,b)=>a.score-b.score||b.performance.views30d-a.performance.views30d||a.title.localeCompare(b.title,"ar"));
+  const totals=items.reduce((acc,item)=>{acc.views30d+=item.performance.views30d;acc.shares30d+=item.performance.shares30d;acc.pdfDownloads30d+=item.performance.pdfDownloads30d;acc.internalLinkClicks30d+=item.performance.internalLinkClicks30d;return acc;},{views30d:0,shares30d:0,pdfDownloads30d:0,internalLinkClicks30d:0});
+  const count=items.length;const sumScore=items.reduce((sum,item)=>sum+item.score,0);
+  return {generatedAt:new Date().toISOString(),summary:{total:count,averageScore:count?Math.round(sumScore/count):100,perfectCount:items.filter((item)=>item.score===100).length,needsAttention:items.filter((item)=>item.score<100).length,indexable:items.filter((item)=>item.indexable).length,sitemapIncluded:items.filter((item)=>item.sitemapIncluded).length,canonicalIssues:items.filter((item)=>!item.audit.indexing.canonicalMatches).length,missingAlt:items.reduce((sum,item)=>sum+item.audit.images.missingAlt,0),brokenInternalLinks:items.reduce((sum,item)=>sum+item.audit.links.brokenInternal.length,0),brokenMedia:items.reduce((sum,item)=>sum+item.audit.media.broken.length,0),duplicateRisks:items.filter((item)=>item.duplicateRisk>=0.42).length,performance:totals},items:items.map(({audit,...item})=>item)};
 }
 
 function deterministicAuditIssues(audit:ArticleSeoAudit):string[]{return audit.checks.filter((item)=>item.status!=='pass').map((item)=>`${item.label}: ${item.detail}`).slice(0,12);}

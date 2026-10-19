@@ -222,7 +222,7 @@ function readJson<T>(candidates: string[], fallback: T): T {
   const file = firstExisting(candidates);
   try {
     if (!file || !fs.existsSync(file)) return fallback;
-    return JSON.parse(fs.readFileSync(file, "utf8")) as T;
+    return JSON.parse(fs.readFileSync(file, "utf8").replace(/^\uFEFF/, "")) as T;
   } catch {
     return fallback;
   }

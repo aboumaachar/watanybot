@@ -1,10 +1,28 @@
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import { readFile, writeFile, copyFile, unlink } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import path from "node:path";
 import { query } from "../lib/db.js";
 import { signAccessToken } from "../auth/auth-middleware.js";
 import { ensureAdminAuthorityTables } from "../admin-authority/adminAuthorityStore.js";
+
+vi.mock("../lib/db.js", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("../lib/db.js")>();
+  return {
+    ...actual,
+    query: vi.fn(async (sql: string, params: unknown[] = []) => {
+      if (sql.includes("SELECT id, email, role FROM users WHERE id = $1 AND status = 'active'")) {
+        const id = String(params[0]);
+        const role = id.endsWith("-superadmin") ? "superadmin" : "admin";
+        return { rows: [{ id, email: `${role}@wave1-canary.test`, role }], rowCount: 1 };
+      }
+      if (sql.includes("SELECT id FROM sessions WHERE id = $1 AND user_id = $2 AND expires_at > now()")) {
+        return { rows: [{ id: String(params[0]) }], rowCount: 1 };
+      }
+      return actual.query(sql, params);
+    }),
+  };
+});
 
 let appPromise: Promise<typeof import("../server").default> | null = null;
 const flagsPath = path.resolve(process.cwd(), "data", "feature_flags.json");
@@ -29,6 +47,7 @@ function authHeader(role: "admin" | "superadmin") {
       sub: `${canaryId}-${role}`,
       role,
       email: `${role}@wave1-canary.test`,
+      sid: `${canaryId}-${role}-session`,
     })}`,
   };
 }

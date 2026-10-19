@@ -2,6 +2,7 @@
  * Shared helper utilities extracted from server.ts
  */
 import type { Role, UserProfile, DocumentItem, NotificationItem, SavedChatItem, PluginDb } from "../types/domain";
+import { isDevRoleHeaderEnabled } from "../auth/dev-role-header";
 
 export function makeId(prefix: string) {
   return `${prefix}_${Math.random().toString(16).slice(2)}_${Date.now().toString(16)}`;
@@ -17,7 +18,7 @@ export function hasSufficientRole(actual: Role, required: Role) {
 }
 
 function getDevelopmentHeaderRole(reply: any): Role | null {
-  if (process.env.NODE_ENV === "production") {
+  if (!isDevRoleHeaderEnabled()) {
     return null;
   }
 
@@ -33,14 +34,13 @@ export function getProfileRow(pluginDb: PluginDb) {
   return pluginDb.prepare("SELECT role, is_authed FROM profile WHERE id = ?").get("default") as Record<string, unknown>;
 }
 
-export function requireAuth(pluginDb: PluginDb, reply: any, minRole: Role = "accredited") {
+export function requireAuth(_pluginDb: PluginDb, reply: any, minRole: Role = "accredited") {
   const jwtRole = reply?.request?.user?.role as Role | undefined;
   if (jwtRole) {
     if (!hasSufficientRole(jwtRole, minRole)) {
       reply.code(403);
       return null;
     }
-
     return jwtRole;
   }
 
@@ -50,7 +50,6 @@ export function requireAuth(pluginDb: PluginDb, reply: any, minRole: Role = "acc
       reply.code(403);
       return null;
     }
-
     if (reply?.request && !reply.request.user) {
       reply.request.user = {
         id: process.env.DEV_SUPERADMIN_ID || "dev-superadmin",
@@ -58,24 +57,16 @@ export function requireAuth(pluginDb: PluginDb, reply: any, minRole: Role = "acc
         email: process.env.DEV_SUPERADMIN_EMAIL || "admin@koudama.com",
       };
     }
-
     return devRole;
   }
 
-  const row = getProfileRow(pluginDb);
-  const isAuthed = row?.is_authed ? Boolean(row.is_authed) : false;
-  const role: Role = row?.role ? String(row.role) as Role : "public";
-  if (!isAuthed && minRole !== "public") {
-    reply.code(401);
-    return null;
+  if (minRole === "public") {
+    return "public";
   }
-  if (!hasSufficientRole(role, minRole)) {
-    reply.code(403);
-    return null;
-  }
-  return role;
-}
 
+  reply.code(401);
+  return null;
+}
 export function mapProfileRow(row?: Record<string, unknown>): UserProfile {
   if (!row) return { isAuthed: false };
   return {

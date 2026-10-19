@@ -35,8 +35,26 @@ describe("saved chats auth regression", () => {
     expect(response.statusCode).toBe(401);
   });
 
-  it("allows non-production dev superadmin headers without legacy profile login", async () => {
+  it("ignores dev superadmin headers in non-production unless explicitly opted in", async () => {
     const app = await getApp();
+    const previous = process.env.WATANY_ALLOW_DEV_ROLE_HEADER;
+    delete process.env.WATANY_ALLOW_DEV_ROLE_HEADER;
+    try {
+      const response = await app.inject({
+        method: "GET",
+        url: "/api/saved",
+        headers: { "x-watany-role": "superadmin", "x-superadmin": "1" },
+      });
+      expect(response.statusCode).toBe(401);
+    } finally {
+      if (previous !== undefined) process.env.WATANY_ALLOW_DEV_ROLE_HEADER = previous;
+    }
+  });
+
+  it("allows opted-in dev superadmin headers without legacy profile login", async () => {
+    const app = await getApp();
+    const previous = process.env.WATANY_ALLOW_DEV_ROLE_HEADER;
+    process.env.WATANY_ALLOW_DEV_ROLE_HEADER = "true";
 
     const response = await app.inject({
       method: "GET",
@@ -46,6 +64,7 @@ describe("saved chats auth regression", () => {
         "x-superadmin": "1",
       },
     });
+    if (previous === undefined) delete process.env.WATANY_ALLOW_DEV_ROLE_HEADER; else process.env.WATANY_ALLOW_DEV_ROLE_HEADER = previous;
 
     expect(response.statusCode).toBe(200);
     expect(response.json()).toEqual({
@@ -77,21 +96,12 @@ describe("saved chats auth regression", () => {
   it("allows authenticated saved chat CRUD", async () => {
     const app = await getApp();
 
-    const login = await app.inject({
-      method: "POST",
-      url: "/api/profile/login",
-      payload: { name: "Test User", role: "accredited" },
-    });
-    expect(login.statusCode).toBe(200);
-    expect(login.json()).toEqual({
-      profile: expect.objectContaining({
-        isAuthed: true,
-        role: "accredited",
-      }),
-    });
-
+    const { signAccessToken } = await import("../auth/auth-middleware");
+    const token = signAccessToken({ sub: "saved-crud-user", role: "accredited", email: "saved.crud@watany.test" });
+    const auth = { authorization: `Bearer ${token}` };
     const created = await app.inject({
       method: "POST",
+      headers: auth,
       url: "/api/saved",
       payload: { text: "hello" },
     });
@@ -108,6 +118,7 @@ describe("saved chats auth regression", () => {
 
     const closed = await app.inject({
       method: "PATCH",
+      headers: auth,
       url: `/api/saved/${item.id}`,
       payload: { status: "closed" },
     });
@@ -121,6 +132,7 @@ describe("saved chats auth regression", () => {
 
     const deletedForMe = await app.inject({
       method: "PATCH",
+      headers: auth,
       url: `/api/saved/${item.id}`,
       payload: { status: "deleted_for_me" },
     });
@@ -131,7 +143,7 @@ describe("saved chats auth regression", () => {
       deletedForMeAt: expect.any(Number),
     }));
 
-    const listed = await app.inject({ method: "GET", url: "/api/saved" });
+    const listed = await app.inject({ method: "GET", url: "/api/saved", headers: auth });
     expect(listed.statusCode).toBe(200);
     expect(listed.json()).toEqual({
       items: expect.arrayContaining([
@@ -143,8 +155,42 @@ describe("saved chats auth regression", () => {
       ]),
     });
 
-    const removed = await app.inject({ method: "DELETE", url: `/api/saved/${item.id}` });
+    const removed = await app.inject({ method: "DELETE", url: `/api/saved/${item.id}`, headers: auth });
     expect(removed.statusCode).toBe(200);
     expect(removed.json()).toEqual({ ok: true });
   });
+
+  it("isolates saved chats by canonical JWT user id", async () => {
+    const app = await getApp();
+    const { signAccessToken } = await import("../auth/auth-middleware");
+    const tokenA = signAccessToken({ sub: "saved-user-a", role: "accredited", email: "saved.a@watany.test" });
+    const tokenB = signAccessToken({ sub: "saved-user-b", role: "accredited", email: "saved.b@watany.test" });
+    const authA = { authorization: `Bearer ${tokenA}` };
+    const authB = { authorization: `Bearer ${tokenB}` };
+
+    const createdA = await app.inject({ method: "POST", url: "/api/saved", headers: authA, payload: { text: "private-a" } });
+    const createdB = await app.inject({ method: "POST", url: "/api/saved", headers: authB, payload: { text: "private-b" } });
+    expect(createdA.statusCode).toBe(200);
+    expect(createdB.statusCode).toBe(200);
+    const itemA = createdA.json();
+    const itemB = createdB.json();
+
+    const listedA = await app.inject({ method: "GET", url: "/api/saved", headers: authA });
+    const listedB = await app.inject({ method: "GET", url: "/api/saved", headers: authB });
+    expect(listedA.statusCode).toBe(200);
+    expect(listedB.statusCode).toBe(200);
+    expect(listedA.json().items.map((item: any) => item.id)).toContain(itemA.id);
+    expect(listedA.json().items.map((item: any) => item.id)).not.toContain(itemB.id);
+    expect(listedB.json().items.map((item: any) => item.id)).toContain(itemB.id);
+    expect(listedB.json().items.map((item: any) => item.id)).not.toContain(itemA.id);
+
+    const crossPatch = await app.inject({ method: "PATCH", url: `/api/saved/${itemA.id}`, headers: authB, payload: { status: "closed" } });
+    const crossDelete = await app.inject({ method: "DELETE", url: `/api/saved/${itemA.id}`, headers: authB });
+    expect(crossPatch.statusCode).toBe(404);
+    expect(crossDelete.statusCode).toBe(404);
+
+    await app.inject({ method: "DELETE", url: `/api/saved/${itemA.id}`, headers: authA });
+    await app.inject({ method: "DELETE", url: `/api/saved/${itemB.id}`, headers: authB });
+  });
+
 });

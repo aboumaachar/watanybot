@@ -15,7 +15,11 @@
  * All routes require superadmin role (resolved from request.user set by auth middleware).
  */
 import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
+import { request } from 'undici';
 import { requireRole } from '../auth/rbac.js';
+import { aiBaseUrl, getPythonBase, useAi, usePython } from '../lib/config.js';
+import { getAiChat, getAiModel, getAiProvider } from '../bootstrap/ai-state.js';
+import { buildAdminIntegrationStatuses, type IntegrationHealthSignal } from './integrationStatus.js';
 import {
   DEFAULT_ADMIN_ROUTE_POLICIES,
   evaluateAdminAuthority,
@@ -85,6 +89,37 @@ function evidenceToWidgetStatus(ev: EvidenceStatus): 'ready' | 'warning' | 'bloc
   if (ev === 'candidate') return 'pending';
   if (ev === 'missing') return 'blocked';
   return 'unknown';
+}
+
+async function probeLegacyPythonHealth(): Promise<IntegrationHealthSignal | undefined> {
+  if (!usePython) return undefined;
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 1500);
+  const started = Date.now();
+  try {
+    const response = await request(`${getPythonBase()}/health`, { method: 'GET', signal: controller.signal });
+    return {
+      ok: response.statusCode >= 200 && response.statusCode < 300,
+      statusCode: response.statusCode,
+      latencyMs: Date.now() - started,
+    };
+  } catch (error) {
+    return { ok: false, latencyMs: Date.now() - started, error: error instanceof Error ? error.message : 'legacy python health check failed' };
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+async function probePrimaryAiHealth(): Promise<IntegrationHealthSignal | undefined> {
+  if (!useAi) return undefined;
+  const aiChat = getAiChat();
+  if (!aiChat) return undefined;
+  try {
+    const health = await aiChat.healthCheck();
+    return { ok: health.ok, latencyMs: health.latencyMs };
+  } catch (error) {
+    return { ok: false, error: error instanceof Error ? error.message : 'AI provider health check failed' };
+  }
 }
 
 // ── Route registration ─────────────────────────────────────────────────────
@@ -206,14 +241,22 @@ export async function adminAuthorityRoutes(app: FastifyInstance): Promise<void> 
    * Returns integration module health signals.
    */
   app.get('/admin-authority/integration-status', guardSuperadmin, async (_req: FastifyRequest, reply: FastifyReply) => {
-    const integrations = [
-      { id: 'gateway',     label: 'Gateway API',     status: 'ready',   url: process.env.API_BASE_URL ?? 'http://127.0.0.1:8010' },
-      { id: 'python_api',  label: 'Python AI Backend', status: 'unknown', url: process.env.PYTHON_API_URL ?? 'http://localhost:8012' },
-      { id: 'sms',         label: 'SMS / OTP',       status: 'unknown' },
-      { id: 'whatsapp',    label: 'WhatsApp',         status: 'unknown' },
-      { id: 'voice',       label: 'Voice Chat',       status: 'unknown' },
-      { id: 'audit_store', label: 'Audit Store',      status: 'ready', note: 'PostgreSQL-backed admin authority store' },
-    ];
+    const [pythonHealth, aiHealth] = await Promise.all([
+      probeLegacyPythonHealth(),
+      probePrimaryAiHealth(),
+    ]);
+    const integrations = buildAdminIntegrationStatuses({
+      env: process.env,
+      usePython,
+      pythonBase: getPythonBase(),
+      pythonHealth,
+      useAi,
+      aiBaseUrl,
+      aiProvider: getAiProvider(),
+      aiModel: getAiModel(),
+      aiHealth,
+      gatewayUrl: process.env.API_BASE_URL ?? '',
+    });
     return reply.send({ ok: true, integrations });
   });
 

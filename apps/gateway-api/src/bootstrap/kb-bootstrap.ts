@@ -115,7 +115,16 @@ export async function bootstrapKb(app: FastifyInstance): Promise<KbBootstrapResu
   let kbStore: ReturnType<typeof createSqliteV3Store> | null = null;
   if (!useKbStub) {
     try {
-      kbStore = createSqliteV3Store({ dbPath: kbPath });
+      const candidate = createSqliteV3Store({ dbPath: kbPath });
+      // Opening the wrapper is lazy; actual metadata queries must succeed
+      // before KB health can claim the SQLite store is available.
+      const initialStats = await candidate.stats();
+      if (initialStats.tables.length === 0) {
+        throw new Error(
+          `KB_SQLITE_METADATA_NOT_READABLE${initialStats.error ? `: ${initialStats.error}` : ""}`,
+        );
+      }
+      kbStore = candidate;
     } catch (e) {
       app.log.warn({ err: e }, "KB store disabled (sqlite-wasm init failed)");
     }

@@ -1,6 +1,22 @@
-﻿import { afterAll, describe, expect, it } from "vitest";
+﻿import { afterAll, describe, expect, it, vi } from "vitest";
 import { normalizeArabic } from "@watany/shared/arabic";
-import { signAccessToken } from "../auth/auth-middleware";
+import { cleanupSessionUsers, createSessionToken } from "./helpers/session-auth";
+
+vi.mock("../lib/db.js", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("../lib/db.js")>();
+  return {
+    ...actual,
+    query: vi.fn(async (sql: string, params: unknown[] = []) => {
+      if (sql.includes("SELECT id, email, role FROM users WHERE id = $1 AND status = 'active'")) {
+        return { rows: [{ id: String(params[0] ?? ""), email: "procedure-diagnostics-user@example.invalid", role: "superadmin" }], rowCount: 1 };
+      }
+      if (sql.includes("SELECT id FROM sessions WHERE id = $1 AND user_id = $2 AND expires_at > now()")) {
+        return { rows: [{ id: String(params[0] ?? "") }], rowCount: 1 };
+      }
+      return actual.query(sql, params);
+    }),
+  };
+});
 
 let appPromise: Promise<typeof import("../server").default> | null = null;
 
@@ -14,6 +30,7 @@ async function getApp() {
 }
 
 afterAll(async () => {
+  await cleanupSessionUsers();
   if (appPromise !== null) {
     const fastifyApp = await appPromise;
     await fastifyApp.close();
@@ -26,13 +43,8 @@ describe("procedure diagnostics regressions", () => {
     const response = await app.inject({
       method: "GET",
       url: "/api/admin/procedures/diagnostics",
-      headers: {
-        authorization: `Bearer ${signAccessToken({
-          sub: "procedure-diagnostics-superadmin",
-          role: "superadmin",
-          email: "procedure-diagnostics-user@example.invalid",
-        })}`,
-      },
+      // Admin paths resolve the principal from the database (active user + live session + sid).
+      headers: { authorization: `Bearer ${await createSessionToken("superadmin", "procedure-diagnostics")}` },
     });
 
     expect(response.statusCode).toBe(200);

@@ -1,9 +1,10 @@
 import Fastify, { type FastifyInstance } from "fastify";
 import websocket from "@fastify/websocket";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import WebSocket from "ws";
 
 import { registerAuthHook, signAccessToken } from "../auth/auth-middleware";
+import { getOrCreateDirectThread } from "../community/direct-service";
 import {
   addCommunityMessage,
   createCommunityGroup,
@@ -14,8 +15,9 @@ import {
   suspendCommunityGroupMember,
 } from "../community/service";
 import { runMigrations } from "../db/migrate";
+import { query } from "../lib/db";
 import { communityWSRoutes } from "../ws/community-ws";
-import { acquireCommunityDbTestLock } from "./community-db-test-lock";
+import { acquireCommunityDbTestLock, COMMUNITY_DB_TEST_LOCK_WAIT_MS } from "./community-db-test-lock";
 
 process.env.JWT_SECRET ||= "test-jwt-secret-for-community-ws-0123456789";
 
@@ -218,21 +220,18 @@ async function startCommunityWsApp(flags?: Record<string, boolean>): Promise<{ a
 
 let releaseDbTestLock: null | (() => Promise<void>) = null;
 
+// Hold the community lock for the whole file so no other community suite
+// truncates these tables between our tests.
 beforeAll(async () => {
-  const release = await acquireCommunityDbTestLock();
-  try {
-    await runMigrations();
-  } finally {
-    await release();
-  }
-});
+  releaseDbTestLock = await acquireCommunityDbTestLock();
+  await runMigrations();
+}, COMMUNITY_DB_TEST_LOCK_WAIT_MS);
 
 beforeEach(async () => {
-  releaseDbTestLock = await acquireCommunityDbTestLock();
   await resetCommunityStore();
 });
 
-afterEach(async () => {
+afterAll(async () => {
   if (releaseDbTestLock) {
     await releaseDbTestLock();
     releaseDbTestLock = null;
@@ -588,4 +587,44 @@ describe("community websocket routes", () => {
     memberSocket.close();
     await app.close();
   });
+  it("delivers direct-thread messages and receipts between exactly two authorized users", async () => {
+    const userA = "20000000-0000-4000-8000-000000000001";
+    const userB = "20000000-0000-4000-8000-000000000002";
+    for (const [id, email, name] of [[userA, "ws.direct.a@watany.test", "WS Direct A"], [userB, "ws.direct.b@watany.test", "WS Direct B"]]) {
+      await query(
+        `INSERT INTO users (id,email,password_hash,name,role,status) VALUES ($1,$2,'test-only',$3,'accredited','active')
+         ON CONFLICT (id) DO UPDATE SET email=EXCLUDED.email,name=EXCLUDED.name,status='active'`,
+        [id, email, name],
+      );
+    }
+    const direct = await getOrCreateDirectThread({ id: userA, role: "user" }, userB);
+    expect(direct.ok).toBe(true);
+    if (!direct.ok) return;
+    const groupId = direct.value.groupId;
+    const { app, wsBaseUrl } = await startCommunityWsApp();
+    const senderSocket = await openCommunitySocket(wsBaseUrl, userAccessToken(userA, "ws.direct.a@watany.test"));
+    const recipientSocket = await openCommunitySocket(wsBaseUrl, userAccessToken(userB, "ws.direct.b@watany.test"));
+    const senderQueue = createSocketQueue(senderSocket);
+    const recipientQueue = createSocketQueue(recipientSocket);
+    const subscribe = JSON.stringify({ type: "community.subscribe", groupId });
+    senderSocket.send(subscribe); recipientSocket.send(subscribe);
+    await expect(senderQueue.next()).resolves.toMatchObject({ eventType: "community.connection.ready", groupId });
+    await expect(recipientQueue.next()).resolves.toMatchObject({ eventType: "community.connection.ready", groupId });
+
+    const created = await addCommunityMessage(groupId, {
+      id: "direct-live-msg-1", groupId, senderId: userA, senderName: "WS Direct A",
+      senderRole: "user", type: "text", body: "رسالة مباشرة حية", createdAt: new Date().toISOString(),
+    }, { viewer: { id: userA, role: "user" } });
+    expect(created.ok).toBe(true);
+    await expect(senderQueue.next()).resolves.toMatchObject({ eventType: "community.message.created", groupId, messageId: "direct-live-msg-1" });
+    await expect(recipientQueue.next()).resolves.toMatchObject({ eventType: "community.message.created", groupId, messageId: "direct-live-msg-1" });
+
+    recipientSocket.send(JSON.stringify({ type: "community.receipt.delivered", groupId, messageId: "direct-live-msg-1" }));
+    await expect(senderQueue.next()).resolves.toMatchObject({ eventType: "community.receipt.delivered", groupId, messageId: "direct-live-msg-1", actorId: userB });
+
+    senderQueue.dispose(); recipientQueue.dispose(); senderSocket.close(); recipientSocket.close();
+    await app.close();
+    await query("DELETE FROM users WHERE id::text = ANY($1::text[])", [[userA, userB]]);
+  });
+
 });

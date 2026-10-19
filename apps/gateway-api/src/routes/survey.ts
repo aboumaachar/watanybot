@@ -158,7 +158,7 @@ type SurveyRequest = {
   user?: {
     id?: string;
     role?: string;
-    email?: string;
+    email?: string | null;
   };
   headers?: Record<string, string | string[] | undefined>;
   ip?: string;
@@ -961,7 +961,7 @@ export const surveyRoutes: FastifyPluginAsync<SurveyRoutesOptions> = async (app,
     Params: { id: string };
     Body: { optionId?: string };
   }>("/api/voting/elections/:id/vote", async (req, reply) => {
-    if (!requireSurveyAccess(req, pluginDb, reply, "public")) return { error: "unauthorized" } as const;
+    if (!requireSurveyAccess(req, pluginDb, reply, "accredited")) return { error: "unauthorized" } as const;
 
     try {
       await bootstrapVotingStore(pluginDb);

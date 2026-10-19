@@ -24,7 +24,11 @@
       "approvedAt": "2026-05-30T12:31:01.517Z",
       "rejectionReason": "",
       "removedAt": "2026-05-30T12:31:01.700Z",
-      "adminNote": "removed by admin"
+      "adminNote": "removed by admin",
+      "locationLabel": "Lebanon",
+      "sellerName": "مستخدم موطني",
+      "lifecycleStatus": "active",
+      "images": []
     },
     {
       "id": "9fe9f786-aac7-4f0d-bb23-ff3b5ad1b9cc",
@@ -48,7 +52,11 @@
         "sellerTrustLevel": "NEW"
       },
       "removedAt": "2026-05-30T11:58:38.395Z",
-      "adminNote": "removed by admin"
+      "adminNote": "removed by admin",
+      "locationLabel": "Beirut",
+      "sellerName": "مستخدم موطني",
+      "lifecycleStatus": "active",
+      "images": []
     },
     {
       "id": "e19091bd-6765-4444-b02a-a5a4df51b852",
@@ -74,7 +82,11 @@
       "approvedAt": "2026-05-30T11:58:36.553Z",
       "rejectionReason": "",
       "removedAt": "2026-05-30T11:58:38.170Z",
-      "adminNote": "removed by admin"
+      "adminNote": "removed by admin",
+      "locationLabel": "Beirut",
+      "sellerName": "مستخدم موطني",
+      "lifecycleStatus": "active",
+      "images": []
     },
     {
       "id": "1c06fe23-607d-4647-85ce-d5a7a27a531d",
@@ -95,11 +107,14 @@
       "trust": {
         "verifiedByWatany": false,
         "featuredVeteranSeller": false,
-        "sellerTrustLevel": "NEW",
-        "note": ""
+        "sellerTrustLevel": "NEW"
       },
       "approvedAt": "2026-05-30T11:31:58.466Z",
-      "rejectionReason": ""
+      "rejectionReason": "",
+      "locationLabel": "?????",
+      "sellerName": "مستخدم موطني",
+      "lifecycleStatus": "active",
+      "images": []
     },
     {
       "id": "503a7b81-25e3-42fb-8695-212e26b70714",
@@ -124,7 +139,11 @@
       },
       "rejectedAt": "2026-05-30T11:31:58.402Z",
       "rejectionReason": "??? ?? ??? ??????: ?????? ????? ?????? ???? ??? ?????.",
-      "adminNote": ""
+      "adminNote": "",
+      "locationLabel": "?????",
+      "sellerName": "مستخدم موطني",
+      "lifecycleStatus": "active",
+      "images": []
     },
     {
       "id": "80414ba6-9dcf-41ac-a7c2-da81ae18d985",
@@ -138,15 +157,21 @@
       "condition": "used",
       "location": "?????",
       "contactPreference": "WHATSAPP",
-      "status": "PENDING_REVIEW",
+      "status": "REMOVED",
       "createdAt": "2026-05-30T11:31:58.329Z",
-      "updatedAt": "2026-05-30T11:31:58.329Z",
+      "updatedAt": "2026-09-29T04:54:05.512Z",
       "reportCount": 0,
       "trust": {
         "verifiedByWatany": false,
         "featuredVeteranSeller": false,
         "sellerTrustLevel": "NEW"
-      }
+      },
+      "locationLabel": "?????",
+      "sellerName": "مستخدم موطني",
+      "lifecycleStatus": "hidden",
+      "images": [],
+      "removedAt": "2026-09-29T04:54:05.512Z",
+      "adminNote": "إزالة من لوحة سوق موطني"
     },
     {
       "id": "68a26ad6-c15b-4b0f-8eda-322a9db24ac2",
@@ -167,11 +192,14 @@
       "trust": {
         "verifiedByWatany": false,
         "featuredVeteranSeller": false,
-        "sellerTrustLevel": "NEW",
-        "note": ""
+        "sellerTrustLevel": "NEW"
       },
       "approvedAt": "2026-05-30T11:31:58.274Z",
-      "rejectionReason": ""
+      "rejectionReason": "",
+      "locationLabel": "?????",
+      "sellerName": "مستخدم موطني",
+      "lifecycleStatus": "active",
+      "images": []
     },
     {
       "id": "79a5cb72-6428-4c0f-9aa9-0f2368c2c74a",
@@ -192,13 +220,16 @@
       "trust": {
         "verifiedByWatany": false,
         "featuredVeteranSeller": false,
-        "sellerTrustLevel": "NEW",
-        "note": ""
+        "sellerTrustLevel": "NEW"
       },
       "approvedAt": "2026-05-30T11:28:49.897Z",
       "rejectionReason": "",
       "removedAt": "2026-05-30T11:31:57.713Z",
-      "adminNote": "removed by admin"
+      "adminNote": "removed by admin",
+      "locationLabel": "?????",
+      "sellerName": "مستخدم موطني",
+      "lifecycleStatus": "active",
+      "images": []
     },
     {
       "id": "a870f1cb-1d98-400a-a1dc-955b3932df75",
@@ -224,7 +255,11 @@
       "rejectedAt": "2026-05-30T11:28:49.837Z",
       "rejectionReason": "??? ?? ??? ??????: ?????? ????? ?????? ???? ??? ?????.",
       "adminNote": "removed by admin",
-      "removedAt": "2026-05-30T11:31:57.752Z"
+      "removedAt": "2026-05-30T11:31:57.752Z",
+      "locationLabel": "?????",
+      "sellerName": "مستخدم موطني",
+      "lifecycleStatus": "active",
+      "images": []
     },
     {
       "id": "2e0d0611-a6fa-43e0-b79a-621fadb0dd58",
@@ -248,7 +283,11 @@
         "sellerTrustLevel": "NEW"
       },
       "removedAt": "2026-05-30T11:31:57.783Z",
-      "adminNote": "removed by admin"
+      "adminNote": "removed by admin",
+      "locationLabel": "?????",
+      "sellerName": "مستخدم موطني",
+      "lifecycleStatus": "active",
+      "images": []
     },
     {
       "id": "e68c4a2f-f75e-4912-86a4-eb7bd8345f21",
@@ -269,13 +308,16 @@
       "trust": {
         "verifiedByWatany": false,
         "featuredVeteranSeller": false,
-        "sellerTrustLevel": "NEW",
-        "note": ""
+        "sellerTrustLevel": "NEW"
       },
       "approvedAt": "2026-05-30T11:28:49.716Z",
       "rejectionReason": "",
       "removedAt": "2026-05-30T11:31:57.812Z",
-      "adminNote": "removed by admin"
+      "adminNote": "removed by admin",
+      "locationLabel": "?????",
+      "sellerName": "مستخدم موطني",
+      "lifecycleStatus": "active",
+      "images": []
     },
     {
       "id": "e701c334-8bdf-4acc-b0a2-9dab87ab5628",
@@ -296,13 +338,16 @@
       "trust": {
         "verifiedByWatany": false,
         "featuredVeteranSeller": false,
-        "sellerTrustLevel": "NEW",
-        "note": ""
+        "sellerTrustLevel": "NEW"
       },
       "approvedAt": "2026-05-30T10:59:38.091Z",
       "rejectionReason": "",
       "removedAt": "2026-05-30T11:31:57.838Z",
-      "adminNote": "removed by admin"
+      "adminNote": "removed by admin",
+      "locationLabel": "?????",
+      "sellerName": "مستخدم موطني",
+      "lifecycleStatus": "active",
+      "images": []
     },
     {
       "id": "c35dff52-07c3-4885-ad46-4320f561dff7",
@@ -328,7 +373,11 @@
       "rejectedAt": "2026-05-30T10:59:38.042Z",
       "rejectionReason": "??? ?? ??? ??????: ?????? ????? ?????? ???? ??? ?????.",
       "adminNote": "removed by admin",
-      "removedAt": "2026-05-30T11:31:57.866Z"
+      "removedAt": "2026-05-30T11:31:57.866Z",
+      "locationLabel": "?????",
+      "sellerName": "مستخدم موطني",
+      "lifecycleStatus": "active",
+      "images": []
     },
     {
       "id": "f2dc594f-6b74-4662-8724-47a12ef10b77",
@@ -352,7 +401,11 @@
         "sellerTrustLevel": "NEW"
       },
       "removedAt": "2026-05-30T11:31:57.900Z",
-      "adminNote": "removed by admin"
+      "adminNote": "removed by admin",
+      "locationLabel": "?????",
+      "sellerName": "مستخدم موطني",
+      "lifecycleStatus": "active",
+      "images": []
     },
     {
       "id": "ffe82818-4e15-42b8-8f0c-e635845d9eef",
@@ -373,13 +426,16 @@
       "trust": {
         "verifiedByWatany": false,
         "featuredVeteranSeller": false,
-        "sellerTrustLevel": "NEW",
-        "note": ""
+        "sellerTrustLevel": "NEW"
       },
       "approvedAt": "2026-05-30T10:59:37.943Z",
       "rejectionReason": "",
       "removedAt": "2026-05-30T11:31:57.928Z",
-      "adminNote": "removed by admin"
+      "adminNote": "removed by admin",
+      "locationLabel": "?????",
+      "sellerName": "مستخدم موطني",
+      "lifecycleStatus": "active",
+      "images": []
     },
     {
       "id": "b37381aa-3b6c-4680-9291-b3659fbb97e2",
@@ -400,13 +456,16 @@
       "trust": {
         "verifiedByWatany": false,
         "featuredVeteranSeller": false,
-        "sellerTrustLevel": "NEW",
-        "note": ""
+        "sellerTrustLevel": "NEW"
       },
       "approvedAt": "2026-05-30T10:23:57.186Z",
       "rejectionReason": "",
       "removedAt": "2026-05-30T11:31:57.986Z",
-      "adminNote": "removed by admin"
+      "adminNote": "removed by admin",
+      "locationLabel": "?????",
+      "sellerName": "مستخدم موطني",
+      "lifecycleStatus": "active",
+      "images": []
     },
     {
       "id": "f02f8609-414d-4702-8f87-b08d60265310",
@@ -432,7 +491,11 @@
       "rejectedAt": "2026-05-30T10:23:57.134Z",
       "rejectionReason": "??? ?? ??? ??????: ?????? ????? ?????? ???? ??? ?????.",
       "adminNote": "removed by admin",
-      "removedAt": "2026-05-30T11:31:58.022Z"
+      "removedAt": "2026-05-30T11:31:58.022Z",
+      "locationLabel": "?????",
+      "sellerName": "مستخدم موطني",
+      "lifecycleStatus": "active",
+      "images": []
     },
     {
       "id": "94070f02-7243-46da-90b0-80163fb41ad8",
@@ -456,7 +519,11 @@
         "sellerTrustLevel": "NEW"
       },
       "removedAt": "2026-05-30T11:31:58.046Z",
-      "adminNote": "removed by admin"
+      "adminNote": "removed by admin",
+      "locationLabel": "?????",
+      "sellerName": "مستخدم موطني",
+      "lifecycleStatus": "active",
+      "images": []
     },
     {
       "id": "f98fcfc9-485d-4cbe-acd4-97aa0f1fc2c3",
@@ -477,13 +544,16 @@
       "trust": {
         "verifiedByWatany": false,
         "featuredVeteranSeller": false,
-        "sellerTrustLevel": "NEW",
-        "note": ""
+        "sellerTrustLevel": "NEW"
       },
       "approvedAt": "2026-05-30T10:23:57.010Z",
       "rejectionReason": "",
       "removedAt": "2026-05-30T11:31:58.076Z",
-      "adminNote": "removed by admin"
+      "adminNote": "removed by admin",
+      "locationLabel": "?????",
+      "sellerName": "مستخدم موطني",
+      "lifecycleStatus": "active",
+      "images": []
     },
     {
       "id": "7a2621f6-8d91-4c83-a4c5-86ba1a25e342",
@@ -504,13 +574,16 @@
       "trust": {
         "verifiedByWatany": false,
         "featuredVeteranSeller": false,
-        "sellerTrustLevel": "NEW",
-        "note": ""
+        "sellerTrustLevel": "NEW"
       },
       "approvedAt": "2026-05-30T10:18:13.483Z",
       "rejectionReason": "",
       "removedAt": "2026-05-30T11:31:58.105Z",
-      "adminNote": "removed by admin"
+      "adminNote": "removed by admin",
+      "locationLabel": "?????",
+      "sellerName": "مستخدم موطني",
+      "lifecycleStatus": "active",
+      "images": []
     },
     {
       "id": "772d289b-1d89-4bef-a5d8-60d7dd602a07",
@@ -536,7 +609,11 @@
       "rejectedAt": "2026-05-30T10:18:13.446Z",
       "rejectionReason": "??? ?? ??? ??????: ?????? ????? ?????? ???? ??? ?????.",
       "adminNote": "removed by admin",
-      "removedAt": "2026-05-30T11:31:58.136Z"
+      "removedAt": "2026-05-30T11:31:58.136Z",
+      "locationLabel": "?????",
+      "sellerName": "مستخدم موطني",
+      "lifecycleStatus": "active",
+      "images": []
     },
     {
       "id": "b69862f9-fb6c-405e-a451-03dea1fc523d",
@@ -560,7 +637,11 @@
         "sellerTrustLevel": "NEW"
       },
       "removedAt": "2026-05-30T11:31:58.167Z",
-      "adminNote": "removed by admin"
+      "adminNote": "removed by admin",
+      "locationLabel": "?????",
+      "sellerName": "مستخدم موطني",
+      "lifecycleStatus": "active",
+      "images": []
     },
     {
       "id": "cd33f769-629f-4a49-a3d0-e5ad98a59115",
@@ -581,13 +662,16 @@
       "trust": {
         "verifiedByWatany": false,
         "featuredVeteranSeller": false,
-        "sellerTrustLevel": "NEW",
-        "note": ""
+        "sellerTrustLevel": "NEW"
       },
       "approvedAt": "2026-05-30T10:18:13.364Z",
       "rejectionReason": "",
       "removedAt": "2026-05-30T11:31:58.195Z",
-      "adminNote": "removed by admin"
+      "adminNote": "removed by admin",
+      "locationLabel": "?????",
+      "sellerName": "مستخدم موطني",
+      "lifecycleStatus": "active",
+      "images": []
     },
     {
       "id": "d421cdc6-2e6a-4ed7-b26b-b70c01c77c39",
@@ -614,7 +698,11 @@
       "rejectedAt": "2026-05-30T09:40:27.277Z",
       "rejectionReason": "???? ????? ?????? ???????",
       "adminNote": "phase3 cleanup",
-      "removedAt": "2026-05-30T09:40:27.321Z"
+      "removedAt": "2026-05-30T09:40:27.321Z",
+      "locationLabel": "?????",
+      "sellerName": "مستخدم موطني",
+      "lifecycleStatus": "active",
+      "images": []
     },
     {
       "id": "b331a7ae-2395-49e6-9dba-85b41f358e3d",
@@ -641,7 +729,11 @@
       "rejectedAt": "2026-05-30T09:38:50.246Z",
       "rejectionReason": "???? ????? ?????? ???????",
       "adminNote": "phase3 cleanup",
-      "removedAt": "2026-05-30T09:38:50.284Z"
+      "removedAt": "2026-05-30T09:38:50.284Z",
+      "locationLabel": "?????",
+      "sellerName": "مستخدم موطني",
+      "lifecycleStatus": "active",
+      "images": []
     },
     {
       "id": "5deacdc4-4851-4764-8586-c497a1fa3ecc",
@@ -668,7 +760,11 @@
       "rejectedAt": "2026-05-30T09:30:31.454Z",
       "rejectionReason": "???? ????? ?????? ???????",
       "adminNote": "phase3 cleanup",
-      "removedAt": "2026-05-30T09:30:31.507Z"
+      "removedAt": "2026-05-30T09:30:31.507Z",
+      "locationLabel": "?????",
+      "sellerName": "مستخدم موطني",
+      "lifecycleStatus": "active",
+      "images": []
     },
     {
       "id": "57afdd80-b24b-4570-a1f8-19436ae1903e",
@@ -676,7 +772,7 @@
       "description": "Runtime smoke listing for WatanyBot Market moderation proof.",
       "categoryId": "other",
       "listingType": "SELL",
-      "price": 1,
+      "price": "1",
       "currency": "USD",
       "condition": "used",
       "location": "APEX smoke location",
@@ -688,7 +784,17 @@
       "reportCount": 1,
       "createdAt": "2026-05-30T07:07:16.782Z",
       "updatedAt": "2026-05-30T07:07:16.956Z",
-      "publishedAt": "2026-05-30T07:07:16.889Z"
+      "publishedAt": "2026-05-30T07:07:16.889Z",
+      "ownerId": "apex-market-smoke-user",
+      "locationLabel": "APEX smoke location",
+      "sellerName": "مستخدم موطني",
+      "lifecycleStatus": "active",
+      "images": [],
+      "trust": {
+        "verifiedByWatany": false,
+        "featuredVeteranSeller": false,
+        "sellerTrustLevel": "NEW"
+      }
     },
     {
       "id": "f30c4ee4-68f2-421a-8bb2-a31b5e9b7204",
@@ -696,7 +802,7 @@
       "description": "وصف اختباري صالح للنشر لاحقاً",
       "categoryId": "other",
       "listingType": "SELL",
-      "price": 15,
+      "price": "15",
       "currency": "USD",
       "condition": "used",
       "location": "بيروت",
@@ -708,7 +814,17 @@
       "reportCount": 0,
       "createdAt": "2026-05-30T08:20:27.123Z",
       "updatedAt": "2026-05-30T08:20:27.123Z",
-      "publishedAt": null
+      "publishedAt": null,
+      "ownerId": "web-user-market-ui",
+      "locationLabel": "بيروت",
+      "sellerName": "مستخدم موطني",
+      "lifecycleStatus": "active",
+      "images": [],
+      "trust": {
+        "verifiedByWatany": false,
+        "featuredVeteranSeller": false,
+        "sellerTrustLevel": "NEW"
+      }
     },
     {
       "id": "bcbda0c0-7e92-4829-a29f-7aae8730fb20",
@@ -716,7 +832,7 @@
       "description": "Contract regression listing body long enough for gateway validation.",
       "categoryId": "other",
       "listingType": "SELL",
-      "price": 15,
+      "price": "15",
       "currency": "USD",
       "condition": "used",
       "location": "Beirut",
@@ -728,7 +844,17 @@
       "reportCount": 0,
       "createdAt": "2026-05-30T08:28:42.550Z",
       "updatedAt": "2026-05-30T08:28:42.550Z",
-      "publishedAt": null
+      "publishedAt": null,
+      "ownerId": "web-user-market-ui",
+      "locationLabel": "Beirut",
+      "sellerName": "مستخدم موطني",
+      "lifecycleStatus": "active",
+      "images": [],
+      "trust": {
+        "verifiedByWatany": false,
+        "featuredVeteranSeller": false,
+        "sellerTrustLevel": "NEW"
+      }
     },
     {
       "id": "fef8b947-10a6-4c17-875a-571db7c0f4a2",
@@ -736,7 +862,7 @@
       "description": "Contract regression listing body long enough for gateway validation.",
       "categoryId": "other",
       "listingType": "SELL",
-      "price": 15,
+      "price": "15",
       "currency": "USD",
       "condition": "used",
       "location": "Beirut",
@@ -748,7 +874,17 @@
       "reportCount": 0,
       "createdAt": "2026-05-30T08:29:30.258Z",
       "updatedAt": "2026-05-30T08:29:30.258Z",
-      "publishedAt": null
+      "publishedAt": null,
+      "ownerId": "web-user-market-ui",
+      "locationLabel": "Beirut",
+      "sellerName": "مستخدم موطني",
+      "lifecycleStatus": "active",
+      "images": [],
+      "trust": {
+        "verifiedByWatany": false,
+        "featuredVeteranSeller": false,
+        "sellerTrustLevel": "NEW"
+      }
     },
     {
       "id": "b316787b-fde2-449a-8d52-978afafe5320",
@@ -756,7 +892,7 @@
       "description": "Contract regression listing body long enough for gateway validation.",
       "categoryId": "other",
       "listingType": "SELL",
-      "price": 15,
+      "price": "15",
       "currency": "USD",
       "condition": "used",
       "location": "Beirut",
@@ -768,7 +904,17 @@
       "reportCount": 0,
       "createdAt": "2026-05-30T08:30:19.170Z",
       "updatedAt": "2026-05-30T08:30:19.291Z",
-      "publishedAt": "2026-05-30T08:30:19.266Z"
+      "publishedAt": "2026-05-30T08:30:19.266Z",
+      "ownerId": "web-user-market-ui",
+      "locationLabel": "Beirut",
+      "sellerName": "مستخدم موطني",
+      "lifecycleStatus": "active",
+      "images": [],
+      "trust": {
+        "verifiedByWatany": false,
+        "featuredVeteranSeller": false,
+        "sellerTrustLevel": "NEW"
+      }
     },
     {
       "id": "c54f52f9-3c41-4b03-9284-fb412b35c4ed",
@@ -776,7 +922,7 @@
       "description": "Contract regression listing body long enough for gateway validation.",
       "categoryId": "other",
       "listingType": "SELL",
-      "price": 15,
+      "price": "15",
       "currency": "USD",
       "condition": "used",
       "location": "Beirut",
@@ -788,7 +934,17 @@
       "reportCount": 0,
       "createdAt": "2026-05-30T08:33:39.393Z",
       "updatedAt": "2026-05-30T08:33:39.693Z",
-      "publishedAt": "2026-05-30T08:33:39.606Z"
+      "publishedAt": "2026-05-30T08:33:39.606Z",
+      "ownerId": "web-user-market-ui",
+      "locationLabel": "Beirut",
+      "sellerName": "مستخدم موطني",
+      "lifecycleStatus": "active",
+      "images": [],
+      "trust": {
+        "verifiedByWatany": false,
+        "featuredVeteranSeller": false,
+        "sellerTrustLevel": "NEW"
+      }
     },
     {
       "id": "25e5cdfa-2bfb-4535-8ede-1bb7615f0603",
@@ -796,7 +952,7 @@
       "description": "Contract proof listing created by final SOT production readiness script.",
       "categoryId": "other",
       "listingType": "SELL",
-      "price": 11,
+      "price": "11",
       "currency": "USD",
       "condition": "used",
       "location": "Beirut",
@@ -808,7 +964,17 @@
       "reportCount": 0,
       "createdAt": "2026-05-30T08:57:38.045Z",
       "updatedAt": "2026-05-30T08:57:38.134Z",
-      "publishedAt": "2026-05-30T08:57:38.102Z"
+      "publishedAt": "2026-05-30T08:57:38.102Z",
+      "ownerId": "market-final-sot-proof",
+      "locationLabel": "Beirut",
+      "sellerName": "مستخدم موطني",
+      "lifecycleStatus": "active",
+      "images": [],
+      "trust": {
+        "verifiedByWatany": false,
+        "featuredVeteranSeller": false,
+        "sellerTrustLevel": "NEW"
+      }
     },
     {
       "id": "3b85cda5-2a26-4825-b696-0a05dd4be4bd",
@@ -816,7 +982,7 @@
       "description": "Contract proof listing created by final SOT production readiness script.",
       "categoryId": "other",
       "listingType": "SELL",
-      "price": 11,
+      "price": "11",
       "currency": "USD",
       "condition": "used",
       "location": "Beirut",
@@ -828,7 +994,17 @@
       "reportCount": 0,
       "createdAt": "2026-05-30T09:04:25.442Z",
       "updatedAt": "2026-05-30T09:04:25.665Z",
-      "publishedAt": "2026-05-30T09:04:25.585Z"
+      "publishedAt": "2026-05-30T09:04:25.585Z",
+      "ownerId": "market-final-sot-proof",
+      "locationLabel": "Beirut",
+      "sellerName": "مستخدم موطني",
+      "lifecycleStatus": "active",
+      "images": [],
+      "trust": {
+        "verifiedByWatany": false,
+        "featuredVeteranSeller": false,
+        "sellerTrustLevel": "NEW"
+      }
     },
     {
       "id": "39d266b0-c872-4fec-950a-6b7771f2cda8",
@@ -836,7 +1012,7 @@
       "description": "Contract proof listing created by final SOT production readiness script.",
       "categoryId": "other",
       "listingType": "SELL",
-      "price": 11,
+      "price": "11",
       "currency": "USD",
       "condition": "used",
       "location": "Beirut",
@@ -848,7 +1024,17 @@
       "reportCount": 0,
       "createdAt": "2026-05-30T09:09:22.169Z",
       "updatedAt": "2026-05-30T09:09:22.306Z",
-      "publishedAt": "2026-05-30T09:09:22.255Z"
+      "publishedAt": "2026-05-30T09:09:22.255Z",
+      "ownerId": "market-final-sot-proof",
+      "locationLabel": "Beirut",
+      "sellerName": "مستخدم موطني",
+      "lifecycleStatus": "active",
+      "images": [],
+      "trust": {
+        "verifiedByWatany": false,
+        "featuredVeteranSeller": false,
+        "sellerTrustLevel": "NEW"
+      }
     }
   ],
   "reports": [
@@ -941,6 +1127,79 @@
       "reporterId": "phase3-user",
       "createdAt": "2026-05-30T09:30:31.397Z",
       "status": "REVIEWED"
+    }
+  ],
+  "favorites": [],
+  "categories": [
+    {
+      "id": "transport",
+      "labelAr": "نقل",
+      "labelEn": "Transport",
+      "icon": "🚕",
+      "enabled": true,
+      "sortOrder": 10
+    },
+    {
+      "id": "services",
+      "labelAr": "خدمات",
+      "labelEn": "Services",
+      "icon": "🛠️",
+      "enabled": true,
+      "sortOrder": 20
+    },
+    {
+      "id": "freelance",
+      "labelAr": "أعمال حرة",
+      "labelEn": "Freelance",
+      "icon": "💼",
+      "enabled": true,
+      "sortOrder": 30
+    },
+    {
+      "id": "property",
+      "labelAr": "عقارات",
+      "labelEn": "Property",
+      "icon": "🏠",
+      "enabled": true,
+      "sortOrder": 40
+    },
+    {
+      "id": "cars",
+      "labelAr": "سيارات",
+      "labelEn": "Cars",
+      "icon": "🚗",
+      "enabled": true,
+      "sortOrder": 50
+    },
+    {
+      "id": "items",
+      "labelAr": "أغراض",
+      "labelEn": "Items",
+      "icon": "📦",
+      "enabled": true,
+      "sortOrder": 60
+    },
+    {
+      "id": "other",
+      "labelAr": "او شي تاني",
+      "labelEn": "Other",
+      "icon": "➕",
+      "enabled": true,
+      "sortOrder": 999
+    }
+  ],
+  "outbox": [
+    {
+      "id": "1f7bacdb-1b61-4732-9a79-ba4aa585689c",
+      "aggregateType": "market_listing",
+      "aggregateId": "80414ba6-9dcf-41ac-a7c2-da81ae18d985",
+      "eventType": "listing.removed",
+      "createdAt": "2026-09-29T04:54:05.512Z",
+      "payload": {
+        "ownerId": "market-demo-veteran-001",
+        "note": "إزالة من لوحة سوق موطني"
+      },
+      "mercurStatus": "pending"
     }
   ]
 }

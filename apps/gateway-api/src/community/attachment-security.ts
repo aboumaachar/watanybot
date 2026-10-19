@@ -26,6 +26,8 @@ const ATTACHMENT_MIME_SPECS = new Map<string, AttachmentMimeSpec>([
   ["image/png", { extension: ".png", messageType: "attachment", detectedMimeTypes: ["image/png"] }],
   ["image/webp", { extension: ".webp", messageType: "attachment", detectedMimeTypes: ["image/webp"] }],
   ["application/pdf", { extension: ".pdf", messageType: "attachment", detectedMimeTypes: ["application/pdf"] }],
+  ["application/vnd.openxmlformats-officedocument.wordprocessingml.document", { extension: ".docx", messageType: "attachment", detectedMimeTypes: ["application/vnd.openxmlformats-officedocument.wordprocessingml.document"] }],
+  ["application/msword", { extension: ".doc", messageType: "attachment", detectedMimeTypes: ["application/x-cfb", "application/msword"] }],
   ["video/mp4", { extension: ".mp4", messageType: "attachment", detectedMimeTypes: ["video/mp4"] }],
   ["video/webm", { extension: ".webm", messageType: "attachment", detectedMimeTypes: ["video/webm"] }],
   ["video/quicktime", { extension: ".mov", messageType: "attachment", detectedMimeTypes: ["video/quicktime"] }],

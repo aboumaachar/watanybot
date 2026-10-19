@@ -1,14 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { queryMock, getClientMock, locatorMock } = vi.hoisted(() => ({
+const { queryMock, getClientMock } = vi.hoisted(() => ({
   queryMock: vi.fn(),
   getClientMock: vi.fn(),
-  locatorMock: vi.fn(),
 }));
 
 vi.mock("../lib/db.js", () => ({ query: queryMock, getClient: getClientMock }));
-vi.mock("../koudama/surveys/middle-east-security/middleEastSecurity.address.js", () => ({ resolveMiddleEastSecurityAddress: locatorMock }));
-vi.mock("../koudama/surveys/middle-east-security/middleEastSecurity.repository.js", () => ({ listMiddleEastSecurityApplicationsForOwner: vi.fn().mockResolvedValue([]) }));
 vi.mock("../admin-authority/adminAuthorityAudit.js", () => ({
   appendAdminAuditEventInTransaction: vi.fn().mockResolvedValue(undefined),
   createAdminAuditEvent: vi.fn((input) => input),
@@ -127,19 +124,6 @@ describe("universal job application engine", () => {
   beforeEach(() => {
     queryMock.mockReset();
     getClientMock.mockReset();
-    locatorMock.mockReset();
-    locatorMock.mockResolvedValue({
-      address: "قرب البلدية",
-      mohafaza: "عكار",
-      mohafaza_id: "LB-GOV-0B6790F71D48",
-      caza: "عكار",
-      caza_id: "LB-DIST-C08378A1F450",
-      village: "العبودية",
-      village_id: "LB-LOC-35249",
-      village_pcode: "35249",
-      location_dataset_version: "1.1.1",
-      location_approval_status: "approvedCanonical",
-    });
   });
 
   it("creates one owner-bound bulldozer application using the universal locator", async () => {
@@ -150,7 +134,6 @@ describe("universal job application engine", () => {
     expect(result.item.reference).toBe("JOB-TEST-001");
     expect(result.item.ageYears).toBe(42);
     expect(result.item.mohafazaId).toBe("LB-GOV-0B6790F71D48");
-    expect(locatorMock).toHaveBeenCalledTimes(1);
     expect(queryMock.mock.calls[2][0]).toContain("ON CONFLICT");
     expect(queryMock.mock.calls[2][1]).toContain("user-a");
   });
@@ -166,6 +149,16 @@ describe("universal job application engine", () => {
     const decimal = { ...validInput, answers: { ...validInput.answers, age_years: 42.5 } };
     await expect(createUniversalJobApplication("accredited-bulldozer-driver", decimal, { userId: "user-a", idempotencyKey: "decimal-age" })).rejects.toThrow("INVALID_INTEGER:age_years");
     expect(queryMock).toHaveBeenCalledTimes(2);
+  });
+
+  it("requires a complete valid bulldozer birth date including the four-digit year", async () => {
+    for (const invalidBirthDate of ["09-28", "1984-02-31", `${new Date().getUTCFullYear() + 1}-01-01`]) {
+      queryMock.mockReset();
+      mockPublishedTemplate();
+      const invalid = { ...validInput, answers: { ...validInput.answers, birth_date: invalidBirthDate } };
+      await expect(createUniversalJobApplication("accredited-bulldozer-driver", invalid, { userId: "user-a", idempotencyKey: `invalid-birth-${invalidBirthDate}` })).rejects.toThrow("INVALID_DATE:birth_date");
+      expect(queryMock).toHaveBeenCalledTimes(2);
+    }
   });
 
   it("enforces accreditation details only when accredited_driver is yes", async () => {

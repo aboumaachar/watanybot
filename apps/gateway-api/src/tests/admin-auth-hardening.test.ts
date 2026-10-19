@@ -1,5 +1,6 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
-import { signAccessToken, signRefreshToken } from "../auth/auth-middleware";
+import { signRefreshToken } from "../auth/auth-middleware";
+import { cleanupSessionUsers, createSessionToken } from "./helpers/session-auth";
 
 let appPromise: Promise<typeof import("../server").default> | null = null;
 const originalNodeEnv = process.env.NODE_ENV;
@@ -16,14 +17,17 @@ async function getApp() {
   return appPromise;
 }
 
+// Admin paths resolve the principal from the database (active user + live session + sid).
+const sessionTokens: Record<"admin" | "superadmin", string> = { admin: "", superadmin: "" };
+
+beforeAll(async () => {
+  await getApp();
+  sessionTokens.admin = await createSessionToken("admin");
+  sessionTokens.superadmin = await createSessionToken("superadmin");
+}, 60000);
+
 function authHeader(role: "admin" | "superadmin") {
-  return {
-    authorization: `Bearer ${signAccessToken({
-      sub: `${role}-test-user`,
-      role,
-      email: `${role}@watany.test`,
-    })}`,
-  };
+  return { authorization: `Bearer ${sessionTokens[role]}` };
 }
 
 function refreshSessionHeaders(refreshToken: string, csrfToken = "test-csrf-token") {
@@ -43,6 +47,7 @@ function publicRefreshSessionHeaders(refreshToken: string, csrfToken = "test-csr
 }
 
 afterAll(async () => {
+  await cleanupSessionUsers();
   if (appPromise !== null) {
     const fastifyApp = await appPromise;
     await fastifyApp.close();

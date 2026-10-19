@@ -1,126 +1,142 @@
 /**
- * Profile CRUD routes — login, logout, patch, get.
- * Extracted from server.ts.
+ * Legacy profile compatibility routes backed by canonical JWT users.
+ * Shared pluginDb profile state is intentionally not used for auth or identity.
  */
 import type { FastifyPluginAsync } from "fastify";
-import type { PluginDb, UserProfile, Role } from "../types/domain";
-import { normalizeText, hasSufficientRole, mapProfileRow } from "../lib/helpers";
+import type { PluginDb, UserProfile } from "../types/domain";
+import { normalizeText } from "../lib/helpers";
+import { query } from "../lib/db.js";
 
 interface ProfileRoutesOptions {
   pluginDb: PluginDb;
 }
 
-export const profileRoutes: FastifyPluginAsync<ProfileRoutesOptions> = async (app, { pluginDb }) => {
-  app.get("/api/profile", async () => {
-    let row = pluginDb.prepare("SELECT * FROM profile WHERE id = ?").get("default") as
-      | Record<string, unknown>
-      | undefined;
-    if (!row) {
-      pluginDb
-        .prepare("INSERT INTO profile (id, name, phone, email, region, note, is_authed, last_login) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")
-        .run("default", "Veteran User", "", "", "", "", 0, null);
-      row = pluginDb.prepare("SELECT * FROM profile WHERE id = ?").get("default") as
-        | Record<string, unknown>
-        | undefined;
+type ProfileRow = {
+  id: string;
+  email?: string | null;
+  full_name?: string | null;
+  name?: string | null;
+  phone_number?: string | null;
+  phone?: string | null;
+  role?: string | null;
+  region?: string | null;
+  note?: string | null;
+  last_login?: unknown;
+};
+
+const retired = (replacement: string) => ({
+  error: "LEGACY_PROFILE_API_DEPRECATED",
+  replacement,
+});
+
+function parseLastLogin(value: unknown): number | undefined {
+  if (!value) return undefined;
+  if (value instanceof Date) return value.getTime();
+  const numeric = Number(value);
+  if (Number.isFinite(numeric) && numeric > 0) return numeric;
+  const parsed = Date.parse(String(value));
+  return Number.isFinite(parsed) ? parsed : undefined;
+}
+
+function mapAuthenticatedProfile(row: ProfileRow): UserProfile {
+  return {
+    isAuthed: true,
+    role: row.role ? String(row.role) as UserProfile["role"] : "public",
+    name: row.full_name || row.name || undefined,
+    phone: row.phone_number || row.phone || undefined,
+    email: row.email || undefined,
+    region: row.region || undefined,
+    note: row.note || undefined,
+    lastLogin: parseLastLogin(row.last_login),
+  };
+}
+
+async function readCurrentProfile(userId: string): Promise<ProfileRow | null> {
+  const result = await query<ProfileRow>(
+    "SELECT id, email, full_name, name, phone_number, phone, role, region, note, last_login FROM users WHERE id = $1 LIMIT 1",
+    [userId],
+  );
+  return result.rows[0] || null;
+}
+
+export const profileRoutes: FastifyPluginAsync<ProfileRoutesOptions> = async (app, _options) => {
+  app.get("/api/profile", async (req, reply) => {
+    const userId = req.user?.id;
+    if (!userId) {
+      return reply.code(401).send({ error: "AUTH_REQUIRED" });
     }
-    return { profile: mapProfileRow(row) } as const;
+
+    const row = await readCurrentProfile(userId);
+    if (!row) {
+      return reply.code(404).send({ error: "USER_NOT_FOUND" });
+    }
+
+    return { profile: mapAuthenticatedProfile(row) } as const;
   });
 
-  app.post<{ Body: { name?: string; role?: string } }>("/api/profile/login", async (req) => {
-    const name = normalizeText(req.body?.name) || "Veteran User";
-    const requested: Role = req.body?.role ? (String(req.body.role) as Role) : "accredited";
-    const now = Date.now();
-    let row = pluginDb.prepare("SELECT * FROM profile WHERE id = ?").get("default") as
-      | Record<string, unknown>
-      | undefined;
-
-    function chooseRole(existing?: Role): Role {
-      const selfAllowed: Role[] = ["public", "accredited"];
-      if (selfAllowed.includes(requested)) return requested;
-      if (existing && hasSufficientRole(existing, "accredited")) return existing;
-      return "accredited";
-    }
-
-    if (!row) {
-      const initialRole = chooseRole(undefined);
-      pluginDb
-        .prepare("INSERT INTO profile (id, name, phone, email, region, note, role, is_authed, last_login) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")
-        .run("default", name, "", "", "", "", initialRole, 1, now);
-      row = pluginDb.prepare("SELECT * FROM profile WHERE id = ?").get("default") as
-        | Record<string, unknown>
-        | undefined;
-      return { profile: mapProfileRow(row) } as const;
-    }
-
-    const currentRole: Role = row.role ? (String(row.role) as Role) : "public";
-    const finalRole = chooseRole(currentRole);
-    const updated = {
-      name,
-      phone: row.phone ? String(row.phone) : "",
-      email: row.email ? String(row.email) : "",
-      region: row.region ? String(row.region) : "",
-      note: row.note ? String(row.note) : "",
-      role: finalRole,
-      is_authed: 1,
-      last_login: now,
-    };
-    pluginDb
-      .prepare("UPDATE profile SET name = ?, phone = ?, email = ?, region = ?, note = ?, role = ?, is_authed = ?, last_login = ? WHERE id = ?")
-      .run(updated.name, updated.phone, updated.email, updated.region, updated.note, updated.role, updated.is_authed, updated.last_login, "default");
-    row = pluginDb.prepare("SELECT * FROM profile WHERE id = ?").get("default") as
-      | Record<string, unknown>
-      | undefined;
-    return { profile: mapProfileRow(row) } as const;
+  app.post("/api/profile/login", async (_req, reply) => {
+    return reply.code(410).send(retired("/api/auth/login"));
   });
 
   app.post("/api/profile/logout", async () => {
-    const row = pluginDb.prepare("SELECT * FROM profile WHERE id = ?").get("default") as
-      | Record<string, unknown>
-      | undefined;
-    const updated = {
-      name: row?.name ? String(row.name) : "Veteran User",
-      phone: row?.phone ? String(row.phone) : "",
-      email: row?.email ? String(row.email) : "",
-      region: row?.region ? String(row.region) : "",
-      note: row?.note ? String(row.note) : "",
-      role: row?.role ? String(row.role) : "public",
-      is_authed: 0,
-      last_login: row?.last_login ? Number(row.last_login) : null,
-    };
-    pluginDb
-      .prepare("UPDATE profile SET name = ?, phone = ?, email = ?, region = ?, note = ?, role = ?, is_authed = ?, last_login = ? WHERE id = ?")
-      .run(updated.name, updated.phone, updated.email, updated.region, updated.note, updated.role, updated.is_authed, updated.last_login, "default");
-    const fresh = pluginDb.prepare("SELECT * FROM profile WHERE id = ?").get("default") as
-      | Record<string, unknown>
-      | undefined;
-    return { profile: mapProfileRow(fresh) } as const;
+    return {
+      profile: {
+        isAuthed: false,
+        role: "public",
+      } satisfies UserProfile,
+    } as const;
   });
 
   app.patch<{ Body: Partial<UserProfile> }>("/api/profile", async (req, reply) => {
-    const patch = req.body || {};
-    const row = pluginDb.prepare("SELECT * FROM profile WHERE id = ?").get("default") as
-      | Record<string, unknown>
-      | undefined;
-    if (!row) {
-      reply.code(404);
-      return { error: "profile not found" } as const;
+    const userId = req.user?.id;
+    if (!userId) {
+      return reply.code(401).send({ error: "AUTH_REQUIRED" });
     }
-    const updated = {
-      name: patch.name ? normalizeText(patch.name) : String(row.name || "Veteran User"),
-      phone: patch.phone ? normalizeText(patch.phone) : String(row.phone || ""),
-      email: patch.email ? normalizeText(patch.email) : String(row.email || ""),
-      region: patch.region ? normalizeText(patch.region) : String(row.region || ""),
-      note: patch.note ? String(patch.note) : String(row.note || ""),
-      role: patch.role ? String(patch.role) : String(row.role || "public"),
-      is_authed: typeof patch.isAuthed === "boolean" ? (patch.isAuthed ? 1 : 0) : Number(row.is_authed || 0),
-      last_login: row.last_login ? Number(row.last_login) : null,
-    };
-    pluginDb
-      .prepare("UPDATE profile SET name = ?, phone = ?, email = ?, region = ?, note = ?, role = ?, is_authed = ?, last_login = ? WHERE id = ?")
-      .run(updated.name, updated.phone, updated.email, updated.region, updated.note, updated.role, updated.is_authed, updated.last_login, "default");
-    const fresh = pluginDb.prepare("SELECT * FROM profile WHERE id = ?").get("default") as
-      | Record<string, unknown>
-      | undefined;
-    return { profile: mapProfileRow(fresh) } as const;
+
+    const patch = req.body || {};
+    if (patch.role !== undefined || patch.isAuthed !== undefined || patch.phone !== undefined) {
+      return reply.code(400).send({
+        error: "LEGACY_PROFILE_FIELD_NOT_WRITABLE",
+        replacement: "/api/me/profile",
+      });
+    }
+
+    const current = await readCurrentProfile(userId);
+    if (!current) {
+      return reply.code(404).send({ error: "USER_NOT_FOUND" });
+    }
+
+    if (patch.email !== undefined) {
+      const requestedEmail = normalizeText(patch.email).toLowerCase();
+      const currentEmail = normalizeText(current.email).toLowerCase();
+      if (requestedEmail !== currentEmail) {
+        return reply.code(409).send({ error: "EMAIL_CHANGE_REQUIRES_REAUTH" });
+      }
+    }
+
+    const nextName = patch.name !== undefined ? normalizeText(patch.name) : null;
+    if (typeof nextName === "string" && nextName.length < 2) {
+      return reply.code(400).send({ error: "PROFILE_NAME_TOO_SHORT" });
+    }
+
+    const nextRegion = patch.region !== undefined ? normalizeText(patch.region) : null;
+    const nextNote = patch.note !== undefined ? String(patch.note).trim() : null;
+    const result = await query<ProfileRow>(
+      `UPDATE users
+       SET full_name = COALESCE($2, full_name),
+           region = COALESCE($3, region),
+           note = COALESCE($4, note),
+           updated_at = now()
+       WHERE id = $1
+       RETURNING id, email, full_name, name, phone_number, phone, role, region, note, last_login`,
+      [userId, nextName, nextRegion, nextNote],
+    );
+
+    const updated = result.rows[0];
+    if (!updated) {
+      return reply.code(404).send({ error: "USER_NOT_FOUND" });
+    }
+
+    return { profile: mapAuthenticatedProfile(updated) } as const;
   });
 };

@@ -4,34 +4,50 @@
  */
 import type { FastifyPluginAsync } from "fastify";
 import type { PluginDb } from "../types/domain";
+import { getLatestEngagementHighlights, isWorldCupRelated } from "./engagement";
+import { readTickerSettings } from "../lib/ticker-settings.js";
 
 interface TickerRoutesOptions {
   pluginDb: PluginDb;
 }
 
+type TickerItem = {
+  kind: string;
+  title: string;
+  body?: string;
+  url?: string;
+  linkType?: string;
+  linkId?: string;
+};
+
+function dedupeTickerItems(items: TickerItem[]): TickerItem[] {
+  const seen = new Set<string>();
+  return items.filter((item) => {
+    const key = `${item.title}|${item.linkId || item.url || ""}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
 const TICKER_CURATED: Array<{ kind: string; title: string; linkType?: string; linkId?: string }> = [
-  { kind: "tip",      title: "💡 نصيحة اليوم: يمكنك حفظ أي رد بالنقر على المحفوظات لقراءته لاحقاً" },
-  { kind: "tip",      title: "💡 هل تعلم؟ يمكنك التحدث صوتياً مع موطني بالضغط على 🎧" },
-  { kind: "tip",      title: "💡 استخدم حاسبة الرواتب لمعرفة تفاصيل راتبك ومعاشك التقاعدي" },
-  { kind: "tip",      title: "📋 النماذج الرسمية متاحة — اختر نموذجاً من القائمة لتعبئته وتحميله" },
-  { kind: "announce", title: "📢 تم تحديث قاعدة المعرفة — 743 مقطع قانوني متاح للبحث" },
-  { kind: "announce", title: "🔔 تابع حالة قضاياك ومستنداتك من الشريط الجانبي" },
-  { kind: "announce", title: "🍎 فرصة عمل موسمية: قطاف التفاح في عين الحفة - تنورين", linkType: "route", linkId: "/jobs/ainelhafeh" },
-  { kind: "announce", title: "💼 تحقق من أحدث عروض العمل", linkType: "route", linkId: "/jobs" },
-  { kind: "announce", title: "🛒 تحقق من إعلانات السوق", linkType: "route", linkId: "/marketplace" },
-  { kind: "announce", title: "💰 تحقق من معاشك", linkType: "route", linkId: "/salary" },
-  { kind: "announce", title: "🎓 تحقق من المنح المدرسية", linkType: "route", linkId: "/school-grants" },
-  { kind: "suggest",  title: "❓ سؤال شائع: ما هي شروط الإحالة على التقاعد؟" },
-  { kind: "suggest",  title: "❓ سؤال شائع: كيف أحسب معاشي التقاعدي؟" },
-  { kind: "suggest",  title: "❓ سؤال شائع: ما هي حقوق ذوي العسكري المتوفى؟" },
-  { kind: "suggest",  title: "❓ سؤال شائع: كيف أقدم طلب مساعدة مدرسية؟" },
-  { kind: "suggest",  title: "❓ سؤال شائع: ما هي إجراءات تسجيل الزواج؟" },
-];
+  { kind: "announce", title: "📋 شارك في استبيانات موطني المفتوحة", linkType: "route", linkId: "/surveys" },
+  { kind: "announce", title: "💼 تصفح أحدث فرص العمل", linkType: "route", linkId: "/jobs" },
+  { kind: "announce", title: "🛒 تصفح أحدث إعلانات السوق", linkType: "route", linkId: "/marketplace" },
+  { kind: "announce", title: "💰 راجع المعاش والزيادات", linkType: "route", linkId: "/salary" },
+  { kind: "announce", title: "🎓 راجع المساعدات والمنح المدرسية", linkType: "route", linkId: "/school-grants" },
+  { kind: "tip", title: "💡 يمكنك حفظ أي رد لقراءته لاحقاً من المحفوظات" },
+  { kind: "tip", title: "📋 النماذج الرسمية متاحة من قسم النماذج", linkType: "route", linkId: "/forms" },
+]
 
 export const tickerRoutes: FastifyPluginAsync<TickerRoutesOptions> = async (app, { pluginDb }) => {
-  app.get("/api/ticker", async (req) => {
-    const userId = (req.query as Record<string, string | undefined>)?.userId;
-    const items: Array<{ kind: string; title: string; body?: string; url?: string; linkType?: string; linkId?: string }> = [];
+  app.get("/api/ticker", async (req, reply) => {
+    reply.header("Cache-Control", "no-store, max-age=0");
+    const query = req.query as Record<string, string | undefined>;
+    const actorId = req.user?.id;
+    const latestOnly = query?.mode === "latest";
+    const settings = readTickerSettings(pluginDb);
+    const items: TickerItem[] = [];
 
     // persistent items managed by admins
     try {
@@ -59,16 +75,27 @@ export const tickerRoutes: FastifyPluginAsync<TickerRoutesOptions> = async (app,
       /* ignore */
     }
 
+    // Latest published posts and actionable features
+    for (const highlight of (await getLatestEngagementHighlights(pluginDb)).slice(0, 20)) {
+      items.push({
+        kind: "latest",
+        title: `🆕 ${highlight.title}`,
+        body: highlight.summary,
+        linkType: "route",
+        linkId: highlight.href,
+      });
+    }
+
     // case updates from notifications
     try {
       let notifs;
-      if (userId) {
+      if (actorId) {
         notifs = pluginDb
           .prepare("SELECT * FROM notifications WHERE kind = 'ticket_reply' AND (user_id IS NULL OR user_id = ?) ORDER BY ts DESC LIMIT 5")
-          .all(userId) as Array<Record<string, unknown>>;
+          .all(actorId) as Array<Record<string, unknown>>;
       } else {
         notifs = pluginDb
-          .prepare("SELECT * FROM notifications WHERE kind = 'ticket_reply' ORDER BY ts DESC LIMIT 5")
+          .prepare("SELECT * FROM notifications WHERE kind = 'ticket_reply' AND user_id IS NULL ORDER BY ts DESC LIMIT 5")
           .all() as Array<Record<string, unknown>>;
       }
       for (const n of notifs) {
@@ -82,6 +109,20 @@ export const tickerRoutes: FastifyPluginAsync<TickerRoutesOptions> = async (app,
       }
     } catch {
       /* ignore */
+    }
+
+    if (latestOnly) {
+      const safeItems = items.filter((item) => !isWorldCupRelated(item.title, item.body, item.url, item.linkId, item.kind));
+      const liveItems = dedupeTickerItems([
+        ...safeItems.filter((item) => item.kind === "latest"),
+        ...safeItems.filter((item) => item.kind !== "latest"),
+      ]).slice(0, 20);
+      return {
+        items: liveItems.length > 0 ? liveItems : TICKER_CURATED.slice(0, 6),
+        mode: "latest",
+        generatedAt: Date.now(),
+        settings,
+      };
     }
 
     // popular user questions from chat_history
@@ -110,6 +151,11 @@ export const tickerRoutes: FastifyPluginAsync<TickerRoutesOptions> = async (app,
       items.push(item);
     }
 
-    return { items };
+    return {
+      items: dedupeTickerItems(items.filter((item) => !isWorldCupRelated(item.title, item.body, item.url, item.linkId, item.kind))).slice(0, 20),
+      mode: "default",
+      generatedAt: Date.now(),
+      settings,
+    };
   });
 };
