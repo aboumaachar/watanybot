@@ -15,15 +15,21 @@ import ArticlePublishingAuthority9D72Page from "./ArticlePublishingAuthority9D72
 import { DASHBOARD_MODULES } from "../dashboardModuleRegistry";
 
 const SHELL_ITEMS = [
-  { path: "/", label: "الرئيسية", icon: "dashboard", end: true },
-  { path: "/cms", label: "إدارة المحتوى", icon: "documents", end: false },
-  { path: "/operations", label: "العمليات", icon: "briefcase", end: false },
-  { path: "/system", label: "النظام", icon: "settings", end: false },
+  { path: "/superadmin", label: "الرئيسية", icon: "dashboard", end: true },
+  { path: "/superadmin/cms", label: "إدارة المحتوى", icon: "documents", end: false },
+  { path: "/superadmin/operations", label: "العمليات", icon: "briefcase", end: false },
+  { path: "/superadmin/system", label: "النظام", icon: "settings", end: false },
 ] as const;
 
+const SUPERADMIN_ONLY_MODULE_IDS = new Set(["crm", "erm"]);
 const REGISTERED_SHELL_ITEMS = DASHBOARD_MODULES
   .filter((module) => module.status === "ACTIVE")
-  .map((module) => ({ path: module.route, label: module.labelAr, icon: module.icon, end: false }));
+  .map((module) => ({
+    path: SUPERADMIN_ONLY_MODULE_IDS.has(module.id) ? `/superadmin${module.route}` : module.route,
+    label: module.labelAr,
+    icon: module.icon,
+    end: false,
+  }));
 
 function ChildSurface({ title, description }: Readonly<{ title: string; description: string }>) {
   return (
