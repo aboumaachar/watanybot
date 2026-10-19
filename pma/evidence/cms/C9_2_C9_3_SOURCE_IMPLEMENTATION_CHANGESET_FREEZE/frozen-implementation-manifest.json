@@ -1,0 +1,23 @@
+{
+  "status": "FROZEN",
+  "gate": "C9_2_C9_3_CHANGESET_FREEZE",
+  "hashAlgorithm": "SHA256",
+  "gitHead": "101afc15906d5012bd879996ce2f3f9b6212b3fe",
+  "gitBranch": "integration/theme-upgrade-20260728",
+  "predecessorManifestSha256": "0684825BD8564EF07A4722FA42DAD90541272F6959E57F260D8DCC0E663C4BCB",
+  "totalFileCount": 12,
+  "files": [
+    { "path": "apps/gateway-api/src/cms/cms-routes.ts", "change": "modified", "sha256": "647B38869D8DE8165F78EA16D0229239CB49F7E4FCD2857FE5404CF857F2AC08" },
+    { "path": "apps/gateway-api/src/cms/documents/documents-cms-adapter.ts", "change": "modified", "sha256": "B291753E5778F498BE63FF7915F21F1F016A51F2555154E51334A5A9E8A5A1BB" },
+    { "path": "apps/gateway-api/src/cms/documents/documents-repository.ts", "change": "new", "sha256": "BC03F965E6851159BAB287318039F3BA78D8833FA022528ACC9603E99DC85CE0" },
+    { "path": "apps/gateway-api/src/cms/documents/documents-service.ts", "change": "new", "sha256": "8409145D037B54982C47B9DBC4A2601790D704300B0E356B26FDB8ED98001FD6" },
+    { "path": "apps/gateway-api/src/tests/documents-cms-boundary.test.ts", "change": "new", "sha256": "7C2B624615C71788C5A509EB980DB19F9BA5939581608F3D888177EA33A6B943" },
+    { "path": "apps/web-admin/src/components/AdminFluentIcon.tsx", "change": "modified", "sha256": "6FE7A7D3191DA5BE21B13CD952F76CF2D734F83857DBAB29ED086655489E7974" },
+    { "path": "apps/web-admin/src/lib/api.ts", "change": "modified", "sha256": "E44708566BBD84B3792D20B39B63A8697257F0ECEAE55862A26050098E4BDF13" },
+    { "path": "apps/web-admin/src/pages/AdminDocumentsPage.tsx", "change": "modified", "sha256": "B7F7FC70060B6C90548C3B01EC704E53CEAF76EA44479653038849B2A9C5FF61" },
+    { "path": "apps/web-admin/src/pages/AdminKBStudioPage.tsx", "change": "modified", "sha256": "E8A19F4A012B205599DE6E3C1293E322377FED3F8B217860D2D470D550AF0361" },
+    { "path": "apps/web-admin/src/pages/CmsDocumentsPage.tsx", "change": "new", "sha256": "2DFA714D849750FB16D1571A0EB65960AE73BCEF2047484B111C7CFD0033ACE8" },
+    { "path": "apps/web-admin/src/pages/CmsPage.tsx", "change": "modified", "sha256": "FC1297043F937ADC9B5A815BE8FBAC3D2B99142E537B58B2F43E0BA9E65E724E" },
+    { "path": "apps/web-admin/src/styles.css", "change": "modified", "sha256": "3FD94C94A0997D35DADC526D260733E06E98D9C890F7D19EF6BB85681A68CB48" }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "scope": "SUPERADMIN_PLATFORM_WAVE1",
+  "ownedFiles": [
+    "apps/web-admin/src/App.tsx",
+    "apps/web-admin/src/lib/api.ts",
+    "apps/web-admin/src/pages/SuperadminShellPage.tsx",
+    "apps/web-admin/src/styles.css",
+    "apps/gateway-api/src/auth/rbac.ts",
+    "apps/gateway-api/src/admin-authority/adminAuthorityGuard.ts",
+    "apps/gateway-api/src/routes/admin-features.ts",
+    "apps/gateway-api/src/tests/auth-rbac.test.ts"
+  ],
+  "directDependencyExpansion": "NONE",
+  "unrelatedDirtyWorkIncluded": "NO"
+}

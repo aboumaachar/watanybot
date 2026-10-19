@@ -246,4 +246,31 @@ describe("AppProvider auth sync", () => {
     expect(profile).toEqual({ isAuthed: false, role: "public" });
     expect(auth.getAccessToken()).toBeNull();
   });
+
+  it("uses the authenticated current-user endpoint instead of the legacy public profile", async () => {
+    ensureStorageGlobals();
+    const { api, auth } = await loadAppModules();
+
+    auth.storeTokens({ accessToken: createFakeAccessToken({ email: "slice4a.20260811@example.test" }), expiresIn: 3600 });
+
+    installFetchMock((url) => {
+      if (url.endsWith("/api/profile")) {
+        return createJsonResponse(200, { profile: { isAuthed: false, role: "public" } });
+      }
+      if (url.endsWith("/api/me")) {
+        return createJsonResponse(200, {
+          user: { id: "user-a", email: "slice4a.20260811@example.test", role: "public", full_name: "User A" },
+        });
+      }
+
+      return createJsonResponse(404, {});
+    });
+
+    await expect(api.getProfile("http://example.test")).resolves.toEqual(expect.objectContaining({
+      id: "user-a",
+      email: "slice4a.20260811@example.test",
+      name: "User A",
+      isAuthed: true,
+    }));
+  });
 });

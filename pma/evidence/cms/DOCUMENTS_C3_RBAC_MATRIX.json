@@ -1,0 +1,12 @@
+{
+  "status": "PASS",
+  "read": "cms.read",
+  "create": "cms.create",
+  "edit": "cms.edit",
+  "publish": "cms.publish",
+  "unpublish": "cms.unpublish",
+  "archive": "cms.archive",
+  "audit": "cms.audit.read",
+  "versions": "cms.version.read",
+  "rollback": "cms.edit"
+}

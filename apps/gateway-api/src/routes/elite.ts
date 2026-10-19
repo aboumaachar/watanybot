@@ -4,6 +4,7 @@
  * Based on WATANYBOT_ELITE_VISION.md specification
  */
 import type { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
+import { randomUUID } from "node:crypto";
 
 // In-memory storage (replace with database in production)
 const userProfiles: Map<string, any> = new Map();
@@ -69,7 +70,7 @@ export async function eliteRoutes(app: FastifyInstance) {
     }
 
     const feedbackEntry = {
-      id: `fb_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
+      id: `fb_${Date.now()}_${randomUUID().slice(0, 6)}`,
       messageId,
       feedback, // 'helpful' | 'not_helpful'
       comment: comment || null,
@@ -125,7 +126,7 @@ export async function eliteRoutes(app: FastifyInstance) {
     }
 
     const interaction = {
-      id: `int_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
+      id: `int_${Date.now()}_${randomUUID().slice(0, 6)}`,
       userId,
       query,
       response: response || null,

@@ -10,13 +10,12 @@
  * 6. Feedback Loop (continuous learning)
  */
 
-import type { KbChunk } from './types';
 import { queryUnderstanding, type QueryUnderstanding } from './query-understanding';
-import { adaptiveRetrieval, type ScoredChunk, type RetrievalStrategy } from './adaptive-retrieval';
+import { adaptiveRetrieval, type ScoredChunk } from './adaptive-retrieval';
 import { multiHopReasoning, type MultiHopResult } from './multi-hop';
-import { confidenceAssessment, contextualReranker, type ConfidenceScore, type AdaptedResponse, type UserProfile } from './confidence-reranking';
+import { confidenceAssessment, contextualReranker, type ConfidenceScore, type UserProfile } from './confidence-reranking';
 import { feedbackLoop } from './feedback-loop';
-import { buildAiMessages, retrieveChunks } from './rag';
+import { buildAiMessages } from './rag';
 import { extractIntents } from './intent-extractor';
 import type { ExtractedIntents } from './types';
 

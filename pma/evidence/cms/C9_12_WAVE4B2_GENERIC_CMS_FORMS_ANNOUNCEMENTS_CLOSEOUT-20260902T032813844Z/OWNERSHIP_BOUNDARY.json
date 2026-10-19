@@ -1,0 +1,34 @@
+{
+    "status":  "PASS",
+    "wave":  "4B.2",
+    "rows":  [
+                 {
+                     "domain":  "forms",
+                     "owner":  "Gateway",
+                     "entityType":  "cms.forms",
+                     "management":  "generic shared CMS"
+                 },
+                 {
+                     "domain":  "announcements",
+                     "owner":  "Gateway",
+                     "entityType":  "cms.announcements",
+                     "management":  "generic shared CMS"
+                 },
+                 {
+                     "domain":  "procedures",
+                     "owner":  "Payload",
+                     "management":  "read-only bridge boundary"
+                 },
+                 {
+                     "domain":  "editorial-documents",
+                     "owner":  "Payload",
+                     "management":  "read-only bridge boundary"
+                 },
+                 {
+                     "domain":  "operational-documents",
+                     "owner":  "Gateway",
+                     "management":  "existing operational surface"
+                 }
+             ],
+    "historicalWave4B1EvidencePreserved":  true
+}

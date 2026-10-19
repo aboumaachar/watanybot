@@ -1,5 +1,8 @@
 ﻿// PAYMENT_OVERRIDE_LIVE_PIPELINE_WIRING_V1: payment override wiring reviewed for live pipeline integration.
 import { searchKbLive, type LiveSearchDocumentResult } from "../kb/kb-search.service";
+import { getSourceCheckedClaims, type ReviewedProceduralClaim } from "../kb/official-claim-ledger";
+import { reviewOfficialSources, type OfficialSourceReview } from "../kb/official-source-lifecycle";
+import { assessAnswerEvidence, type AnswerEvidenceReview } from "../../lib/chat-claim-evidence";
 
 export type HybridKbSelectedResult = {
   kind?: "tag" | "document" | "procedure" | "faq" | "salary" | "payment" | "unknown";
@@ -55,6 +58,11 @@ export type HybridChatResponse = {
   confidence: number;
   conversationId: string;
   generatedAt: string;
+  /** Explicit excerpt checks for a closed list of short administrative facts; not legal certification. */
+  sourceCheckedClaims?: ReviewedProceduralClaim[];
+  /** Review dates only. No network or autonomous reapproval occurs during chat. */
+  sourceReviews?: OfficialSourceReview[];
+  answerEvidence?: AnswerEvidenceReview;
 };
 
 function makeConversationId(existing?: string): string {
@@ -73,8 +81,7 @@ function resolveSelectedTags(request: HybridChatRequest): string[] {
   const selectedResult = request.selectedResult || null;
   const resultTags = Array.isArray(selectedResult?.tags) ? selectedResult?.tags || [] : [];
   const resultIdAsTag = selectedResult?.kind === "tag" ? [selectedResult.id] : [];
-  const snapshotTags = Array.isArray(request.searchSnapshot?.topTags) ? request.searchSnapshot.topTags : [];
-  return unique([...(request.selectedTags || []), ...resultTags, ...resultIdAsTag, ...snapshotTags]);
+  return unique([...(request.selectedTags || []), ...resultTags, ...resultIdAsTag]);
 }
 
 function resolveSelectedKbIds(request: HybridChatRequest): string[] {
@@ -268,7 +275,18 @@ function buildAnswer(request: HybridChatRequest, selectedTags: string[], sources
   }
 
   if (sources.length === 0) {
-    return "لم أجد نتيجة كافية في قاعدة المعرفة لهذا السؤال. اختر موضوعاً من الاقتراحات أو اكتب تفاصيل إضافية، ويمكنك اختيار: او شي تاني.";
+    const normalized = normalizeHybridIntentText(message);
+    let clarification = "اذكر اسم الموضوع أو المعاملة بالتحديد حتى أبحث عن مرجع مناسب.";
+    if (/(معاش|تقاعد|راتب)/.test(normalized)) {
+      clarification = "هل تريد إفادة المعاش التقاعدي، أم شروط الاستحقاق، أم طريقة الاحتساب؟ لا أستطيع تأكيد الشروط دون نص قانوني مناسب.";
+    } else if (/(مدرس|منح|تعليم)/.test(normalized)) {
+      clarification = "هل تقصد المساعدات المدرسية المتأخرة، أم تسوية الأوراق المدرسية، أم نوعاً آخر من المساعدات؟";
+    } else if (/(طباب|استشف|معالج|صحه)/.test(normalized)) {
+      clarification = "هل تقصد تصريح الاستفادة من الطبابة، أم طلب علاج معين، أم شروط تغطية الاستشفاء؟";
+    } else if (/(معامل|مستند|اوراق|اجراء)/.test(normalized)) {
+      clarification = "أي معاملة تقصد؟ اذكر اسم المعاملة أو الجهة المختصة لأحدد المستندات المرتبطة بها.";
+    }
+    return `لم أجد نتيجة كافية في قاعدة المعرفة لهذا السؤال. ${clarification} ويمكنك اختيار: او شي تاني.`;
   }
 
   const sourceTitles = sources.slice(0, 3).map((source) => source.title).join("، ");
@@ -317,20 +335,14 @@ export async function runHybridKbChat(request: HybridChatRequest): Promise<Hybri
 
   const filteredByTags = selectedTags.length > 0
     ? rerankedDocuments.filter((doc) => doc.tags.some((tag) => selectedTags.includes(tag)))
-    : live.documents;
+    : rerankedDocuments;
 
   const filteredByKb = selectedKbIds.length > 0
     ? filteredByTags.filter((doc) => selectedKbIds.includes(String(doc.kbId || "")) || doc.tags.some((tag) => selectedKbIds.includes(tag)))
     : filteredByTags;
 
-  let rankedSources: LiveSearchDocumentResult[];
-  if (filteredByKb.length > 0) {
-    rankedSources = filteredByKb;
-  } else if (filteredByTags.length > 0) {
-    rankedSources = filteredByTags;
-  } else {
-    rankedSources = rerankedDocuments;
-  }
+  // A selected scope must never silently expand to unrelated results.
+  const rankedSources: LiveSearchDocumentResult[] = filteredByKb;
 
   const sources = rankedSources.slice(0, 5);
   const confidence = sources.length === 0 ? 0 : Math.min(0.95, Math.max(...sources.map((source) => source.score)) / 100);
@@ -342,9 +354,28 @@ export async function runHybridKbChat(request: HybridChatRequest): Promise<Hybri
   }
   const followUps = live.suggestedQuestions.length > 0 ? live.suggestedQuestions : ["هل تريد المستندات المطلوبة؟", "هل تريد طريقة التقديم؟", "او شي تاني"];
   const actions = buildActions(selectedResult, sources);
+  const sourceCheckedClaims = getSourceCheckedClaims(sources);
+  const sourceReviews = reviewOfficialSources().filter((review) =>
+    sources.some((source) => source.id === review.sourceId && source.sourceUrl === review.sourceUrl),
+  );
+  const baseAnswer = buildAnswer(request, selectedTags, sources, followUps);
+  const factNotes = sourceCheckedClaims.map((claim) =>
+    `• ${claim.textAr} [${claim.sourceId}] (مراجعة مصدر: ${claim.reviewedAt})`,
+  ).join("\n");
+  const reviewedAnswer = factNotes
+    ? `${baseAnswer}\n\nمعلومات إجرائية محدودة راجعت نصوصها في الصفحات الأصلية (قد تتغير؛ راجع المصدر):\n${factNotes}`
+    : baseAnswer;
+  const reviewWarnings = sourceReviews.filter((source) => source.reviewState !== "current")
+    .map((source) => `تنبيه: مراجعة المرجع ${source.sourceId} ${source.reviewState === "expired" ? "منتهية" : "تحتاج تحديثاً قريباً"}، ويجب إعادة التحقق من مصدره.`);
+  const answer = reviewWarnings.length
+    ? `${reviewedAnswer}\n\n${reviewWarnings.join("\n")}`
+    : reviewedAnswer;
 
   return {
-    answer: buildAnswer(request, selectedTags, sources, followUps),
+    answer,
+    answerEvidence: assessAnswerEvidence(answer, sources),
+    sourceCheckedClaims,
+    sourceReviews,
     mode,
     sources,
     followUps,

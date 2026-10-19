@@ -1,0 +1,33 @@
+{
+  "project_id": "watanybot",
+  "entity_priority": [
+    "procedure",
+    "rule",
+    "directory_entry",
+    "law_reference",
+    "faq_seed",
+    "document_asset"
+  ],
+  "intent_groups": {
+    "where_apply": [
+      "وين بقدّم",
+      "وين براجع",
+      "وين لازم روح"
+    ],
+    "docs_required": [
+      "شو الوراق",
+      "شو لازم جيب",
+      "شو المستندات"
+    ],
+    "timing_cost": [
+      "قديش بتاخد وقت",
+      "آخر مهلة",
+      "ببلاش ولا لا"
+    ],
+    "clarifications": [
+      "مع مين بحكي",
+      "مين المرجع",
+      "إذا علّقت المعاملة"
+    ]
+  }
+}

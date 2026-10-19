@@ -1,0 +1,22 @@
+{
+  "status": "PASS",
+  "changedFiles": [
+    {
+      "path": "apps/api-backend/apps/api/routers/public.py",
+      "change": "Added canonical POST /api/files/upload and bounded PNG readback route to the already-mounted public router"
+    },
+    {
+      "path": "pma/feature-gates/04_PROGRAM_FAILURE_AND_REGRESSION_REGISTER.md",
+      "change": "Registered APEX_PYTHON8010_UPLOAD_ROUTE_EXPECTED_200_RECEIVED_404"
+    }
+  ],
+  "preservedOwner": {
+    "path": "apps/api-backend/apps/api/main.py",
+    "sha256": "7D23C77408AD396B49B6603AA2E4335880B0854F79FC20CA2DF6167D73732DBF"
+  },
+  "removedUnusedParallelRouter": "apps/api-backend/apps/api/routers/files.py",
+  "validation": {
+    "pythonCompile": "PASS",
+    "ownerHashParity": "PASS"
+  }
+}

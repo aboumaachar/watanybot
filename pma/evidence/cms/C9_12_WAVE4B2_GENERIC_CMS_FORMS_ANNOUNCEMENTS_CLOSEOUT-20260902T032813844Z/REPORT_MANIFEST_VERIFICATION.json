@@ -1,0 +1,564 @@
+{
+  "status": "PASS",
+  "entryCount": 62,
+  "entries": [
+    {
+      "path": "01_SOURCE_IDENTITY.json",
+      "exists": true,
+      "bytesBefore": 8660,
+      "bytesAfter": 8660,
+      "hashBefore": "61801605FF3FFFC38D01378FF83EE70CC050ECD871BE5C8A755667BC37E0870F",
+      "hashAfter": "61801605FF3FFFC38D01378FF83EE70CC050ECD871BE5C8A755667BC37E0870F",
+      "match": true
+    },
+    {
+      "path": "02_MIGRATION_STATUS.json",
+      "exists": true,
+      "bytesBefore": 2002,
+      "bytesAfter": 2002,
+      "hashBefore": "912F021439C1E58AD573B74E01A56F66BBE5FAF04E265C4452DD013459A0397C",
+      "hashAfter": "912F021439C1E58AD573B74E01A56F66BBE5FAF04E265C4452DD013459A0397C",
+      "match": true
+    },
+    {
+      "path": "03_GATEWAY_VALIDATION.json",
+      "exists": true,
+      "bytesBefore": 5380,
+      "bytesAfter": 5380,
+      "hashBefore": "1BDE018FBF9723B5761460973FF5E48C67A9BBFB7B61E19BBC1A58A588630F36",
+      "hashAfter": "1BDE018FBF9723B5761460973FF5E48C67A9BBFB7B61E19BBC1A58A588630F36",
+      "match": true
+    },
+    {
+      "path": "04_ADMIN_BUILD.json",
+      "exists": true,
+      "bytesBefore": 3165,
+      "bytesAfter": 3165,
+      "hashBefore": "596132077FF77CA674D9434F6B5FFBF18433A510C28B33B192746A7443B021F0",
+      "hashAfter": "596132077FF77CA674D9434F6B5FFBF18433A510C28B33B192746A7443B021F0",
+      "match": true
+    },
+    {
+      "path": "05_BROWSER_PROOF.json",
+      "exists": true,
+      "bytesBefore": 4535,
+      "bytesAfter": 4535,
+      "hashBefore": "F0F93BBBFBF053A1AEB4F3089C9F3BFD1A23B9C07DB6AE67CA78B54BA5E13C8F",
+      "hashAfter": "F0F93BBBFBF053A1AEB4F3089C9F3BFD1A23B9C07DB6AE67CA78B54BA5E13C8F",
+      "match": true
+    },
+    {
+      "path": "06_CLEANUP.json",
+      "exists": true,
+      "bytesBefore": 4078,
+      "bytesAfter": 4078,
+      "hashBefore": "8435C9652F454E35B29BEEFFB81766627A7ED64CDD5884A49489F648628AD540",
+      "hashAfter": "8435C9652F454E35B29BEEFFB81766627A7ED64CDD5884A49489F648628AD540",
+      "match": true
+    },
+    {
+      "path": "07_WORKTREE_CLASSIFICATION.json",
+      "exists": true,
+      "bytesBefore": 1469,
+      "bytesAfter": 1469,
+      "hashBefore": "2D9FD58716EE947F15CE8154317CCE5D86FBB1DC59331D7537861677196EF01F",
+      "hashAfter": "2D9FD58716EE947F15CE8154317CCE5D86FBB1DC59331D7537861677196EF01F",
+      "match": true
+    },
+    {
+      "path": "08_CLOSEOUT.json",
+      "exists": true,
+      "bytesBefore": 1244,
+      "bytesAfter": 1244,
+      "hashBefore": "8AD463D30AE148185F6A7A421A18896D4257F308A9C2D76F22B4ADBD4C25D229",
+      "hashAfter": "8AD463D30AE148185F6A7A421A18896D4257F308A9C2D76F22B4ADBD4C25D229",
+      "match": true
+    },
+    {
+      "path": "actions.csv",
+      "exists": true,
+      "bytesBefore": 827,
+      "bytesAfter": 827,
+      "hashBefore": "44091259E440FB2AD955AC3B4E4085AFA097B47D626782AD30AECDF92C198168",
+      "hashAfter": "44091259E440FB2AD955AC3B4E4085AFA097B47D626782AD30AECDF92C198168",
+      "match": true
+    },
+    {
+      "path": "ADMIN_BUILD.json",
+      "exists": true,
+      "bytesBefore": 852,
+      "bytesAfter": 852,
+      "hashBefore": "4EA3C9A93C8271D12AE242CFE6D1E8EA20CB01B4E261E8C120052586187D7F48",
+      "hashAfter": "4EA3C9A93C8271D12AE242CFE6D1E8EA20CB01B4E261E8C120052586187D7F48",
+      "match": true
+    },
+    {
+      "path": "ADMIN_BUILD.stderr.txt",
+      "exists": true,
+      "bytesBefore": 4230,
+      "bytesAfter": 4230,
+      "hashBefore": "0B4CF135E634BDCC708EEF125DF303F77CD99F96510E99155827747F6C397671",
+      "hashAfter": "0B4CF135E634BDCC708EEF125DF303F77CD99F96510E99155827747F6C397671",
+      "match": true
+    },
+    {
+      "path": "ADMIN_BUILD.stdout.txt",
+      "exists": true,
+      "bytesBefore": 2772,
+      "bytesAfter": 2772,
+      "hashBefore": "A61C6114C52D9301718E1BEB4D7823E81307FB694F25AF358BB4F2A96E79C288",
+      "hashAfter": "A61C6114C52D9301718E1BEB4D7823E81307FB694F25AF358BB4F2A96E79C288",
+      "match": true
+    },
+    {
+      "path": "ADMIN_TYPECHECK.json",
+      "exists": true,
+      "bytesBefore": 864,
+      "bytesAfter": 864,
+      "hashBefore": "71539EF26A6AF02FD3D1814878D262D7116194302C1B84BE841623892F630289",
+      "hashAfter": "71539EF26A6AF02FD3D1814878D262D7116194302C1B84BE841623892F630289",
+      "match": true
+    },
+    {
+      "path": "ADMIN_TYPECHECK.stderr.txt",
+      "exists": true,
+      "bytesBefore": 0,
+      "bytesAfter": 0,
+      "hashBefore": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "hashAfter": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "match": true
+    },
+    {
+      "path": "ADMIN_TYPECHECK.stdout.txt",
+      "exists": true,
+      "bytesBefore": 234,
+      "bytesAfter": 234,
+      "hashBefore": "15E19EF427BF7565E234B3AC377A7B68E15AD370235199FD646E44014C46E273",
+      "hashAfter": "15E19EF427BF7565E234B3AC377A7B68E15AD370235199FD646E44014C46E273",
+      "match": true
+    },
+    {
+      "path": "BROWSER_BROWSER_BROWSER_BROWSER_wave4b2-announcements-desktop.png",
+      "exists": true,
+      "bytesBefore": 287640,
+      "bytesAfter": 287640,
+      "hashBefore": "4200D2404F365CB9A2413878B96A4AF7050EAA1DC4D62C7ED33575ED065372E4",
+      "hashAfter": "4200D2404F365CB9A2413878B96A4AF7050EAA1DC4D62C7ED33575ED065372E4",
+      "match": true
+    },
+    {
+      "path": "BROWSER_BROWSER_BROWSER_BROWSER_wave4b2-announcements-mobile.png",
+      "exists": true,
+      "bytesBefore": 313180,
+      "bytesAfter": 313180,
+      "hashBefore": "C9215B13C75E7CAB7B024CB8F0C6191C79A86B2941DEE1A845F6549CBDAB0DBA",
+      "hashAfter": "C9215B13C75E7CAB7B024CB8F0C6191C79A86B2941DEE1A845F6549CBDAB0DBA",
+      "match": true
+    },
+    {
+      "path": "BROWSER_BROWSER_BROWSER_BROWSER_wave4b2-forms-desktop.png",
+      "exists": true,
+      "bytesBefore": 183486,
+      "bytesAfter": 183486,
+      "hashBefore": "842A23EC85682F854CDB97E9DF9C224F3C62B707A729D2F84258A6ECB4494A82",
+      "hashAfter": "842A23EC85682F854CDB97E9DF9C224F3C62B707A729D2F84258A6ECB4494A82",
+      "match": true
+    },
+    {
+      "path": "BROWSER_BROWSER_BROWSER_BROWSER_wave4b2-forms-mobile.png",
+      "exists": true,
+      "bytesBefore": 338920,
+      "bytesAfter": 338920,
+      "hashBefore": "7BD9644DC4C916853DD100740C48C60AD4A24609760F467FE521D027736F2128",
+      "hashAfter": "7BD9644DC4C916853DD100740C48C60AD4A24609760F467FE521D027736F2128",
+      "match": true
+    },
+    {
+      "path": "BROWSER_PROOF_CAPTURE.json",
+      "exists": true,
+      "bytesBefore": 6820,
+      "bytesAfter": 6820,
+      "hashBefore": "AFC6E1DE41041141250587F1F4EE8E4FB9BDA967A704B99247EF0A0E0B1FEEF4",
+      "hashAfter": "AFC6E1DE41041141250587F1F4EE8E4FB9BDA967A704B99247EF0A0E0B1FEEF4",
+      "match": true
+    },
+    {
+      "path": "checkpoint.json",
+      "exists": true,
+      "bytesBefore": 311,
+      "bytesAfter": 311,
+      "hashBefore": "C23C2EE10079CBB941CB6F01442E8A137AB09B125D37F396F3AD7E82860CD896",
+      "hashAfter": "C23C2EE10079CBB941CB6F01442E8A137AB09B125D37F396F3AD7E82860CD896",
+      "match": true
+    },
+    {
+      "path": "CMS_CONTRACT_COVERAGE.json",
+      "exists": true,
+      "bytesBefore": 1139,
+      "bytesAfter": 1139,
+      "hashBefore": "77C72BCDBC65510ED7EA92A052B9EF9B8DD13501D4FC0AA04E58BE9C26C06EAF",
+      "hashAfter": "77C72BCDBC65510ED7EA92A052B9EF9B8DD13501D4FC0AA04E58BE9C26C06EAF",
+      "match": true
+    },
+    {
+      "path": "CMS_ROUTE_AND_PAYLOAD_BOUNDARY.json",
+      "exists": true,
+      "bytesBefore": 1057,
+      "bytesAfter": 1057,
+      "hashBefore": "258027030F74EFBF85D6AC663FE8D07E37E5C6F27A15BCEDC81EB2EFE5BFB8F7",
+      "hashAfter": "258027030F74EFBF85D6AC663FE8D07E37E5C6F27A15BCEDC81EB2EFE5BFB8F7",
+      "match": true
+    },
+    {
+      "path": "CMS_ROUTE_AND_PAYLOAD_BOUNDARY.stderr.txt",
+      "exists": true,
+      "bytesBefore": 0,
+      "bytesAfter": 0,
+      "hashBefore": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "hashAfter": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "match": true
+    },
+    {
+      "path": "CMS_ROUTE_AND_PAYLOAD_BOUNDARY.stdout.txt",
+      "exists": true,
+      "bytesBefore": 1336,
+      "bytesAfter": 1336,
+      "hashBefore": "AA3430983EFDD50CF11BF8BF41F3923FCFE3C2DE606BD4A703A0EE3B2FD5F936",
+      "hashAfter": "AA3430983EFDD50CF11BF8BF41F3923FCFE3C2DE606BD4A703A0EE3B2FD5F936",
+      "match": true
+    },
+    {
+      "path": "CONTROLLER_SOURCE.ps1",
+      "exists": true,
+      "bytesBefore": 45694,
+      "bytesAfter": 45694,
+      "hashBefore": "3517216C5951B3523F8C8E9A00A353F6780B97D9D71A7CC8BDBD9CF95807FB10",
+      "hashAfter": "3517216C5951B3523F8C8E9A00A353F6780B97D9D71A7CC8BDBD9CF95807FB10",
+      "match": true
+    },
+    {
+      "path": "DATABASE_ZERO_RESIDUE.json",
+      "exists": true,
+      "bytesBefore": 3706,
+      "bytesAfter": 3706,
+      "hashBefore": "8776AFF487EF463FB8B21D9C1259D40B9D61EF7156E355F9A0465129D513552B",
+      "hashAfter": "8776AFF487EF463FB8B21D9C1259D40B9D61EF7156E355F9A0465129D513552B",
+      "match": true
+    },
+    {
+      "path": "ERROR_LOG.txt",
+      "exists": true,
+      "bytesBefore": 361,
+      "bytesAfter": 361,
+      "hashBefore": "51B969B4FA55A66879F9E5D8173538484710641EC644D90AA7EC97A01A0D4BE0",
+      "hashAfter": "51B969B4FA55A66879F9E5D8173538484710641EC644D90AA7EC97A01A0D4BE0",
+      "match": true
+    },
+    {
+      "path": "EXECUTION_LOG.txt",
+      "exists": true,
+      "bytesBefore": 1101,
+      "bytesAfter": 1101,
+      "hashBefore": "B4596DC08D7A2E259F606018B590B72681C7539839C11A53E54F87D049D3884B",
+      "hashAfter": "B4596DC08D7A2E259F606018B590B72681C7539839C11A53E54F87D049D3884B",
+      "match": true
+    },
+    {
+      "path": "failures.csv",
+      "exists": true,
+      "bytesBefore": 25,
+      "bytesAfter": 25,
+      "hashBefore": "D2C363E72EBFD63E02025F4D25AD478BA8446E3A37D93337159794215F8324E0",
+      "hashAfter": "D2C363E72EBFD63E02025F4D25AD478BA8446E3A37D93337159794215F8324E0",
+      "match": true
+    },
+    {
+      "path": "FINAL_REPORT.md",
+      "exists": true,
+      "bytesBefore": 1451,
+      "bytesAfter": 1451,
+      "hashBefore": "DEAD3E6AD47B2226199CA324764BE7E711462194AC0CE9C7B3D3DBBF419C855D",
+      "hashAfter": "DEAD3E6AD47B2226199CA324764BE7E711462194AC0CE9C7B3D3DBBF419C855D",
+      "match": true
+    },
+    {
+      "path": "FINAL_STATUS.txt",
+      "exists": true,
+      "bytesBefore": 935,
+      "bytesAfter": 935,
+      "hashBefore": "65D8D97AE2C75A6939251567010D962C504D8867E55A2449657EEED84A5B7E4A",
+      "hashAfter": "65D8D97AE2C75A6939251567010D962C504D8867E55A2449657EEED84A5B7E4A",
+      "match": true
+    },
+    {
+      "path": "FORMS_AND_ANNOUNCEMENTS_RUNTIME.json",
+      "exists": true,
+      "bytesBefore": 1077,
+      "bytesAfter": 1077,
+      "hashBefore": "F9544525695AC41004248F02F46E8BB473BC17C25EBB464157E51E4D5D1EF602",
+      "hashAfter": "F9544525695AC41004248F02F46E8BB473BC17C25EBB464157E51E4D5D1EF602",
+      "match": true
+    },
+    {
+      "path": "FORMS_AND_ANNOUNCEMENTS_RUNTIME.stderr.txt",
+      "exists": true,
+      "bytesBefore": 0,
+      "bytesAfter": 0,
+      "hashBefore": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "hashAfter": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "match": true
+    },
+    {
+      "path": "FORMS_AND_ANNOUNCEMENTS_RUNTIME.stdout.txt",
+      "exists": true,
+      "bytesBefore": 41082,
+      "bytesAfter": 41082,
+      "hashBefore": "084F1670B331B886BF861B00C3347CD4A332100B229D977F6255C73F17EF7C2B",
+      "hashAfter": "084F1670B331B886BF861B00C3347CD4A332100B229D977F6255C73F17EF7C2B",
+      "match": true
+    },
+    {
+      "path": "GATEWAY_TYPECHECK.json",
+      "exists": true,
+      "bytesBefore": 872,
+      "bytesAfter": 872,
+      "hashBefore": "0E8A030B39C0BB9DD2E6074B2E35F1C6270612EE331B29CA2B5669C73F6C80B7",
+      "hashAfter": "0E8A030B39C0BB9DD2E6074B2E35F1C6270612EE331B29CA2B5669C73F6C80B7",
+      "match": true
+    },
+    {
+      "path": "GATEWAY_TYPECHECK.stderr.txt",
+      "exists": true,
+      "bytesBefore": 0,
+      "bytesAfter": 0,
+      "hashBefore": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "hashAfter": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "match": true
+    },
+    {
+      "path": "GATEWAY_TYPECHECK.stdout.txt",
+      "exists": true,
+      "bytesBefore": 242,
+      "bytesAfter": 242,
+      "hashBefore": "2B857BC05A2DB28C096B8AD8B6E13ED0CACE28348AFAE15BAE3AACDFB1037B9D",
+      "hashAfter": "2B857BC05A2DB28C096B8AD8B6E13ED0CACE28348AFAE15BAE3AACDFB1037B9D",
+      "match": true
+    },
+    {
+      "path": "GIT_STATUS_FULL_UNTRACKED.json",
+      "exists": true,
+      "bytesBefore": 900,
+      "bytesAfter": 900,
+      "hashBefore": "4BB8124FC670449375A106576495639604FB47B158C42A1D2E385B39CB0C52C4",
+      "hashAfter": "4BB8124FC670449375A106576495639604FB47B158C42A1D2E385B39CB0C52C4",
+      "match": true
+    },
+    {
+      "path": "GIT_STATUS_FULL_UNTRACKED.stderr.txt",
+      "exists": true,
+      "bytesBefore": 0,
+      "bytesAfter": 0,
+      "hashBefore": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "hashAfter": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "match": true
+    },
+    {
+      "path": "GIT_STATUS_FULL_UNTRACKED.stdout.txt",
+      "exists": true,
+      "bytesBefore": 2610,
+      "bytesAfter": 2610,
+      "hashBefore": "DA5CC20ECC0D93D1BA60D69E95924669D3D71059BDB7C6A686015586C7519797",
+      "hashAfter": "DA5CC20ECC0D93D1BA60D69E95924669D3D71059BDB7C6A686015586C7519797",
+      "match": true
+    },
+    {
+      "path": "MIGRATION_STATUS_DETAIL.json",
+      "exists": true,
+      "bytesBefore": 1498,
+      "bytesAfter": 1498,
+      "hashBefore": "B819D15660B0C1097F117F2F73D78526D37813071341FE7068B6D6F9EC968A3D",
+      "hashAfter": "B819D15660B0C1097F117F2F73D78526D37813071341FE7068B6D6F9EC968A3D",
+      "match": true
+    },
+    {
+      "path": "MIGRATION_STATUS_PROBE.json",
+      "exists": true,
+      "bytesBefore": 1096,
+      "bytesAfter": 1096,
+      "hashBefore": "341DF3163EFD9B2D4FBAFD920559915E057F473016EDDB9D857DA70CEAAF720C",
+      "hashAfter": "341DF3163EFD9B2D4FBAFD920559915E057F473016EDDB9D857DA70CEAAF720C",
+      "match": true
+    },
+    {
+      "path": "MIGRATION_STATUS_PROBE.stderr.txt",
+      "exists": true,
+      "bytesBefore": 0,
+      "bytesAfter": 0,
+      "hashBefore": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "hashAfter": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "match": true
+    },
+    {
+      "path": "MIGRATION_STATUS_PROBE.stdout.txt",
+      "exists": true,
+      "bytesBefore": 132,
+      "bytesAfter": 132,
+      "hashBefore": "3E4931FD1E987B8303704640F799229535DCCEB04C9A1612FEE655A16E9110FE",
+      "hashAfter": "3E4931FD1E987B8303704640F799229535DCCEB04C9A1612FEE655A16E9110FE",
+      "match": true
+    },
+    {
+      "path": "MIGRATION_STATUS_PROBE.ts",
+      "exists": true,
+      "bytesBefore": 436,
+      "bytesAfter": 436,
+      "hashBefore": "B46BF212936DB607F4D6D82319C8696D73C067ECA48570A05DF2D28A0A980D1F",
+      "hashAfter": "B46BF212936DB607F4D6D82319C8696D73C067ECA48570A05DF2D28A0A980D1F",
+      "match": true
+    },
+    {
+      "path": "OWNERSHIP_BOUNDARY.json",
+      "exists": true,
+      "bytesBefore": 1228,
+      "bytesAfter": 1228,
+      "hashBefore": "95B02F2B06B1467671A7B510B1FC9BF5B7FFCEA7EB7B0D2FB499BD411047A6FA",
+      "hashAfter": "95B02F2B06B1467671A7B510B1FC9BF5B7FFCEA7EB7B0D2FB499BD411047A6FA",
+      "match": true
+    },
+    {
+      "path": "progress.csv",
+      "exists": true,
+      "bytesBefore": 1764,
+      "bytesAfter": 1764,
+      "hashBefore": "A76DCE0672721C50927A2F579EADCD622CD48C0AF519413B0FB09C303135E3AE",
+      "hashAfter": "A76DCE0672721C50927A2F579EADCD622CD48C0AF519413B0FB09C303135E3AE",
+      "match": true
+    },
+    {
+      "path": "progress.json",
+      "exists": true,
+      "bytesBefore": 5024,
+      "bytesAfter": 5024,
+      "hashBefore": "B93E08D03626F16498E1DA5E173BDABFF076DD23A0D1DE1D5C4AB9C6FEB1E3E2",
+      "hashAfter": "B93E08D03626F16498E1DA5E173BDABFF076DD23A0D1DE1D5C4AB9C6FEB1E3E2",
+      "match": true
+    },
+    {
+      "path": "SOURCE_IDENTITY_DETAIL.json",
+      "exists": true,
+      "bytesBefore": 6806,
+      "bytesAfter": 6806,
+      "hashBefore": "B14E70AAA383D35FD962E373E703F10E2E926BE8D9F5323CEFD57267B342046B",
+      "hashAfter": "B14E70AAA383D35FD962E373E703F10E2E926BE8D9F5323CEFD57267B342046B",
+      "match": true
+    },
+    {
+      "path": "summary.json",
+      "exists": true,
+      "bytesBefore": 2921,
+      "bytesAfter": 2921,
+      "hashBefore": "9617EAF1698DB6B0CEEA04C2A1996494F798FD42AE7855471A6CC91ECBDA607B",
+      "hashAfter": "9617EAF1698DB6B0CEEA04C2A1996494F798FD42AE7855471A6CC91ECBDA607B",
+      "match": true
+    },
+    {
+      "path": "validations.csv",
+      "exists": true,
+      "bytesBefore": 1440,
+      "bytesAfter": 1440,
+      "hashBefore": "EF92C366E8142450FFCEB89788A5309C2904D43728E5C07685FCF1F7E3866E20",
+      "hashAfter": "EF92C366E8142450FFCEB89788A5309C2904D43728E5C07685FCF1F7E3866E20",
+      "match": true
+    },
+    {
+      "path": "warnings.csv",
+      "exists": true,
+      "bytesBefore": 423,
+      "bytesAfter": 423,
+      "hashBefore": "DF5B4D9FCA5E78F6D18E93FF2D1A6ED64B96047BE4CD7530AF9CAE17A2781450",
+      "hashAfter": "DF5B4D9FCA5E78F6D18E93FF2D1A6ED64B96047BE4CD7530AF9CAE17A2781450",
+      "match": true
+    },
+    {
+      "path": "WORKTREE_CLASSIFICATION_DETAIL.json",
+      "exists": true,
+      "bytesBefore": 4170,
+      "bytesAfter": 4170,
+      "hashBefore": "743056D3EFADFA0AAAB4C657CF982D392A703E6C5291D5074265E23525632BE1",
+      "hashAfter": "743056D3EFADFA0AAAB4C657CF982D392A703E6C5291D5074265E23525632BE1",
+      "match": true
+    },
+    {
+      "path": "ZERO_SYNTHETIC_RESIDUE_CLEANUP.json",
+      "exists": true,
+      "bytesBefore": 1128,
+      "bytesAfter": 1128,
+      "hashBefore": "7C0DC565F1C6901336517B24AFA55EC8C561F7ED88C4D723A1FF0787674674EC",
+      "hashAfter": "7C0DC565F1C6901336517B24AFA55EC8C561F7ED88C4D723A1FF0787674674EC",
+      "match": true
+    },
+    {
+      "path": "ZERO_SYNTHETIC_RESIDUE_CLEANUP.stderr.txt",
+      "exists": true,
+      "bytesBefore": 0,
+      "bytesAfter": 0,
+      "hashBefore": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "hashAfter": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "match": true
+    },
+    {
+      "path": "ZERO_SYNTHETIC_RESIDUE_CLEANUP.stdout.txt",
+      "exists": true,
+      "bytesBefore": 176,
+      "bytesAfter": 176,
+      "hashBefore": "8FAB9DA93EC996FC96818728751B16CA5184249BB3E4F5150CCE915AB17692E3",
+      "hashAfter": "8FAB9DA93EC996FC96818728751B16CA5184249BB3E4F5150CCE915AB17692E3",
+      "match": true
+    },
+    {
+      "path": "ZERO_SYNTHETIC_RESIDUE_CLEANUP.ts",
+      "exists": true,
+      "bytesBefore": 1552,
+      "bytesAfter": 1552,
+      "hashBefore": "A14907DC567490A25D2063279BBAF2E3D6A48DBEE3B1809F146E82BBC769A586",
+      "hashAfter": "A14907DC567490A25D2063279BBAF2E3D6A48DBEE3B1809F146E82BBC769A586",
+      "match": true
+    },
+    {
+      "path": "ZERO_SYNTHETIC_RESIDUE_PROBE.json",
+      "exists": true,
+      "bytesBefore": 1120,
+      "bytesAfter": 1120,
+      "hashBefore": "8FB846160194FB9E2687F8C33D37758EE0608D5380D6692386999A55CB605382",
+      "hashAfter": "8FB846160194FB9E2687F8C33D37758EE0608D5380D6692386999A55CB605382",
+      "match": true
+    },
+    {
+      "path": "ZERO_SYNTHETIC_RESIDUE_PROBE.stderr.txt",
+      "exists": true,
+      "bytesBefore": 0,
+      "bytesAfter": 0,
+      "hashBefore": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "hashAfter": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "match": true
+    },
+    {
+      "path": "ZERO_SYNTHETIC_RESIDUE_PROBE.stdout.txt",
+      "exists": true,
+      "bytesBefore": 118,
+      "bytesAfter": 118,
+      "hashBefore": "2F019F2FC098FE9E91E6701DFBF05F1E7B88D9FAC38BDA6C41A6AC2C5482F32C",
+      "hashAfter": "2F019F2FC098FE9E91E6701DFBF05F1E7B88D9FAC38BDA6C41A6AC2C5482F32C",
+      "match": true
+    },
+    {
+      "path": "ZERO_SYNTHETIC_RESIDUE_PROBE.ts",
+      "exists": true,
+      "bytesBefore": 1201,
+      "bytesAfter": 1201,
+      "hashBefore": "46821DBE83C50847E3B650643D5340226B81EA68AECDE7EBDD7EB09F357DF9BF",
+      "hashAfter": "46821DBE83C50847E3B650643D5340226B81EA68AECDE7EBDD7EB09F357DF9BF",
+      "match": true
+    }
+  ]
+}

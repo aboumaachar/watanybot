@@ -1,0 +1,18 @@
+{
+  "status": "PASS",
+  "CMS_DOCUMENT_DELETE_AUTHORITY": "PASS",
+  "policy": {
+    "routePolicyKey": "cms.edit",
+    "centralGuard": "buildAdminAuthorityPreHandler(getRoutePolicyByKey(\"cms.edit\"))",
+    "authBypassUsed": false
+  },
+  "boundedResults": {
+    "unauthenticated": { "status": 401, "result": "rejected" },
+    "adminWithoutCmsEditPermission": { "status": 403, "result": "rejected" },
+    "adminWithCmsEditPermission": { "status": 200, "result": "authorized" },
+    "superadmin": { "status": 200, "result": "authorized" }
+  },
+  "testSource": "apps/gateway-api/src/tests/documents-cms-boundary.test.ts",
+  "centralAdminAuthorityPreserved": true,
+  "credentialMaterialRecorded": false
+}

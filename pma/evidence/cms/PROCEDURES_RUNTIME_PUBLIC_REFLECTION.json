@@ -1,0 +1,8 @@
+{
+  "status": "PASS",
+  "details": {
+    "status": "PASS",
+    "publishRead": 200,
+    "unpublishHidden": 404
+  }
+}

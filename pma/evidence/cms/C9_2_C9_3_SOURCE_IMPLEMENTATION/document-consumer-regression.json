@@ -1,0 +1,26 @@
+{
+  "status": "PASS",
+  "gate": "EXISTING_DOCUMENT_CONSUMER_REGRESSION",
+  "capturedAtUtc": "2026-08-24T06:36:16.9841164Z",
+  "legacyConsumer": {
+    "endpoint": "/api/documents",
+    "persistenceBoundary": "legacy SQLite plugin store",
+    "suite": "apps/gateway-api/src/tests/documents-metadata-regression.test.ts",
+    "result": "PASS: 2 tests"
+  },
+  "newCmsConsumer": {
+    "endpointPrefix": "/api/admin/cms/documents",
+    "persistenceBoundary": "PostgreSQL public.documents repository",
+    "suite": "apps/gateway-api/src/tests/documents-cms-boundary.test.ts",
+    "result": "PASS: 3 tests"
+  },
+  "authorizationRegression": {
+    "suites": [
+      "admin-authority-negative-auth.test.ts",
+      "admin-auth-hardening.test.ts",
+      "auth-rbac.test.ts"
+    ],
+    "result": "PASS: 57 tests"
+  },
+  "separationResult": "The legacy /api/documents consumer remains separate from the current PostgreSQL CMS boundary."
+}

@@ -1,0 +1,9 @@
+{
+  "registeredUsersMutated": "NO",
+  "submittedApplicationsMutated": "NO",
+  "realProcedureMutated": "NO",
+  "productionDatabaseMutated": "NO",
+  "canaryActiveProcedureResidue": 0,
+  "canaryAttachmentResidue": 0,
+  "immutableAuditVersionRows": "retained as legitimate evidence"
+}

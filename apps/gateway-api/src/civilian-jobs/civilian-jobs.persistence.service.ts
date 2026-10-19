@@ -1,5 +1,10 @@
 ﻿import type { OpportunityStatus } from "./civilian-jobs.types";
-import { civilianJobsRepository } from "./civilian-jobs.repository";
+import {
+  civilianJobsRepository,
+  InMemoryCivilianJobsRepository,
+  PostgresCivilianJobsRepository,
+} from "./civilian-jobs.repository";
+import type { CivilianJobsRepository } from "./civilian-jobs.repository";
 
 export async function listCivilianJobAuditEvents(entityType?: string, entityId?: string) {
   return civilianJobsRepository.listAuditEvents(entityType, entityId);
@@ -14,22 +19,29 @@ export async function updateCivilianJobStatusWithAudit(input: {
   return civilianJobsRepository.updateOpportunityStatus(input.id, input.status, input.actorId, input.note);
 }
 
-export async function getCivilianJobsPersistenceHealth() {
+export async function getCivilianJobsPersistenceHealth(repository: CivilianJobsRepository = civilianJobsRepository) {
   const [opportunities, applications, sources, imports, auditEvents] = await Promise.all([
-    civilianJobsRepository.listOpportunities(),
-    civilianJobsRepository.listApplications(),
-    civilianJobsRepository.listSources(),
-    civilianJobsRepository.listImported(),
-    civilianJobsRepository.listAuditEvents(),
+    repository.listOpportunities(),
+    repository.listApplications(),
+    repository.listSources(),
+    repository.listImported(),
+    repository.listAuditEvents(),
   ]);
 
+  let mode = "CUSTOM_REPOSITORY";
+  if (repository instanceof PostgresCivilianJobsRepository) {
+    mode = "POSTGRES_REPOSITORY";
+  } else if (repository instanceof InMemoryCivilianJobsRepository) {
+    mode = "IN_MEMORY_REPOSITORY_TEST_FIXTURE";
+  }
+
   return {
-    mode: "IN_MEMORY_REPOSITORY_READY_FOR_DB_ADAPTER",
+    mode,
     opportunities: opportunities.length,
     applications: applications.length,
     sources: sources.length,
     imports: imports.length,
     auditEvents: auditEvents.length,
-    warning: "Wave04 adds a repository boundary and additive SQL migration. Wire the actual DB adapter in the next hardening step if the project persistence layer is available.",
+    warning: mode === "POSTGRES_REPOSITORY" ? undefined : "Explicit test fixture; production must use the PostgreSQL repository.",
   };
 }

@@ -54,9 +54,12 @@ export async function registerPlugins(app: FastifyInstance): Promise<void> {
     );
   }
 
+  const rateLimitMax = Number.parseInt(process.env.RATE_LIMIT_MAX || "100", 10);
+  const rateLimitWindow = process.env.RATE_LIMIT_WINDOW || "1 minute";
+
   await app.register(rateLimit, {
-    max: 100,
-    timeWindow: "1 minute",
+    max: Number.isFinite(rateLimitMax) && rateLimitMax > 0 ? rateLimitMax : 100,
+    timeWindow: rateLimitWindow,
     allowList: ["127.0.0.1", "::1"],
     addHeadersOnExceeding: {
       "x-ratelimit-limit": true,

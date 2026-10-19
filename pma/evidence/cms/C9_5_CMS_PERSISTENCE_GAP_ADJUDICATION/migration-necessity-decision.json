@@ -1,0 +1,7 @@
+{
+    "currentRuntimeSchemaMigrationNecessary":  false,
+    "richerCmsExpansion":  "DEFERRED_PENDING_EXPLICIT_PRODUCT_REQUIREMENT_AND_SEPARATE_MIGRATION_AUTHORITY",
+    "directSchemaMutationAuthorized":  false,
+    "migrationExecutionAuthorized":  false,
+    "nextRequiredGate":  "C9_6_CMS_IMPLEMENTATION_CLOSEOUT_AND_RELEASE_READINESS"
+}

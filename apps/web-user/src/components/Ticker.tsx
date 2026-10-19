@@ -13,6 +13,17 @@ export type TickerItem = {
 
 const OFFICIAL_DEATHS_TICKER_PREFIX = "تم تحديث الوفيات الرسمية";
 
+const DEFAULT_TICKER_ITEMS: TickerItem[] = [
+  { kind: "announce", title: "📢 آخر التحديثات والخدمات متاحة الآن عبر موطني" },
+  { kind: "announce", title: "🍎 فرصة عمل موسمية: قطاف التفاح في عين الحفة - تنورين", linkType: "route", linkId: "/jobs/ainelhafeh" },
+  { kind: "announce", title: "💼 تحقق من أحدث عروض العمل", linkType: "route", linkId: "/jobs" },
+  { kind: "announce", title: "🛒 تحقق من إعلانات السوق", linkType: "route", linkId: "/marketplace" },
+  { kind: "announce", title: "💰 تحقق من معاشك", linkType: "route", linkId: "/salary" },
+  { kind: "announce", title: "🎓 تحقق من المنح المدرسية", linkType: "route", linkId: "/school-grants" },
+  { kind: "tip", title: "💡 يمكنك حفظ أي رد لقراءته لاحقاً من المحفوظات" },
+  { kind: "tip", title: "💡 استخدم حاسبة المعاش لمعرفة تقدير معاشك" },
+];
+
 function withOfficialDeathsTicker(items: TickerItem[], total: number): TickerItem[] {
   if (!Number.isFinite(total) || total <= 0) return items;
 
@@ -56,7 +67,7 @@ export function Ticker({
   disabledKinds?: string[];
   loop?: boolean;
 }>) {
-  const [items, setItems] = useState<TickerItem[]>([]);
+  const [items, setItems] = useState<TickerItem[]>(DEFAULT_TICKER_ITEMS);
   const [paused, setPaused] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
   const trackRef = useRef<HTMLDivElement | null>(null);
@@ -66,16 +77,20 @@ export function Ticker({
     let cancelled = false;
     const loadTicker = async () => {
       try {
-        const [tickerRes, deathsRes] = await Promise.all([
-          api.getTicker(apiBaseUrl),
-          api.listAlWafiyat({ limit: 1 }, apiBaseUrl).catch(() => null),
-        ]);
+        const tickerRes = await api.getTicker(apiBaseUrl);
         if (cancelled) return;
 
-        const nextItems = withOfficialDeathsTicker(tickerRes.items || [], Number(deathsRes?.total || 0));
-        setItems(nextItems);
+        setItems(tickerRes.items?.length ? tickerRes.items : DEFAULT_TICKER_ITEMS);
+
+        const deathsRes = await api.listAlWafiyat({ limit: 1 }, apiBaseUrl).catch(() => null);
+        if (cancelled) return;
+
+        const deathsTotal = Number(deathsRes?.total || 0);
+        if (deathsTotal > 0) {
+          setItems((currentItems) => withOfficialDeathsTicker(currentItems, deathsTotal));
+        }
       } catch {
-        if (!cancelled) setItems([]);
+        if (!cancelled) setItems(DEFAULT_TICKER_ITEMS);
       }
     };
 
@@ -97,7 +112,9 @@ export function Ticker({
       setTickerOffset((offset) => {
         const loopWidth = (trackRef.current?.scrollWidth || 0) / 2;
         if (loopWidth <= 0) return offset;
-        const nextOffset = offset + 2;
+        const ticksPerCycle = (40 * 1000) / 50;
+        const pixelsPerTick = loopWidth / ticksPerCycle;
+        const nextOffset = offset + pixelsPerTick;
         return nextOffset >= loopWidth ? 0 : nextOffset;
       });
     }, 50);

@@ -1,6 +1,7 @@
 import { expandArabiziAliases } from "../../utils/normalize-arabizi";
 import { normalizeSearchText } from "../../utils/normalize-arabic";
 import { getHybridKbIndexStats, searchWeightedKbIndex, type KbWeightedSearchHit } from "./kb-dynamic-index.service";
+import { candidateReferenceTier, isGenericUnspecifiedTransaction, rankEvidenceCandidates, type ReferenceTier } from "./kb-source-quality";
 
 const NOISY_SOURCE_TYPES = new Set(["json", "markdown", "text", "unknown", "admin-override"]);
 const TECHNICAL_NOISE_PATTERN = /(^|[\s_.-])(canonical|cluster|clusters|script|command|implementation|report|debug|diagnostic|pipeline|manifest|snapshot|fixture|spec|test|pilot)([\s_.-]|$)|\.(md|json|csv|tsx?|jsx?)$/i;
@@ -34,6 +35,7 @@ export type LiveSearchDocumentResult = {
   excerpt?: string;
   score: number;
   sourcePath?: string;
+  referenceTier?: ReferenceTier;
   matchedFields?: string[];
   matchedTerms?: string[];
 };
@@ -148,6 +150,7 @@ function hitToDocument(hit: KbWeightedSearchHit): LiveSearchDocumentResult {
     excerpt: hit.excerpt || "نتيجة من فهرس قاعدة المعرفة الديناميكي.",
     score: hit.score,
     sourcePath: record.sourcePath,
+    referenceTier: candidateReferenceTier(hit),
     matchedFields: hit.matchedFields,
     matchedTerms: hit.matchedTerms
   };
@@ -201,8 +204,7 @@ function isNoisyRecord(hit: KbWeightedSearchHit): boolean {
 }
 
 function pickUserFacingHits(hits: KbWeightedSearchHit[]): KbWeightedSearchHit[] {
-  const cleanHits = hits.filter((hit) => !isNoisyRecord(hit));
-  return cleanHits.length > 0 ? cleanHits : hits;
+  return hits.filter((hit) => !isNoisyRecord(hit));
 }
 
 export async function searchKbLive(query: string, options: LiveSearchOptions = {}): Promise<LiveSearchResponse> {
@@ -212,7 +214,9 @@ export async function searchKbLive(query: string, options: LiveSearchOptions = {
   const hits = searchWeightedKbIndex(query, { limit: Math.max(limit * 3, 12), forceRefresh: Boolean(options.forceRefreshIndex) });
   const userFacingHits = pickUserFacingHits(hits);
   const tags = uniqueTags(userFacingHits, limit);
-  const documents = userFacingHits.map(hitToDocument).slice(0, limit);
+  const documents = isGenericUnspecifiedTransaction(query)
+    ? []
+    : rankEvidenceCandidates(userFacingHits, query).map(hitToDocument).slice(0, limit);
   const fallbackDocuments = documents.length === 0 ? buildFallbackDocuments(query).slice(0, limit) : [];
   const finalDocuments = documents.length > 0 ? documents : fallbackDocuments;
   const suggestedQuestions = Array.from(new Set(userFacingHits.flatMap((hit) => hit.record.suggestedQuestions))).slice(0, 6);

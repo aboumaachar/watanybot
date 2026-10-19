@@ -1,0 +1,3 @@
+"utc","code","stage","status","message"
+"2026-09-02T03:30:29.1442607Z","UNRELATED_DIRTY_WORKTREE_PRESERVED","WORKTREE_CLASSIFICATION","ADVISORY","Unrelated dirty paths remain and were not changed. count=7"
+"2026-09-02T03:30:29.4534885Z","ANNOUNCEMENTS_FALLBACK_SEED_MISSING","CLOSEOUT","ADVISORY","The pre-existing official announcements fallback file is absent; no-published fallback remains an advisory runtime path."

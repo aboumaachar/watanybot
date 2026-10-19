@@ -1,0 +1,56 @@
+{
+    "runId":  "20260902T032813844Z",
+    "stage":  "BROWSER_PROOF",
+    "status":  "PASS",
+    "reason":  "Authenticated integrated-browser proof with desktop/mobile overflow and touch-media evidence.",
+    "data":  {
+                 "status":  "PASS",
+                 "authenticated":  true,
+                 "desktop":  {
+                                 "viewport":  "1440x900",
+                                 "scrollWidth":  1425,
+                                 "clientWidth":  1425,
+                                 "horizontalOverflow":  false,
+                                 "formsTitleVisible":  true,
+                                 "announcementsTitleVisible":  true,
+                                 "historyAndAuditCopyVisible":  true
+                             },
+                 "mobile":  {
+                                "viewport":  "430x932",
+                                "scrollWidth":  415,
+                                "clientWidth":  415,
+                                "horizontalOverflow":  false,
+                                "formsTitleVisible":  true,
+                                "announcementsTitleVisible":  true
+                            },
+                 "media":  {
+                               "maxTouchPoints":  10,
+                               "pointerCoarse":  false,
+                               "anyPointerCoarse":  true,
+                               "hoverNone":  false
+                           },
+                 "screenshots":  [
+                                     {
+                                         "source":  "C:\\xampp\\htdocs\\projectx\\watanybot\\pma\\evidence\\cms\\C9_12_WAVE4B2_GENERIC_CMS_FORMS_ANNOUNCEMENTS_CLOSEOUT-20260902T032135795Z\\BROWSER_BROWSER_BROWSER_wave4b2-forms-desktop.png",
+                                         "evidence":  "C:\\xampp\\htdocs\\projectx\\watanybot\\pma\\evidence\\cms\\C9_12_WAVE4B2_GENERIC_CMS_FORMS_ANNOUNCEMENTS_CLOSEOUT-20260902T032813844Z\\BROWSER_BROWSER_BROWSER_BROWSER_wave4b2-forms-desktop.png",
+                                         "sha256":  "842A23EC85682F854CDB97E9DF9C224F3C62B707A729D2F84258A6ECB4494A82"
+                                     },
+                                     {
+                                         "source":  "C:\\xampp\\htdocs\\projectx\\watanybot\\pma\\evidence\\cms\\C9_12_WAVE4B2_GENERIC_CMS_FORMS_ANNOUNCEMENTS_CLOSEOUT-20260902T032135795Z\\BROWSER_BROWSER_BROWSER_wave4b2-forms-mobile.png",
+                                         "evidence":  "C:\\xampp\\htdocs\\projectx\\watanybot\\pma\\evidence\\cms\\C9_12_WAVE4B2_GENERIC_CMS_FORMS_ANNOUNCEMENTS_CLOSEOUT-20260902T032813844Z\\BROWSER_BROWSER_BROWSER_BROWSER_wave4b2-forms-mobile.png",
+                                         "sha256":  "7BD9644DC4C916853DD100740C48C60AD4A24609760F467FE521D027736F2128"
+                                     },
+                                     {
+                                         "source":  "C:\\xampp\\htdocs\\projectx\\watanybot\\pma\\evidence\\cms\\C9_12_WAVE4B2_GENERIC_CMS_FORMS_ANNOUNCEMENTS_CLOSEOUT-20260902T032135795Z\\BROWSER_BROWSER_BROWSER_wave4b2-announcements-desktop.png",
+                                         "evidence":  "C:\\xampp\\htdocs\\projectx\\watanybot\\pma\\evidence\\cms\\C9_12_WAVE4B2_GENERIC_CMS_FORMS_ANNOUNCEMENTS_CLOSEOUT-20260902T032813844Z\\BROWSER_BROWSER_BROWSER_BROWSER_wave4b2-announcements-desktop.png",
+                                         "sha256":  "4200D2404F365CB9A2413878B96A4AF7050EAA1DC4D62C7ED33575ED065372E4"
+                                     },
+                                     {
+                                         "source":  "C:\\xampp\\htdocs\\projectx\\watanybot\\pma\\evidence\\cms\\C9_12_WAVE4B2_GENERIC_CMS_FORMS_ANNOUNCEMENTS_CLOSEOUT-20260902T032135795Z\\BROWSER_BROWSER_BROWSER_wave4b2-announcements-mobile.png",
+                                         "evidence":  "C:\\xampp\\htdocs\\projectx\\watanybot\\pma\\evidence\\cms\\C9_12_WAVE4B2_GENERIC_CMS_FORMS_ANNOUNCEMENTS_CLOSEOUT-20260902T032813844Z\\BROWSER_BROWSER_BROWSER_BROWSER_wave4b2-announcements-mobile.png",
+                                         "sha256":  "C9215B13C75E7CAB7B024CB8F0C6191C79A86B2941DEE1A845F6549CBDAB0DBA"
+                                     }
+                                 ],
+                 "reason":  "Authenticated integrated-browser proof with desktop/mobile overflow and touch-media evidence."
+             }
+}

@@ -3,6 +3,7 @@ import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import type { FastifyInstance } from 'fastify';
 import { loadIndex, mapStoredDocAssetToDocRef, resolveProcedureId } from '../procedures/indexer.js';
+import { requireRole } from '../auth/rbac.js';
 
 const MAX_UPLOAD_BYTES = 5 * 1024 * 1024;
 const ALLOWED_MIME_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
@@ -142,6 +143,19 @@ export async function filesRoutes(fastify: FastifyInstance) {
       items: items.slice(0, limit),
       total: items.length,
     };
+  });
+
+  fastify.get('/api/admin/erm/assets', { preHandler: [requireRole('admin')] }, async (request, reply) => {
+    const query = (request.query || {}) as { limit?: number | string };
+    const limitValue = Number(query.limit || 100);
+    const limit = Number.isFinite(limitValue) ? Math.max(0, Math.min(limitValue, 500)) : 100;
+    const state = await loadIndex(false);
+    const items = state.docs.slice(0, limit).map((doc) => ({
+      ...mapStoredDocAssetToDocRef(doc),
+      id: doc.id,
+    }));
+
+    return reply.send({ items, total: state.docs.length, bounded: true });
   });
 
   fastify.post('/api/files/upload', async (request, reply) => {

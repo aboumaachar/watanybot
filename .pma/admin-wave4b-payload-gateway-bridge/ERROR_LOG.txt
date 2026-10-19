@@ -1,0 +1,24 @@
+APEX_PS1_SKILL_UPDATE_NOT_REQUIRED
+ERROR_LOG_START_UTC=2026-09-01T12:15:31.2868617Z
+
+RECOVERED F001: stale invalid browser init token was replaced before authenticated proof.
+RECOVERED F002: CMS table wrapper lacked a rule; existing table-wrap bounded utility was applied.
+RECOVERED F003: RTL mobile drawer was left-anchored during positive translation; right anchoring was applied.
+RECOVERED F004: two pnpm test alias invocations rejected --run; direct Vitest invocation passed with exit code 0.
+RECOVERED F005: first cleanup socket query raced teardown; fresh query proved no requested listeners.
+
+CURRENT_UNRESOLVED_ERROR_COUNT=0
+CURRENT_BLOCKER_COUNT=0
+CREDENTIALS_RECORDED=NO
+FULL_PAYLOAD_BODIES_RECORDED=NO
+
+REAL_PAYLOAD_RECOVERED_F006: Payload startup was relaunched with the isolated DATABASE_URI after the initial missing-variable failure.
+REAL_PAYLOAD_RECOVERED_F007: Structured procedure fields were added to the disposable Payload records before the enriched sync proof.
+REAL_PAYLOAD_RECOVERED_F008: The sync request was retried with application/json after the expected unsupported-media-type response.
+REAL_PAYLOAD_RECOVERED_F009: The unavailable proof records the bridge contract's 503 / UNAVAILABLE response.
+REAL_PAYLOAD_RECOVERED_F010: The detached Payload listener owner was stopped directly and port 3001 was rechecked.
+
+REAL_PAYLOAD_UNRESOLVED_ERROR_COUNT=0
+REAL_PAYLOAD_BLOCKER_COUNT=0
+PROTECTED_NORMAL_PAYLOAD_DATABASE_TOUCHED=NO
+ISOLATED_DISPOSABLE_DATABASES_DROPPED=YES

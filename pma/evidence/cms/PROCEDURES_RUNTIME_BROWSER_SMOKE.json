@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "server": "http://127.0.0.1:5175",
+  "gateway": "http://127.0.0.1:4000",
+  "routes": [
+    {"path": "/superadmin/cms", "shellHeading": "مركز الإدارة", "childHeading": "إدارة الإجراءات", "listLoaded": true},
+    {"path": "/superadmin/cms/procedures", "childHeading": "إدارة الإجراءات", "table": true, "searchControl": true, "statusFilter": true}
+  ],
+  "auth": "short-lived synthetic superadmin token",
+  "console": "React Router warnings only; no application crash"
+}

@@ -1,0 +1,17 @@
+{
+    "authority":  "public.documents",
+    "rowCount":  0,
+    "columnCount":  8,
+    "columns":  [
+                    "id",
+                    "user_id",
+                    "name",
+                    "kind",
+                    "status",
+                    "tags",
+                    "file_path",
+                    "updated_at"
+                ],
+    "canaryResidualCount":  0,
+    "status":  "PASS"
+}

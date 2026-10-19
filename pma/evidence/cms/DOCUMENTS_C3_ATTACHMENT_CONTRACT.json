@@ -1,0 +1,6 @@
+{
+  "status": "PASS_WITH_GAP",
+  "owner": "apps/gateway-api/src/routes/documents.ts",
+  "attachmentMutation": "UNVERIFIED_NOT_PRESENT_IN_CURRENT_OWNER",
+  "fileMetadata": ["sourceFileName", "mimeType", "slug", "extractionStatus", "chunkCount"]
+}

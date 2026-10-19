@@ -1,9 +1,14 @@
-﻿import { randomUUID } from "node:crypto";
+﻿import { createHash, randomUUID } from "node:crypto";
 import { appendFile, readFile, writeFile } from "node:fs/promises";
 import { ensureKbImportStorage } from "./storage";
 import { extractTextFromAsset } from "./extractors";
 import { buildKbDraft } from "./kb-builder";
 import type { CreateRawImportInput, KbImportAsset, KbImportJob } from "./types";
+
+export function deriveIndividualKbId(sourceName: string, contentHash: string): string {
+  const stableKey = `${String(sourceName || "source").trim()}\u0000${String(contentHash || "").trim().toLowerCase()}`;
+  return `kb-${createHash("sha256").update(stableKey, "utf8").digest("hex").slice(0, 32)}`;
+}
 
 async function readJobs(path: string): Promise<KbImportJob[]> {
   try {
@@ -46,8 +51,12 @@ async function saveJob(job: KbImportJob): Promise<KbImportJob> {
 
 export async function createRawKbImportJob(input: CreateRawImportInput): Promise<KbImportJob> {
   const now = new Date().toISOString();
+  const contentHash = createHash("sha256").update(String(input.rawText), "utf8").digest("hex");
+  const individualKbId = deriveIndividualKbId(input.sourceName, contentHash);
+  const existing = (await listKbImportJobs()).find((item) => item.individualKbId === individualKbId);
   const job: KbImportJob = {
-    id: randomUUID(),
+    id: existing?.id || randomUUID(),
+    individualKbId,
     sourceName: input.sourceName || "Manual KB import",
     sourceType: input.sourceType || "manual",
     sourceUrl: input.sourceUrl,
@@ -59,14 +68,14 @@ export async function createRawKbImportJob(input: CreateRawImportInput): Promise
     reviewStatus: "pending",
     publishStatus: "not_published",
     confidence: 0,
-    createdAt: now,
+    createdAt: existing?.createdAt || now,
     updatedAt: now,
     createdBy: input.createdBy,
     rawText: input.rawText,
     citations: [],
     facts: [],
     chunks: [],
-    audit: [{ at: now, event: "raw-import-created" }],
+    audit: [{ at: now, event: existing ? "raw-import-updated" : "raw-import-created", detail: individualKbId }],
   };
   return saveJob(job);
 }
@@ -80,8 +89,11 @@ export async function createUploadedKbImportJob(input: {
   asset: KbImportAsset;
 }): Promise<KbImportJob> {
   const now = new Date().toISOString();
+  const individualKbId = deriveIndividualKbId(input.sourceName || input.asset.originalName, input.asset.sha256);
+  const existing = (await listKbImportJobs()).find((item) => item.individualKbId === individualKbId || item.asset?.sha256 === input.asset.sha256);
   const job: KbImportJob = {
-    id: randomUUID(),
+    id: existing?.id || randomUUID(),
+    individualKbId,
     sourceName: input.sourceName || input.asset.originalName,
     sourceType: "unknown",
     sourceUrl: input.sourceUrl,
@@ -93,14 +105,14 @@ export async function createUploadedKbImportJob(input: {
     reviewStatus: "pending",
     publishStatus: "not_published",
     confidence: 0,
-    createdAt: now,
+    createdAt: existing?.createdAt || now,
     updatedAt: now,
     createdBy: input.createdBy,
     asset: input.asset,
     citations: [],
     facts: [],
     chunks: [],
-    audit: [{ at: now, event: "upload-job-created", detail: input.asset.sha256 }],
+    audit: [{ at: now, event: existing ? "upload-job-updated" : "upload-job-created", detail: individualKbId }],
   };
   return saveJob(job);
 }
@@ -173,6 +185,7 @@ export async function publishKbImportJob(jobId: string): Promise<KbImportJob> {
   const payload = {
     at: new Date().toISOString(),
     jobId: existing.id,
+    individualKbId: existing.individualKbId,
     sourceName: existing.sourceName,
     category: existing.detectedCategory,
     citations: existing.citations,

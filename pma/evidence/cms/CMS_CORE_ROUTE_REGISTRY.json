@@ -1,0 +1,1 @@
+{"status":"PASS","registry":"GET /api/admin/cms/registry","list":"GET /api/admin/cms/procedures","detail":"GET /api/admin/cms/procedures/:id","edit":"PATCH /api/admin/cms/procedures/:id","lifecycle":["publish","unpublish","archive","restore"],"audit":"GET /api/admin/cms/procedures/:id/audit","versions":"GET /api/admin/cms/procedures/:id/versions"}

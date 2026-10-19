@@ -1,0 +1,8 @@
+{
+  "status": "PASS",
+  "canaryId": "proc-apex-cms-canary-20260821102510545-d574b7",
+  "titleMarker": "إجراء خدمة قبول proc-apex-cms-canary-20260821102510545-d574b7",
+  "correlationId": "cms-runtime-42f84014-316b-4edb-853b-eb2276e5d5ed",
+  "gateway": "http://127.0.0.1:4000",
+  "dataOwner": "C:\\xampp\\htdocs\\projectx\\watanybot\\kb_vnext\\data"
+}

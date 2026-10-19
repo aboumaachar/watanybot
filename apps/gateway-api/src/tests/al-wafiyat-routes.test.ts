@@ -9,6 +9,12 @@ import { registerOfficialSourcesRoutes } from "../routes/official-sources";
 const originalKbDataRoot = process.env.KB_DATA_ROOT;
 const tempDataRoot = fs.mkdtempSync(path.join(os.tmpdir(), "watany-al-wafiyat-"));
 
+function storedNoticeCount(): number {
+  const file = path.join(tempDataRoot, "death-notices.jsonl");
+  const raw = fs.readFileSync(file, "utf8").trim();
+  return raw ? raw.split(/\r?\n/).filter(Boolean).length : 0;
+}
+
 describe("al-wafiyat routes", () => {
   beforeAll(async () => {
     process.env.KB_DATA_ROOT = tempDataRoot;
@@ -69,16 +75,7 @@ describe("al-wafiyat routes", () => {
     })));
     vi.stubGlobal("fetch", fetchMock);
 
-    const baselineAdminList = await app.inject({
-      method: "GET",
-      url: "/api/admin/al-wafiyat",
-      headers: {
-        authorization: `Bearer ${adminToken}`,
-      },
-    });
-
-    expect(baselineAdminList.statusCode).toBe(200);
-    const baselineAdminTotal = (baselineAdminList.json() as { total: number }).total;
+    const baselineStoredTotal = storedNoticeCount();
 
     const baselinePublicAlWafiyat = await app.inject({
       method: "GET",
@@ -128,16 +125,7 @@ describe("al-wafiyat routes", () => {
       }),
     ]);
 
-    const previewAdminList = await app.inject({
-      method: "GET",
-      url: "/api/admin/al-wafiyat",
-      headers: {
-        authorization: `Bearer ${adminToken}`,
-      },
-    });
-
-    expect(previewAdminList.statusCode).toBe(200);
-    expect((previewAdminList.json() as { total: number }).total).toBe(baselineAdminTotal);
+    expect(storedNoticeCount()).toBe(baselineStoredTotal);
 
     const importResponse = await app.inject({
       method: "POST",

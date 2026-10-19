@@ -10,7 +10,7 @@ export interface FormMetadata {
   descriptionAr: string;
   descriptionEn: string;
   category: "mof" | "laf";
-  type: "pdf" | "html" | "interactive";
+  type: "pdf" | "html" | "image" | "interactive";
   url: string;
   printable: boolean;
   downloadable: boolean;
@@ -36,8 +36,8 @@ export const formsCatalog: Record<string, FormMetadata> = {
     descriptionAr: "النموذج الأساسي لطلب إعادة تخصيص المعاش بعد وفاة المتقاعد",
     descriptionEn: "Primary form for pension reallocation request after retiree's death",
     category: "mof",
-    type: "html",
-    url: "/forms/mof/t7-pension-reallocation.html",
+    type: "image",
+    url: "/mof/t7-original.jpg",
     printable: true,
     downloadable: true,
     shareable: true,
@@ -54,8 +54,8 @@ export const formsCatalog: Record<string, FormMetadata> = {
     descriptionAr: "إقرار وتعهد من المستفيد بصحة البيانات المقدمة",
     descriptionEn: "Declaration and commitment from beneficiary regarding data accuracy",
     category: "mof",
-    type: "html",
-    url: "/forms/mof/t8-beneficiary-declaration.html",
+    type: "image",
+    url: "/mof/t8-original.jpg",
     printable: true,
     downloadable: true,
     shareable: true,
@@ -72,8 +72,8 @@ export const formsCatalog: Record<string, FormMetadata> = {
     descriptionAr: "إثبات صفة الأيتام والأرامل من جهات رسمية",
     descriptionEn: "Official certificate proving orphan/widow status",
     category: "mof",
-    type: "html",
-    url: "/forms/mof/t9-orphans-widows-certificate.html",
+    type: "image",
+    url: "/mof/t9-original.jpg",
     printable: true,
     downloadable: true,
     shareable: true,

@@ -1,4 +1,5 @@
 ﻿import type { FastifyInstance } from 'fastify';
+import { randomUUID } from 'node:crypto';
 
 type FastifyWithHasRoute = FastifyInstance & {
   hasRoute?: (options: { method: string; url: string }) => boolean;
@@ -80,7 +81,7 @@ export async function taxiPoolsRoutes(fastify: FastifyInstance) {
     }
 
     const row: PoolRow = {
-      id: `pool_${Date.now()}_${Math.random().toString(16).slice(2, 10)}`,
+      id: `pool_${Date.now()}_${randomUUID().slice(0, 8)}`,
       createdAt: new Date().toISOString(),
       ownerId: safeText(body.ownerId, 120),
       pickup,

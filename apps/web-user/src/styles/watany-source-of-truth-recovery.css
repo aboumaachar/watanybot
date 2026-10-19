@@ -64,7 +64,7 @@ body.watany-recovery-menu-open .watany-recovery-main {
 .watany-guided-card { margin: 13px 0; padding: 13px 14px; border-radius: 18px; border: 1px solid #d7c98f; background: linear-gradient(135deg, #fff9df, #f3ead0); }
 .watany-guided-card strong { color: #71500b; }
 .watany-guided-card p { margin: 5px 0 0; line-height: 1.65; font-size: .82rem; color: #625839; }
-.watany-service-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.watany-service-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
 .watany-service-card { min-height: 132px; padding: 14px; border-radius: 20px; border: 1px solid #dfe5de; background: rgb(255 255 252 / 92%); box-shadow: 0 8px 22px rgb(30 58 44 / 8%); display: flex; flex-direction: column; align-items: flex-start; gap: 7px; }
 .watany-service-card > span { width: 38px; height: 38px; border-radius: 12px; display: grid; place-items: center; background: #123e2e; color: #f4d978; box-shadow: 0 5px 14px rgb(18 62 46 / 20%); }
 .watany-service-card strong { color: #123e2e; }
@@ -395,6 +395,38 @@ body:has(.watany-recovery-dock) .watany-recovery-chat {
   .watany-service-grid { grid-template-columns: 1fr; }
   .watany-home-intro { grid-template-columns: 72px 1fr; }
   .watany-home-intro img { width: 68px; height: 68px; }
+}
+
+.watany-v4-homepage .watany-v4-launcher-card__label {
+  margin-top: 4px !important;
+  font-size: 16px !important;
+  line-height: 22px !important;
+}
+
+@media (max-width: 1023px) {
+  .watany-recovery-shell {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    width: 100%;
+    height: 100dvh;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+  }
+
+  .watany-recovery-topbar,
+  .watany-recovery-bottom {
+    position: relative;
+    inset: auto;
+    width: 100%;
+    transform: none;
+  }
+
+  .watany-recovery-main {
+    width: 100%;
+    min-height: 0;
+    padding: 0 10px var(--apex-content-bottom-clearance);
+  }
 }
 
 @media (min-width: 1024px) {

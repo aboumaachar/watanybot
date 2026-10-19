@@ -1,0 +1,46 @@
+{
+  "status": "PASS",
+  "gitHead": "101afc15906d5012bd879996ce2f3f9b6212b3fe",
+  "gitBranch": "integration/theme-upgrade-20260728",
+  "C9_4A_SOURCE_FILE_COUNT": 5,
+  "C9_4A_SOURCE_CHANGES": [
+    { "path": "apps/gateway-api/src/routes/official-sources.ts", "category": "RUNTIME_SIDE_EFFECT_CONTAINMENT", "change": "modified-by-C9.4A" },
+    { "path": "apps/gateway-api/src/cms/documents/documents-repository.ts", "category": "DOCUMENT_DELETE_BOUNDARY", "change": "modified-by-C9.4A" },
+    { "path": "apps/gateway-api/src/cms/documents/documents-service.ts", "category": "DOCUMENT_DELETE_BOUNDARY", "change": "modified-by-C9.4A" },
+    { "path": "apps/gateway-api/src/cms/documents/documents-cms-adapter.ts", "category": "DOCUMENT_DELETE_BOUNDARY", "change": "modified-by-C9.4A" },
+    { "path": "apps/gateway-api/src/tests/documents-cms-boundary.test.ts", "category": "DOCUMENT_DELETE_TEST", "change": "modified-by-C9.4A" }
+  ],
+  "inheritedAuthorizedImplementation": [
+    { "path": "apps/gateway-api/src/cms/cms-routes.ts", "category": "AUTHORIZED_SHARED_SUPPORT", "ownership": "inherited unchanged from C9.2/C9.3" },
+    { "path": "apps/web-admin/src/components/AdminFluentIcon.tsx", "category": "AUTHORIZED_SHARED_SUPPORT", "ownership": "inherited unchanged from C9.2/C9.3" },
+    { "path": "apps/web-admin/src/lib/api.ts", "category": "AUTHORIZED_SHARED_SUPPORT", "ownership": "inherited unchanged from C9.2/C9.3" },
+    { "path": "apps/web-admin/src/pages/AdminDocumentsPage.tsx", "category": "AUTHORIZED_SHARED_SUPPORT", "ownership": "inherited unchanged from C9.2/C9.3" },
+    { "path": "apps/web-admin/src/pages/AdminKBStudioPage.tsx", "category": "AUTHORIZED_SHARED_SUPPORT", "ownership": "inherited unchanged from C9.2/C9.3" },
+    { "path": "apps/web-admin/src/pages/CmsDocumentsPage.tsx", "category": "AUTHORIZED_SHARED_SUPPORT", "ownership": "inherited unchanged from C9.2/C9.3" },
+    { "path": "apps/web-admin/src/pages/CmsPage.tsx", "category": "AUTHORIZED_SHARED_SUPPORT", "ownership": "inherited unchanged from C9.2/C9.3" },
+    { "path": "apps/web-admin/src/styles.css", "category": "AUTHORIZED_SHARED_SUPPORT", "ownership": "inherited unchanged from C9.2/C9.3" }
+  ],
+  "preexistingUnrelatedChanges": [
+    { "path": "apps/gateway-api/data/death-notices.jsonl", "category": "PREEXISTING_UNRELATED_CHANGE", "ownership": "preserved user data from blocked C9.4; not modified by C9.4A", "gitNumstat": "8 0" }
+  ],
+  "authorizedPredecessorEvidencePaths": [
+    "pma/evidence/cms/C9_2_C9_3_SOURCE_IMPLEMENTATION",
+    "pma/evidence/cms/C9_2_C9_3_SOURCE_IMPLEMENTATION_CHANGESET_FREEZE",
+    "pma/evidence/cms/C9_4_CMS_RUNTIME_BROWSER_AND_READ_WRITE_CANARY_VALIDATION"
+  ],
+  "testGeneratedDisposablePaths": [
+    "tmp/rag-test-runtime-69764-1787556288268-n24lzmj2wyq.jsonl",
+    "tmp/rag-test-runtime-73124-1787553909887-m850m8n3kz.jsonl",
+    "tmp/rag-test-runtime-79976-1787556103460-pyiyxnyf8nj.jsonl"
+  ],
+  "unauthorizedChangePaths": [],
+  "prohibitedPathCounts": {
+    "databaseSchemaChangePathCount": 0,
+    "databaseMigrationChangePathCount": 0,
+    "containerConfigChangePathCount": 0,
+    "deploymentChangePathCount": 0
+  },
+  "scopeResult": "PASS",
+  "deathNoticesAutomaticallyDeleted": false,
+  "worktreeCleaned": false
+}

@@ -1,0 +1,7 @@
+{
+    "list":  "PASS",
+    "detail":  "NOT_APPLICABLE_NO_BASELINE_ROWS",
+    "filter":  "PASS",
+    "adminAuthority":  "PASS",
+    "unauthorizedNegativeTest":  "PASS"
+}

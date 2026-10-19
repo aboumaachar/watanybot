@@ -1,0 +1,39 @@
+{
+  "status": "PASS",
+  "DEATH_NOTICES_ROOT_CAUSE_IDENTIFIED": "PASS",
+  "target": "apps/gateway-api/data/death-notices.jsonl",
+  "mutationClassification": {
+    "synchronousDuringStartup": false,
+    "asynchronousAfterStartup": true,
+    "schedulerOrTimer": true,
+    "externalFetchOrImport": true,
+    "classification": "B+C+D"
+  },
+  "callChain": [
+    { "path": "apps/gateway-api/src/server.ts", "line": 145, "operation": "registerOfficialSourcesRoutes(app)" },
+    { "path": "apps/gateway-api/src/routes/official-sources.ts", "line": 1891, "operation": "startAlWafiyatAutoSyncJob()" },
+    { "path": "apps/gateway-api/src/routes/official-sources.ts", "line": 1675, "operation": "define auto-sync job" },
+    { "path": "apps/gateway-api/src/routes/official-sources.ts", "line": 1696, "operation": "setTimeout warmup" },
+    { "path": "apps/gateway-api/src/routes/official-sources.ts", "line": 1684, "operation": "runCycle invokes runAlWafiyatAutoSyncCycle" },
+    { "path": "apps/gateway-api/src/routes/official-sources.ts", "line": 1654, "operation": "fetch each configured official source" },
+    { "path": "apps/gateway-api/src/routes/official-sources.ts", "line": 1668, "operation": "writeAllDeathNotices(all)" },
+    { "path": "apps/gateway-api/src/routes/official-sources.ts", "line": 1165, "operation": "fs.writeFileSync death-notices.jsonl" }
+  ],
+  "preRemediationBehavior": {
+    "disableCondition": "AL_WAFIYAT_AUTO_SYNC === false",
+    "unsetVariableBehavior": "auto-sync enabled",
+    "observedEffect": "8 records inserted after gateway startup"
+  },
+  "remediation": {
+    "path": "apps/gateway-api/src/routes/official-sources.ts",
+    "condition": "AL_WAFIYAT_AUTO_SYNC !== true",
+    "lifecycle": "explicit opt-in",
+    "manualImportPreserved": true,
+    "legitimateAutoSyncPreservedWhenExplicitlyEnabled": true,
+    "historicalDataDeleted": false
+  },
+  "rootCauseEvidence": {
+    "officialSourceTests": "PASS: 5 tests",
+    "startupContainmentRuntimeProof": "PASS"
+  }
+}

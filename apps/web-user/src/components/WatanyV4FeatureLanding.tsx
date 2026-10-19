@@ -8,7 +8,7 @@ export const WATANY_V4_CLEAN_ROUTES = [
   "/for-you", "/popular", "/latest", "/important", "/salary", "/procedures", "/school-grants",
   "/jobs", "/marketplace", "/taxi", "/announcements", "/tools", "/network",
   "/vote", "/community", "/deaths", "/faq", "/laws", "/forms", "/news", "/fake",
-  "/settings", "/profile", "/saved", "/downloads", "/files", "/notifications",
+  "/settings", "/profile", "/saved", "/downloads", "/files", "/notifications", "/sports",
   "/login", "/services"
 ];
 
@@ -43,6 +43,7 @@ const data: Record<string, { label: string; img: string; description: string }> 
   "/notifications": { label: "الإشعارات", img: A + "latest.png", description: "إشعاراتك وتنبيهاتك." },
   "/login": { label: "تسجيل الدخول", img: A + "profile.png", description: "ادخل إلى حسابك أو ابدأ التصفح." },
   "/services": { label: "الخدمات", img: A + "all.png", description: "كل خدمات موطني في مكان واحد." },
+  "/sports": { label: "الرياضة", img: "/watany-v4/icons/world-cup.png", description: "الأنشطة الرياضية والمشاركة في الفعاليات الرياضية." },
 };
 
 function cleanLegacy() {

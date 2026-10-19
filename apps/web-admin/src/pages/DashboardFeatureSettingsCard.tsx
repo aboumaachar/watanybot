@@ -186,7 +186,7 @@ export default function DashboardFeatureSettingsCard() {
             Discard Changes
           </button>
           <button className="accent" onClick={saveDashboardFeatureFlags} disabled={!hasPendingFeatureChanges || featureSaving || featureLoading}>
-            {featureSaving ? "Savingâ€¦" : "Save Settings"}
+            {featureSaving ? "Saving…" : "Save Settings"}
           </button>
         </div>
       </div>
@@ -195,7 +195,7 @@ export default function DashboardFeatureSettingsCard() {
       {featureError ? <div className="feature-banner feature-banner--error">{featureError}</div> : null}
 
       {featureLoading ? (
-        <div className="page-loading">Loading feature settingsâ€¦</div>
+        <div className="page-loading">Loading feature settings…</div>
       ) : (
         <div className="feature-groups" style={{ marginTop: 16 }}>
           {featureGroups.map((group) => {
@@ -236,13 +236,13 @@ export default function DashboardFeatureSettingsCard() {
 
       {hasPendingFeatureChanges && (
         <div className="feature-save-bar">
-          <span className="feature-save-bar__label">âš  Unsaved changes â€” publish to apply</span>
+          <span className="feature-save-bar__label">⚠ Unsaved changes — publish to apply</span>
           <div className="feature-save-bar__actions">
             <button className="ghost sm" onClick={discardDashboardFeatureChanges} disabled={featureSaving}>
               Discard
             </button>
             <button className="accent" onClick={saveDashboardFeatureFlags} disabled={featureSaving}>
-              {featureSaving ? "Savingâ€¦" : "Save & Publish"}
+              {featureSaving ? "Saving…" : "Save & Publish"}
             </button>
           </div>
         </div>

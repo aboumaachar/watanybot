@@ -42,6 +42,14 @@ function getGoogleAccountsApi(): GoogleAccountsIdApi | undefined {
   return (globalThis as GoogleWindow).google?.accounts?.id;
 }
 
+export function resolvePostLoginPath(rawNextPath: string | null): string {
+  if (!rawNextPath || !rawNextPath.startsWith("/") || rawNextPath.startsWith("//")) {
+    return "/home";
+  }
+
+  return rawNextPath;
+}
+
 // NOSONAR - this page intentionally keeps the full auth flow in one component.
 function LoginPageOriginal() {
   const { loginWithProfile, apiBaseUrl } = useApp();
@@ -56,10 +64,7 @@ function LoginPageOriginal() {
     console.info(`[google-auth] ${event}`, payload);
   }, [authDebugEnabled]);
   const rawNextPath = new URLSearchParams(location.search).get("next");
-  const nextPath = (() => {
-    if (!rawNextPath) return "/hybrid-kb-chat";
-    return rawNextPath.startsWith("/") ? rawNextPath : "/hybrid-kb-chat";
-  })();
+  const nextPath = resolvePostLoginPath(rawNextPath);
   const [tab, setTab] = useState<"email" | "phone">("email");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -141,7 +146,7 @@ function LoginPageOriginal() {
     try {
       const profile = await api.login(email, password, apiBaseUrl, rememberMe);
       loginWithProfile(profile);
-      navigate(profile.role === "superadmin" ? "/superadmin" : nextPath);
+      navigate(profile.role === "admin" || profile.role === "superadmin" ? "/superadmin" : nextPath);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "";
       setError(
@@ -165,8 +170,7 @@ function LoginPageOriginal() {
     try {
       const profile = await api.login(DEV_SUPERADMIN_EMAIL, DEV_SUPERADMIN_PASSWORD, apiBaseUrl, false);
       loginWithProfile(profile);
-      const fallbackPath = rawNextPath ? nextPath : "/superadmin";
-      navigate(profile.role === "superadmin" ? "/superadmin" : fallbackPath);
+      navigate(profile.role === "admin" || profile.role === "superadmin" ? "/superadmin" : nextPath);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "تعذر تنفيذ دخول التطوير");
     } finally {
@@ -432,6 +436,8 @@ function LoginPageOriginal() {
             </form>
           )}
 
+          <p className="auth-link approved-login-register">ليس لديك حساب؟ <Link to="/register">إنشاء حساب جديد</Link></p>
+
           <section className="auth-provider">
             {googleClientId ? (
               <div className="auth-google-slot-wrap">
@@ -547,7 +553,6 @@ function LoginPageOriginal() {
             <button type="button" onClick={() => setError("سيتم تفعيل استعادة كلمة المرور قريباً.")}>نسيت كلمة المرور؟</button>
             <button type="button" onClick={() => { setTab("phone"); setError(""); }}>الدخول لمرة واحدة</button>
           </div>
-          <p className="auth-link approved-login-register">ليس لديك حساب؟ <Link to="/register">إنشاء حساب جديد</Link></p>
         </div>
       </div>
     </main>

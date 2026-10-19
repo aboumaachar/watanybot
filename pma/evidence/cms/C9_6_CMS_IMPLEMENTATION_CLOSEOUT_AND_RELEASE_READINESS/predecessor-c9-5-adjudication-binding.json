@@ -1,0 +1,9 @@
+{
+    "evidence":  "pma/evidence/cms/C9_5_CMS_PERSISTENCE_GAP_ADJUDICATION",
+    "finalStatusSha256":  "A522F6689A0AE216C0B47AFA6A7F450B2F5F5081E844AB7AD2B9F2C420F82FA3",
+    "migrationDecisionSha256":  "19F7ECAF2AD541525F71CB2A05014E938E6761653E773FFD8568225AB253C7CD",
+    "currentRuntimeRequiredPersistenceGapCount":  0,
+    "currentRuntimeSchemaMigrationNecessary":  false,
+    "deferredRicherCmsCapabilities":  12,
+    "binding":  "PASS"
+}

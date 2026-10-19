@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 // APEX_CSS_FREEZE_DISABLED_IMPORT import "./superadminUsers.css";
+import { authFetch } from "../../lib/api";
 
 type UserRow = {
   id: string;
@@ -67,11 +68,9 @@ export default function SuperadminUsersPage() {
         if (status) params.set("status", status);
         if (role) params.set("role", role);
 
-        const response = await fetch(`/api/superadmin/users?${params.toString()}`, {
+        const response = await authFetch(`/api/superadmin/users?${params.toString()}`, {
           headers: {
             Accept: "application/json",
-            // Dev-only preview guard. Real production guard must come from auth/RBAC.
-            "x-watany-role": "SUPERADMIN",
           },
         });
 
@@ -106,12 +105,11 @@ export default function SuperadminUsersPage() {
   async function assignRole(user: UserRow, nextRole: string) {
     setRoleSavingUserId(user.id);
     try {
-      const response = await fetch(`/api/superadmin/users/${encodeURIComponent(user.id)}/role`, {
+      const response = await authFetch(`/api/superadmin/users/${encodeURIComponent(user.id)}/role`, {
         method: "PATCH",
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
-          "x-watany-role": "SUPERADMIN",
         },
         body: JSON.stringify({ role: nextRole }),
       });

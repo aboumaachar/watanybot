@@ -1,0 +1,32 @@
+{
+    "runId":  "20260902T032813844Z",
+    "stage":  "MIGRATION_STATUS",
+    "status":  "PASS",
+    "reason":  "Live migration catalog query completed.",
+    "data":  {
+                 "status":  "PASS",
+                 "applied":  true,
+                 "probe":  {
+                               "name":  "MIGRATION_STATUS_PROBE",
+                               "command":  [
+                                               "pnpm",
+                                               "--dir",
+                                               "apps/gateway-api",
+                                               "exec",
+                                               "tsx",
+                                               "C:\\xampp\\htdocs\\projectx\\watanybot\\pma\\evidence\\cms\\C9_12_WAVE4B2_GENERIC_CMS_FORMS_ANNOUNCEMENTS_CLOSEOUT-20260902T032813844Z\\MIGRATION_STATUS_PROBE.ts"
+                                           ],
+                               "workingDirectory":  "C:\\xampp\\htdocs\\projectx\\watanybot",
+                               "startUtc":  "2026-09-02T03:28:14.6146807Z",
+                               "endUtc":  "2026-09-02T03:28:17.3827099Z",
+                               "exitCode":  0,
+                               "status":  "PASS",
+                               "stdoutPath":  "C:\\xampp\\htdocs\\projectx\\watanybot\\pma\\evidence\\cms\\C9_12_WAVE4B2_GENERIC_CMS_FORMS_ANNOUNCEMENTS_CLOSEOUT-20260902T032813844Z\\MIGRATION_STATUS_PROBE.stdout.txt",
+                               "stderrPath":  "C:\\xampp\\htdocs\\projectx\\watanybot\\pma\\evidence\\cms\\C9_12_WAVE4B2_GENERIC_CMS_FORMS_ANNOUNCEMENTS_CLOSEOUT-20260902T032813844Z\\MIGRATION_STATUS_PROBE.stderr.txt",
+                               "stdoutBytes":  132,
+                               "stderrBytes":  0,
+                               "exception":  ""
+                           },
+                 "reason":  "Live migration catalog query completed."
+             }
+}

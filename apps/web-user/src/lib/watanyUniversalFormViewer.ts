@@ -298,11 +298,11 @@ export async function openWatanyUniversalFormViewer(item: UniversalFormViewerIte
 
     if (isPdfContentType(contentType)) {
       const pdfBlobUrl = URL.createObjectURL(await response.blob());
-      trackObjectUrlForCleanup(pdfBlobUrl);
       viewerApi.open({
         ...baseOptions,
         fileUrl: pdfBlobUrl,
       });
+      trackObjectUrlForCleanup(pdfBlobUrl);
       forceFitMobileViewer(viewerWindow);
       return true;
     }
@@ -311,12 +311,12 @@ export async function openWatanyUniversalFormViewer(item: UniversalFormViewerIte
 
     if (!isLikelyHtmlResponse(contentType, responseBody)) {
       const blobUrl = URL.createObjectURL(await response.blob());
-      trackObjectUrlForCleanup(blobUrl);
       if (isImageContentType(contentType)) {
         viewerApi.open({
           ...baseOptions,
           formHtml: buildImageHtml(item.titleAr, blobUrl),
         });
+        trackObjectUrlForCleanup(blobUrl);
         forceFitMobileViewer(viewerWindow);
         return true;
       }
@@ -324,6 +324,7 @@ export async function openWatanyUniversalFormViewer(item: UniversalFormViewerIte
         ...baseOptions,
         fileUrl: blobUrl,
       });
+      trackObjectUrlForCleanup(blobUrl);
       forceFitMobileViewer(viewerWindow);
       return true;
     }

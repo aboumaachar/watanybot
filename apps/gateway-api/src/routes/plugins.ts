@@ -6,7 +6,7 @@ import type { FastifyPluginAsync } from "fastify";
 import { request } from "undici";
 import type { PluginDb, JobApplication, MarketplaceListing, EmergencyAlert } from "../types/domain";
 import { makeId, normalizeText } from "../lib/helpers";
-import { MOCK_JOBS, MOCK_ALERTS, SEED_MARKETPLACE } from "../data/seed-data";
+import { MOCK_JOBS, SEED_MARKETPLACE } from "../data/seed-data";
 
 interface PluginsRoutesOptions {
   pluginDb: PluginDb;
@@ -42,8 +42,10 @@ function mapMarketplaceRow(row: Record<string, unknown>): MarketplaceListing {
 }
 
 async function fetchEmergencyAlerts(query: string, limit: number): Promise<EmergencyAlert[]> {
-  const url = new URL("https://api.reliefweb.int/v1/disasters");
-  url.searchParams.set("appname", "watany");
+  const appname = normalizeText(process.env.RELIEFWEB_APPNAME);
+  if (!appname) throw new Error("reliefweb_appname_not_configured");
+  const url = new URL("https://api.reliefweb.int/v2/disasters");
+  url.searchParams.set("appname", appname);
   url.searchParams.set("limit", String(limit));
   url.searchParams.set("profile", "lite");
   url.searchParams.append("fields[include][]", "name");
@@ -55,8 +57,16 @@ async function fetchEmergencyAlerts(query: string, limit: number): Promise<Emerg
     url.searchParams.set("query[value]", query);
   }
 
-  const res = await request(url.toString(), { method: "GET" });
+  const res = await request(url.toString(), {
+    method: "GET",
+    headersTimeout: 5_000,
+    bodyTimeout: 5_000,
+    signal: AbortSignal.timeout(6_000),
+  });
   const text = await res.body.text();
+  if (res.statusCode < 200 || res.statusCode >= 300) {
+    throw new Error(`reliefweb_http_${res.statusCode}`);
+  }
   const raw = JSON.parse(text) as {
     data?: Array<{
       id?: string | number;
@@ -401,19 +411,14 @@ export const pluginsRoutes: FastifyPluginAsync<PluginsRoutesOptions> = async (ap
     return { ok: true, message: "Interest recorded (demo)." } as const;
   });
 
-  app.get("/api/plugins/emergency", async (req) => {
+  app.get("/api/plugins/emergency", async (req, reply) => {
     const query = normalizeText((req.query as { q?: string }).q);
     const limit = Math.max(1, Math.min(10, Number((req.query as { limit?: string }).limit || "5")));
     try {
       const alerts = await fetchEmergencyAlerts(query, limit);
-      return { source: "ReliefWeb", alerts } as const;
+      return { source: "ReliefWeb", live: true, alerts } as const;
     } catch {
-      const alerts = query
-        ? MOCK_ALERTS.filter((item) =>
-            `${item.title} ${item.country} ${item.summary || ""}`.toLowerCase().includes(query.toLowerCase()),
-          )
-        : MOCK_ALERTS;
-      return { source: "Watany Demo", alerts } as const;
+      return reply.code(503).send({ source: "ReliefWeb", live: false, alerts: [], error: "reliefweb_unavailable" });
     }
   });
 

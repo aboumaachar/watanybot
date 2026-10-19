@@ -1,0 +1,18 @@
+id,stage,action,result,detail
+A001,preflight,Load APEX PS1 skill and Wave 4A authority scope,PASS,Required controls and locked flow loaded
+A002,source-boundary,Inspect external Payload workspace and database without mutation,PASS,Payload source remained unchanged
+A003,bridge,Implement Payload HTTP pagination normalization and derived publication,PASS,Canonical IDs and relationship mapping preserved
+A004,publication,Add atomic active pointer and last-good protection,PASS,Invalid activation/reload does not replace active pointer
+A005,authority,Close Gateway and legacy Procedure mutation writers,PASS,11 editor routes return CANONICAL_EDITOR_PAYLOAD
+A006,ui,Add Payload ownership and read-only editorial document surfaces,PASS,Operational Documents Forms and Announcements retained
+A007,responsive,Bound CMS grid and fix RTL mobile drawer anchoring,PASS,430px proof has no horizontal overflow
+A008,runtime,Run live disposable Payload and Gateway proof,PASS,1 procedure and 2 documents published
+A009,evidence,Create credential-free APEX report package,PASS,Required artifacts and stage reports present
+A010,cleanup,Stop disposable processes and verify ports,PASS,Ports 3001 4000 4010 5175 clean
+A011,delivery,Selective stage commit and push,PASS,Commit c7ca29999b41bf41511abd29429ac448e73b05aa pushed; remote SHA matches local HEAD
+A012,real-payload,Run final real Payload REST and Gateway acceptance,PASS,Real collection totals and canonical identity fields recorded without full bodies
+A013,real-payload,Exercise enriched archive and republish lifecycle,PASS,Publication exclusion and relationship restoration recorded with final run IDs
+A014,real-payload,Exercise unavailable sync last-good protection,PASS,503 UNAVAILABLE returned and active pointer preserved byte-for-byte
+A015,cleanup,Drop disposable databases and remove temporary runtime,PASS,Only isolated databases were mutated then dropped; protected normal database untouched
+A016,source-commit,Commit canonical identity correction,PASS,fix(cms): correct real Payload bridge contract at 89335a1d4c7a133e6e3f200e77e5943890e40a35
+A017,evidence,Freeze credential-free real-Payload addendum,PASS,Manifest-listed artifacts prepared for final SHA256 verification

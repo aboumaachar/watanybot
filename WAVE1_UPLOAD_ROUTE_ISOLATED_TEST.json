@@ -1,0 +1,15 @@
+{
+  "status": "PASS",
+  "command": "pnpm --dir apps/gateway-api exec vitest run test/upload.test.ts",
+  "testFile": "apps/gateway-api/test/upload.test.ts",
+  "testsPassed": 1,
+  "testFilesPassed": 1,
+  "contract": {
+    "statusCode": 200,
+    "ok": true,
+    "url": true
+  },
+  "healthStatusCode": 200,
+  "uploadResidueAfterPriorCleanup": 0,
+  "source": "canonical apps.api.main:app on 127.0.0.1:8010"
+}

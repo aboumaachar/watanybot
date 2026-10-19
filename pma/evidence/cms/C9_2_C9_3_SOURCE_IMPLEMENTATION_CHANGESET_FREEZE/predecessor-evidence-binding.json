@@ -1,0 +1,36 @@
+{
+  "status": "PASS",
+  "gate": "C9_2_C9_3_SOURCE_IMPLEMENTATION_VALIDATION_AND_CHANGESET_FREEZE",
+  "capturedAtUtc": "2026-08-24T06:47:09.8787790Z",
+  "predecessorPackage": "pma/evidence/cms/C9_2_C9_3_SOURCE_IMPLEMENTATION",
+  "predecessorPackageOverwritten": false,
+  "requiredArtifactCount": 9,
+  "verifiedArtifactCount": 9,
+  "requiredArtifacts": [
+    "c9-2-information-architecture-implementation.json",
+    "c9-3-backend-service-boundary-implementation.json",
+    "current-document-model-compatibility.json",
+    "document-consumer-regression.json",
+    "source-validation-results.json",
+    "changed-file-manifest.json",
+    "persistence-gap-report.md",
+    "implementation-summary.md",
+    "final-status.txt"
+  ],
+  "requiredFinalStatusTokens": [
+    "C9_2_INFORMATION_ARCHITECTURE_IMPLEMENTATION=PASS",
+    "C9_3_BACKEND_SERVICE_BOUNDARY_IMPLEMENTATION=PASS",
+    "CURRENT_DOCUMENT_MODEL_COMPATIBILITY=PASS",
+    "EXISTING_DOCUMENT_CONSUMER_REGRESSION=PASS",
+    "SOURCE_BUILD=PASS",
+    "SOURCE_TESTS=PASS",
+    "DATABASE_SCHEMA_MUTATION_EXECUTED=NO",
+    "DATABASE_DATA_MUTATION_EXECUTED=NO",
+    "DATABASE_MIGRATION_EXECUTED=NO",
+    "CONTAINER_START_STOP_EXECUTED=NO",
+    "PRODUCTION_DEPLOYMENT_EXECUTED=NO"
+  ],
+  "predecessorManifestSha256": "0684825BD8564EF07A4722FA42DAD90541272F6959E57F260D8DCC0E663C4BCB",
+  "predecessorImplementationFileCount": 12,
+  "bindingResult": "PASS"
+}

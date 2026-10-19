@@ -311,6 +311,22 @@ export type CommunityGroup = {
   actorPermissions?: CommunityGroupPermission[];
 };
 
+export type CommunityDirectContact = {
+  id: string;
+  name: string;
+  email: string;
+  phone?: string;
+  role: string;
+};
+
+export type CommunityDirectThread = {
+  groupId: string;
+  peer: CommunityDirectContact;
+  unreadCount: number;
+  lastMessagePreview?: string;
+  lastMessageAt?: string;
+};
+
 export type CommunityMessage = {
   id: string;
   groupId: string;
@@ -327,8 +343,17 @@ export type CommunityMessage = {
     | "payment_update";
   body?: string;
   attachmentUrl?: string;
+  attachments?: Array<{
+    id: string;
+    url: string;
+    originalName?: string;
+    mimeType?: string;
+    size?: number;
+  }>;
   createdAt: string;
   editedAt?: string;
+  isForwarded?: boolean;
+  forwardSourceMessageId?: string;
   replyToMessageId?: string;
   replyToPreview?: {
     id: string;
@@ -337,10 +362,12 @@ export type CommunityMessage = {
   };
   mentions?: CommunityMessageMention[];
   reactions?: CommunityMessageReaction[];
+  isStarredByMe?: boolean;
   deletedForEveryoneAt?: string;
   deletedForEveryoneBy?: string;
   deletedForMeAt?: string;
   isPinned?: boolean;
+  receiptStatus?: "sent" | "delivered" | "read";
 };
 
 export type CommunityMessageCursor = string;
@@ -381,6 +408,8 @@ export type CommunityRealtimeEventType =
   | "community.message.created"
   | "community.message.updated"
   | "community.message.deleted"
+  | "community.receipt.delivered"
+  | "community.receipt.read"
   | "community.read_state.updated"
   | "community.typing.started"
   | "community.typing.stopped"

@@ -8,7 +8,7 @@
  * - Session analytics and insights
  */
 
-import { randomUUID } from 'crypto';
+import { randomUUID } from 'node:crypto';
 
 // ─────────────────────────────────────────────────────────────────────
 // Types
@@ -72,9 +72,9 @@ export interface SessionConfig {
 // ─────────────────────────────────────────────────────────────────────
 
 export class SessionStore {
-  private sessions: Map<string, Session> = new Map();
-  private userSessions: Map<string, Set<string>> = new Map();
-  private config: SessionConfig;
+  private readonly sessions: Map<string, Session> = new Map();
+  private readonly userSessions: Map<string, Set<string>> = new Map();
+  private readonly config: SessionConfig;
   private cleanupInterval: ReturnType<typeof setInterval> | null = null;
 
   constructor(config?: Partial<SessionConfig>) {
@@ -447,7 +447,7 @@ export class SessionStore {
 // ─────────────────────────────────────────────────────────────────────
 
 export class SessionContextBuilder {
-  private sessionStore: SessionStore;
+  private readonly sessionStore: SessionStore;
 
   constructor(sessionStore: SessionStore) {
     this.sessionStore = sessionStore;
@@ -553,11 +553,11 @@ export class SessionContextBuilder {
 
     // Add user preference hints
     if (session.context.userPreferences.rank) {
-      hints.push(`رتبة المستخدم: ${session.context.userPreferences.rank}`);
+      hints.push(`رتبة المستخدم: ${JSON.stringify(session.context.userPreferences.rank)}`);
     }
 
     if (session.context.userPreferences.yearsOfService) {
-      hints.push(`سنوات الخدمة: ${session.context.userPreferences.yearsOfService}`);
+      hints.push(`سنوات الخدمة: ${JSON.stringify(session.context.userPreferences.yearsOfService)}`);
     }
 
     return hints;
@@ -584,7 +584,7 @@ export class SessionContextBuilder {
 
     // Replace entity references
     for (const [key, value] of session.context.entities) {
-      const pattern = new RegExp(`\\b${key}\\b`, 'g');
+      const pattern = new RegExp(String.raw`\b${key}\b`, 'g');
       if (typeof value === 'string') {
         resolved = resolved.replace(pattern, value);
       }
@@ -602,21 +602,17 @@ let sessionStoreInstance: SessionStore | null = null;
 let contextBuilderInstance: SessionContextBuilder | null = null;
 
 export function getSessionStore(): SessionStore {
-  if (!sessionStoreInstance) {
-    sessionStoreInstance = new SessionStore({
-      maxMessages: parseInt(process.env.SESSION_MAX_MESSAGES || '100'),
-      sessionTimeoutMs: parseInt(process.env.SESSION_TIMEOUT_MS || '86400000'),
-      idleTimeoutMs: parseInt(process.env.SESSION_IDLE_TIMEOUT_MS || '1800000'),
-      maxActiveSessions: parseInt(process.env.SESSION_MAX_ACTIVE || '10000'),
-    });
-  }
+  sessionStoreInstance ??= new SessionStore({
+      maxMessages: Number.parseInt(process.env.SESSION_MAX_MESSAGES || '100'),
+      sessionTimeoutMs: Number.parseInt(process.env.SESSION_TIMEOUT_MS || '86400000'),
+      idleTimeoutMs: Number.parseInt(process.env.SESSION_IDLE_TIMEOUT_MS || '1800000'),
+      maxActiveSessions: Number.parseInt(process.env.SESSION_MAX_ACTIVE || '10000'),
+  });
   return sessionStoreInstance;
 }
 
 export function getSessionContextBuilder(): SessionContextBuilder {
-  if (!contextBuilderInstance) {
-    contextBuilderInstance = new SessionContextBuilder(getSessionStore());
-  }
+  contextBuilderInstance ??= new SessionContextBuilder(getSessionStore());
   return contextBuilderInstance;
 }
 

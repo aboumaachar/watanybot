@@ -2,6 +2,7 @@
 import { MfeSchoolGrantsCalculator } from "../components/MfeSchoolGrantsCalculator";
 import { SchoolAidsRequiredFormsPanel } from "../features/school-aids/SchoolAidsRequiredFormsPanel";
 import { getSchoolAidRequiredItem } from "../features/school-aids/schoolAidsRequiredItems";
+import { openSchoolAidViewer } from "../features/school-aids/openSchoolAidViewer";
 import { WatanyAppIcon } from "../components/watanybot/WatanyAppIcon";
 import { PopupModal } from "../components/PopupModal";
 import type { SchoolFormIconName } from "../theme/watany-v4/schoolFormIconRegistry";
@@ -69,8 +70,6 @@ const SCHOOL_DIRECT_PREVIEW_BY_POPUP: Partial<Record<SchoolChildPopupView, strin
 function resolveSchoolGrantRoute(route: string) {
   if (!("location" in globalThis)) return route;
   const { protocol, hostname, port } = globalThis.location;
-  // The school grants experience and form assets live in web-user on 5174.
-  // If this page is opened from web-admin on 5175, send users to the canonical web-user origin.
   if (port === "5175") {
     return `${protocol}//${hostname}:5174${route}`;
   }
@@ -79,7 +78,7 @@ function resolveSchoolGrantRoute(route: string) {
 
 function SchoolGrantsPageTemplateContent() {
   const [childPopup, setChildPopup] = useState<SchoolChildPopupView>("none");
-  const [viewerItem, setViewerItem] = useState<ReturnType<typeof getSchoolAidRequiredItem>>();
+  const [calculatorMountKey, setCalculatorMountKey] = useState(0);
 
   useEffect(() => {
     document.body.classList.add("school-grants-feature-active");
@@ -96,11 +95,28 @@ function SchoolGrantsPageTemplateContent() {
   const openChildPopup = (id: string) => {
     const popup = SCHOOL_CHILD_POPUP_BY_ID[id] ?? "none";
     if (popup === "none") return;
+    if (popup === "calculator") {
+      setCalculatorMountKey((current) => current + 1);
+    }
     setChildPopup(popup);
   };
 
   const closeChildPopup = () => setChildPopup("none");
-  const closeViewer = () => setViewerItem(undefined);
+
+  const openDocument = async (popup: SchoolChildPopupView) => {
+    const itemId = SCHOOL_DIRECT_PREVIEW_BY_POPUP[popup];
+    const item = itemId ? getSchoolAidRequiredItem(itemId) : undefined;
+    if (!item) return;
+
+    closeChildPopup();
+    await new Promise((resolve) => globalThis.setTimeout(resolve, 60));
+    await openSchoolAidViewer({
+      titleAr: item.titleAr,
+      previewUrl: resolveSchoolGrantRoute(item.previewUrl),
+      downloadUrl: resolveSchoolGrantRoute(item.downloadUrl),
+      preferUniversal: item.preferUniversal,
+    });
+  };
 
   return (
     <section dir="rtl" className="school-grants-page" style={{ fontFamily: "system-ui, -apple-system, Segoe UI, Tahoma, sans-serif", color: "#0f172a", display: "grid", gap: 16 }}>
@@ -117,45 +133,32 @@ function SchoolGrantsPageTemplateContent() {
         ))}
       </section>
 
+      {childPopup === "calculator" ? (
+        <MfeSchoolGrantsCalculator key={calculatorMountKey} initialView="calculator" />
+      ) : null}
+
       <PopupModal
-        open={childPopup !== "none"}
+        open={childPopup !== "none" && childPopup !== "calculator"}
         title={popupTitle}
         onClose={closeChildPopup}
         variant="premium"
         compactMobile
       >
         <section data-school-grants-popup={childPopup === "none" ? undefined : childPopup}>
-          {childPopup === "calculator" ? <MfeSchoolGrantsCalculator initialView="calculator" /> : null}
           {childPopup === "ministerial" ? <section id="school-grants-ministerial" className="school-grants-page__calculator"><MfeSchoolGrantsCalculator initialView="alshoon" /></section> : null}
           {childPopup === "tariff" ? <section id="school-grants-tariff" className="school-grants-page__calculator"><MfeSchoolGrantsCalculator initialView="mfe" /></section> : null}
-          {childPopup === "forms" ? <SchoolAidsRequiredFormsPanel mode="forms" showHeader={false} onOpenViewer={setViewerItem} /> : null}
-          {childPopup === "terms" ? <SchoolAidsRequiredFormsPanel mode="terms" showHeader={false} onOpenViewer={setViewerItem} /> : null}
+          {childPopup === "forms" ? <SchoolAidsRequiredFormsPanel mode="forms" showHeader={false} onBeforeOpenViewer={closeChildPopup} /> : null}
+          {childPopup === "terms" ? <SchoolAidsRequiredFormsPanel mode="terms" showHeader={false} onBeforeOpenViewer={closeChildPopup} /> : null}
           {SCHOOL_DIRECT_PREVIEW_BY_POPUP[childPopup] ? (
-            <SchoolGrantDocumentCard popup={childPopup} onOpen={setViewerItem} />
+            <SchoolGrantDocumentCard popup={childPopup} onOpen={() => void openDocument(childPopup)} />
           ) : null}
         </section>
-      </PopupModal>
-
-      <PopupModal
-        open={Boolean(viewerItem)}
-        title={viewerItem?.titleAr}
-        onClose={closeViewer}
-        variant="premium"
-        compactMobile
-      >
-        {viewerItem ? (
-          <iframe
-            className="school-grants-form-viewer"
-            title={viewerItem.titleAr}
-            src={resolveSchoolGrantRoute(viewerItem.previewUrl)}
-          />
-        ) : null}
       </PopupModal>
     </section>
   );
 }
 
-function SchoolGrantDocumentCard({ popup, onOpen }: { popup: SchoolChildPopupView; onOpen: (item: NonNullable<ReturnType<typeof getSchoolAidRequiredItem>>) => void }) {
+function SchoolGrantDocumentCard({ popup, onOpen }: { popup: SchoolChildPopupView; onOpen: () => void }) {
   const itemId = SCHOOL_DIRECT_PREVIEW_BY_POPUP[popup];
   const item = itemId ? getSchoolAidRequiredItem(itemId) : undefined;
   if (!item) return null;
@@ -166,7 +169,7 @@ function SchoolGrantDocumentCard({ popup, onOpen }: { popup: SchoolChildPopupVie
       <button
         className="wt-cta-glow"
         type="button"
-        onClick={() => onOpen(item)}
+        onClick={onOpen}
       >
         فتح المستند
       </button>

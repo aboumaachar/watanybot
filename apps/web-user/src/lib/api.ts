@@ -10,6 +10,8 @@ import type {
   Community,
   CommunityGroupDetail,
   CommunityGroup,
+  CommunityDirectContact,
+  CommunityDirectThread,
   CommunityGroupMembersOverview,
   CommunityGroupMembershipSummary,
   CommunityGroupPermission,
@@ -43,6 +45,8 @@ import type {
   NotificationRoomMuteDuration,
   NotificationSettings,
   PensionCalcResult,
+  SalaryDegreeInference,
+  SalaryPre2019DegreeInference,
   SalaryComputeV2Response,
   SalaryMeta,
   SalaryResult,
@@ -670,6 +674,24 @@ export async function authFetch(url: string, init?: RequestInit): Promise<Respon
     }
   }
   return res;
+}
+
+export type SuperadminContact = {
+  name: string;
+  first_name?: string;
+  last_name?: string;
+  full_name?: string;
+  company_name?: string;
+  status?: string;
+};
+
+export async function getSuperadminContacts(limit = 50): Promise<SuperadminContact[]> {
+  const response = await authFetch(`${API_URL}/api/admin-authority/crm/contacts?limit=${Math.min(Math.max(limit, 1), 100)}`);
+  if (!response.ok) {
+    throw new Error(`CRM_CONTACTS_HTTP_${response.status}`);
+  }
+  const payload = (await response.json()) as { items?: SuperadminContact[] };
+  return Array.isArray(payload.items) ? payload.items : [];
 }
 
 function parseContentDispositionFileName(value: string | null): string | undefined {
@@ -1800,6 +1822,7 @@ type AuthenticatedProfilePayload = {
   region?: string | null;
   note?: string | null;
   profile_completed?: boolean | null;
+  must_change_password?: boolean | null;
   phone_verified_at?: string | null;
   last_login?: string | number | null;
 };
@@ -1865,6 +1888,10 @@ function mapAuthenticatedProfile(user: AuthenticatedProfilePayload, fallback?: U
 
   if (typeof user.profile_completed === "boolean") {
     next.profileCompleted = user.profile_completed;
+  }
+
+  if (typeof user.must_change_password === "boolean") {
+    next.mustChangePassword = user.must_change_password;
   }
 
   if (lastLogin !== undefined) {
@@ -2149,8 +2176,8 @@ export const api = {
     return (await res.json()) as SurveyBridgeStatus;
   },
 
-  async listSurveys(baseUrl = API_URL): Promise<SurveySummary[]> {
-    const res = await authFetch(`${baseUrl}/api/voting/elections`);
+  async listSurveys(baseUrl = API_URL, status: SurveyStatus = "active"): Promise<SurveySummary[]> {
+    const res = await authFetch(`${baseUrl}/api/voting/elections?status=${encodeURIComponent(status)}`);
     if (!res.ok) {
       throw new Error(await readApiError(res, "تعذر تحميل الاستطلاعات حالياً."));
     }
@@ -2499,8 +2526,44 @@ export const api = {
     };
   },
 
+  async salaryInferDegree(
+    params: { rank: string; exactVetSalary: number },
+    baseUrl = API_URL,
+  ): Promise<SalaryDegreeInference> {
+    const res = await fetch(`${baseUrl}/api/salary/infer-degree`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(params),
+    });
+    const data = await res.json().catch(() => null) as { ok?: boolean; inference?: SalaryDegreeInference; error?: string; minimumVetSalary?: number } | null;
+    if (!res.ok || !data?.inference) {
+      const error = new Error(data?.error || "salary degree inference failed") as Error & { minimumVetSalary?: number };
+      error.minimumVetSalary = data?.minimumVetSalary;
+      throw error;
+    }
+    return data.inference;
+  },
+
+  async salaryInferPre2019Degree(
+    params: { rank: string; pre2019BaseSalary: number },
+    baseUrl = API_URL,
+  ): Promise<SalaryPre2019DegreeInference> {
+    const res = await fetch(`${baseUrl}/api/salary/infer-pre2019-degree`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(params),
+    });
+    const data = await res.json().catch(() => null) as { ok?: boolean; inference?: SalaryPre2019DegreeInference; error?: string; minimumPre2019BaseSalary?: number } | null;
+    if (!res.ok || !data?.inference) {
+      const error = new Error(data?.error || "pre-2019 salary degree inference failed") as Error & { minimumPre2019BaseSalary?: number };
+      error.minimumPre2019BaseSalary = data?.minimumPre2019BaseSalary;
+      throw error;
+    }
+    return data.inference;
+  },
+
   async salaryCalc(
-    params: { rank: string; degree: number; married: boolean; kidsCount: number; selectedOrnaments: string[] },
+    params: { rank: string; degree?: number; married: boolean; kidsCount: number; selectedOrnaments: string[]; exactVetSalary?: number; pre2019BaseSalary?: number },
     baseUrl = API_URL,
   ): Promise<PensionCalcResult> {
     const res = await fetch(`${baseUrl}/api/salary/calc`, {
@@ -3820,6 +3883,17 @@ export const api = {
     return mapGatewayChatResponse(await res2.json());
   },
 
+  async chatGatewayV2(question: string, context?: Record<string, unknown>, baseUrl = API_URL): Promise<ChatV2Response> {
+    const normalizedQuestion = normalizeSearchableArabicInput(question);
+    const res = await authFetch(`${baseUrl}/api/chat`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ message: normalizedQuestion, context, sessionId: getClientChatSessionId() }),
+    });
+    if (!res.ok) throw new Error("gateway chat failed");
+    return mapGatewayChatResponse(await res.json());
+  },
+
   async chatV2Stream(
     question: string,
     handlers?: ChatStreamHandlers,
@@ -4540,7 +4614,7 @@ export const api = {
 
   async getAnnouncements(baseUrl = API_URL): Promise<{ announcements: Array<{ id: string; title: string; body?: string; timestamp?: number; source?: string; url?: string; }> }> {
     try {
-      const res = await fetch(`${baseUrl}/announcements`);
+      const res = await fetch(`${baseUrl}/api/announcements`);
       if (!res.ok) throw new Error("announcements fetch failed");
       return (await res.json()) as { announcements: Array<{ id: string; title: string; body?: string; timestamp?: number; source?: string; url?: string; }> };
     } catch {
@@ -4701,7 +4775,7 @@ export const api = {
     }
 
     try {
-      const res = await fetch(`${baseUrl}/api/admin/features`);
+      const res = await authFetch(`${baseUrl}/api/features`);
       if (!res.ok) return { flags: {}, lastUpdatedAt: null };
       const data = await res.json();
       return {
@@ -4755,6 +4829,31 @@ export const api = {
     return data.group;
   },
 
+  async getCommunityDirectContacts(query = "", baseUrl = API_URL): Promise<CommunityDirectContact[]> {
+    const params = new URLSearchParams();
+    if (query.trim()) params.set("q", query.trim());
+    const suffix = params.size ? `?${params.toString()}` : "";
+    const res = await authFetch(`${baseUrl}/api/community/direct/contacts${suffix}`);
+    if (!res.ok) throw new Error("community direct contacts fetch failed");
+    const data = await res.json() as { contacts: CommunityDirectContact[] };
+    return data.contacts;
+  },
+
+  async getCommunityDirectThreads(baseUrl = API_URL): Promise<CommunityDirectThread[]> {
+    const res = await authFetch(`${baseUrl}/api/community/direct`);
+    if (!res.ok) throw new Error("community direct threads fetch failed");
+    const data = await res.json() as { threads: CommunityDirectThread[] };
+    return data.threads;
+  },
+
+  async getOrCreateCommunityDirectThread(recipientUserId: string, baseUrl = API_URL): Promise<CommunityDirectThread> {
+    const res = await authFetch(`${baseUrl}/api/community/direct`, {
+      method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ recipientUserId }),
+    });
+    if (!res.ok) throw new Error("community direct thread create failed");
+    return await res.json() as CommunityDirectThread;
+  },
+
   async getCommunityOverview(baseUrl = API_URL): Promise<{ community: Community; groups: CommunityGroup[]; liveSessions: LiveSession[] }> {
     const res = await authFetch(`${baseUrl}/api/community/groups`);
     if (!res.ok) throw new Error("community overview fetch failed");
@@ -4804,15 +4903,19 @@ export const api = {
 
   async searchCommunityGroupMessages(
     groupId: string,
-    options: { query: string; limit?: number },
+    options: { query?: string; filter?: "all" | "media" | "links" | "documents" | "audio"; limit?: number },
     baseUrl = API_URL,
   ): Promise<CommunityMessagesPage> {
     const params = new URLSearchParams();
-    const normalizedQuery = options.query.trim();
-    if (!normalizedQuery) {
+    const normalizedQuery = options.query?.trim() || "";
+    const filter = options.filter || "all";
+    if (!normalizedQuery && filter === "all") {
       throw new Error("community group search query required");
     }
-    params.set("q", normalizedQuery);
+    if (normalizedQuery) {
+      params.set("q", normalizedQuery);
+    }
+    params.set("filter", filter);
     if (typeof options.limit === "number") {
       params.set("limit", String(options.limit));
     }
@@ -5045,10 +5148,25 @@ export const api = {
     return await res.json() as CommunityMessage;
   },
 
+  async forwardCommunityMessage(
+    groupId: string,
+    payload: { sourceMessageId: string; clientRequestId: string },
+    baseUrl = API_URL,
+  ): Promise<CommunityMessage> {
+    const res = await authFetch(`${baseUrl}/api/community/groups/${encodeURIComponent(groupId)}/forward`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) throw new Error("community message forward failed");
+    return await res.json() as CommunityMessage;
+  },
+
   async uploadCommunityAttachment(
     groupId: string,
     payload: {
-      file: File;
+      file?: File;
+      files?: File[];
       body?: string;
       type?: Extract<CommunityMessage["type"], "attachment" | "voice">;
       replyToMessageId?: string;
@@ -5074,7 +5192,9 @@ export const api = {
     };
   }> {
     const form = new FormData();
-    form.append("file", payload.file);
+    for (const file of payload.files || (payload.file ? [payload.file] : [])) {
+      form.append("file", file);
+    }
     if (payload.body?.trim()) {
       form.append("body", payload.body.trim());
     }
@@ -5110,6 +5230,17 @@ export const api = {
         attachmentUrl: string;
         durationMs?: number;
       };
+      attachments?: Array<{
+        id: string;
+        groupId: string;
+        messageId?: string;
+        originalName: string;
+        mimeType: string;
+        size: number;
+        sha256: string;
+        createdAt: string;
+        attachmentUrl: string;
+      }>;
     };
   },
 
@@ -5133,9 +5264,11 @@ export const api = {
     };
   },
 
-  async markCommunityGroupRead(groupId: string, baseUrl = API_URL): Promise<CommunityReadUpdate> {
+  async markCommunityGroupRead(groupId: string, baseUrl = API_URL, messageId?: string): Promise<CommunityReadUpdate> {
     const res = await authFetch(`${baseUrl}/api/community/groups/${encodeURIComponent(groupId)}/read`, {
       method: "POST",
+      headers: messageId ? { "content-type": "application/json" } : undefined,
+      body: messageId ? JSON.stringify({ messageId }) : undefined,
     });
     if (!res.ok) throw new Error("community read failed");
     return await res.json() as CommunityReadUpdate;
@@ -5186,6 +5319,34 @@ export const api = {
     });
     if (!res.ok) throw new Error("community reaction toggle failed");
     return await res.json() as { message: CommunityMessage; group: CommunityGroup };
+  },
+
+  async setCommunityMessageStarredState(
+    groupId: string,
+    messageId: string,
+    starred: boolean,
+    baseUrl = API_URL,
+  ): Promise<{ message: CommunityMessage; group: CommunityGroup }> {
+    const res = await authFetch(`${baseUrl}/api/community/groups/${encodeURIComponent(groupId)}/messages/${encodeURIComponent(messageId)}/star`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ starred }),
+    });
+    if (!res.ok) throw new Error("community star toggle failed");
+    return await res.json() as { message: CommunityMessage; group: CommunityGroup };
+  },
+
+  async getCommunityStarredMessages(
+    options?: { before?: string; limit?: number },
+    baseUrl = API_URL,
+  ): Promise<CommunityMessagesPage> {
+    const params = new URLSearchParams();
+    if (options?.before) params.set("before", options.before);
+    if (typeof options?.limit === "number") params.set("limit", String(options.limit));
+    const query = params.size ? `?${params.toString()}` : "";
+    const res = await authFetch(`${baseUrl}/api/community/starred-messages${query}`);
+    if (!res.ok) throw new Error("community starred messages fetch failed");
+    return await res.json() as CommunityMessagesPage;
   },
 
   async pinCommunityMessage(

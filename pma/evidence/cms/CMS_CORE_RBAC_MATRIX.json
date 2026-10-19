@@ -1,0 +1,1 @@
+{"status":"PASS","read":"cms.read","create":"cms.create","edit":"cms.edit","publish":"cms.publish","unpublish":"cms.unpublish","archive":"cms.archive","restore":"cms.restore","audit":"cms.audit.read","versions":"cms.version.read","bulk":"cms.bulk.manage","superadmin":"implicit allow in central authority guard"}

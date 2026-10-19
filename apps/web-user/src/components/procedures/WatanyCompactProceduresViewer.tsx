@@ -34,20 +34,20 @@ const forms: Record<string, ProcedureForm> = {
   'ت7': {
     code: 'ت7',
     title: 'طلب إعادة تخصيص معاش تقاعدي',
-    previewUrl: '/api/v2/procedures/docs/DOC-WATANY_MOF_HTML-0006/preview',
-    downloadUrl: '/api/v2/procedures/docs/DOC-WATANY_MOF_HTML-0006/download',
+    previewUrl: '/mof/t7-original.jpg',
+    downloadUrl: '/mof/t7-original.jpg',
   },
   'ت8': {
     code: 'ت8',
     title: 'إقرار من مستفيد',
-    previewUrl: '/api/v2/procedures/docs/DOC-WATANY_MOF_HTML-0007/preview',
-    downloadUrl: '/api/v2/procedures/docs/DOC-WATANY_MOF_HTML-0007/download',
+    previewUrl: '/mof/t8-original.jpg',
+    downloadUrl: '/mof/t8-original.jpg',
   },
   'ت9': {
     code: 'ت9',
     title: 'شهادة أيتام وأرامل',
-    previewUrl: '/api/v2/procedures/docs/DOC-WATANY_MOF_HTML-0008/preview',
-    downloadUrl: '/api/v2/procedures/docs/DOC-WATANY_MOF_HTML-0008/download',
+    previewUrl: '/mof/t9-original.jpg',
+    downloadUrl: '/mof/t9-original.jpg',
   },
 };
 

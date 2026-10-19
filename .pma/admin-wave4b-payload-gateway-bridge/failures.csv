@@ -1,0 +1,11 @@
+id,stage,severity,state,detail
+F001,browser,RECOVERED,RESOLVED,Stale invalid browser init token overwrote the disposable JWT; valid token override restored authenticated proof
+F002,browser,RECOVERED,RESOLVED,Initial 430px CMS check found missing table-responsive bounds; table-wrap utility fixed the grid
+F003,browser,RECOVERED,RESOLVED,RTL mobile drawer retained left anchoring and clipped into viewport; right anchoring fixed and re-proved
+F004,test-runner,RECOVERED,RESOLVED,Host pnpm test alias rejected --run; direct pnpm exec vitest run exited 0
+F005,cleanup,RECOVERED,RESOLVED,Immediate socket query raced process teardown; subsequent process and port query returned no output
+F006,preflight,RECOVERED,RESOLVED,Payload initially lacked DATABASE_URI; the service was relaunched against the isolated database only
+F007,runtime,RECOVERED,RESOLVED,Initial real sync data lacked structured procedure fields; enrichment updated the disposable Payload records and readback then passed
+F008,runtime,RECOVERED,RESOLVED,Sync without JSON content type returned 415; application/json with an empty object succeeded
+F009,runtime,RECOVERED,RESOLVED,Unavailable sync contract returned 503 UNAVAILABLE; the proof was corrected from the initial 502 expectation
+F010,cleanup,RECOVERED,RESOLVED,Detached Payload child listener required direct owner-process teardown; port 3001 was then verified clear

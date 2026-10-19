@@ -1,12 +1,12 @@
 import Fastify from "fastify";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 import { registerAuthHook, signAccessToken } from "../auth/auth-middleware";
 import { resetCommunityStore } from "../community/service";
 import { runMigrations } from "../db/migrate";
 import { query } from "../lib/db";
 import { communityRoutes } from "../routes/community";
-import { acquireCommunityDbTestLock } from "./community-db-test-lock";
+import { acquireCommunityDbTestLock, COMMUNITY_DB_TEST_LOCK_WAIT_MS } from "./community-db-test-lock";
 
 process.env.JWT_SECRET ||= "test-jwt-secret-for-community-routes-0123456789";
 
@@ -27,28 +27,25 @@ function buildApp(makeIdSuffix: string) {
 
 let releaseDbTestLock: null | (() => Promise<void>) = null;
 
+// Hold the community lock for the whole file so no other community suite
+// truncates these tables between our tests.
 beforeAll(async () => {
-  const release = await acquireCommunityDbTestLock();
-  try {
-    await runMigrations();
-  } finally {
-    await release();
-  }
-});
+  releaseDbTestLock = await acquireCommunityDbTestLock();
+  await runMigrations();
+}, COMMUNITY_DB_TEST_LOCK_WAIT_MS);
 
 beforeEach(async () => {
-  releaseDbTestLock = await acquireCommunityDbTestLock();
   await resetCommunityStore();
 });
 
-describe("community persistence and authorization", () => {
-  afterEach(async () => {
-    if (releaseDbTestLock) {
-      await releaseDbTestLock();
-      releaseDbTestLock = null;
-    }
-  });
+afterAll(async () => {
+  if (releaseDbTestLock) {
+    await releaseDbTestLock();
+    releaseDbTestLock = null;
+  }
+});
 
+describe("community persistence and authorization", () => {
   it("supports private join requests, admin approval, member listing, and leave flow", async () => {
     const app = buildApp("membership_flow");
     await app.ready();
@@ -1466,11 +1463,12 @@ describe("community persistence and authorization", () => {
       messages: expect.arrayContaining([
         expect.objectContaining({
           id: firstMessage.id,
-          body: "تم تعديل الرسالة قبل الحذف.",
           deletedForEveryoneBy: "community.admin",
         }),
       ]),
     });
+    const persistedDeletedMessage = persistedDetail.json().messages.find((message: { id: string }) => message.id === firstMessage.id);
+    expect(persistedDeletedMessage).not.toHaveProperty("body");
 
     const persistedPageAfterRestart = await restartedApp.inject({
       method: "GET",

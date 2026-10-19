@@ -1,0 +1,36 @@
+{
+  "status": "PASS",
+  "gate": "C9_4A_RUNTIME_SIDE_EFFECT_CONTAINMENT_AND_DOCUMENT_DELETE_BOUNDARY",
+  "environment": {
+    "os": "Windows",
+    "powershell": "5.1.26100.9168",
+    "productionUsed": false,
+    "databaseSchemaMutation": false,
+    "databaseMigration": false,
+    "containerLifecycle": false,
+    "deployment": false
+  },
+  "commands": [
+    { "command": "pnpm --dir apps/gateway-api exec vitest run src/tests/al-wafiyat-routes.test.ts src/tests/official-services.test.ts", "result": "PASS", "detail": "2 files, 5 tests passed" },
+    { "command": "pnpm --dir apps/gateway-api exec vitest run src/tests/documents-cms-boundary.test.ts", "result": "PASS", "detail": "1 file, 4 tests passed" },
+    { "command": "pnpm --dir apps/gateway-api exec vitest run src/tests/admin-authority-negative-auth.test.ts src/tests/admin-auth-hardening.test.ts src/tests/auth-rbac.test.ts", "result": "PASS", "detail": "3 files, 57 tests passed hermetically" },
+    { "command": "pnpm --dir apps/gateway-api exec vitest run src/tests/documents-metadata-regression.test.ts", "result": "PASS", "detail": "1 file, 2 tests passed" },
+    { "command": "pnpm --dir apps/gateway-api typecheck", "result": "PASS" },
+    { "command": "pnpm --dir apps/gateway-api build", "result": "PASS" },
+    { "command": "pnpm --dir apps/web-admin typecheck", "result": "PASS" },
+    { "command": "pnpm --dir apps/web-admin build", "result": "PASS", "detail": "Existing dynamic/static import chunk warnings only; exit 0" },
+    { "command": "git diff --check", "result": "PASS", "detail": "Existing death-notices line-ending warning; exit 0" },
+    { "command": "VS Code diagnostics for changed backend/test files", "result": "PASS", "detail": "No errors found" }
+  ],
+  "aggregate": {
+    "DEATH_NOTICES_ROOT_CAUSE_IDENTIFIED": "PASS",
+    "DEATH_NOTICES_STARTUP_CONTAINMENT": "PASS",
+    "DOCUMENTS_CMS_BOUNDARY_TEST": "PASS",
+    "ADMIN_AUTHORITY_NEGATIVE_AUTH_TEST": "PASS",
+    "LEGACY_DOCUMENT_REGRESSION": "PASS",
+    "SOURCE_VALIDATION": "PASS",
+    "GIT_DIFF_CHECK": "PASS"
+  },
+  "C9_4_RERUN_EXECUTED": "NO",
+  "credentialMaterialRecorded": false
+}

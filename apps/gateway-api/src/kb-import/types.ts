@@ -87,6 +87,7 @@ export interface KbChunk {
 
 export interface KbImportJob {
   id: string;
+  individualKbId: string;
   sourceName: string;
   sourceType: KbImportSourceType;
   sourceUrl?: string;

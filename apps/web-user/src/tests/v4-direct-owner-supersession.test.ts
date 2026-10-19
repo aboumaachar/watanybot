@@ -33,7 +33,6 @@ const restoredFeatureIds = [
   "voting",
   "faq",
   "community",
-  "voice",
   "deaths",
   "health",
 ] as const;

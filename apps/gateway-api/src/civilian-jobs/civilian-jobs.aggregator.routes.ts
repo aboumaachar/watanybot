@@ -185,7 +185,7 @@ export async function registerCivilianJobsAggregatorRoutes(app: FastifyInstance)
       return reply.code(400).send({ error: "decision must be APPROVE or REJECT" });
     }
     try {
-      const item = processImportReview({
+      const item = await processImportReview({
         importedOpportunityId: id,
         decision: body.decision,
         adminNote: body.adminNote,

@@ -1,7 +1,7 @@
 ﻿import { useEffect, useMemo, useRef, useState } from "react";
 import type { FormEvent } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { MainHybridChatSurface } from "../../components/chat/MainHybridChatSurface";
+import { api } from "../../lib/api";
 import { resolveContextualChat } from "../chat/contextualChatRuntime";
 
 type ChatMessage = {
@@ -26,7 +26,7 @@ type WatanyHybridDefaultLocationState = {
 function extractAnswer(payload: unknown): string {
   const value = payload as Record<string, unknown> | null;
   if (!value) return "";
-  const candidates = [value.answer, value.reply, value.message, value.text, value.content];
+  const candidates = [value.answer_lb, value.answer_formal, value.answer, value.reply, value.message, value.text, value.content];
   for (const candidate of candidates) {
     if (typeof candidate === "string" && candidate.trim().length > 0) return candidate;
   }
@@ -44,7 +44,7 @@ export function WatanyHybridDefaultChat(props: Readonly<WatanyHybridDefaultChatP
   const location = useLocation();
   const navigate = useNavigate();
   const contextual = useMemo(() => resolveContextualChat(location.pathname), [location.pathname]);
-  const endpoint = props.endpoint || "/api/kb/hybrid-chat";
+  const endpoint = props.endpoint;
   const title = props.title || "مساعد موطني";
   const surfaceId = props.surfaceId || "watany-hybrid-default";
   const quickChoices = useMemo(() => ["معاشي وتعويضاتي", "الطبابة والاستشفاء", "المدارس والمنح", "المعاملات والمستندات", "او شي تاني"], []);
@@ -67,31 +67,26 @@ export function WatanyHybridDefaultChat(props: Readonly<WatanyHybridDefaultChatP
     setInput("");
     setLoading(true);
     try {
-      const response = await fetch(endpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          message: trimmed,
-          query: trimmed,
-          surfaceId,
-          locale: "ar-LB",
-          source: "watany-hybrid-default",
-          searchSnapshot: {
-            query: `${trimmed} ${contextual.pageKeywords.slice(0, 6).join(" ")}`.trim(),
-          },
-          contextual: {
-            originPath: location.pathname,
-            pageContext: contextual.pageContext,
-            chatMode: contextual.chatMode,
-            searchScope: contextual.searchScope,
-            pageKeywords: contextual.pageKeywords,
-          },
-        }),
-      });
-      if (!response.ok) {
-        throw new Error(`Hybrid chat request failed with HTTP ${response.status}`);
+      const chatContext = {
+        originPath: location.pathname,
+        pageContext: contextual.pageContext,
+        chatMode: contextual.chatMode,
+        searchScope: contextual.searchScope,
+        pageKeywords: contextual.pageKeywords,
+      };
+      let payload: unknown;
+      if (endpoint) {
+        const response = await fetch(endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: trimmed, query: trimmed, surfaceId, locale: "ar-LB", source: "watany-hybrid-default", contextual: chatContext }),
+        });
+        if (!response.ok) throw new Error(`Chat request failed with HTTP ${response.status}`);
+        payload = await response.json();
+      } else {
+        try { payload = await api.chatV2Stream(trimmed); }
+        catch { payload = await api.chatGatewayV2(trimmed, chatContext); }
       }
-      const payload = (await response.json()) as unknown;
       const answer = extractAnswer(payload);
       setMessages((current) => [...current, { role: "assistant", text: answer }]);
     } catch (err) {
@@ -101,7 +96,7 @@ export function WatanyHybridDefaultChat(props: Readonly<WatanyHybridDefaultChatP
         ...current,
         {
           role: "assistant",
-          text: "تعذر الاتصال بخدمة Hybrid KB حالياً. تحقق من تشغيل بوابة API ثم حاول مجدداً.",
+          text: "تعذر الاتصال بمساعد موطني حالياً. تحقق من تشغيل بوابة API ثم حاول مجدداً.",
         },
       ]);
     } finally {
@@ -165,11 +160,10 @@ export function WatanyHybridDefaultChat(props: Readonly<WatanyHybridDefaultChatP
         overflow: "hidden",
       }}
     >
-      <MainHybridChatSurface context="features/hybrid-chat/WatanyHybridDefaultChat.tsx" />
       <header style={{ padding: "18px 20px", borderBottom: "1px solid rgba(15, 23, 42, 0.08)" }}>
         <strong style={{ display: "block", fontSize: "1.18rem" }}>{title}</strong>
         <span style={{ display: "block", marginTop: "4px", color: "#475569", fontSize: "0.92rem" }}>
-          Hybrid KB default assistant — Community Chat محفوظ كما هو
+          مساعد موطني الذكي — محادثة موحّدة مع البحث المعرفي والتوجيه والذكاء الاصطناعي
         </span>
       </header>
 
@@ -194,7 +188,7 @@ export function WatanyHybridDefaultChat(props: Readonly<WatanyHybridDefaultChatP
             {message.text}
           </article>
         ))}
-        {loading ? <div style={{ color: "#475569" }}>جاري البحث في قاعدة المعرفة...</div> : null}
+        {loading ? <div style={{ color: "#475569" }}>جاري إعداد الجواب...</div> : null}
         {error ? <div data-hybrid-default-error="true" style={{ color: "#b91c1c" }}>{error}</div> : null}
       </div>
 

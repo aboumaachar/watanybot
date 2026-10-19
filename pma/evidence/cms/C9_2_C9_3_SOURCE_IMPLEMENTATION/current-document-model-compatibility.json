@@ -1,0 +1,26 @@
+{
+  "status": "PASS",
+  "gate": "CURRENT_DOCUMENT_MODEL_COMPATIBILITY",
+  "capturedAtUtc": "2026-08-24T06:36:16.9841164Z",
+  "runtimeAuthority": {
+    "table": "public.documents",
+    "provenColumns": ["id", "user_id", "name", "kind", "status", "tags", "file_path", "updated_at"],
+    "kindCheck": ["image", "pdf", "doc", "file"],
+    "statusCheck": ["pending", "verified", "rejected"]
+  },
+  "implementationCompatibility": {
+    "repositoryUsesOnlyProvenColumns": true,
+    "createStartsPending": true,
+    "statusTranslation": "pending->DRAFT, verified->PUBLISHED, rejected->ARCHIVED",
+    "clientOnlySlugPersisted": false,
+    "nullableFilePathSupported": true,
+    "legacySqlitePluginPathModified": false
+  },
+  "evidenceBasis": [
+    "read-only current runtime/schema discovery from the preceding authority-recovery phase",
+    "source repository SQL inspection",
+    "focused boundary test",
+    "legacy document regression test"
+  ],
+  "limitation": "No live database write was issued; compatibility is source- and test-validated without data mutation."
+}

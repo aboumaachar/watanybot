@@ -1,4 +1,5 @@
 import type { FastifyPluginAsync } from "fastify";
+import { randomUUID } from "node:crypto";
 import { worldCupMatchSeed } from "../data/world-cup-seed";
 import { worldCupTeamsSeed } from "../data/world-cup-teams-seed";
 import { worldCupNewsCrawlSources } from "../data/world-cup-news-seed";
@@ -22,7 +23,7 @@ interface WorldCupRoutesOptions {
 }
 
 function makeId(prefix: string) {
-  return `${prefix}-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  return `${prefix}-${Date.now()}-${randomUUID()}`;
 }
 
 type WorldCupRoutePoll = {
@@ -328,8 +329,7 @@ export const worldCupRoutes: FastifyPluginAsync<WorldCupRoutesOptions> = async (
 
     if (!userId || !teamId) return reply.code(400).send({ error: "userId and teamId are required" });
 
-    const team = worldCupTeamsSeed.find((item) => item.id === teamId);
-    if (!team) return reply.code(404).send({ error: "team not found" });
+    if (!worldCupTeamsSeed.some((item) => item.id === teamId)) return reply.code(404).send({ error: "team not found" });
 
     const favorite = await worldCupPersistence.upsertFavorite({ userId, teamId, createdAt: new Date().toISOString() });
     return { favorite };
@@ -348,8 +348,7 @@ export const worldCupRoutes: FastifyPluginAsync<WorldCupRoutesOptions> = async (
       return reply.code(400).send({ error: "userId, matchId and remindAt are required" });
     }
 
-    const match = worldCupMatchSeed.find((item) => item.id === matchId);
-    if (!match) return reply.code(404).send({ error: "match not found" });
+    if (!worldCupMatchSeed.some((item) => item.id === matchId)) return reply.code(404).send({ error: "match not found" });
 
     const reminder = await worldCupPersistence.createReminder({
       id: makeId("wcr"),

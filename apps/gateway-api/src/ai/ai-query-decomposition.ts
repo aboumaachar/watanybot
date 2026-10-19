@@ -69,7 +69,7 @@ export interface LLMProvider {
 // ─────────────────────────────────────────────────────────────────────
 
 export class OpenAILLMProvider implements LLMProvider {
-  private config: LLMConfig;
+  private readonly config: LLMConfig;
 
   constructor(config: LLMConfig) {
     this.config = config;
@@ -114,7 +114,7 @@ export class OpenAILLMProvider implements LLMProvider {
 // ─────────────────────────────────────────────────────────────────────
 
 export class OllamaLLMProvider implements LLMProvider {
-  private config: LLMConfig;
+  private readonly config: LLMConfig;
 
   constructor(config: LLMConfig) {
     this.config = config;
@@ -264,8 +264,8 @@ function ruleBasedDecomposition(query: string, understanding: QueryUnderstanding
 // ─────────────────────────────────────────────────────────────────────
 
 export class AIQueryDecomposer {
-  private llmProvider: LLMProvider | null;
-  private useLLM: boolean;
+  private readonly llmProvider: LLMProvider | null;
+  private readonly useLLM: boolean;
 
   constructor(llmConfig?: LLMConfig) {
     if (llmConfig) {
@@ -370,12 +370,13 @@ export class AIQueryDecomposer {
     const response = await this.llmProvider!.complete(prompt);
     
     // Parse JSON from response
-    const jsonMatch = response.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) {
+    const jsonStart = response.indexOf('{');
+    const jsonEnd = response.lastIndexOf('}');
+    if (jsonStart === -1 || jsonEnd < jsonStart) {
       throw new Error('No JSON found in LLM response');
     }
 
-    const parsed = JSON.parse(jsonMatch[0]);
+    const parsed = JSON.parse(response.slice(jsonStart, jsonEnd + 1));
     const subQuestions: SubQuestion[] = parsed.subQuestions || [];
 
     // Validate and fix IDs
@@ -550,8 +551,8 @@ export function getAIQueryDecomposer(): AIQueryDecomposer {
         model: process.env.LLM_MODEL || 'gpt-3.5-turbo',
         baseUrl: process.env.LLM_BASE_URL,
         apiKey: process.env.LLM_API_KEY,
-        maxTokens: parseInt(process.env.LLM_MAX_TOKENS || '1000'),
-        temperature: parseFloat(process.env.LLM_TEMPERATURE || '0.3'),
+        maxTokens: Number.parseInt(process.env.LLM_MAX_TOKENS || '1000'),
+        temperature: Number.parseFloat(process.env.LLM_TEMPERATURE || '0.3'),
       });
     } else {
       // Rule-based only

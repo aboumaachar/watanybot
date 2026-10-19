@@ -1,0 +1,6 @@
+{
+  "status": "PASS",
+  "entityType": "cms.documents",
+  "historyService": "adminAuthorityVersioning",
+  "rollback": "snapshot restore through existing documents owner"
+}

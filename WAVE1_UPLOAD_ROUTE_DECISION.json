@@ -1,0 +1,12 @@
+{
+  "status": "PASS",
+  "classification": "C",
+  "classificationName": "CANONICAL_APP_MISSING_EXPECTED_ROUTE",
+  "reason": "The canonical Python app mounted the public router but had no route satisfying POST /api/files/upload. The Gateway already owns the same contract, so the Python route was added to the existing mounted public router with bounded PNG validation and no parallel subsystem.",
+  "rejected": [
+    "A: no existing Python route was merely unregistered",
+    "B: no alternate canonical Python path was proven",
+    "D: the test remains an active consumer contract"
+  ],
+  "authority": "C:/APEX/CMSUPLOADV110/APEX_WATANYBOT_PYTHON8010_UPLOAD_ROUTE_CONTRACT_REPAIR_AND_WAVE1_FINAL_SEAL_V1_0_10.md"
+}

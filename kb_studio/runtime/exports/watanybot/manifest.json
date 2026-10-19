@@ -1,0 +1,44 @@
+{
+  "project_id": "watanybot",
+  "generated_at": "2026-03-16T01:42:57",
+  "counts": {
+    "procedures": 482,
+    "documents": 217,
+    "directory_entries": 62,
+    "procedure_to_docs": 482,
+    "procedure_to_directories": 482,
+    "faq_seeds": 2410,
+    "flow_definitions": 482
+  },
+  "artifacts": {
+    "procedures_jsonl": "C:\\xampp\\htdocs\\projectx\\watanybot\\kb_studio\\runtime\\exports\\watanybot\\procedures.jsonl",
+    "documents_jsonl": "C:\\xampp\\htdocs\\projectx\\watanybot\\kb_studio\\runtime\\exports\\watanybot\\documents.jsonl",
+    "directory_entries_jsonl": "C:\\xampp\\htdocs\\projectx\\watanybot\\kb_studio\\runtime\\exports\\watanybot\\directory_entries.jsonl",
+    "procedure_to_docs_jsonl": "C:\\xampp\\htdocs\\projectx\\watanybot\\kb_studio\\runtime\\exports\\watanybot\\procedure_to_docs.jsonl",
+    "procedure_to_directories_jsonl": "C:\\xampp\\htdocs\\projectx\\watanybot\\kb_studio\\runtime\\exports\\watanybot\\procedure_to_directories.jsonl",
+    "faq_seeds_jsonl": "C:\\xampp\\htdocs\\projectx\\watanybot\\kb_studio\\runtime\\exports\\watanybot\\faq_seeds.jsonl",
+    "flow_definitions_jsonl": "C:\\xampp\\htdocs\\projectx\\watanybot\\kb_studio\\runtime\\exports\\watanybot\\flow_definitions.jsonl",
+    "router_index_json": "C:\\xampp\\htdocs\\projectx\\watanybot\\kb_studio\\runtime\\exports\\watanybot\\router_index.json",
+    "tags_lexicon_json": "C:\\xampp\\htdocs\\projectx\\watanybot\\kb_studio\\runtime\\exports\\watanybot\\tags_lexicon.json",
+    "sqlite": "C:\\xampp\\htdocs\\projectx\\watanybot\\kb_studio\\runtime\\exports\\watanybot\\kb_nodes.db",
+    "flows_dir": "C:\\xampp\\htdocs\\projectx\\watanybot\\kb_studio\\runtime\\exports\\watanybot\\flows",
+    "docs_dir": "C:\\xampp\\htdocs\\projectx\\watanybot\\kb_studio\\runtime\\exports\\watanybot\\docs"
+  },
+  "canonical_sources": [
+    "C:\\xampp\\htdocs\\projectx\\watanybot\\kb_studio\\runtime\\sources\\watanybot\\procedures.docx",
+    "C:\\xampp\\htdocs\\projectx\\watanybot\\kb_studio\\runtime\\sources\\watanybot\\laf.html",
+    "C:\\xampp\\htdocs\\projectx\\watanybot\\kb_studio\\runtime\\sources\\watanybot\\mof.html",
+    "C:\\xampp\\htdocs\\projectx\\watanybot\\kb_studio\\runtime\\sources\\watanybot\\الاوسمة.html",
+    "C:\\xampp\\htdocs\\projectx\\watanybot\\kb_studio\\runtime\\sources\\watanybot\\نظام التقاعد والصرف و الخدمة.txt",
+    "C:\\xampp\\htdocs\\projectx\\watanybot\\kb_studio\\runtime\\sources\\watanybot\\قانون الدفاع الوطني.txt",
+    "C:\\xampp\\htdocs\\projectx\\watanybot\\kb_studio\\runtime\\sources\\watanybot\\قانون العمل.txt",
+    "C:\\xampp\\htdocs\\projectx\\watanybot\\kb_studio\\runtime\\sources\\watanybot\\قانون الموظفين.txt",
+    "C:\\xampp\\htdocs\\projectx\\watanybot\\kb_studio\\runtime\\sources\\watanybot\\نظام التعويضات والمساعدات.txt"
+  ],
+  "docs_dir": "C:\\xampp\\htdocs\\projectx\\watanybot\\kb_studio\\runtime\\exports\\watanybot\\docs",
+  "copied_documents": 217,
+  "native_file_documents": 0,
+  "source_fallback_documents": 217,
+  "external_url_documents": 0,
+  "missing_documents": 0
+}

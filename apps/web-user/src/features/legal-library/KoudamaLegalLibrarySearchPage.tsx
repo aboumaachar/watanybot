@@ -20,13 +20,13 @@ type LegalDocument = {
   endpoint: string;
 };
 
-const categories: Array<{ id: LegalCategory; label: string; countLabel: string }> = [
-  { id: "all", label: "الكل", countLabel: "مكتبة" },
-  { id: "laws", label: "قوانين", countLabel: "مواد" },
-  { id: "decrees", label: "مراسيم", countLabel: "قرارات" },
-  { id: "rights", label: "حقوق", countLabel: "أسئلة" },
-  { id: "procedures", label: "إجراءات", countLabel: "نماذج" },
-  { id: "faq", label: "سؤال وجواب", countLabel: "مختصر" },
+const categories: Array<{ id: LegalCategory; label: string }> = [
+  { id: "all", label: "الكل" },
+  { id: "laws", label: "قوانين" },
+  { id: "decrees", label: "مراسيم" },
+  { id: "rights", label: "حقوق" },
+  { id: "procedures", label: "إجراءات" },
+  { id: "faq", label: "سؤال وجواب" },
 ];
 
 const popularSearches = ["الابنة على العاتق", "تعويض عائلي", "المعاش", "مستندات مطلوبة", "مرسوم", "تقاعد", "وثائق رابطة", "نماذج رابطة"];
@@ -50,6 +50,7 @@ export function inferLegalCategoryFromHit(hit: SearchV2Hit): Exclude<LegalCatego
 
   if (legalType.includes("قانون")) return "laws";
   if (legalType.includes("مرسوم")) return "decrees";
+  if (/(قانون|نظام|مرسوم|تعميم|قرار|لائحة|تشريع)/.test(normalizeText(hit.title))) return "laws";
   if (/(إجراء|معاملة|مستند|نماذج|طلب)/.test(searchable)) return "procedures";
   if (/(حق|حقوق|استحقاق)/.test(searchable)) return "rights";
   if (/(faq|سؤال|جواب|استفسار)/.test(searchable)) return "faq";
@@ -100,6 +101,23 @@ function getVisibleLegalDocuments(documents: LegalDocument[], activeCategory: Le
   });
 
   return rankVeteranPriorityItems(filtered, query).map((entry) => entry.item);
+}
+
+export function countLegalDocumentsByCategory(documents: LegalDocument[]): Record<LegalCategory, number> {
+  const counts: Record<LegalCategory, number> = {
+    all: documents.length,
+    laws: 0,
+    decrees: 0,
+    rights: 0,
+    procedures: 0,
+    faq: 0,
+  };
+
+  documents.forEach((document) => {
+    counts[document.category] += 1;
+  });
+
+  return counts;
 }
 
 function buildSearchParamsForQuery(searchParams: URLSearchParams, nextQuery: string): URLSearchParams {
@@ -252,22 +270,15 @@ function LegalResultsSection({ isLoading, loadError, visibleDocuments }: Readonl
       <div className="legal-library-result-list">
         {!isLoading && !loadError ? visibleDocuments.map((doc, idx) => (
           <article className="legal-library-result-card" key={`${doc.id}-${idx}`}>
-            <div className="legal-library-result-card__icon">§</div>
             <div className="legal-library-result-card__body">
-              <div className="legal-library-result-card__meta">
-                <span>{doc.type}</span>
-                <span>{doc.updated}</span>
-              </div>
               <h3>{doc.title}</h3>
-              <p>{doc.summary}</p>
-              <div className="legal-library-result-card__tags">
-                <span>{doc.reference}</span>
-                {doc.keywords.slice(0, 3).map((keyword, kIdx) => <span key={`${keyword}-${kIdx}`}>{keyword}</span>)}
-              </div>
+                 <p>
+                   {doc.summary} {" "}
+                   <Link to={doc.endpoint} className="legal-library-open-button" aria-label={`فتح ${doc.title}`}>
+                     فتح
+                   </Link>
+                 </p>
             </div>
-            <Link to={doc.endpoint} className="legal-library-open-button" aria-label={`فتح ${doc.title}`}>
-              فتح
-            </Link>
           </article>
         )) : null}
 
@@ -289,6 +300,7 @@ export function KoudamaLegalLibrarySearchPage() {
   const [activeCategory, setActiveCategory] = useState<LegalCategory>("all");
   const [selectedDocId, setSelectedDocId] = useState<string | null>(null);
   const [documents, setDocuments] = useState<LegalDocument[]>([]);
+  const [libraryDocuments, setLibraryDocuments] = useState<LegalDocument[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
   const { selectedLaw, isLoadingLaw, lawError } = useSelectedLawDetails(apiBaseUrl, selectedDocId);
@@ -311,9 +323,14 @@ export function KoudamaLegalLibrarySearchPage() {
       setLoadError(null);
 
       try {
-        const response = await api.getLegalContent(query.trim(), 80, undefined, apiBaseUrl);
+        const response = await api.getLegalContent(query.trim(), 50, undefined, apiBaseUrl);
         if (cancelled) return;
-        setDocuments((response.items || []).map(mapSearchHitToLegalDocument));
+        const mappedDocuments = (response.items || []).map(mapSearchHitToLegalDocument);
+        setDocuments(mappedDocuments);
+
+        if (!query.trim()) {
+          setLibraryDocuments(mappedDocuments);
+        }
       } catch (error_) {
         if (cancelled) return;
         setDocuments([]);
@@ -354,12 +371,14 @@ export function KoudamaLegalLibrarySearchPage() {
     return getVisibleLegalDocuments(documents, activeCategory, query);
   }, [activeCategory, documents, query]);
 
+  const categoryCounts = useMemo(() => countLegalDocumentsByCategory(libraryDocuments), [libraryDocuments]);
+
   return (
     <main className="legal-library-page" dir="rtl" data-legal-library-search-layout="v1">
       <section className="legal-library-hero" aria-labelledby="legal-library-title">
         <div className="legal-library-hero__content">
           <span className="legal-library-eyebrow">المكتبة القانونية</span>
-          <h1 id="legal-library-title">إبحث في القوانين والمراسيم والمواد</h1>
+          <h1 id="legal-library-title">ابحث في القوانين والمراسيم والمواد</h1>
           <p>اكتب كلمة، مادة، حق، أو مستند. النتائج تظهر كمدخل سريع قبل فتح النص الكامل.</p>
         </div>
 
@@ -373,7 +392,14 @@ export function KoudamaLegalLibrarySearchPage() {
               placeholder="مثال: الابنة على العاتق، تعويض عائلي، مرسوم..."
               autoComplete="off"
             />
-            <button type="button" onClick={() => syncQuery("")} aria-label="مسح البحث">×</button>
+            {query.trim() ? (
+              <div className="legal-library-search-actions">
+                <button type="button" onClick={() => syncQuery(query.trim())} aria-label="بحث">بحث</button>
+                <button type="button" onClick={() => syncQuery("")} aria-label="مسح البحث">×</button>
+              </div>
+            ) : (
+              <button type="button" onClick={() => syncQuery(query.trim())} aria-label="بحث">بحث</button>
+            )}
           </div>
           <div className="legal-library-popular" aria-label="عمليات بحث شائعة">
             {popularSearches.map((item) => (
@@ -393,7 +419,7 @@ export function KoudamaLegalLibrarySearchPage() {
             onClick={() => syncCategory(category.id)}
           >
             <strong>{category.label}</strong>
-            <span>{category.countLabel}</span>
+            <span>{categoryCounts[category.id]} مستند</span>
           </button>
         ))}
       </nav>
@@ -408,10 +434,10 @@ export function KoudamaLegalLibrarySearchPage() {
         onClose={clearSelectedLaw}
       />
 
-      <section className="legal-library-shortcuts" aria-label="اختصارات قانونية">
-        <article><strong>بحث بالمادة</strong><span>ابحث برقم المادة أو اسم القانون.</span></article>
-        <article><strong>بحث بالحالة</strong><span>اكتب الحالة: تقاعد، عاتق، تعويض، مستندات.</span></article>
-        <article><strong>مصدر النص</strong><span>كل بطاقة تأتي مباشرة من خدمة المحتوى القانوني الحي.</span></article>
+      <section className="legal-library-shortcuts" aria-label="إرشادات البحث القانوني">
+        <article><strong>للبحث بالمادة</strong><span>اكتب رقم المادة أو اسم القانون.</span></article>
+        <article><strong>للبحث بالحالة</strong><span>استخدم كلمات مثل: تقاعد، تعويض، مستندات.</span></article>
+        <article><strong>مصدر المحتوى</strong><span>النصوص مأخوذة من خدمة المحتوى القانوني الحية.</span></article>
       </section>
     </main>
   );

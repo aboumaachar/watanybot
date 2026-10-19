@@ -31,6 +31,7 @@ import {
   Phone24Regular,
   Pin24Regular,
   QuestionCircle24Regular,
+  ArrowClockwise24Regular,
   Search24Regular,
   Settings24Regular,
   Shield24Regular,
@@ -78,6 +79,7 @@ const ICON_MAP: Record<string, IconComponent> = {
   phone: Phone24Regular,
   pin: Pin24Regular,
   search: Search24Regular,
+  refresh: ArrowClockwise24Regular,
   settings: Settings24Regular,
   shield: Shield24Regular,
   star: Star24Regular,
@@ -90,6 +92,7 @@ const ICON_MAP: Record<string, IconComponent> = {
   users: People24Regular,
   audit: DocumentText24Regular,
   knowledge: Book24Regular,
+  jobs: Briefcase24Regular,
 };
 
 export function AdminFluentIcon({

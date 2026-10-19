@@ -1,0 +1,97 @@
+{
+    "kbStudio":  "PASS",
+    "adminDocuments":  "PASS",
+    "superadminCmsDocuments":  "PASS",
+    "consoleBlockingErrorCount":  0,
+    "canaryVisible":  "PASS",
+    "browserResult":  {
+                          "paths":  [
+                                        {
+                                            "path":  "/admin/kb-studio",
+                                            "finalUrl":  "http://127.0.0.1:5173/admin/kb-studio",
+                                            "finalPathname":  "/admin/kb-studio",
+                                            "httpStatus":  200,
+                                            "bodyLength":  735,
+                                            "bodyPreview":  "W\nWatany Ops\nCONTROL ROOM\nDashboard\nFeature Controls\nUsers\nChat Monitor\nContent Rules\nAudit Log\nKB Editor\nNews\nNetwork\nJobs \u0026 Applications\nðŸŒ Custom\nLive\nSign Out\nWATANY OPS\n\nUnified view of runtime health, queues, and knowledge.\n\nCreate Incident\nSync KB\nExport Report\nCMS / KB STUDIO\nÙ…ÙƒØªØ¨Ø© Ø§Ù„ÙˆØ«Ø§Ø¦Ù‚\n\nØ¥Ø¯Ø§Ø±Ø© Ø§Ù„ÙˆØ«Ø§Ø¦Ù‚ Ø§Ù„Ø­Ø§Ù„ÙŠØ© Ø§Ù„Ù…Ø±ØªØ¨Ø·Ø© Ø¨Ø¹Ù‚Ø¯ public.documents.\n\nÙˆØ«ÙŠÙ‚Ø© Ø¬Ø¯ÙŠØ¯Ø©\nÙ…Ø³ÙˆØ¯Ø§Øª\n0\nÙ…Ù†Ø´ÙˆØ±Ø©\n1\nÙ…Ø±ÙÙˆØ¶Ø©\n0\nØ§Ù„Ù†ØªØ§Ø¦Ø¬\n1 ÙˆØ«ÙŠÙ‚Ø©\nØ¨Ø­Ø« ÙÙŠ Ø§Ù„Ø§Ø³Ù… Ø£Ùˆ Ø§Ù„Ù†ÙˆØ¹ Ø£Ùˆ Ø§Ù„ÙˆØ³ÙˆÙ…\nØ§Ù„Ù†ÙˆØ¹\nÙƒÙ„ Ø§Ù„Ø£Ù†ÙˆØ§Ø¹\nÙ…Ù„Ù\nPDF\nÙ…Ø³ØªÙ†Ø¯\nØµÙˆØ±Ø©\nØ§Ù„Ø­Ø§Ù„Ø©\nÙƒÙ„ Ø§Ù„Ø­Ø§Ù„Ø§Øª\nÙ…Ø³ÙˆØ¯Ø©\nÙ…Ù†Ø´ÙˆØ±\nÙ…Ø±ÙÙˆØ¶\nÙˆØ³Ù…\nØ§Ù„ÙˆØ«Ø§Ø¦Ù‚\nAPEX_C9_4_CANARY_20260824T084951881Z_5283b46852_UPDATED\nÙ…Ù„Ù Â· Ù¢Ù¤â€/Ù¨â€/Ù¢Ù Ù¢Ù¦ØŒ",
+                                            "markerVisibleInitial":  true,
+                                            "markerVisibleAfterSearch":  true,
+                                            "searchAttempted":  false,
+                                            "searchSelector":  "",
+                                            "searchPlaceholder":  "",
+                                            "searchAriaLabel":  "",
+                                            "documentApiResponses":  [
+                                                                         {
+                                                                             "pathAndQuery":  "/api/admin/cms/documents?page=1\u0026pageSize=20",
+                                                                             "status":  200,
+                                                                             "containsMarker":  true,
+                                                                             "bodyLength":  865
+                                                                         },
+                                                                         {
+                                                                             "pathAndQuery":  "/api/admin/cms/documents?page=1\u0026pageSize=20",
+                                                                             "status":  200,
+                                                                             "containsMarker":  true,
+                                                                             "bodyLength":  865
+                                                                         }
+                                                                     ],
+                                            "documentApiMarkerSeen":  true
+                                        },
+                                        {
+                                            "path":  "/admin/documents",
+                                            "finalUrl":  "http://127.0.0.1:5173/admin/documents",
+                                            "finalPathname":  "/admin/documents",
+                                            "httpStatus":  200,
+                                            "bodyLength":  735,
+                                            "bodyPreview":  "W\nWatany Ops\nCONTROL ROOM\nDashboard\nFeature Controls\nUsers\nChat Monitor\nContent Rules\nAudit Log\nKB Editor\nNews\nNetwork\nJobs \u0026 Applications\nðŸŒ Custom\nLive\nSign Out\nWATANY OPS\n\nUnified view of runtime health, queues, and knowledge.\n\nCreate Incident\nSync KB\nExport Report\nCMS / KB STUDIO\nÙ…ÙƒØªØ¨Ø© Ø§Ù„ÙˆØ«Ø§Ø¦Ù‚\n\nØ¥Ø¯Ø§Ø±Ø© Ø§Ù„ÙˆØ«Ø§Ø¦Ù‚ Ø§Ù„Ø­Ø§Ù„ÙŠØ© Ø§Ù„Ù…Ø±ØªØ¨Ø·Ø© Ø¨Ø¹Ù‚Ø¯ public.documents.\n\nÙˆØ«ÙŠÙ‚Ø© Ø¬Ø¯ÙŠØ¯Ø©\nÙ…Ø³ÙˆØ¯Ø§Øª\n0\nÙ…Ù†Ø´ÙˆØ±Ø©\n1\nÙ…Ø±ÙÙˆØ¶Ø©\n0\nØ§Ù„Ù†ØªØ§Ø¦Ø¬\n1 ÙˆØ«ÙŠÙ‚Ø©\nØ¨Ø­Ø« ÙÙŠ Ø§Ù„Ø§Ø³Ù… Ø£Ùˆ Ø§Ù„Ù†ÙˆØ¹ Ø£Ùˆ Ø§Ù„ÙˆØ³ÙˆÙ…\nØ§Ù„Ù†ÙˆØ¹\nÙƒÙ„ Ø§Ù„Ø£Ù†ÙˆØ§Ø¹\nÙ…Ù„Ù\nPDF\nÙ…Ø³ØªÙ†Ø¯\nØµÙˆØ±Ø©\nØ§Ù„Ø­Ø§Ù„Ø©\nÙƒÙ„ Ø§Ù„Ø­Ø§Ù„Ø§Øª\nÙ…Ø³ÙˆØ¯Ø©\nÙ…Ù†Ø´ÙˆØ±\nÙ…Ø±ÙÙˆØ¶\nÙˆØ³Ù…\nØ§Ù„ÙˆØ«Ø§Ø¦Ù‚\nAPEX_C9_4_CANARY_20260824T084951881Z_5283b46852_UPDATED\nÙ…Ù„Ù Â· Ù¢Ù¤â€/Ù¨â€/Ù¢Ù Ù¢Ù¦ØŒ",
+                                            "markerVisibleInitial":  true,
+                                            "markerVisibleAfterSearch":  true,
+                                            "searchAttempted":  false,
+                                            "searchSelector":  "",
+                                            "searchPlaceholder":  "",
+                                            "searchAriaLabel":  "",
+                                            "documentApiResponses":  [
+                                                                         {
+                                                                             "pathAndQuery":  "/api/admin/cms/documents?page=1\u0026pageSize=20",
+                                                                             "status":  200,
+                                                                             "containsMarker":  true,
+                                                                             "bodyLength":  865
+                                                                         },
+                                                                         {
+                                                                             "pathAndQuery":  "/api/admin/cms/documents?page=1\u0026pageSize=20",
+                                                                             "status":  200,
+                                                                             "containsMarker":  true,
+                                                                             "bodyLength":  865
+                                                                         }
+                                                                     ],
+                                            "documentApiMarkerSeen":  true
+                                        },
+                                        {
+                                            "path":  "/superadmin/cms",
+                                            "finalUrl":  "http://127.0.0.1:5173/superadmin/cms",
+                                            "finalPathname":  "/superadmin/cms",
+                                            "httpStatus":  200,
+                                            "bodyLength":  704,
+                                            "bodyPreview":  "W\nWatany Ops\nCONTROL ROOM\nDashboard\nFeature Controls\nUsers\nChat Monitor\nContent Rules\nAudit Log\nKB Editor\nNews\nNetwork\nJobs \u0026 Applications\nðŸŒ Custom\nLive\nSign Out\nWATANY OPS\n\nUnified view of runtime health, queues, and knowledge.\n\nCreate Incident\nSync KB\nExport Report\nWATANY OPS / SUPERADMIN\nÙ…Ø±ÙƒØ² Ø§Ù„Ø¥Ø¯Ø§Ø±Ø©\nc9-4-runtime-canary@watany.test\nsuperadmin\nØ§Ù„Ø±Ø¦ÙŠØ³ÙŠØ©\nCMS\nCRM\nERM\nØ§Ù„Ù†Ø¸Ø§Ù…\nØ§Ù„ØªØ­ÙƒÙ… ÙÙŠ Ø§Ù„Ù…ÙŠØ²Ø§Øª\nØ³Ø¬Ù„ Ø§Ù„ØªØ¯Ù‚ÙŠÙ‚\nSuperadmin / cms\nCMS CORE / PROCEDURES\nØ¥Ø¯Ø§Ø±Ø© Ø§Ù„Ø¥Ø¬Ø±Ø§Ø¡Ø§Øª\n\nÙ„ÙˆØ­Ø© ÙØ±Ø¹ÙŠØ© Ù‚Ø§Ø¨Ù„Ø© Ù„Ø¥Ø¹Ø§Ø¯Ø© Ø§Ù„Ø§Ø³ØªØ®Ø¯Ø§Ù… Ù…Ø¹ Ø¯ÙˆØ±Ø© Ø­ÙŠØ§Ø© ÙˆØªØ¯Ù‚ÙŠÙ‚ Ù…Ø±ÙƒØ²ÙŠÙŠÙ†.\n\nØ§Ù„Ø¥Ø¬Ø±Ø§Ø¡Ø§Øª\nØ§Ù„ÙˆØ«Ø§Ø¦Ù‚\nØ§Ù„Ù†Ù…Ø§Ø°Ø¬\nØ§Ù„ØªØ¹Ø§Ù…ÙŠÙ…\nÙ…Ø³ÙˆØ¯Ø©\n0\nØ¬Ø§Ù‡Ø² Ù„Ù„Ù…Ø±Ø§Ø¬Ø¹Ø©\n0\nÙ…Ù†Ø´ÙˆØ±\n0\nØºÙŠØ± Ù…Ù†",
+                                            "markerVisibleInitial":  false,
+                                            "markerVisibleAfterSearch":  false,
+                                            "searchAttempted":  true,
+                                            "searchSelector":  "input:nth(0)",
+                                            "searchPlaceholder":  "Ø¨Ø­Ø«...",
+                                            "searchAriaLabel":  "Ø¨Ø­Ø« ÙÙŠ Ø§Ù„Ø¥Ø¬Ø±Ø§Ø¡Ø§Øª",
+                                            "documentApiResponses":  [
+
+                                                                     ],
+                                            "documentApiMarkerSeen":  false
+                                        }
+                                    ],
+                          "consoleBlockingErrors":  [
+
+                                                    ],
+                          "pageErrors":  [
+
+                                         ],
+                          "allRoutesRendered":  true,
+                          "allRoutesStayedOnExpectedPath":  true,
+                          "markerVisibleOnAtLeastOneRoute":  true,
+                          "markerSeenInBrowserDocumentApiOnAtLeastOneRoute":  true
+                      }
+}

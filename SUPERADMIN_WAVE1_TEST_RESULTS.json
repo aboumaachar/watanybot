@@ -1,0 +1,11 @@
+{
+  "frontendTypecheck": "PASS",
+  "frontendBuild": "PASS",
+  "gatewayTypecheck": "PASS",
+  "rbacUnitTests": "PASS; 9 tests",
+  "adminAuthorityNegativeTests": "PASS; 28 tests",
+  "gatewayFullTests": "UNVERIFIED; 79 passed, 1 failed, 1 skipped; upload test blocked by ECONNREFUSED 127.0.0.1:8010",
+  "featureControlCanary": "UNVERIFIED",
+  "featureControlCanaryResidue": "UNVERIFIED",
+  "protectedDataMutated": "NO"
+}

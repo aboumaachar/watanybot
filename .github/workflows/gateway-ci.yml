@@ -1,0 +1,96 @@
+name: gateway-ci
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: gateway-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  gateway:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: watany_test
+          POSTGRES_PASSWORD: watany_test
+          POSTGRES_DB: watany_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U watany_test -d watany_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      # Disposable CI-only database: local host, name contains "test", explicit opt-in.
+      DATABASE_URL: postgresql://watany_test:watany_test@127.0.0.1:5432/watany_test
+      WATANY_TEST_DB_DISPOSABLE: "true"
+      NODE_ENV: test
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 8.15.9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: better-sqlite3 binding loads
+        run: |
+          for d in apps/gateway-api packages/kb; do
+            (cd "$d" && node -e "const D=require('better-sqlite3'); new D(':memory:').prepare('select 1').get(); console.log('$d: better-sqlite3 ok')")
+          done
+
+      - name: Migrate disposable database
+        working-directory: apps/gateway-api
+        run: npx tsx src/db/migrate.ts
+
+      - name: Typecheck
+        run: npx tsc -p apps/gateway-api/tsconfig.json --noEmit
+
+      - name: Test (vitest, JSON report)
+        working-directory: apps/gateway-api
+        # The gate below decides pass/fail from the report, so a crash that
+        # writes no report still fails there.
+        run: npx vitest run --reporter=default --reporter=json --outputFile.json=vitest-report.json || true
+
+      - name: Gate on report
+        # Per-test statuses, not vitest's summary counters (which count skips as
+        # passed). Fails on failed/pending/todo, unlisted skips, or lost tests.
+        run: node .github/gateway-ci/gate.mjs apps/gateway-api/vitest-report.json .github/gateway-ci/expected-skips.json
+
+      - name: Tracked files unchanged
+        if: always()
+        run: |
+          changed="$(git status --porcelain --untracked-files=no)"
+          if [ -n "$changed" ]; then
+            echo "Tracked files were modified during the run:"
+            echo "$changed"
+            git diff --stat
+            exit 1
+          fi
+
+      - name: Upload vitest report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vitest-report
+          path: apps/gateway-api/vitest-report.json
+          if-no-files-found: ignore

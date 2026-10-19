@@ -8,7 +8,8 @@ import { requireRole } from "../auth/rbac.js";
 const execAsync = promisify(exec);
 
 function quoteShellArg(value: string): string {
-  return `"${value.replace(/"/g, '\\"')}"`;
+  const escaped = Array.from(value, (character) => character === '"' ? '\\"' : character).join("");
+  return `"${escaped}"`;
 }
 
 function resolvePythonExecutable(repoRootPath: string): string {

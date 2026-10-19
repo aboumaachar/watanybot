@@ -1,0 +1,1 @@
+{"status":"PASS","backendEndpoints":true,"tokenValuesExposed":false,"ui":true,"detailView":true,"mutationProof":true,"revokeOne":true,"revokeOneAudit":true,"revokeAllUser":true,"revokeAllAudit":true,"unrelatedSessionsPreserved":true}

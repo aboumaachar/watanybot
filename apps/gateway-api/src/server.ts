@@ -1,5 +1,5 @@
 /**
- * WatanyBot Gateway API â€” Thin bootstrap server.
+ * WatanyBot Gateway API — Thin bootstrap server.
  *
  * This file contains only:
  *   1. Fastify instantiation
@@ -33,12 +33,20 @@ import { isIgnorableGatewayDisconnectError } from "./lib/gateway-hardening";
 import registerKbImportRoutes from "./routes/kb-import";
 import multipart from "@fastify/multipart";
 import { seasonalAppleJobRouter } from './koudama/surveys/seasonal-apple-job';
+import { registerAinElHafehAdminRoutes } from "./routes/ainelhafeh-admin";
+import { registerAinMreissehBuildingAssistantRoutes } from "./koudama/surveys/ain-mreisseh-building-assistant/ainMreissehBuildingAssistant.routes.js";
+import { registerMiddleEastSecurityRoutes } from "./koudama/surveys/middle-east-security/middleEastSecurity.routes.js";
+import { registerMiddleEastSecurityShareRoutes } from "./koudama/surveys/middle-east-security/middleEastSecurity.share.js";
+import { registerJobReadinessRoutes } from "./civilian-jobs/job-readiness.routes.js";
+import { registerJobTemplateBuilderRoutes } from "./civilian-jobs/job-template-builder.routes.js";
+import { getTrustProxySetting } from "./auth/request-network.js";
 /* ================================================================
  *  Fastify instance
  * ================================================================ */
 export const app = Fastify({
   logger:    { level: LOG_LEVEL },
   bodyLimit: 11 * 1024 * 1024,
+  trustProxy: getTrustProxySetting(),
 });
 
 /* ================================================================
@@ -76,6 +84,7 @@ if (_apexBootTrace) console.log('APEX_BOOT_MARKER:BOOT_AI_DONE');
 // 5. KB store, vNext nodes, RAG chunks, plugin DB
 if (_apexBootTrace) console.log('APEX_BOOT_MARKER:BOOT_KB_START');
 const kb = await bootstrapKb(app);
+app.addHook("onClose", async () => { await kb.cleanupRuntimeRag(); });
 if (_apexBootTrace) console.log('APEX_BOOT_MARKER:BOOT_KB_DONE');
 
 // 6. Circuit breakers
@@ -145,6 +154,12 @@ if (process.env.NODE_ENV !== "test") {
     await app.register(seasonalAppleJobRouter);
     // APEX_FEATURE01_KB_IMPORT_ROUTE_REGISTERED
     await app.register(registerKbImportRoutes);
+await registerAinElHafehAdminRoutes(app);
+    await registerAinMreissehBuildingAssistantRoutes(app);
+    await registerMiddleEastSecurityRoutes(app);
+    await registerMiddleEastSecurityShareRoutes(app);
+    await registerJobReadinessRoutes(app);
+    await registerJobTemplateBuilderRoutes(app);
     await app.listen({ port, host, backlog: 2048 });
   } catch (err) {
     app.log.error(err);

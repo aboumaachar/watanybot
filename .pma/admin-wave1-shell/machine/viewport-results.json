@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "authenticated": true,
+  "testedViewports": ["1920x1080", "1440x900", "1024x768", "768x1024", "430x932"],
+  "mobileMenuTrigger": "PASS",
+  "drawerOpen": "PASS",
+  "drawerEscapeClose": "PASS",
+  "drawerNavigationClose": "PASS",
+  "bodyHorizontalOverflowCount": 0,
+  "screenshots": ["wave1-dashboard-1920x1080.png", "wave1-dashboard-1440x900.png", "wave1-dashboard-1024x768.png", "wave1-dashboard-768x1024.png", "wave1-dashboard-430x932.png"]
+}

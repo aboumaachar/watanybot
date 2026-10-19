@@ -237,30 +237,36 @@ export const adminKbRoutes: FastifyPluginAsync<AdminKbRoutesOptions> = async (
 
     for (const [, row] of Object.entries(kb.salariesIndex) as [string, any][]) {
       const vetSalary = readNumber(row, "vetSalary");
-      const basicSalary = readNumber(row, "basicSalary");
       const equipment = readNumber(row, "equipment");
       const position = readNumber(row, "position");
       const driver = readNumber(row, "driver");
-      const grant2025 = readNumber(row, "grant2025");
-      const d13020 = readNumber(row, "d13020");
-      const d11227_2 = readNumber(row, "d11227_2");
-      const d11227_1 = readNumber(row, "d11227_1");
-      const budget2022 = readNumber(row, "budget2022");
+      const eligibleBase = vetSalary + equipment + position + driver;
+      const grant2025 = 12000000;
+      const d13020 = Math.max(eligibleBase * 3, 7000000);
+      const d11227_2 = Math.max(eligibleBase * 3, 7000000);
+      const d11227_1 = eligibleBase * 4;
+      const budget2022 = Math.min(12000000, Math.max(eligibleBase * 2, Math.max(0, 5000000 - eligibleBase)));
 
-      const pension2026 = readNumber(row, "pension2026") || (vetSalary + equipment + position + driver + grant2025 + d13020 + d11227_2 + d11227_1 + budget2022);
+      row.grant2025 = grant2025;
+      row.d13020 = d13020;
+      row.d11227_2 = d11227_2;
+      row.d11227_1 = d11227_1;
+      row.budget2022 = budget2022;
+
+      const pension2026 = eligibleBase + grant2025 + d13020 + d11227_2 + d11227_1 + budget2022;
       row.pension2026 = pension2026;
-      row.pension2026usd = readNumber(row, "pension2026usd") || Math.round((pension2026 / usdRate) * 100) / 100;
+      row.pension2026usd = Math.round((pension2026 / usdRate) * 100) / 100;
 
-      const sixSalary = readNumber(row, "sixSalary");
+      const sixSalary = eligibleBase * 6;
       row.sixSalary = sixSalary;
-      row.totalSalary2026usd = readNumber(row, "totalSalary2026usd") || Math.round(((pension2026 + sixSalary) / usdRate) * 100) / 100;
+      row.totalSalary2026usd = Math.round(((pension2026 + sixSalary) / usdRate) * 100) / 100;
 
       const val2019 = readNumber(row, "val2019");
       const val2019usd = readNumber(row, "val2019usd") || (val2019 > 0 ? Math.round((val2019 / 1507.5) * 100) / 100 : 0);
       row.val2019usd = val2019usd;
-      row.fiftyPct = readNumber(row, "fiftyPct") || Math.round((val2019usd * 0.5) * 100) / 100;
-      row.pct2019 = readNumber(row, "pct2019") || (val2019usd > 0 ? Math.round((row.pension2026usd / val2019usd) * 1000) / 1000 : 0);
-      row.sixPct = readNumber(row, "sixPct") || (val2019usd > 0 ? Math.round((row.totalSalary2026usd / val2019usd) * 1000) / 1000 : 0);
+      row.fiftyPct = Math.round((val2019usd * 0.5) * 100) / 100;
+      row.pct2019 = val2019usd > 0 ? Math.round((row.pension2026usd / val2019usd) * 1000) / 1000 : 0;
+      row.sixPct = val2019usd > 0 ? Math.round((row.totalSalary2026usd / val2019usd) * 1000) / 1000 : 0;
 
       updated++;
     }

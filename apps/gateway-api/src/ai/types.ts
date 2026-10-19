@@ -5,7 +5,7 @@
  * Keeps compatibility with existing ChatRequest/ChatResponse types
  * while enabling true streaming and RAG augmentation.
  */
-import type { ChatRequest, ChatResponse, ActionIntent } from "@watany/types";
+import type { ChatRequest, ActionIntent } from "@watany/types";
 
 /* ------------------------------------------------------------------ */
 /*  RAG context                                                       */

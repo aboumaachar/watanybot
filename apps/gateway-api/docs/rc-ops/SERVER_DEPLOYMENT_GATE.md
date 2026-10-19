@@ -13,13 +13,13 @@ resolved on the Linux staging/production host before the tag is promoted.
 
 ---
 
-## Blocker 1 â€” Gateway Production Build Validation
+## Blocker 1 — Gateway Production Build Validation
 
 **Current status:** BLOCKED (no `build` script in `apps/gateway-api/package.json`)
 
 **Accepted resolution (choose one):**
 
-### Option A â€” Accept tsc as the build gate (recommended)
+### Option A — Accept tsc as the build gate (recommended)
 
 Add the following to `apps/gateway-api/package.json` under `"scripts"`:
 
@@ -35,7 +35,7 @@ pnpm --dir apps/gateway-api build
 
 exits 0. This makes the RC ops `gateway_build` step non-blocked on future runs.
 
-### Option B â€” Document tsc as the accepted validation path
+### Option B — Document tsc as the accepted validation path
 
 If no transpile output is shipped (gateway runs via `tsx` directly), add a comment in
 `apps/gateway-api/package.json`:
@@ -50,7 +50,7 @@ and mark this item ACCEPTED in the tracking table below.
 
 ---
 
-## Blocker 2 â€” Nginx Config Validation
+## Blocker 2 — Nginx Config Validation
 
 **Current status:** BLOCKED (nginx not installed on Windows host)
 
@@ -80,7 +80,7 @@ nginx: configuration file /etc/nginx/nginx.conf test is successful
 
 ---
 
-## Smoke Test Suite â€” Server Deployment
+## Smoke Test Suite — Server Deployment
 
 Run each item after the gateway is started on the server via PM2:
 
@@ -138,7 +138,7 @@ pm2 status
 | # | Test | Expected | Result |
 |---|------|----------|--------|
 | 20 | `GET /api/kb-nodes/stats` | 200, `{ ready: true }` | [ ] |
-| 21 | `GET /api/v2/directory/search?q=ØªÙ‚Ø§Ø¹Ø¯` | 200, results array with Ø¯Ø§Ø¦Ø±Ø© Ø§Ù„ØªÙ‚Ø§Ø¹Ø¯ entry | [ ] |
+| 21 | `GET /api/v2/directory/search?q=تقاعد` | 200, results array with دائرة التقاعد entry | [ ] |
 
 ---
 
@@ -162,9 +162,9 @@ The local `.env` JWT_SECRET is a dev-grade value. Before production deployment:
 
 | Item | Assigned | Status | Date |
 |------|----------|--------|------|
-| Blocker 1 â€” Gateway build script / accepted path | Engineering | [ ] OPEN | |
-| Blocker 2 â€” Nginx config test on Linux server | Ops | [ ] OPEN | |
-| Smoke tests 1â€“21 all pass | QA / deployer | [ ] OPEN | |
+| Blocker 1 — Gateway build script / accepted path | Engineering | [ ] OPEN | |
+| Blocker 2 — Nginx config test on Linux server | Ops | [ ] OPEN | |
+| Smoke tests 1–21 all pass | QA / deployer | [ ] OPEN | |
 | JWT secret rotated to production value | Security | [ ] OPEN | |
 
 When all four rows are marked **DONE**, update the final status below and commit this file.

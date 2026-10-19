@@ -59,37 +59,31 @@ function expectProxyOkOrDown(statusCode: number, body: Record<string, unknown>) 
 // ─────────────────────────────────────────────────────────────────────────────
 // POST /api/v2/chat
 // ─────────────────────────────────────────────────────────────────────────────
-describe("POST /api/v2/chat (proxy → Python)", () => {
+describe("POST /api/v2/chat (proxy → Python with Node fallback)", () => {
   it("returns 400 when question is missing", async () => {
-    const res = await app.inject({
-      method: "POST",
-      url: "/api/v2/chat",
-      payload: {},
-    });
+    const res = await app.inject({ method: "POST", url: "/api/v2/chat", payload: {} });
     expect(res.statusCode).toBe(400);
-    const body = res.json();
-    expect(body).toHaveProperty("error");
+    expect(res.json()).toHaveProperty("error");
   });
 
-  it("returns 200 or 502 for a valid question", async () => {
+  it("falls back to authoritative Node chat when Python is unavailable", async () => {
     const res = await app.inject({
       method: "POST",
       url: "/api/v2/chat",
-      payload: { question: "ما هو راتب الجندي؟", lang: "ar" },
+      payload: { question: "مرحبا", lang: "ar" },
     });
     const body = res.json();
-    expectProxyOkOrDown(res.statusCode, body);
-
-    if (PYTHON_UP) {
-      // Shape assertions for live Python response
-      expect(body).toHaveProperty("answer_lb");
-      expect(body).toHaveProperty("confidence");
-      expect(body).toHaveProperty("intent");
-    }
+    expect(res.statusCode).toBe(200);
+    expect(res.headers["x-watany-kb-v2-source"]).toBe("node-fallback");
+    expect(typeof body.answer_lb).toBe("string");
+    expect(body.answer_lb.length).toBeGreaterThan(0);
+    expect(typeof body.confidence).toBe("number");
+    expect(Array.isArray(body.kb_hits)).toBe(true);
+    expect(Array.isArray(body.menu)).toBe(true);
+    expect(body).toHaveProperty("intent_result");
   });
 });
 
-// ─────────────────────────────────────────────────────────────────────────────
 // GET /api/v2/search
 // ─────────────────────────────────────────────────────────────────────────────
 describe("GET /api/v2/search (proxy → Python)", () => {
@@ -99,12 +93,11 @@ describe("GET /api/v2/search (proxy → Python)", () => {
       url: "/api/v2/search?q=تقاعد",
     });
     const body = res.json();
-    expectProxyOkOrDown(res.statusCode, body);
-
-    if (PYTHON_UP) {
-      expect(body).toHaveProperty("hits");
-      expect(Array.isArray(body.hits)).toBe(true);
-    }
+    expect(res.statusCode).toBe(200);
+    expect(body).toHaveProperty("items");
+    expect(Array.isArray(body.items)).toBe(true);
+    expect(body).toHaveProperty("total");
+    expect(body).toHaveProperty("query", "تقاعد");
   });
 
   it("handles empty q gracefully", async () => {
@@ -120,24 +113,27 @@ describe("GET /api/v2/search (proxy → Python)", () => {
 // ─────────────────────────────────────────────────────────────────────────────
 // POST /api/v2/intent
 // ─────────────────────────────────────────────────────────────────────────────
-describe("POST /api/v2/intent (proxy → Python)", () => {
-  it("returns 200 or 502 for intent classification", async () => {
+describe("POST /api/v2/intent (proxy -> Python with Node fallback)", () => {
+  it("falls back to the canonical legacy intent authority when Python is unavailable", async () => {
     const res = await app.inject({
       method: "POST",
       url: "/api/v2/intent",
-      payload: { question: "أين يمكنني تقديم الراتب؟" },
+      payload: { text: "بدي اعرف قديش معاشي" },
     });
     const body = res.json();
-    expectProxyOkOrDown(res.statusCode, body);
+    expect(res.statusCode).toBe(200);
+    expect(res.headers["x-watany-kb-v2-source"]).toBe("node-fallback");
+    expect(body).toMatchObject({ intent: "salary_compute", domain: "salary", request_type: "salary" });
+    expect(typeof body.confidence).toBe("number");
+  });
 
-    if (PYTHON_UP) {
-      expect(body).toHaveProperty("intent");
-      expect(body).toHaveProperty("confidence");
-    }
+  it("returns 422 when text is missing", async () => {
+    const res = await app.inject({ method: "POST", url: "/api/v2/intent", payload: {} });
+    expect(res.statusCode).toBe(422);
+    expect(res.json()).toMatchObject({ error: "text required" });
   });
 });
 
-// ─────────────────────────────────────────────────────────────────────────────
 // POST /api/v2/salary/compute
 // ─────────────────────────────────────────────────────────────────────────────
 describe("POST /api/v2/salary/compute (proxy → Python)", () => {
@@ -161,19 +157,15 @@ describe("POST /api/v2/salary/compute (proxy → Python)", () => {
 // POST /api/v2/tickets
 // ─────────────────────────────────────────────────────────────────────────────
 describe("POST /api/v2/tickets (proxy → Python)", () => {
-  it("returns 200 or 502 for ticket creation", async () => {
+  it("uses the local fallback and requires authentication when Python is unavailable", async () => {
     const res = await app.inject({
       method: "POST",
       url: "/api/v2/tickets",
       payload: { subject: "استفسار عن المعاش", message: "أحتاج مساعدة", lang: "ar" },
     });
     const body = res.json();
-    expectProxyOkOrDown(res.statusCode, body);
-
-    if (PYTHON_UP) {
-      expect(body).toHaveProperty("id");
-      expect(body).toHaveProperty("status");
-    }
+    expect(res.statusCode).toBe(401);
+    expect(body).toMatchObject({ error: "Authentication required" });
   });
 });
 
@@ -181,36 +173,48 @@ describe("POST /api/v2/tickets (proxy → Python)", () => {
 // GET /api/v2/tickets
 // ─────────────────────────────────────────────────────────────────────────────
 describe("GET /api/v2/tickets (proxy → Python)", () => {
-  it("returns 200 or 502 for ticket list", async () => {
+  it("uses the local fallback and requires authentication when Python is unavailable", async () => {
     const res = await app.inject({
       method: "GET",
       url: "/api/v2/tickets",
     });
     const body = res.json();
-    expectProxyOkOrDown(res.statusCode, body);
-
-    if (PYTHON_UP) {
-      expect(body).toHaveProperty("tickets");
-      expect(Array.isArray(body.tickets)).toBe(true);
-    }
+    expect(res.statusCode).toBe(401);
+    expect(body).toMatchObject({ error: "Authentication required" });
   });
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
 // GET /api/v2/diagnostics
 // ─────────────────────────────────────────────────────────────────────────────
-describe("GET /api/v2/diagnostics (proxy → Python)", () => {
-  it("returns 200 or 502", async () => {
-    const res = await app.inject({
-      method: "GET",
-      url: "/api/v2/diagnostics",
-    });
-    const body = res.json();
-    expectProxyOkOrDown(res.statusCode, body);
+describe("GET /api/v2/diagnostics (proxy → Python with Node fallback)", () => {
+  // The Node fallback reports "degraded" only when the local KB is actually ready; otherwise the
+  // route keeps its 502 contract. Assert the branch that matches this environment's KB state.
+  async function localKbReady(): Promise<boolean> {
+    const [health, kb, nodes] = await Promise.all([
+      app.inject({ method: "GET", url: "/api/health" }),
+      app.inject({ method: "GET", url: "/api/kb/stats" }),
+      app.inject({ method: "GET", url: "/api/kb-nodes/stats" }),
+    ]);
+    if ([health, kb, nodes].some((r) => r.statusCode < 200 || r.statusCode >= 300)) return false;
+    return health.json().status === "ok" && kb.json().ok === true && nodes.json().ready === true;
+  }
 
+  it("returns upstream diagnostics, the degraded Node fallback, or 502 when nothing is ready", async () => {
+    const res = await app.inject({ method: "GET", url: "/api/v2/diagnostics" });
+    const body = res.json();
     if (PYTHON_UP) {
+      expect(res.statusCode).toBe(200);
       expect(body).toHaveProperty("status");
       expect(body).toHaveProperty("kb_path");
+    } else if (await localKbReady()) {
+      expect(res.statusCode).toBe(200);
+      expect(res.headers["x-watany-kb-v2-source"]).toBe("node-fallback");
+      expect(body).toMatchObject({ status: "degraded", ready: true, source: "node-fallback", python_backend: "unavailable" });
+    } else {
+      expect(res.statusCode).toBe(502);
+      expect(body).toMatchObject({ error: "KB v2 backend unavailable" });
+      expect(res.headers["x-watany-kb-v2-source"]).toBeUndefined();
     }
   });
 });

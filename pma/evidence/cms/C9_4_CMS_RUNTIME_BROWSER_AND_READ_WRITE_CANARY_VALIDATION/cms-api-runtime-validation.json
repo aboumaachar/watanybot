@@ -1,0 +1,26 @@
+{
+  "status": "PASS_FOR_NON_MUTATING_PROOF",
+  "authority": "public.documents",
+  "authenticatedMechanism": "local Bearer JWT held only in the runtime request process; token omitted",
+  "checks": {
+    "CMS_DOCUMENT_LIST_RUNTIME": "PASS",
+    "CMS_DOCUMENT_DETAIL_RUNTIME": "NOT_APPLICABLE_NO_BASELINE_ROWS",
+    "CMS_DOCUMENT_FILTER_RUNTIME": "PASS",
+    "ADMIN_AUTHORITY_RUNTIME": "PASS",
+    "CMS_DOCUMENT_UNAUTHORIZED_NEGATIVE_TEST": "PASS",
+    "unauthorizedStatus": 401,
+    "authenticatedListStatus": 200,
+    "authenticatedFilterStatus": 200,
+    "baselineRowsReturned": 0,
+    "LEGACY_DOCUMENT_RUNTIME_READ": "PASS"
+  },
+  "filterExercise": {
+    "kind": "file",
+    "status": "DRAFT",
+    "tag": "apex-c9-4-probe",
+    "page": 1,
+    "pageSize": 1
+  },
+  "mutatingRequestsIssued": false,
+  "credentialMaterialRecorded": false
+}

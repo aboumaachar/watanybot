@@ -1,0 +1,1 @@
+{"status":"PASS","sourceEndpoints":["/api/admin/overview","/api/admin/plugins"],"realZeroPreserved":true,"unavailableState":"Unavailable","fakeMetricsRemoved":true}

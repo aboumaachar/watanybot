@@ -1,51 +1,74 @@
-import type { ReactNode } from "react";
+import { lazy, Suspense, useEffect, type ReactNode } from "react";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { WatanyPublicShellV20 } from "./layouts/WatanyPublicShellV20";
 import { UnavailableRecoveryPage } from "../pages/WatanyRecoveryPages";
-import LoginPage from "../pages/LoginPage";
 import RegisterPage from "../pages/RegisterPage";
-import SalaryPage from "../pages/SalaryPage";
-import ProceduresPage from "../pages/ProceduresPage";
-import SchoolGrantsPage from "../pages/SchoolGrantsPage";
-import SettingsPage from "../pages/SettingsPage";
-import SavedChatsPage from "../pages/SavedChatsPage";
-import BookmarksPage from "../pages/BookmarksPage";
-import ChatSessionsPage from "../pages/ChatSessionsPage";
-import JobsPage from "../pages/JobsPage";
-import AinElHafehJobsPage from "../pages/AinElHafehJobsPage";
-import MarketPage from "../pages/MarketPage";
-import SuperAdminPage from "../pages/SuperAdminPage";
 import WatanyV4Homepage from "./WatanyV4Homepage";
-import MobileOsChatPage from "../pages/MobileOsChatPage";
-import HybridKbChatPage from "../pages/hybrid-kb-chat";
-import DocumentsPage from "../pages/DocumentsPage";
-import LegalPage from "../pages/LegalPage";
-import ProfilePage from "../pages/ProfilePage";
-import NotificationsPage from "../pages/NotificationsPage";
-import NewsPage from "../pages/NewsPage";
-import FakeFactPage from "../pages/FakeNewsPage";
-import FormsPage from "../pages/FormsPage";
-import SurveyPage from "../pages/SurveyPage";
-import SurveyDetailPage from "../pages/SurveyDetailPage";
-import SurveyResultsPage from "../pages/SurveyResultsPage";
-import FaqPage from "../pages/FaqPage";
-import DeathsPage from "../pages/DeathsPage";
-import CommunityPage from "../pages/CommunityPage";
-import CommunityThreadsPage from "../pages/CommunityThreadsPage";
-import VoicePage from "../pages/VoicePage";
-import TaxiPage from "../pages/TaxiPage";
-import NetworkPage from "../pages/NetworkPage";
-import CircularsPage from "../pages/CircularsPage";
-import AdsPage from "../pages/AdsPage";
-import HealthPage from "../pages/HealthPage";
-import OfficialServicesPage from "../pages/OfficialServicesPage";
-import AdminAuthorityDemoPage from "../pages/AdminAuthorityDemoPage";
 import WatanyGuidedSmokePage from "../pages/WatanyGuidedHelperSmokePage";
 import WatanyV4FeatureLanding from "./WatanyV4FeatureLanding";
 import { SmartAttentionFeaturePage } from "../features/smart-attention-native/SmartAttentionPages";
 import { useApp } from "../store/app";
 import { isLoggedIn } from "../lib/auth";
 import "../apex/apex-theme-runtime-v274";
+
+const LoginPage = lazy(() => import("../pages/LoginPage"));
+const SalaryPage = lazy(() => import("../pages/SalaryPage"));
+const ProceduresPage = lazy(() => import("../pages/ProceduresPage"));
+const SchoolGrantsPage = lazy(() => import("../pages/SchoolGrantsPage"));
+const SettingsPage = lazy(() => import("../pages/SettingsPage"));
+const SavedChatsPage = lazy(() => import("../pages/SavedChatsPage"));
+const BookmarksPage = lazy(() => import("../pages/BookmarksPage"));
+const ChatSessionsPage = lazy(() => import("../pages/ChatSessionsPage"));
+const JobApplicationsPage = lazy(() => import("../pages/JobApplicationsPage"));
+const JobsPage = lazy(() => import("../pages/JobsPage"));
+const JobReadinessPage = lazy(() => import("../pages/JobReadinessPage"));
+const EmployerCandidateSearchPage = lazy(() => import("../pages/EmployerCandidateSearchPage"));
+const EmployerPortalPage = lazy(() => import("../pages/EmployerPortalPage"));
+const AdminEmployerPortalPage = lazy(() => import("../pages/AdminEmployerPortalPage"));
+const AinElHafehJobsPage = lazy(() => import("../pages/AinElHafehJobsPage"));
+const AinElHafehAcceptedApplicationsPage = lazy(() => import("../pages/AinElHafehAcceptedApplicationsPage"));
+const AinElHafehApplicationsAdminPage = lazy(() => import("../pages/AinElHafehApplicationsAdminPage"));
+const AinMreissehBuildingAssistantJobsPage = lazy(() => import("../pages/AinMreissehBuildingAssistantJobsPage"));
+const AinMreissehBuildingAssistantApplicationsAdminPage = lazy(() => import("../pages/AinMreissehBuildingAssistantApplicationsAdminPage"));
+const MiddleEastSecurityJobsPage = lazy(() => import("../pages/MiddleEastSecurityJobsPage"));
+const MiddleEastSecurityApplicationsAdminPage = lazy(() => import("../pages/MiddleEastSecurityApplicationsAdminPage"));
+const MiddleEastSecuritySharePage = lazy(() => import("../pages/MiddleEastSecuritySharePage"));
+const UniversalJobApplicationPage = lazy(() => import("../pages/UniversalJobApplicationPage"));
+const JobOpportunitiesPage = lazy(() => import("../pages/JobOpportunitiesPage"));
+const JobOpportunityPage = lazy(() => import("../pages/JobOpportunityPage"));
+const MarketPage = lazy(() => import("../pages/MarketPage"));
+const SuperAdminPage = lazy(() => import("../pages/SuperAdminPage"));
+const SuperadminUsersPage = lazy(() => import("../features/superadmin-users/SuperadminUsersPage"));
+const MobileOsChatPage = lazy(() => import("../pages/MobileOsChatPage"));
+const HybridKbChatPage = lazy(() => import("../pages/hybrid-kb-chat"));
+const DocumentsPage = lazy(() => import("../pages/DocumentsPage"));
+const LegalPage = lazy(() => import("../pages/LegalPage"));
+const ProfilePage = lazy(() => import("../pages/ProfilePage"));
+const NotificationsPage = lazy(() => import("../pages/NotificationsPage"));
+const NewsPage = lazy(() => import("../pages/NewsPage"));
+const ArticlesPage = lazy(() => import("../pages/ArticlesPage"));
+const ArticleDetailPage = lazy(() => import("../pages/ArticleDetailPage"));
+const FakeFactPage = lazy(() => import("../pages/FakeNewsPage"));
+const FormsPage = lazy(() => import("../pages/FormsPage"));
+const UniversalFormPage = lazy(() => import("../pages/UniversalFormPage"));
+const SurveyDetailPage = lazy(() => import("../pages/SurveyDetailPage"));
+const SurveyResultsPage = lazy(() => import("../pages/SurveyResultsPage"));
+const SurveyPage = lazy(() => import("../pages/SurveyPage"));
+const FaqPage = lazy(() => import("../pages/FaqPage"));
+const DeathsPage = lazy(() => import("../pages/DeathsPage"));
+const CommunityPage = lazy(() => import("../pages/CommunityPage"));
+const CommunityThreadsPage = lazy(() => import("../pages/CommunityThreadsPage"));
+const MessagesPage = lazy(() => import("../pages/MessagesPage"));
+const TaxiPage = lazy(() => import("../pages/TaxiPage"));
+const NetworkPage = lazy(() => import("../pages/NetworkPage"));
+const SurveysPage = lazy(() => import("../pages/SurveysPage"));
+const CircularsPage = lazy(() => import("../pages/CircularsPage"));
+const ChildrenHubPage = lazy(() => import("../pages/ChildrenHubPage"));
+const AdsPage = lazy(() => import("../pages/AdsPage"));
+const HealthPage = lazy(() => import("../pages/HealthPage"));
+const OfficialServicesPage = lazy(() => import("../pages/OfficialServicesPage"));
+const AdminAuthorityDemoPage = lazy(() => import("../pages/AdminAuthorityDemoPage"));
+const WorldCupPage = lazy(() => import("../pages/WorldCupPage"));
 
 
 function RequireAuthenticated({ children }: { children: ReactNode }) {
@@ -60,24 +83,58 @@ function RequireAuthenticated({ children }: { children: ReactNode }) {
   return <>{children}</>;
 }
 
+function RedirectVeterans2019ApplicationsToOps() {
+  useEffect(() => { globalThis.location.replace("/ops/veterans-2019-applications/"); }, []);
+  return <div role="status">جارٍ الانتقال إلى موطني Ops…</div>;
+}
+
+function RequireAdmin({ children }: { children: ReactNode }) {
+  const { profile, hasRole } = useApp();
+  const location = useLocation();
+
+  if (!profile.isAuthed || !isLoggedIn()) {
+    const from = `${location.pathname}${location.search}${location.hash}`;
+    return <Navigate to="/login" replace state={{ from }} />;
+  }
+
+  if (!hasRole(["admin"])) {
+    return (
+      <main className="superadmin-access-gate" dir="rtl">
+        <section className="superadmin-access-gate__panel" aria-labelledby="superadmin-denied-title">
+          <span className="superadmin-access-gate__eyebrow">صلاحيات غير كافية</span>
+          <h1 id="superadmin-denied-title">هذه اللوحة للإدارة فقط</h1>
+          <p>الحساب الحالي لا يملك صلاحية الوصول إلى مركز الإدارة.</p>
+          <a className="superadmin-access-gate__cta" href="/home">العودة إلى الرئيسية</a>
+        </section>
+      </main>
+    );
+  }
+
+  return <>{children}</>;
+}
+
 export function AppShell() {
   return (
-    <Routes>
+    <Suspense fallback={<div className="screen-loader" aria-live="polite"><span className="screen-loader__spinner" /> جارٍ تحميل الصفحة…</div>}>
+      <Routes>
       <Route
-        path="/superadmin/*"
+        path="/superadmin/users"
         element={
           <div
             data-apex-shell="superadmin"
             data-apex-foundation="v4-phase-b"
             className="watany-mobile-shell watany-superadmin-shell"
           >
-            <SuperAdminPage />
+            <RequireAdmin><SuperadminUsersPage /></RequireAdmin>
           </div>
         }
       />
       <Route path="/mobile-os" element={<Navigate to="/" replace />} />
       <Route path="/mobile-os/*" element={<Navigate to="/" replace />} />
+      <Route path="/mcp" element={<Navigate to="/home" replace />} />
+      <Route path="/mcp/*" element={<Navigate to="/home" replace />} />
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/share/jobs/middle-east-security/:shareToken" element={<MiddleEastSecuritySharePage />} />
       <Route
         element={
           <div
@@ -103,6 +160,22 @@ export function AppShell() {
         <Route path="procedures" element={<ProceduresPage />} />
         <Route path="school-grants" element={<SchoolGrantsPage />} />
         <Route path="jobs/ainelhafeh" element={<AinElHafehJobsPage />} />
+        <Route path="jobs/ain-mreisseh-building-assistant" element={<AinMreissehBuildingAssistantJobsPage />} />
+        <Route path="jobs/middle-east-security" element={<MiddleEastSecurityJobsPage />} />
+        <Route path="jobs/opportunities" element={<JobOpportunitiesPage />} />
+        <Route path="jobs/opportunities/:slug" element={<JobOpportunityPage />} />
+        <Route path="jobs/:jobSlug/application" element={<UniversalJobApplicationPage />} />
+        <Route path="jobs/accredited-bulldozer-driver" element={<Navigate to="/jobs/accredited-bulldozer-driver/application" replace />} />
+        <Route path="superadmin/middle-east-security/applications" element={<RequireAdmin><MiddleEastSecurityApplicationsAdminPage /></RequireAdmin>} />
+        <Route path="superadmin/ain-mreisseh-building-assistant/applications" element={<RequireAdmin><AinMreissehBuildingAssistantApplicationsAdminPage /></RequireAdmin>} />
+        <Route path="superadmin/jobs" element={<RequireAdmin><AdminEmployerPortalPage /></RequireAdmin>} />
+        <Route path="superadmin/jobs/employers" element={<RequireAdmin><AdminEmployerPortalPage /></RequireAdmin>} />
+        <Route path="jobs/ainelhafeh/accepted" element={<AinElHafehAcceptedApplicationsPage />} />
+        <Route path="superadmin/ainelhafeh/applications" element={<RequireAdmin><AinElHafehApplicationsAdminPage /></RequireAdmin>} />
+        <Route path="jobs/readiness" element={<RequireAuthenticated><JobReadinessPage /></RequireAuthenticated>} />
+        <Route path="jobs/candidates" element={<RequireAuthenticated><EmployerCandidateSearchPage /></RequireAuthenticated>} />
+        <Route path="jobs/employer" element={<RequireAuthenticated><EmployerPortalPage /></RequireAuthenticated>} />
+        <Route path="jobs/applications" element={<RequireAuthenticated><JobApplicationsPage /></RequireAuthenticated>} />
         <Route path="jobs" element={<JobsPage />} />
         <Route path="marketplace" element={<MarketPage />} />
         <Route path="saved" element={<RequireAuthenticated><SavedChatsPage /></RequireAuthenticated>} />
@@ -116,9 +189,14 @@ export function AppShell() {
         <Route path="profile" element={<RequireAuthenticated><div data-watany-feature-route="profile"><ProfilePage /></div></RequireAuthenticated>} />
         <Route path="notifications" element={<RequireAuthenticated><div data-watany-feature-route="notifications"><NotificationsPage /></div></RequireAuthenticated>} />
         <Route path="news" element={<div data-watany-feature-route="news"><NewsPage /></div>} />
+        <Route path="articles" element={<div data-watany-feature-route="articles"><ArticlesPage /></div>} />
+        <Route path="articles/:category/:slug" element={<div data-watany-feature-route="article-detail"><ArticleDetailPage /></div>} />
+        <Route path="articles/:slug" element={<div data-watany-feature-route="article-detail"><ArticleDetailPage /></div>} />
         <Route path="fake-fact" element={<div data-watany-feature-route="fake-fact"><FakeFactPage /></div>} />
         <Route path="forms" element={<div data-watany-feature-route="forms"><FormsPage /></div>} />
-        <Route path="voting" element={<div data-watany-feature-route="voting"><SurveyPage /></div>} />
+        <Route path="forms/live/:slug" element={<div data-watany-feature-route="universal-form"><UniversalFormPage /></div>} />
+        <Route path="vote" element={<SurveyPage />} />
+        <Route path="voting" element={<Navigate to="/vote" replace />} />
         <Route path="voting/:surveyId" element={<SurveyDetailPage />} />
         <Route path="voting/:surveyId/results" element={<SurveyResultsPage />} />
         <Route path="faq" element={<div data-watany-feature-route="faq"><FaqPage /></div>} />
@@ -126,16 +204,24 @@ export function AppShell() {
         <Route path="community" element={<CommunityPage />} />
         <Route path="groups" element={<CommunityThreadsPage />} />
         <Route path="groups/:groupId" element={<CommunityThreadsPage />} />
-        <Route path="voice" element={<VoicePage />} />
+        <Route path="messages" element={<RequireAuthenticated><MessagesPage /></RequireAuthenticated>} />
+        <Route path="messages/:groupId" element={<RequireAuthenticated><MessagesPage /></RequireAuthenticated>} />
         <Route path="taxi" element={<TaxiPage />} />
         <Route path="network" element={<NetworkPage />} />
+        <Route path="surveys" element={<SurveysPage />} />
+        <Route path="veterans-2019" element={<Navigate to="/surveys" replace />} />
+        <Route path="superadmin/veterans-2019-applications" element={<RedirectVeterans2019ApplicationsToOps />} />
         <Route path="circulars" element={<CircularsPage />} />
+        <Route path="children" element={<ChildrenHubPage />} />
+        <Route path="sports" element={<WatanyV4FeatureLanding />} />
         <Route path="ads" element={<AdsPage />} />
         <Route path="health" element={<HealthPage />} />
         <Route path="services/official" element={<OfficialServicesPage />} />
         <Route path="admin-authority-demo" element={<AdminAuthorityDemoPage />} />
+        <Route path="world-cup/*" element={<WorldCupPage />} />
         <Route path="*" element={<UnavailableRecoveryPage />} />
       </Route>
-    </Routes>
+      </Routes>
+    </Suspense>
   );
 }

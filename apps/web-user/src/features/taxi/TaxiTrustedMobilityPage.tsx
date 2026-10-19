@@ -36,7 +36,7 @@ export function TaxiTrustedMobilityPage() {
     });
   }, [area]);
 
-  function useCurrentLocation() {
+  function locateCurrentLocation() {
     if (!navigator.geolocation) {
       setNotice('خدمة تحديد الموقع غير متاحة في هذا المتصفح.');
       return;
@@ -62,7 +62,7 @@ export function TaxiTrustedMobilityPage() {
     }
     if (filter === 'gps') {
       setGpsEnabled(true);
-      useCurrentLocation();
+      locateCurrentLocation();
     }
     if (filter === 'scheduled') {
       setRideMode('scheduled');
@@ -176,7 +176,7 @@ export function TaxiTrustedMobilityPage() {
 
               <div className="taxi-rg-request-grid">
                 <div className="taxi-rg-form-stack">
-                  <label className="taxi-rg-field"><span>موقع الانطلاق</span><div className="taxi-rg-input-action"><input value={pickup} onChange={(event) => setPickup(event.target.value)} /><button type="button" onClick={useCurrentLocation}>تحديد GPS</button></div></label>
+                  <label className="taxi-rg-field"><span>موقع الانطلاق</span><div className="taxi-rg-input-action"><input value={pickup} onChange={(event) => setPickup(event.target.value)} /><button type="button" onClick={locateCurrentLocation}>تحديد GPS</button></div></label>
                   <label className="taxi-rg-field"><span>الوجهة</span><input value={destination} onChange={(event) => setDestination(event.target.value)} placeholder="اكتب الوجهة" /></label>
                   {rideMode === 'scheduled' && <div className="taxi-rg-double-field"><label className="taxi-rg-field"><span>التاريخ</span><input type="date" value={rideDate} onChange={(event) => setRideDate(event.target.value)} /></label><label className="taxi-rg-field"><span>الوقت</span><input type="time" value={rideTime} onChange={(event) => setRideTime(event.target.value)} /></label></div>}
                   <label className="taxi-rg-field"><span>ملاحظات الرحلة</span><textarea value={notes} onChange={(event) => setNotes(event.target.value)} placeholder="حقائب، كرسي متحرك، رحلة عائلية، أو نقطة التقاء" /></label>

@@ -78,6 +78,7 @@ body:has(.watany-recovery-shell) {
   direction: rtl !important;
   color: var(--apex-ink) !important;
   background: var(--apex-bg) !important;
+  padding: 0 !important;
   border: 1px solid var(--apex-border) !important;
   border-radius: 24px !important;
   box-shadow: 0 20px 55px rgba(19, 48, 36, 0.18) !important;
@@ -95,28 +96,6 @@ body:has(.watany-recovery-shell) {
   height: var(--apex-top-height) !important;
   min-height: var(--apex-top-height) !important;
   padding: 10px 12px !important;
- :is([data-watany-recovery-shell="true"], .watany-recovery-shell) > .watany-recovery-bottom > :last-child:is(button, a),
- :is([data-watany-recovery-shell="true"], .watany-recovery-shell) > .watany-recovery-bottom > :last-child :is(button, a) {
-   grid-column: 1 / -1 !important;
-   grid-row: 1 !important;
-   align-self: center !important;
-   justify-self: stretch !important;
-   display: flex !important;
-   align-items: center !important;
-   justify-content: center !important;
-   gap: 8px !important;
-   height: 40px !important;
-   min-height: 40px !important;
-   margin: 4px 10px 0 !important;
-   padding: 0 16px !important;
-   border-radius: 13px !important;
-   box-sizing: border-box !important;
-   font-size: 14px !important;
-   line-height: 1 !important;
-   white-space: nowrap !important;
-   overflow: hidden !important;
-   text-overflow: ellipsis !important;
- }
   background: linear-gradient(180deg, #fffdf7 0%, #f5eddb 100%) !important;
   border: 0 !important;
   border-bottom: 1px solid var(--apex-border) !important;
@@ -168,14 +147,62 @@ body:has(.watany-recovery-shell) {
   min-height: 16px !important;
 }
 
-  background: var(--apex-bg) !important;
-}
-
 .watany-recovery-main > * {
   width: 100% !important;
   max-width: 100% !important;
   min-width: 0 !important;
   margin-inline: auto !important;
+}
+
+.watany-recovery-main {
+  padding: 0 0 var(--apex-content-bottom-clearance) !important;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+.watany-recovery-main::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.watany-v4-homepage .watany-v4-homepage__grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 20px 10px !important;
+  align-items: start !important;
+}
+
+.watany-v4-homepage .watany-v4-launcher-card {
+  gap: 5px !important;
+}
+
+.watany-v4-homepage .watany-v4-launcher-card__label {
+  margin-top: 0 !important;
+  font-size: 16px !important;
+  line-height: 22px !important;
+}
+
+.screen.welcome.active .welcome-logo {
+  width: min(82vw, 290px) !important;
+  height: auto !important;
+  max-height: 300px !important;
+}
+
+.screen.welcome.active .welcome-top-half {
+  align-items: flex-end !important;
+  padding-top: 0 !important;
+  padding-bottom: 14px !important;
+}
+
+.screen.welcome.active .welcome-bottom-half {
+  align-items: flex-start !important;
+  padding-top: 14px !important;
+  padding-bottom: 12px !important;
+}
+
+.screen.welcome.active .welcome-cta-group {
+  gap: 5px !important;
 }
 
 .watany-recovery-dock {
@@ -266,20 +293,48 @@ body.watany-recovery-menu-open .watany-recovery-bottom {
 .watany-recovery-bottom [data-watany-menu-icon] {
   display: grid !important;
   place-items: center !important;
-  width: 25px !important;
-  height: 25px !important;
+  width: 32px !important;
+  height: 32px !important;
 }
 
 .watany-recovery-bottom svg {
-  width: 24px !important;
-  height: 24px !important;
+  width: 30px !important;
+  height: 30px !important;
+}
+
+.watany-recovery-bottom .watany-recovery-home-sign,
+.watany-recovery-bottom .watany-v4-icon {
+  width: 30px !important;
+  height: 30px !important;
+  min-width: 30px !important;
+  min-height: 30px !important;
+  max-width: 30px !important;
+  max-height: 30px !important;
+}
+
+.watany-recovery-bottom .watany-recovery-bottom__label {
+  font-size: 12px !important;
+  line-height: 1.2 !important;
+}
+
+html[data-apex-theme="v274"] body .watany-recovery-shell .watany-v4-homepage .watany-v4-launcher-card {
+  gap: 5px !important;
+  row-gap: 5px !important;
+}
+
+html[data-apex-theme="v274"] body .watany-recovery-shell .watany-v4-homepage .watany-v4-launcher-card__label {
+  margin: 0 !important;
+}
+
+html[data-apex-theme="v274"] body .watany-recovery-shell > .watany-recovery-bottom[data-watany-bottom-bar="true"] .watany-recovery-bottom__label {
+  font: 900 12px/1.2 "Cairo", Tahoma, Arial, sans-serif !important;
 }
 
 .watany-recovery-bottom small {
   display: block !important;
   width: 100% !important;
   overflow: hidden !important;
-  font-size: 10px !important;
+  font-size: 12px !important;
   line-height: 1.35 !important;
   text-align: center !important;
   white-space: nowrap !important;
@@ -316,6 +371,44 @@ body.watany-recovery-menu-open .watany-recovery-bottom {
   position: absolute !important;
   inset: 0 !important;
   z-index: 80 !important;
+}
+
+/* Keep the assistant as the fifth mobile navigation item, not a full-width CTA row. */
+html[data-apex-theme="v274"] body .watany-recovery-shell > .watany-recovery-bottom[data-watany-bottom-bar="true"] > :last-child:is(button, a) {
+  grid-column: auto !important;
+  grid-row: auto !important;
+  align-self: stretch !important;
+  justify-self: stretch !important;
+  display: grid !important;
+  grid-template-rows: 30px auto !important;
+  align-content: center !important;
+  gap: 1px !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 3px 2px !important;
+  color: #365447 !important;
+  background: transparent !important;
+  border-radius: 11px !important;
+  font-size: inherit !important;
+  line-height: normal !important;
+  overflow: visible !important;
+}
+
+html[data-apex-theme="v274"] body .watany-recovery-shell > .watany-recovery-bottom[data-watany-bottom-bar="true"] > :last-child:is(button, a) .watany-v4-icon {
+  width: 34px !important;
+  height: 34px !important;
+  min-width: 34px !important;
+  min-height: 34px !important;
+  max-width: 34px !important;
+  max-height: 34px !important;
+  justify-self: center !important;
+}
+
+html[data-apex-theme="v274"] body .watany-recovery-shell > .watany-recovery-bottom[data-watany-bottom-bar="true"] > :last-child:is(button, a) .watany-recovery-bottom__label {
+  color: #365447 !important;
 }
 
 .watany-recovery-drawer-backdrop {
@@ -376,24 +469,77 @@ body.watany-recovery-menu-open .watany-recovery-bottom {
 }
 
 .watany-recovery-chat {
-  position: absolute !important;
-  right: 10px !important;
-  bottom: calc(var(--apex-dock-height) + 8px) !important;
-  left: 10px !important;
+  position: fixed !important;
+  right: auto !important;
+  top: auto !important;
+  bottom: var(--watany-v4-bottom-nav-height, 72px) !important;
+  left: 50% !important;
   z-index: 70 !important;
+  width: min(calc(100vw - 24px), 446px) !important;
+  height: auto !important;
   max-height: min(320px, calc(100% - var(--apex-top-height) - var(--apex-dock-height) - 24px)) !important;
   padding: 14px !important;
   overflow-y: auto !important;
+  transform: translateX(-50%) !important;
   background: #fff !important;
   border: 1px solid var(--apex-border) !important;
   border-radius: 16px !important;
   box-shadow: 0 12px 36px rgba(13, 35, 25, 0.24) !important;
 }
 
-.watany-recovery-chat-head {
-  display: flex !important;
+.watany-recovery-chat .hybrid-kb-chat-window {
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  gap: 0.45rem !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.watany-recovery-chat .hybrid-kb-documents {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  gap: 0.45rem !important;
+}
+
+.watany-recovery-chat .hybrid-kb-document-card {
+  min-width: 0 !important;
+}
+
+.watany-recovery-chat .hybrid-kb-composer {
+  margin-bottom: 0 !important;
+}
+
+.watany-recovery-chat .hybrid-kb-input-row {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto auto !important;
+  gap: 0.5rem !important;
   align-items: center !important;
-  justify-content: space-between !important;
+}
+
+.watany-recovery-chat .hybrid-kb-input-row input {
+  min-width: 0 !important;
+}
+
+.watany-recovery-chat .hybrid-kb-icon-button {
+  display: inline-grid !important;
+  place-items: center !important;
+  width: 44px !important;
+  min-width: 44px !important;
+  height: 44px !important;
+  padding: 0 !important;
+  font-size: 1.15rem !important;
+  line-height: 1 !important;
+}
+
+.watany-recovery-chat .hybrid-kb-close-button {
+  background: #6b7280 !important;
+}
+
+.watany-recovery-chat:has([data-hybrid-kb-expanded="false"]) {
+  padding: 0 !important;
+  border-radius: 16px 16px 0 0 !important;
 }
 
 .watany-drawer-page,
@@ -685,9 +831,7 @@ body.watany-recovery-menu-open .watany-recovery-bottom {
   scroll-padding-bottom: var(--apex-content-bottom-clearance) !important;
 }
 
-.watany-recovery-shell .procedures-browser__item,
-.watany-recovery-shell .watany-procedure-card {
-  padding-bottom: var(--apex-content-bottom-clearance) !important;
+.watany-recovery-shell .procedures-browser__item {
   scroll-padding-bottom: var(--apex-content-bottom-clearance) !important;
 }
 
@@ -759,7 +903,7 @@ body.watany-recovery-menu-open .watany-recovery-bottom {
   }
 
   .watany-recovery-main {
-    padding: 10px !important;
+    padding: 0 10px var(--apex-content-bottom-clearance) !important;
   }
 }
 

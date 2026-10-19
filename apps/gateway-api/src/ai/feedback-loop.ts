@@ -9,9 +9,22 @@
  * - Continuously improves retrieval
  */
 
+import { randomUUID } from 'node:crypto';
 import type { QueryUnderstanding, Intent } from './query-understanding';
 import type { ScoredChunk } from './adaptive-retrieval';
-import type { ConfidenceScore } from './confidence-reranking';
+
+type FeedbackChannel = 'web' | 'whatsapp' | 'voice';
+type FeedbackType = 'incorrect' | 'incomplete' | 'unclear' | 'other';
+type ABTestGroup = 'test' | 'control';
+type ABTestWinner = 'control' | 'test' | 'no_difference';
+
+type FaqCandidate = {
+  query: string;
+  answer: string;
+  confidences: number[];
+  count: number;
+  feedbackPositive: number;
+};
 
 // ─────────────────────────────────────────────────────────────────────
 // Types
@@ -27,7 +40,7 @@ export interface Interaction {
   confidence: number;
   sources: Array<{ id: string; score: number }>;
   responseTimeMs: number;
-  channel: 'web' | 'whatsapp' | 'voice';
+  channel: FeedbackChannel;
 }
 
 export interface Feedback {
@@ -38,7 +51,7 @@ export interface Feedback {
   helpful: boolean;
   rating?: number;  // 1-5
   comment?: string;
-  feedbackType?: 'incorrect' | 'incomplete' | 'unclear' | 'other';
+  feedbackType?: FeedbackType;
 }
 
 export interface KnowledgeGap {
@@ -78,7 +91,7 @@ export interface ABTest {
     control: { satisfaction: number[]; confidence: number[]; responseTime: number[] };
     test: { satisfaction: number[]; confidence: number[]; responseTime: number[] };
   };
-  winner?: 'control' | 'test' | 'no_difference';
+  winner?: ABTestWinner;
 }
 
 // ─────────────────────────────────────────────────────────────────────
@@ -86,17 +99,17 @@ export interface ABTest {
 // ─────────────────────────────────────────────────────────────────────
 
 class InteractionStore {
-  private interactions: Map<string, Interaction> = new Map();
-  private feedbacks: Map<string, Feedback> = new Map();
-  private gaps: Map<string, KnowledgeGap> = new Map();
-  private improvements: Map<string, ImprovementCandidate> = new Map();
-  private abTests: Map<string, ABTest> = new Map();
+  private readonly interactions: Map<string, Interaction> = new Map();
+  private readonly feedbacks: Map<string, Feedback> = new Map();
+  private readonly gaps: Map<string, KnowledgeGap> = new Map();
+  private readonly improvements: Map<string, ImprovementCandidate> = new Map();
+  private readonly abTests: Map<string, ABTest> = new Map();
   
   // Query patterns tracking
-  private queryPatterns: Map<string, { count: number; lastQuery: string; intents: Intent[] }> = new Map();
+  private readonly queryPatterns: Map<string, { count: number; lastQuery: string; intents: Intent[] }> = new Map();
   
   generateId(): string {
-    return `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return `${Date.now()}_${randomUUID().slice(0, 9)}`;
   }
   
   // ─────────────────────────────────────────────────────────────────
@@ -249,10 +262,14 @@ class InteractionStore {
     metric: { satisfaction?: number; confidence?: number; responseTime?: number }
   ): void {
     const test = this.abTests.get(testId);
-    if (!test || test.status !== 'running') return;
+    if (test?.status !== 'running') return;
     
-    const group = test.testGroup.includes(userId) ? 'test' : 
-                  test.controlGroup.includes(userId) ? 'control' : null;
+    let group: ABTestGroup | null = null;
+    if (test.testGroup.includes(userId)) {
+      group = 'test';
+    } else if (test.controlGroup.includes(userId)) {
+      group = 'control';
+    }
     
     if (!group) return;
     
@@ -373,7 +390,7 @@ class InteractionStore {
 // ─────────────────────────────────────────────────────────────────────
 
 export class FeedbackLoopService {
-  private store: InteractionStore;
+  private readonly store: InteractionStore;
   
   constructor() {
     this.store = new InteractionStore();
@@ -390,7 +407,7 @@ export class FeedbackLoopService {
     confidence: number;
     sources: ScoredChunk[];
     responseTimeMs: number;
-    channel: 'web' | 'whatsapp' | 'voice';
+    channel: FeedbackChannel;
   }): string {
     return this.store.storeInteraction({
       userId: data.userId,
@@ -414,17 +431,17 @@ export class FeedbackLoopService {
     helpful: boolean;
     rating?: number;
     comment?: string;
-    feedbackType?: Feedback['feedbackType'];
+    feedbackType?: FeedbackType;
   }): string {
-    return this.store.storeFeedback({
-      interactionId: data.interactionId,
-      userId: data.userId,
-      timestamp: new Date(),
-      helpful: data.helpful,
-      rating: data.rating,
-      comment: data.comment,
-      feedbackType: data.feedbackType,
-    });
+      return this.store.storeFeedback({
+        interactionId: data.interactionId,
+        userId: data.userId,
+        timestamp: new Date(),
+        helpful: data.helpful,
+        rating: data.rating,
+        comment: data.comment,
+        feedbackType: data.feedbackType,
+      });
   }
   
   /**
@@ -465,7 +482,7 @@ export class FeedbackLoopService {
     
     // Convert to gaps (frequency > 3)
     const gaps: KnowledgeGap[] = [];
-    for (const [key, group] of queryGroups) {
+    for (const [, group] of queryGroups) {
       if (group.count >= 3) {
         const avgConfidence = group.confidences.reduce((a, b) => a + b, 0) / group.confidences.length;
         
@@ -489,79 +506,67 @@ export class FeedbackLoopService {
    */
   async autoGenerateFAQ(): Promise<ImprovementCandidate[]> {
     const interactions = this.store.getRecentInteractions(1000);
-    const feedbackStats = this.store.getFeedbackStats();
-    
-    // Group by similar queries with high confidence
-    const candidates = new Map<string, {
-      query: string;
-      answer: string;
-      confidences: number[];
-      count: number;
-      feedbackPositive: number;
-    }>();
-    
+
+    const candidates = this.groupFaqCandidates(interactions);
+    this.addCandidateFeedback(interactions, candidates);
+    return this.buildFaqImprovements(candidates);
+  }
+
+  private groupFaqCandidates(interactions: Interaction[]): Map<string, FaqCandidate> {
+    const candidates = new Map<string, FaqCandidate>();
     for (const interaction of interactions) {
-      if (interaction.confidence < 0.8) continue; // Only high confidence
-      
-      const normalized = interaction.query
-        .toLowerCase()
-        .replace(/\d+/g, '#')
-        .slice(0, 50);
-      
+      if (interaction.confidence < 0.8) continue;
+
+      const normalized = interaction.query.toLowerCase().replace(/\d+/g, '#').slice(0, 50);
       const existing = candidates.get(normalized);
       if (existing) {
         existing.confidences.push(interaction.confidence);
         existing.count++;
-      } else {
-        candidates.set(normalized, {
-          query: interaction.query,
-          answer: interaction.answer,
-          confidences: [interaction.confidence],
-          count: 1,
-          feedbackPositive: 0,
-        });
+        continue;
       }
+
+      candidates.set(normalized, {
+        query: interaction.query,
+        answer: interaction.answer,
+        confidences: [interaction.confidence],
+        count: 1,
+        feedbackPositive: 0,
+      });
     }
-    
-    // Check feedback for each candidate
+    return candidates;
+  }
+
+  private addCandidateFeedback(interactions: Interaction[], candidates: Map<string, FaqCandidate>): void {
     for (const [key, candidate] of candidates) {
-      const relatedInteractions = interactions.filter(
-        i => i.query.toLowerCase().includes(key.slice(0, 30))
-      );
-      
-      for (const ri of relatedInteractions) {
-        const feedback = this.store.getFeedbackForInteraction(ri.id);
-        const positive = feedback.filter(f => f.helpful);
-        candidate.feedbackPositive += positive.length;
+      const relatedInteractions = interactions.filter((interaction) => interaction.query.toLowerCase().includes(key.slice(0, 30)));
+      for (const interaction of relatedInteractions) {
+        candidate.feedbackPositive += this.store.getFeedbackForInteraction(interaction.id).filter((feedback) => feedback.helpful).length;
       }
     }
-    
-    // Convert to improvement candidates (frequency > 10, satisfaction > 70%)
+  }
+
+  private buildFaqImprovements(candidates: Map<string, FaqCandidate>): ImprovementCandidate[] {
     const improvements: ImprovementCandidate[] = [];
-    for (const [key, candidate] of candidates) {
-      if (candidate.count >= 10) {
-        const avgConfidence = candidate.confidences.reduce((a, b) => a + b, 0) / candidate.confidences.length;
-        const satisfaction = candidate.count > 0 
-          ? candidate.feedbackPositive / candidate.count 
-          : 0.5;
-        
-        if (satisfaction >= 0.7 || candidate.count >= 20) {
-          improvements.push({
-            id: this.store.generateId(),
-            type: 'auto_faq',
-            query: candidate.query,
-            answer: candidate.answer,
-            sourceCount: 1,
-            frequencyCount: candidate.count,
-            avgSatisfaction: satisfaction,
-            avgConfidence,
-            needsReview: true,
-            createdAt: new Date(),
-          });
-        }
-      }
+    for (const candidate of candidates.values()) {
+      if (candidate.count < 10) continue;
+
+      const avgConfidence = candidate.confidences.reduce((a, b) => a + b, 0) / candidate.confidences.length;
+      const satisfaction = candidate.feedbackPositive / candidate.count;
+      if (satisfaction < 0.7 && candidate.count < 20) continue;
+
+      improvements.push({
+        id: this.store.generateId(),
+        type: 'auto_faq',
+        query: candidate.query,
+        answer: candidate.answer,
+        sourceCount: 1,
+        frequencyCount: candidate.count,
+        avgSatisfaction: satisfaction,
+        avgConfidence,
+        needsReview: true,
+        createdAt: new Date(),
+      });
     }
-    
     return improvements.sort((a, b) => b.frequencyCount - a.frequencyCount);
   }
   

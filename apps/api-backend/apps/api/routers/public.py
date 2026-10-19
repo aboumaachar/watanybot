@@ -1,8 +1,13 @@
+import base64
+import binascii
 import re
 import time
 import uuid
+from pathlib import Path
 from typing import Any, List, Optional
 from fastapi import APIRouter, Depends, Header, HTTPException, Query, Request
+from fastapi.responses import FileResponse
+from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from sqlalchemy import func, text
 from database import get_db
@@ -23,6 +28,56 @@ import structlog
 logger = structlog.get_logger()
 router = APIRouter()
 CLARIFY_APOLOGY = "حتى أعطيك جواباً دقيقاً، أحتاج منك تحديد المعاملة المقصودة."
+UPLOAD_ROOT = Path(__file__).resolve().parents[3] / "data" / "uploads"
+MAX_UPLOAD_BYTES = 5 * 1024 * 1024
+PNG_DATA_URL = re.compile(r"^data:image/png;base64,(?P<data>[A-Za-z0-9+/=]+)$", re.IGNORECASE)
+PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
+
+
+class UploadRequest(BaseModel):
+    dataUrl: str
+
+
+@router.post("/api/files/upload")
+async def upload_file(request: UploadRequest):
+    match = PNG_DATA_URL.fullmatch(request.dataUrl.strip())
+    if not match:
+        raise HTTPException(status_code=415, detail="UNSUPPORTED_IMAGE_TYPE")
+
+    try:
+        content = base64.b64decode(match.group("data"), validate=True)
+    except (binascii.Error, ValueError):
+        raise HTTPException(status_code=400, detail="INVALID_BASE64") from None
+
+    if not content or not content.startswith(PNG_SIGNATURE):
+        raise HTTPException(status_code=400, detail="INVALID_PNG")
+    if len(content) > MAX_UPLOAD_BYTES:
+        raise HTTPException(status_code=413, detail="UPLOAD_TOO_LARGE")
+
+    UPLOAD_ROOT.mkdir(parents=True, exist_ok=True)
+    filename = f"{uuid.uuid4().hex}.png"
+    target = UPLOAD_ROOT / filename
+    target.write_bytes(content)
+
+    return {
+        "ok": True,
+        "url": f"/runtime/uploads/{filename}",
+        "filename": filename,
+        "mimeType": "image/png",
+        "size": len(content),
+    }
+
+
+@router.get("/runtime/uploads/{filename}")
+async def read_uploaded_file(filename: str):
+    if not re.fullmatch(r"[0-9a-f]{32}\.png", filename):
+        raise HTTPException(status_code=404, detail="NOT_FOUND")
+
+    target = UPLOAD_ROOT / filename
+    if not target.is_file():
+        raise HTTPException(status_code=404, detail="NOT_FOUND")
+
+    return FileResponse(target, media_type="image/png")
 
 
 def build_procedure_answer(data: dict, lang: str) -> str:

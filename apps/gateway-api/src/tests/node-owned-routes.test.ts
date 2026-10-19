@@ -15,18 +15,39 @@
  *   - TX mock               (/api/tx/search)
  *   - Unified search        (/api/search/unified)
  */
-import { describe, it, expect, beforeAll, afterAll } from "vitest";
+import { describe, it, expect, beforeAll, afterAll, vi } from "vitest";
 // Ensure Python upstream is treated as down for these Node-owned route tests
 // so proxy calls fail fast and do not hang internal requests.
 import { restorePythonEnv, forcePythonDown } from "./setup/force-python-down";
+
+vi.mock("../lib/db.js", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("../lib/db.js")>();
+  return {
+    ...actual,
+    query: vi.fn(async (sql: string, params: unknown[] = []) => {
+      if (sql.includes("SELECT id, email, role FROM users WHERE id = $1 AND status = 'active'")) {
+        return { rows: [{ id: String(params[0] ?? ""), email: "admin@test.com", role: "admin" }], rowCount: 1 };
+      }
+      if (sql.includes("SELECT id FROM sessions WHERE id = $1 AND user_id = $2 AND expires_at > now()")) {
+        return { rows: [{ id: String(params[0] ?? "") }], rowCount: 1 };
+      }
+      return actual.query(sql, params);
+    }),
+  };
+});
+
 import { app } from "../server";
-import { signAccessToken } from "../auth/auth-middleware.js";
+import { cleanupSessionUsers, createSessionToken } from "./helpers/session-auth";
 
 process.env.JWT_SECRET ||= "test-jwt-secret-for-admin-tests-0123456789abcdef";
 
+// Admin paths resolve the principal from the database (active user + live session + sid).
+let adminToken = "";
+beforeAll(async () => { adminToken = await createSessionToken("admin"); }, 30000);
+afterAll(async () => { await cleanupSessionUsers(); });
+
 function adminHeaders() {
-  const token = signAccessToken({ sub: "test-admin", role: "admin", email: "admin@test.com" });
-  return { authorization: `Bearer ${token}` };
+  return { authorization: `Bearer ${adminToken}` };
 }
 
 beforeAll(async () => {
@@ -130,6 +151,27 @@ describe("GET /api/ticker", () => {
     expect(body).toHaveProperty("items");
     expect(Array.isArray(body.items)).toBe(true);
   });
+
+  it("supports a no-store latest-activity mode", async () => {
+    const res = await app.inject({ method: "GET", url: "/api/ticker?mode=latest" });
+    expect(res.statusCode).toBe(200);
+    expect(res.headers["cache-control"]).toContain("no-store");
+    const body = res.json() as { items: unknown[]; mode?: string; generatedAt?: number; settings?: { cycleMs?: number } };
+    expect(body.mode).toBe("latest");
+    expect(typeof body.generatedAt).toBe("number");
+    expect(body.settings?.cycleMs).toBe(240000);
+    expect(Array.isArray(body.items)).toBe(true);
+    expect(body.items.length).toBeGreaterThan(0);
+  });
+
+  it("excludes World Cup activity and keeps job activity in latest mode", async () => {
+    const res = await app.inject({ method: "GET", url: "/api/ticker?mode=latest" });
+    expect(res.statusCode).toBe(200);
+    const body = res.json() as { items: Array<{ title?: string; body?: string; linkId?: string; url?: string }> };
+    const corpus = JSON.stringify(body.items).toLowerCase();
+    expect(corpus).not.toMatch(/world[ _-]?cup|fifa 2026|كأس العالم|كاس العالم|مونديال/);
+    expect(body.items.some((item) => String(item.linkId || item.url || "").startsWith("/jobs"))).toBe(true);
+  });
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -147,6 +189,24 @@ describe("GET /api/v2/files", () => {
   it("accepts procedureId filter param", async () => {
     const res = await app.inject({ method: "GET", url: "/api/v2/files?procedureId=TEST-001" });
     expect([200, 404]).toContain(res.statusCode);
+  });
+});
+
+describe("GET /api/admin/erm/assets", () => {
+  it("rejects unauthenticated requests", async () => {
+    const res = await app.inject({ method: "GET", url: "/api/admin/erm/assets" });
+    expect([401, 403]).toContain(res.statusCode);
+  });
+
+  it("returns a bounded admin asset collection with stable IDs", async () => {
+    const res = await app.inject({ method: "GET", url: "/api/admin/erm/assets?limit=2", headers: adminHeaders() });
+    expect(res.statusCode).toBe(200);
+    const body = res.json() as { items: Array<{ id?: string }>; total: number; bounded: boolean };
+    expect(body.bounded).toBe(true);
+    expect(Array.isArray(body.items)).toBe(true);
+    expect(body.items.length).toBeLessThanOrEqual(2);
+    expect(body.items.every((item) => typeof item.id === "string" && item.id.length > 0)).toBe(true);
+    expect(typeof body.total).toBe("number");
   });
 });
 

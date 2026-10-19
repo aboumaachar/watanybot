@@ -2,7 +2,73 @@
 <IfModule mod_rewrite.c>
   RewriteEngine On
 
+  # ARTICLE_SITEMAP_V2_BEGIN
+  RewriteRule ^sitemap-articles\.xml$ /mcp/api/articles/sitemap.xml [L,QSA]
+  # ARTICLE_SITEMAP_V2_END
+
+  # ARTICLE_SOCIAL_PREVIEW_V5_BEGIN
+  # Social/share crawlers receive compact server-rendered OpenGraph metadata.
+  RewriteCond %{HTTP_USER_AGENT} "(facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|Pinterestbot|BingPreview)" [NC]
+  RewriteRule ^articles/([^/]+)/([^/]+)/?$ /mcp/api/articles/social-preview/$1/$2 [B,L,QSA]
+  RewriteCond %{HTTP_USER_AGENT} "(facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|Pinterestbot|BingPreview)" [NC]
+  RewriteRule ^articles/([^/]+)/?$ /mcp/api/articles/social-preview-legacy/$1 [B,L,QSA]
+  # ARTICLE_SOCIAL_PREVIEW_V5_END
+
+  # ARTICLE_SEARCH_PREVIEW_V1_BEGIN
+  # Search crawlers receive equivalent full article content plus canonical SEO metadata.
+  RewriteCond %{HTTP_USER_AGENT} "(Googlebot|Google-InspectionTool|bingbot|DuckDuckBot|Applebot|YandexBot)" [NC]
+  RewriteRule ^articles/([^/]+)/([^/]+)/?$ /mcp/api/articles/search-preview/$1/$2 [B,L,QSA]
+  RewriteCond %{HTTP_USER_AGENT} "(Googlebot|Google-InspectionTool|bingbot|DuckDuckBot|Applebot|YandexBot)" [NC]
+  RewriteRule ^articles/([^/]+)/?$ /mcp/api/articles/search-preview-legacy/$1 [B,L,QSA]
+  # ARTICLE_SEARCH_PREVIEW_V1_END
+
+  # Serve generated social-preview shells before the generic SPA fallback.
+  RewriteCond %{REQUEST_FILENAME}/index.html -f
+  RewriteRule ^(.+?)/?$ $1/index.html [L]
+
+  # Keep the canonical React JobsPage from being shadowed by the static jobs directory.
+  RewriteRule ^jobs/?$ index.html [L]
+
+  # Keep the canonical React Announcements page from being shadowed by the legacy static announcements directory.
+  RewriteRule ^announcements/?$ index.html [L]
+
+  RewriteCond %{REQUEST_URI} ^/share/jobs/middle-east-security/
+  RewriteRule ^ - [E=MES_SHARE_DOCUMENT:1]
+
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
   RewriteRule . index.html [L]
+</IfModule>
+
+# Hashed production assets are immutable and should not be revalidated per request.
+<IfModule mod_expires.c>
+  ExpiresActive On
+  <FilesMatch "\.(?:css|js|mjs|json|png|jpe?g|gif|webp|svg|ico|woff2?)$">
+    ExpiresDefault "access plus 1 year"
+  </FilesMatch>
+</IfModule>
+
+<IfModule mod_setenvif.c>
+  SetEnvIf Request_URI "^/share/jobs/middle-east-security/" MES_SHARE_DOCUMENT=1
+</IfModule>
+
+<IfModule mod_headers.c>
+  Header always set Cache-Control "no-store" env=MES_SHARE_DOCUMENT
+  Header always set Referrer-Policy "no-referrer" env=MES_SHARE_DOCUMENT
+  Header always set X-Robots-Tag "noindex, nofollow" env=MES_SHARE_DOCUMENT
+  Header always set Referrer-Policy "no-referrer" "expr=%{THE_REQUEST} =~ m#\s/+share/jobs/middle-east-security/#"
+  Header always set X-Robots-Tag "noindex, nofollow" "expr=%{THE_REQUEST} =~ m#\s/+share/jobs/middle-east-security/#"
+  <FilesMatch "\.(?:css|js|mjs|json|png|jpe?g|gif|webp|svg|ico|woff2?)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  <FilesMatch "^index\.html$">
+    Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
+    Header set Pragma "no-cache"
+    Header set Expires "0"
+  </FilesMatch>
+</IfModule>
+
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/css text/javascript
+  AddOutputFilterByType DEFLATE application/javascript application/json application/manifest+json image/svg+xml
 </IfModule>

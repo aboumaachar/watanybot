@@ -1,0 +1,29 @@
+{
+  "schema": "watanybot-apex-report-manifest-v1",
+  "runId": "68721380-5e0c-4bdf-808b-41c4e99a6e34",
+  "frozen": true,
+  "selfHashExcluded": true,
+  "artifacts": [
+    "FINAL_REPORT.md",
+    "summary.json",
+    "FINAL_STATUS.txt",
+    "progress.json",
+    "progress.csv",
+    "checkpoint.json",
+    "validations.csv",
+    "actions.csv",
+    "failures.csv",
+    "warnings.csv",
+    "ERROR_LOG.txt",
+    "EXECUTION_LOG.txt",
+    "REAL_PAYLOAD_ACCEPTANCE_ADDENDUM.md",
+    "stages/01_PREFLIGHT.md",
+    "stages/02_BRIDGE.md",
+    "stages/03_RUNTIME.md",
+    "stages/04_BROWSER.md",
+    "stages/05_CLEANUP.md",
+    "stages/06_DELIVERY.md"
+  ],
+  "verification": "SHA256 verification recorded in report-manifest-verification.txt",
+  "selfExcludedArtifacts": ["report-manifest.json", "report-manifest-verification.txt"]
+}

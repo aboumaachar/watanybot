@@ -12,39 +12,70 @@ const expectedIds = [
   "for-you",
   "latest",
   "popular",
-  "schools",
-  "procedures",
   "salary",
-  "taxi",
+  "procedures",
+  "schools",
   "marketplace",
   "jobs",
+  "taxi",
+  "circulars",
   "network",
+  "forms",
   "useful-links",
   "deaths",
   "community",
-  "voice",
-  "forms",
+  "voting",
+  "news",
   "laws",
   "faq",
   "fake-fact",
-  "news",
+  "profile",
+  "settings",
+  "children",
+  "sports",
 ] as const;
 
 describe("V4 authorized homepage contract", () => {
-  it("exposes exactly the authorized 19 entries in order", () => {
-    expect(watanyV4HomepageItems).toHaveLength(19);
+  it("exposes exactly the authorized 24 entries in order", () => {
+    expect(watanyV4HomepageItems).toHaveLength(24);
     expect(watanyV4HomepageItems.map((item) => item.id)).toEqual(expectedIds);
-    expect(new Set(watanyV4HomepageItems.map((item) => item.id)).size).toBe(19);
-    expect(new Set(watanyV4HomepageItems.map((item) => item.route)).size).toBe(19);
+    expect(new Set(watanyV4HomepageItems.map((item) => item.id)).size).toBe(24);
+    expect(new Set(watanyV4HomepageItems.map((item) => item.route)).size).toBe(24);
+    expect(watanyV4HomepageItems.map((item) => item.id)).not.toContain("voice");
     expect(watanyV4HomepageItems.map((item) => item.labelAr)).not.toContain("كأس العالم 2026");
     expect(watanyV4HomepageItems.map((item) => item.labelAr)).not.toContain("خدمات موطني");
-    expect(watanyV4HomepageItems[0]).toEqual(
+    expect(watanyV4HomepageItems.at(-4)).toEqual(
       expect.objectContaining({
-        id: "for-you",
-        labelAr: "يهمك",
-        route: "/for-you",
+        id: "profile",
+        labelAr: "الحساب",
+        route: "/profile",
       }),
     );
+    expect(watanyV4HomepageItems.at(-3)).toEqual(
+      expect.objectContaining({
+        id: "settings",
+        labelAr: "الإعدادات",
+        route: "/settings",
+      }),
+    );
+    expect(watanyV4HomepageItems.at(-2)).toEqual(
+      expect.objectContaining({
+        id: "children",
+        labelAr: "الأبناء",
+        route: "/children",
+      }),
+    );
+    expect(watanyV4HomepageItems.at(-1)).toEqual(
+      expect.objectContaining({
+        id: "sports",
+        labelAr: "الرياضة",
+        route: "/sports",
+      }),
+    );
+    expect(getWatanyV4IconName("children")).toBe("users");
+    expect(WATANY_V4_ICONS.users).toBe("/watany-v4/icons/users.png");
+    expect(getWatanyV4IconName("sports")).toBe("world-cup");
+    expect(WATANY_V4_ICONS["world-cup"]).toBe("/watany-v4/icons/world-cup.png");
     expect(watanyV4HomepageItems.every((item) => getWatanyV4IconName(item.id))).toBe(true);
     expect(WATANY_V4_ICONS["for-you"]).toBe("/watany-v4/icons/for-you.png");
     expect(WATANY_V4_ICONS.latest).toBe("/watany-v4/icons/latest.png");
@@ -57,6 +88,13 @@ describe("V4 authorized homepage contract", () => {
     );
     expect(getWatanyV4IconName("useful-links")).toBe("links");
     expect(WATANY_V4_ICONS.links).toBe("/watany-assets/icons/links.svg");
+    expect(watanyV4HomepageItems.find((item) => item.id === "profile")).toEqual(
+      expect.objectContaining({ labelAr: "الحساب", route: "/profile" }),
+    );
+    expect(watanyV4HomepageItems.find((item) => item.id === "settings")).toEqual(
+      expect.objectContaining({ labelAr: "الإعدادات", route: "/settings" }),
+    );
+    expect(WATANY_V4_ICONS.settings).toBe("/watany-v4/icons/settings.svg");
   });
 
   it("keeps forbidden homepage headings and spacing removed", () => {
@@ -119,12 +157,14 @@ describe("V4 authorized homepage contract", () => {
     expect(DRAWER_MENU_GROUPS).toHaveLength(5);
     expect(DRAWER_MENU_GROUPS.map((group) => group.label)).toEqual([
       "الإجراءات",
+      "الخدمات والفرص",
       "المعلومات والمراجع",
-      "الخدمات اليومية والفرص",
       "المجتمع والإعلام",
       "الحساب والإعدادات",
     ]);
     expect(DRAWER_MENU_GROUPS[0].id).toBe("procedures");
+    expect(DRAWER_MENU_GROUPS[1]).toEqual(expect.objectContaining({ id: "daily-services" }));
+    expect(DRAWER_MENU_GROUPS[1]).not.toHaveProperty("drawerLevel", "top-level");
     expect(DRAWER_MENU_GROUPS.reduce((total, group) => total + group.items.length, 0)).toBe(21);
     expect(DRAWER_MENU_GROUPS.every((group) => group.items.every((item) => item.route.startsWith("/")))).toBe(true);
     expect(DRAWER_MENU_GROUPS.at(-1)?.id).toBe("account");

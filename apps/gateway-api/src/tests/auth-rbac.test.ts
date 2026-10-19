@@ -49,12 +49,18 @@ describe("RBAC", () => {
       expect(hasPermission("superadmin", "admin.users")).toBe(true);
       expect(hasPermission("superadmin", "superadmin.all")).toBe(true);
       expect(hasPermission("superadmin", "admin.rules")).toBe(true);
+      expect(hasPermission("superadmin", "superadmin.shell.read")).toBe(true);
+      expect(hasPermission("superadmin", "superadmin.audit.read")).toBe(true);
+      expect(hasPermission("superadmin", "superadmin.feature_controls.read")).toBe(true);
+      expect(hasPermission("superadmin", "superadmin.feature_controls.write")).toBe(true);
+      expect(hasPermission("superadmin", "superadmin.system.read")).toBe(true);
     });
 
     it("admin can manage users and dashboard but not superadmin.all", () => {
       expect(hasPermission("admin", "admin.users")).toBe(true);
       expect(hasPermission("admin", "admin.dashboard")).toBe(true);
       expect(hasPermission("admin", "superadmin.all")).toBe(false);
+      expect(hasPermission("admin", "superadmin.shell.read")).toBe(false);
     });
 
     it("moderator can view cases and verify documents", () => {

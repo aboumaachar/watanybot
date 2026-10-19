@@ -4,9 +4,17 @@
 import { randomUUID } from "node:crypto";
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { query } from "../lib/db.js";
-import { hashPassword, verifyPassword } from "./password.js";
-import { signAccessToken, signRefreshToken, verifyToken } from "./auth-middleware.js";
+import { hashPassword, isLegacyWordpressPasswordHash, verifyPassword } from "./password.js";
+import { createAuthSession, signAccessToken, signRefreshToken, verifyToken } from "./auth-middleware.js";
 import type { UserRole } from "@watany/types";
+import { effectiveUserRole, isConfiguredAdminEmail } from "./admin-policy.js";
+import {
+  ADMIN_AUDIT_ANONYMOUS_ACTOR,
+  appendAdminAuditEvent,
+  createAdminAuditEvent,
+} from "../admin-authority/adminAuthorityAudit.js";
+import { getRequestNetworkContext } from "./request-network.js";
+import { recordSuccessfulLogin } from "./login-events.js";
 
 const REFRESH_COOKIE_NAME = "watany_refresh";
 const CSRF_COOKIE_NAME = "watany_csrf";
@@ -141,9 +149,7 @@ function isLoopbackIp(clientIp: string): boolean {
 }
 
 function isLocalRequest(request: FastifyRequest): boolean {
-  const forwardedFor = request.headers["x-forwarded-for"];
-  const firstForwarded = Array.isArray(forwardedFor) ? forwardedFor[0] : forwardedFor;
-  const clientIp = (firstForwarded?.split(",")[0]?.trim() || request.ip || "").toLowerCase();
+  const clientIp = getRequestNetworkContext(request).clientIp.toLowerCase();
   const hostname = normalizeHost(request.hostname) ?? normalizeHost(request.headers.host);
 
   return isLoopbackHost(hostname) && isLoopbackIp(clientIp);
@@ -263,6 +269,10 @@ export async function authRoutes(app: FastifyInstance): Promise<void> {
       return reply.code(400).send({ error: "email, password, fullName, username مطلوبة" });
     }
 
+    if (isConfiguredAdminEmail(email)) {
+      return reply.code(403).send({ error: "هذا البريد مخصص لحساب إداري مُدار" });
+    }
+
     // Email format validation
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/u.test(email)) {
       return reply.code(400).send({ error: "صيغة البريد الإلكتروني غير صحيحة" });
@@ -284,27 +294,28 @@ export async function authRoutes(app: FastifyInstance): Promise<void> {
 
     const hash = await hashPassword(password);
     const result = await query(
-      `INSERT INTO users (email, username, full_name, name, password_hash, phone_number, phone)
-       VALUES ($1, $2, $3, $3, $4, $5, $5)
+      `INSERT INTO users (email, username, full_name, name, password_hash, phone_number, phone, last_login, last_login_ip)
+       VALUES ($1, $2, $3, $3, $4, $5, $5, now(), $6)
        RETURNING id, role, username, full_name`,
-      [email, username, fullName, hash, phoneNumber || null],
+      [email, username, fullName, hash, phoneNumber || null, getRequestNetworkContext(request).clientIp],
     );
 
     const user = result.rows[0];
-    const accessToken = signAccessToken({ sub: user.id, role: user.role as UserRole, email });
     const refreshToken = signRefreshToken({ sub: user.id });
+    const sessionId = await createAuthSession({
+      userId: user.id,
+      refreshToken,
+      ip: getRequestNetworkContext(request).clientIp,
+      userAgent: request.headers["user-agent"] || "",
+    });
+    await recordSuccessfulLogin(request, user.id, sessionId, "registration");
+    const accessToken = signAccessToken({ sub: user.id, role: user.role as UserRole, email, sid: sessionId });
     setSessionCookies(reply, request, refreshToken, rememberMe);
-
-    // Store session
-    await query(
-      "INSERT INTO sessions (user_id, token, ip, user_agent, expires_at) VALUES ($1, $2, $3, $4, now() + interval '7 days')",
-      [user.id, refreshToken, request.ip, request.headers["user-agent"] || ""],
-    );
 
     // Audit
     await query(
       "INSERT INTO audit_log (user_id, action, resource, ip, user_agent) VALUES ($1, $2, $3, $4, $5)",
-      [user.id, "auth.register", "users", request.ip, request.headers["user-agent"] || ""],
+      [user.id, "auth.register", "users", getRequestNetworkContext(request).clientIp, request.headers["user-agent"] || ""],
     );
 
     return reply.code(201).send({
@@ -359,45 +370,103 @@ export async function authRoutes(app: FastifyInstance): Promise<void> {
            role,
            status
          FROM users
-         WHERE email = $1 OR username = $1`,
+         WHERE email = $1 OR username = $1
+            OR (length(regexp_replace($1, '[^0-9]', '', 'g')) BETWEEN 8 AND 15
+                AND regexp_replace(COALESCE(phone_number, phone, ''), '[^0-9]', '', 'g') = regexp_replace($1, '[^0-9]', '', 'g'))`,
         [email],
       );
 
       if ((result.rowCount ?? 0) === 0) {
+        await appendAdminAuditEvent(createAdminAuditEvent({
+          eventType: "ADMIN_LOGIN_FAILURE",
+          actorId: ADMIN_AUDIT_ANONYMOUS_ACTOR,
+          entityType: "authentication",
+          reason: "invalid_credentials",
+          ip: getRequestNetworkContext(request).clientIp,
+          userAgent: request.headers["user-agent"] || "",
+        }));
         return reply.code(401).send({ error: "بريد إلكتروني أو كلمة مرور خاطئة" });
       }
 
       const user = result.rows[0];
 
       if (user.status === "banned") {
+        await appendAdminAuditEvent(createAdminAuditEvent({
+          eventType: "ADMIN_LOGIN_FAILURE",
+          actorId: ADMIN_AUDIT_ANONYMOUS_ACTOR,
+          entityType: "authentication",
+          entityId: user.id,
+          reason: "banned_account",
+          ip: getRequestNetworkContext(request).clientIp,
+          userAgent: request.headers["user-agent"] || "",
+        }));
         return reply.code(403).send({ error: "تم حظر هذا الحساب" });
       }
 
       const valid = await verifyPassword(password, user.password_hash);
       if (!valid) {
+        await appendAdminAuditEvent(createAdminAuditEvent({
+          eventType: "ADMIN_LOGIN_FAILURE",
+          actorId: ADMIN_AUDIT_ANONYMOUS_ACTOR,
+          entityType: "authentication",
+          entityId: user.id,
+          reason: "invalid_credentials",
+          ip: getRequestNetworkContext(request).clientIp,
+          userAgent: request.headers["user-agent"] || "",
+        }));
         return reply.code(401).send({ error: "بريد إلكتروني أو كلمة مرور خاطئة" });
       }
 
-      const accessToken = signAccessToken({ sub: user.id, role: user.role as UserRole, email: user.email });
+      let identityVerificationRequired = false;
+      if (isLegacyWordpressPasswordHash(user.password_hash)) {
+        const upgradedHash = await hashPassword(password);
+        await query("UPDATE users SET password_hash = $2, updated_at = now() WHERE id = $1", [user.id, upgradedHash]);
+      }
+      const legacyIdentity = await query<{ identity_verification_required: boolean }>(
+        "SELECT identity_verification_required FROM legacy_wp_user_identities WHERE user_id = $1 LIMIT 1",
+        [user.id],
+      );
+      identityVerificationRequired = Boolean(legacyIdentity.rows[0]?.identity_verification_required);
+
+      const role = effectiveUserRole(user.email, user.role as UserRole);
+      if (role !== user.role) {
+        await query("UPDATE users SET role = $1 WHERE id = $2", [role, user.id]);
+      }
       const refreshToken = signRefreshToken({ sub: user.id });
+      const sessionId = await createAuthSession({
+        userId: user.id,
+        refreshToken,
+        ip: getRequestNetworkContext(request).clientIp,
+        userAgent: request.headers["user-agent"] || "",
+      });
+      await recordSuccessfulLogin(request, user.id, sessionId, "password");
+      const accessToken = signAccessToken({ sub: user.id, role, email: user.email, sid: sessionId });
       setSessionCookies(reply, request, refreshToken, rememberMe);
 
-      await query(
-        "INSERT INTO sessions (user_id, token, ip, user_agent, expires_at) VALUES ($1, $2, $3, $4, now() + interval '7 days')",
-        [user.id, refreshToken, request.ip, request.headers["user-agent"] || ""],
-      );
-
-      await query("UPDATE users SET last_login = now() WHERE id = $1", [user.id]);
+      await query("UPDATE users SET last_login = now(), last_login_ip = $2 WHERE id = $1", [user.id, getRequestNetworkContext(request).clientIp]);
 
       await query(
         "INSERT INTO audit_log (user_id, action, resource, ip, user_agent) VALUES ($1, $2, $3, $4, $5)",
-        [user.id, "auth.login", "sessions", request.ip, request.headers["user-agent"] || ""],
+        [user.id, "auth.login", "sessions", getRequestNetworkContext(request).clientIp, request.headers["user-agent"] || ""],
       );
+
+      if (role === "admin" || role === "superadmin") {
+        await appendAdminAuditEvent(createAdminAuditEvent({
+          eventType: "ADMIN_LOGIN_SUCCESS",
+          actorId: user.id,
+          entityType: "session",
+          entityId: sessionId,
+          after: { role },
+          reason: "password_login",
+          ip: getRequestNetworkContext(request).clientIp,
+          userAgent: request.headers["user-agent"] || "",
+        }));
+      }
 
       return reply.send({
         accessToken,
         expiresIn: 86400,
-        user: { id: user.id, email: user.email, username: user.username, fullName: user.full_name, role: user.role },
+        user: { id: user.id, email: user.email, username: user.username, fullName: user.full_name, role, identityVerificationRequired },
       });
     } catch (error) {
       if (isDatabaseUnavailableError(error)) {
@@ -473,9 +542,10 @@ export async function authRoutes(app: FastifyInstance): Promise<void> {
       }
 
       if (user) {
+        const role = effectiveUserRole(email, user.role);
         await query(
           `UPDATE public.users
-           SET last_login = now(),
+           SET last_login = now(), last_login_ip = $4, role = $3,
                full_name = CASE
                  WHEN full_name IS NULL OR btrim(full_name) = '' THEN $2
                  ELSE full_name
@@ -485,32 +555,49 @@ export async function authRoutes(app: FastifyInstance): Promise<void> {
                  ELSE name
                END
            WHERE id = $1`,
-          [user.id, fullName],
+          [user.id, fullName, role, getRequestNetworkContext(request).clientIp],
         );
+        user.role = role;
       } else {
         const createdUserResult = await query<AuthenticatedUserRow>(
-          `INSERT INTO public.users (email, username, full_name, name, password_hash, role, status, last_login)
-           VALUES ($1, $2, $3, $3, '', 'public', 'active', now())
+          `INSERT INTO public.users (email, username, full_name, name, password_hash, role, status, last_login, last_login_ip)
+           VALUES ($1, $2, $3, $3, '', $4, 'active', now(), $5)
            RETURNING id, email, full_name, username, role, status`,
-          [email, buildGeneratedUsername(), fullName],
+          [email, buildGeneratedUsername(), fullName, effectiveUserRole(email, "public"), getRequestNetworkContext(request).clientIp],
         );
 
         user = createdUserResult.rows[0];
       }
 
-      const accessToken = signAccessToken({ sub: user.id, role: user.role, email: user.email });
       const refreshToken = signRefreshToken({ sub: user.id });
+      const role = effectiveUserRole(user.email, user.role);
+      const sessionId = await createAuthSession({
+        userId: user.id,
+        refreshToken,
+        ip: getRequestNetworkContext(request).clientIp,
+        userAgent: request.headers["user-agent"] || "",
+      });
+      await recordSuccessfulLogin(request, user.id, sessionId, "google");
+      const accessToken = signAccessToken({ sub: user.id, role, email: user.email, sid: sessionId });
       setSessionCookies(reply, request, refreshToken, rememberMe);
 
       await query(
-        "INSERT INTO public.sessions (user_id, token, ip, user_agent, expires_at) VALUES ($1, $2, $3, $4, now() + interval '7 days')",
-        [user.id, refreshToken, request.ip, request.headers["user-agent"] || ""],
+        "INSERT INTO audit_log (user_id, action, resource, details, ip, user_agent) VALUES ($1, $2, $3, $4, $5, $6)",
+        [user.id, "auth.login.google", "sessions", { googleSub: googleIdentity.sub }, getRequestNetworkContext(request).clientIp, request.headers["user-agent"] || ""],
       );
 
-      await query(
-        "INSERT INTO audit_log (user_id, action, resource, details, ip, user_agent) VALUES ($1, $2, $3, $4, $5, $6)",
-        [user.id, "auth.login.google", "sessions", { googleSub: googleIdentity.sub }, request.ip, request.headers["user-agent"] || ""],
-      );
+      if (role === "admin" || role === "superadmin") {
+        await appendAdminAuditEvent(createAdminAuditEvent({
+          eventType: "ADMIN_LOGIN_SUCCESS",
+          actorId: user.id,
+          entityType: "session",
+          entityId: sessionId,
+          after: { role },
+          reason: "google_login",
+          ip: getRequestNetworkContext(request).clientIp,
+          userAgent: request.headers["user-agent"] || "",
+        }));
+      }
 
       const responsePayload = {
         accessToken,
@@ -520,7 +607,7 @@ export async function authRoutes(app: FastifyInstance): Promise<void> {
           email: user.email,
           username: user.username,
           fullName: user.full_name,
-          role: user.role,
+          role,
         },
       };
 
@@ -561,14 +648,20 @@ export async function authRoutes(app: FastifyInstance): Promise<void> {
 
     const isDevAdminSession = isDevAdminFallbackEnabled(request) && payload.sub === DEV_ADMIN_ID;
 
+    let sessionId: string | undefined;
     if (!isDevAdminSession) {
-      const session = await query(
+      const session = await query<{ id: string }>(
         "SELECT id FROM sessions WHERE token = $1 AND expires_at > now()",
         [refreshToken],
       );
       if ((session.rowCount ?? 0) === 0) {
         clearSessionCookies(reply, request);
         return reply.code(401).send({ error: "الجلسة منتهية" });
+      }
+      sessionId = session.rows[0]?.id;
+      if (!sessionId) {
+        clearSessionCookies(reply, request);
+        return reply.code(401).send({ error: "الجلسة غير صالحة" });
       }
     }
 
@@ -582,9 +675,15 @@ export async function authRoutes(app: FastifyInstance): Promise<void> {
         return reply.code(401).send({ error: "المستخدم غير موجود" });
       }
       u = user.rows[0] as { id: string; email: string; role: UserRole };
+      u.role = effectiveUserRole(u.email, u.role);
     }
 
-    const newAccess = signAccessToken({ sub: u.id, role: u.role, email: u.email });
+    const newAccess = signAccessToken({
+      sub: u.id,
+      role: u.role,
+      email: u.email,
+      ...(sessionId ? { sid: sessionId } : {}),
+    });
     const newRefresh = signRefreshToken({ sub: u.id });
     setSessionCookies(reply, request, newRefresh, true);
 
@@ -616,11 +715,36 @@ export async function authRoutes(app: FastifyInstance): Promise<void> {
     if (userId) {
       await query(
         "INSERT INTO audit_log (user_id, action, resource, ip) VALUES ($1, $2, $3, $4)",
-        [userId, "auth.logout", "sessions", request.ip],
+        [userId, "auth.logout", "sessions", getRequestNetworkContext(request).clientIp],
       );
+
+      await appendAdminAuditEvent(createAdminAuditEvent({
+        eventType: "ADMIN_LOGOUT",
+        actorId: userId,
+        entityType: "session",
+        reason: "logout",
+        ip: getRequestNetworkContext(request).clientIp,
+        userAgent: request.headers["user-agent"] || "",
+      }));
     }
 
     clearSessionCookies(reply, request);
+    return reply.send({ ok: true });
+  });
+
+  app.post("/api/auth/change-password", async (request, reply) => {
+    const user = (request as any).user;
+    if (!user?.id) return reply.code(401).send({ error: "AUTH_REQUIRED" });
+    const body = (request.body ?? {}) as any;
+    const currentPassword = String(body.currentPassword ?? "");
+    const newPassword = String(body.newPassword ?? "");
+    if (newPassword.length < 8) return reply.code(400).send({ error: "NEW_PASSWORD_TOO_SHORT" });
+    const current = await query("SELECT password_hash FROM users WHERE id=$1 LIMIT 1", [user.id]);
+    if (!(current.rowCount ?? 0)) return reply.code(404).send({ error: "USER_NOT_FOUND" });
+    if (!(await verifyPassword(currentPassword, current.rows[0].password_hash)))
+      return reply.code(400).send({ error: "CURRENT_PASSWORD_INVALID" });
+    const passwordHash = await hashPassword(newPassword);
+    await query("UPDATE users SET password_hash=$2, must_change_password=FALSE WHERE id=$1", [user.id, passwordHash]);
     return reply.send({ ok: true });
   });
 
@@ -631,7 +755,7 @@ export async function authRoutes(app: FastifyInstance): Promise<void> {
     }
 
     const result = await query(
-      "SELECT id, email, name, phone, role, rank, military_id, region, status, created_at, last_login FROM users WHERE id = $1",
+      "SELECT id, email, full_name, name, phone_number, phone, role, rank, military_id, region, note, status, created_at, last_login, last_login_ip, must_change_password FROM users WHERE id = $1",
       [user.id],
     );
 
@@ -639,7 +763,16 @@ export async function authRoutes(app: FastifyInstance): Promise<void> {
       return reply.code(404).send({ error: "المستخدم غير موجود" });
     }
 
-    return reply.send({ user: result.rows[0] });
+    const legacyIdentity = await query<{ identity_verification_required: boolean }>(
+      "SELECT identity_verification_required FROM legacy_wp_user_identities WHERE user_id = $1 LIMIT 1",
+      [user.id],
+    );
+    return reply.send({
+      user: {
+        ...result.rows[0],
+        identityVerificationRequired: Boolean(legacyIdentity.rows[0]?.identity_verification_required),
+      },
+    });
   }
 
   /** GET /api/auth/me — return current user profile */

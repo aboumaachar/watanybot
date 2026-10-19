@@ -8,7 +8,7 @@
  * - Feature flagging integration
  */
 
-import { randomUUID } from 'crypto';
+import { randomInt, randomUUID } from 'node:crypto';
 
 // ─────────────────────────────────────────────────────────────────────
 // Types
@@ -138,9 +138,9 @@ function confidenceInterval(p: number, n: number, confidence: number): [number, 
 // ─────────────────────────────────────────────────────────────────────
 
 export class ABTestEngine {
-  private experiments: Map<string, Experiment> = new Map();
-  private userAssignments: Map<string, Map<string, UserAssignment>> = new Map();
-  private config: ABTestConfig;
+  private readonly experiments: Map<string, Experiment> = new Map();
+  private readonly userAssignments: Map<string, Map<string, UserAssignment>> = new Map();
+  private readonly config: ABTestConfig;
 
   constructor(config?: Partial<ABTestConfig>) {
     this.config = {
@@ -238,7 +238,7 @@ export class ABTestEngine {
    */
   pauseExperiment(experimentId: string): boolean {
     const experiment = this.experiments.get(experimentId);
-    if (!experiment || experiment.status !== 'running') return false;
+      if (!experiment || experiment?.status !== 'running') return false;
 
     experiment.status = 'paused';
     return true;
@@ -249,7 +249,7 @@ export class ABTestEngine {
    */
   completeExperiment(experimentId: string, winner?: string): boolean {
     const experiment = this.experiments.get(experimentId);
-    if (!experiment) return false;
+      if (!experiment) return false;
 
     experiment.status = 'completed';
     experiment.completedAt = new Date();
@@ -296,7 +296,7 @@ export class ABTestEngine {
    */
   assignUser(userId: string, experimentId: string): Variant | null {
     const experiment = this.experiments.get(experimentId);
-    if (!experiment || experiment.status !== 'running') return null;
+    if (experiment?.status !== 'running') return null;
 
     // Check for existing assignment
     const userExperiments = this.userAssignments.get(userId);
@@ -306,7 +306,7 @@ export class ABTestEngine {
     }
 
     // Random assignment based on weights
-    const random = Math.random() * 100;
+    const random = randomInt(0, 10_000) / 100;
     let cumulative = 0;
     let selectedVariant: Variant | null = null;
 
@@ -318,15 +318,15 @@ export class ABTestEngine {
       }
     }
 
-    if (!selectedVariant) {
-      selectedVariant = experiment.variants[experiment.variants.length - 1];
-    }
+    selectedVariant ??= experiment.variants[experiment.variants.length - 1];
 
     // Store assignment
-    if (!this.userAssignments.has(userId)) {
-      this.userAssignments.set(userId, new Map());
+    let assignments = this.userAssignments.get(userId);
+    if (!assignments) {
+      assignments = new Map();
+      this.userAssignments.set(userId, assignments);
     }
-    this.userAssignments.get(userId)!.set(experimentId, {
+    assignments.set(experimentId, {
       experimentId,
       variantId: selectedVariant.id,
       assignedAt: new Date(),
@@ -410,7 +410,7 @@ export class ABTestEngine {
       rating?: 'positive' | 'negative';
     }
   ): void {
-    const experiment = this.experiments.get(experimentId);
+      const experiment = this.experiments.get(experimentId);
     if (!experiment) return;
 
     const variantMetrics = experiment.results.get(variantId);
@@ -666,14 +666,12 @@ export class ABTestEngine {
 let abTestEngineInstance: ABTestEngine | null = null;
 
 export function getABTestEngine(): ABTestEngine {
-  if (!abTestEngineInstance) {
-    abTestEngineInstance = new ABTestEngine({
-      defaultSignificanceLevel: parseFloat(process.env.AB_SIGNIFICANCE_LEVEL || '0.95'),
-      defaultMinSampleSize: parseInt(process.env.AB_MIN_SAMPLE_SIZE || '100'),
+  abTestEngineInstance ??= new ABTestEngine({
+      defaultSignificanceLevel: Number.parseFloat(process.env.AB_SIGNIFICANCE_LEVEL || '0.95'),
+      defaultMinSampleSize: Number.parseInt(process.env.AB_MIN_SAMPLE_SIZE || '100'),
       autoCompleteOnSignificance: process.env.AB_AUTO_COMPLETE !== 'false',
-      maxRunningExperiments: parseInt(process.env.AB_MAX_RUNNING || '10'),
+      maxRunningExperiments: Number.parseInt(process.env.AB_MAX_RUNNING || '10'),
     });
-  }
   return abTestEngineInstance;
 }
 

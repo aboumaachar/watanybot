@@ -1,0 +1,120 @@
+{
+  "runId": "68721380-5e0c-4bdf-808b-41c4e99a6e34",
+  "wave": "4B.1",
+  "feature": "PAYLOAD_TO_GATEWAY_CANONICAL_PUBLICATION_BRIDGE",
+  "status": "PASS_WITH_ADVISORY_RUNTIME_NOISE",
+  "branchRequired": "integration/theme-upgrade-20260728",
+  "payloadToGatewaySync": "PASS",
+  "canonicalIds": {
+    "procedures": ["P4B_PROCEDURE_A"],
+    "documents": ["P4B_DOCUMENT_A", "P4B_DOCUMENT_B"]
+  },
+  "counts": {
+    "proceduresFetched": 1,
+    "proceduresPublished": 1,
+    "documentsFetched": 4,
+    "documentsPublished": 2,
+    "mappings": 1
+  },
+  "contentHash": "15b885a9d0a9c14255ec6b2cee3fe274f1276861ebed6e3daec43db6c5d4dd0e",
+  "relationshipProof": {
+    "procedureAttachments": ["P4B_DOCUMENT_A", "P4B_DOCUMENT_B"],
+    "documentLinkedProcedures": ["P4B_PROCEDURE_A"]
+  },
+  "lifecycleExclusion": {
+    "draftRecordsPublished": 0,
+    "archivedRecordsPublished": 0
+  },
+  "lastGoodPreservation": "PASS",
+  "concurrencyProtection": "PASS",
+  "legacyWriterCensus": {
+    "cmsMutatingAuthorityBoundaries": 8,
+    "blockedCmsProcedureMutationRoutes": 7,
+    "blockedLegacyAdminProcedureMutationRoutes": 4,
+    "blockedProcedureEditorRoutes": 11,
+    "writeProcedureDocsLinksReachableCalls": 0,
+    "legacyKbStudioDatasetGenerationPaths": 1
+  },
+  "uiGates": {
+    "desktopViewport": "1440x900 PASS",
+    "mobileViewport": "430x932 PASS",
+    "mobileHorizontalOverflow": false,
+    "payloadOwnershipLabel": "PASS",
+    "procedureReadOnlyLabel": "PASS",
+    "editorialDocumentReadOnlyDetail": "PASS"
+  },
+  "validation": {
+    "focusedBridgeTests": "4 passed",
+    "boundaryTests": "3 passed",
+    "gatewayRegression": "5 suites passed; 17 tests passed; 3 skipped",
+    "gatewayTypecheck": "PASS",
+    "webAdminTypecheck": "PASS",
+    "webAdminBuild": "PASS_WITH_EXISTING_CHUNK_ADVISORIES"
+  },
+  "safety": {
+    "genericCmsCompletionStarted": "NO",
+    "productionContacted": "NO",
+    "externalPayloadSourceMutated": "NO",
+    "payloadDatabaseMutated": "NO",
+    "credentialsPersisted": "NO",
+    "fullPayloadBodiesCaptured": "NO"
+  },
+  "delivery": {
+    "commitMessage": "feat(cms): bridge Payload editorial content to Gateway",
+    "commitSha": "c7ca29999b41bf41511abd29429ac448e73b05aa",
+    "pushBranch": "integration/theme-upgrade-20260728",
+    "pushResult": "PASS_REMOTE_SHA_MATCH",
+    "stagedUnrelatedPathCount": 0,
+    "unrelatedWorktreePathCount": 6
+  },
+  "realPayloadAcceptance": {
+    "status": "PASS",
+    "historicalFixtureBrowserProofRerun": false,
+    "wave4b2Started": false,
+    "restSnapshot": {
+      "proceduresTotal": 2,
+      "documentsTotal": 4,
+      "publishedProcedureCanonicalId": "P4B_REAL_PROCEDURE_A",
+      "publishedProcedureBusinessIdentifier": "PROC-0001",
+      "publishedDocumentCanonicalIds": ["P4B_REAL_DOCUMENT_A", "P4B_REAL_DOCUMENT_B"]
+    },
+    "enrichedSync": {
+      "runId": "d52f0819-0b3d-4f66-bdef-6c7e6747dd2d",
+      "status": "SYNCED",
+      "proceduresFetched": 2,
+      "proceduresPublished": 1,
+      "documentsFetched": 4,
+      "documentsPublished": 2,
+      "mappings": 1,
+      "contentHash": "6ad074fd51d65f1e2718998390bd252f2a51745740a4ebd1db37ba76d823d060"
+    },
+    "archiveSync": {
+      "runId": "a7099911-10a7-44df-bbbc-e68f0a9d911d",
+      "proceduresPublished": 0,
+      "documentsPublished": 2,
+      "draftArchiveExclusion": "PASS"
+    },
+    "republishSync": {
+      "runId": "7f209036-d8dd-43e9-a11c-162e11a45133",
+      "proceduresPublished": 1,
+      "documentsPublished": 2,
+      "mappings": 1,
+      "restoration": "PASS"
+    },
+    "lastGood": {
+      "unavailableHttpStatus": 503,
+      "errorCode": "UNAVAILABLE",
+      "auditStatus": "FAILED / UNAVAILABLE",
+      "pointerSha256": "D159524BBCD36FDC62F820B214264B40918D7879CCC159B352B37BD4DCD31C8A",
+      "pointerUnchanged": true
+    },
+    "safety": {
+      "protectedNormalPayloadDatabaseTouched": false,
+      "isolatedDisposableDatabasesMutatedThenDropped": true,
+      "temporaryArtifactsRemoved": true,
+      "credentialsPersisted": false
+    },
+    "sourceCorrectionCommitSha": "89335a1d4c7a133e6e3f200e77e5943890e40a35",
+    "evidenceCommitMessage": "docs(cms): finalize Wave 4B.1 bridge evidence"
+  }
+}

@@ -2,6 +2,20 @@
   "use strict";
   if (window.watanyPublicRuntimeScopeV1) return;
 
+  function pinPublicSameOriginApiBase() {
+    var host = String(window.location && window.location.hostname || "").toLowerCase();
+    if (!host || host === "localhost" || host === "127.0.0.1" || host === "0.0.0.0" || host === "::1" || host === "[::1]") return;
+    try {
+      var origin = String(window.location.origin || "").replace(/\/$/, "");
+      if (!origin) return;
+      window.localStorage.setItem("watany_api_base_force", origin);
+      window.localStorage.setItem("watany_api_base_url", origin);
+      document.documentElement.setAttribute("data-watany-public-api-base", "same-origin");
+    } catch (e) {}
+  }
+
+  pinPublicSameOriginApiBase();
+
   function normalizePath(path) {
     return String(path || "/").replace(/\/+$/, "") || "/";
   }

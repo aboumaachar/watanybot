@@ -1,15 +1,8 @@
 import { WatanyFeatureTemplate } from "../components/template";
 import { useEffect, useRef, useState } from "react";
-import { Archive24Regular, ArrowCounterclockwise24Regular, Clock24Regular, Share24Regular } from "../theme/watany-v4/legacyIconBridge";
-import InlineInfoButton from "../components/InlineInfoButton";
 import { api, type SurveyBridgeStatus, type SurveySummary, type SurveyDetail, type SurveyResults } from "../lib/api";
 import { useApp } from "../store/app";
-
-const PROVIDER_LABELS: Record<SurveyBridgeStatus["provider"], string> = {
-  pending_bridge: "غير مفعّل بعد",
-  supabase_rest_bridge: "مصدر Supabase الحالي",
-  watany_plugin_db: "مخزن موطني الداخلي",
-};
+import "../styles.css";
 
 const STATUS_LABELS: Record<SurveySummary["status"], string> = {
   draft: "مسودة",
@@ -28,62 +21,7 @@ function formatSurveyWindow(survey: SurveySummary): string {
   return `${start} - ${end}`;
 }
 
-const LEGACY_SURVEY_HINT_SNIPPETS = [
-  "التصويت النتائج",
-  "قاعدة موطني",
-  "المصدر القديم",
-  "القراءة الكتابة",
-] as const;
-
-function sanitizeSurveyNextStep(nextStep: string): string {
-  const collapsed = nextStep.replace(/\s+/g, " ").trim();
-  if (LEGACY_SURVEY_HINT_SNIPPETS.every((snippet) => collapsed.includes(snippet))) {
-    return "";
-  }
-
-  let sanitized = collapsed;
-  for (const snippet of LEGACY_SURVEY_HINT_SNIPPETS) {
-    sanitized = sanitized.replace(snippet, "");
-  }
-
-  return sanitized
-    .replace(/[.R,:;\u061b\u060c]+\s*[.R,:;\u061b\u060c]+/g, ". ")
-    .replace(/\s{2,}/g, " ")
-    .trim();
-}
-
-function getSanitizedNextStep(bridgeStatus: SurveyBridgeStatus | null): string {
-  if (!bridgeStatus) {
-    return "";
-  }
-
-  return sanitizeSurveyNextStep(bridgeStatus.nextStep);
-}
-
 const SURVEY_TONE_CLASSES = ["survey-poll-card--teal", "survey-poll-card--sky", "survey-poll-card--sand"] as const;
-
-function getFeaturedPoll(polls: SurveySummary[]): SurveySummary | null {
-  return polls.find((poll) => poll.status === "active") ?? polls[0] ?? null;
-}
-
-function getSurveyCategoryLabel(poll: SurveySummary): string {
-  const normalizedId = poll.id.toLowerCase();
-  const normalizedTitle = poll.title.toLowerCase();
-
-  if (normalizedId.includes("upcoming") || normalizedTitle.includes("مباراة")) {
-    return "المباريات المقبلة";
-  }
-
-  if (normalizedId.includes("champion") || normalizedTitle.includes("بطلاً") || normalizedTitle.includes("بطلا")) {
-    return "البطل المتوقع";
-  }
-
-  if (normalizedId.includes("golden-boot") || normalizedTitle.includes("الحذاء الذهبي") || normalizedTitle.includes("الأهداف") || normalizedTitle.includes("الاهداف")) {
-    return "سباق الهداف";
-  }
-
-  return "استطلاع مباشر";
-}
 
 function getSurveyToneClass(index: number): string {
   return SURVEY_TONE_CLASSES[index % SURVEY_TONE_CLASSES.length];
@@ -169,8 +107,11 @@ async function submitSurveyVoteFlow({
     const results = await api.getSurveyResults(selectedPoll.id, apiBaseUrl);
     setPollResults(results);
 
-    const pollsList = await api.listSurveys(apiBaseUrl);
-    setPolls(pollsList);
+    const [activeItems, closedItems] = await Promise.all([
+      api.listSurveys(apiBaseUrl, "active"),
+      api.listSurveys(apiBaseUrl, "closed"),
+    ]);
+    setPolls([...activeItems, ...closedItems]);
   } catch (err) {
     console.error("Vote submission failed:", err);
   } finally {
@@ -288,6 +229,7 @@ function SurveyModalLoadedContent({
   onSubmitVote,
 }: Readonly<SurveyModalLoadedContentProps>) {
   const canVote = pollDetails.canVote;
+  const isClosed = selectedPoll.status === "closed";
   const selectionLocked = voted || canVote === false;
   const totalVotes = pollResults?.totalVotes ?? 0;
 
@@ -299,14 +241,14 @@ function SurveyModalLoadedContent({
         </div>
       ) : null}
 
-      {canVote ? null : (
+      {canVote || isClosed ? null : (
         <div className="survey-modal-notice survey-modal-notice--info">
           يمكنك مراجعة التفاصيل والنتائج الآن، لكن إرسال التصويت يتطلب تسجيل الدخول أولاً.
         </div>
       )}
 
       <div className="survey-modal-layout">
-        <section className="survey-modal-section">
+        {isClosed ? null : <section className="survey-modal-section">
           <div className="survey-modal-section__header">
             <div>
               <h3 className="survey-modal-section__title">اختر خيارك</h3>
@@ -341,13 +283,13 @@ function SurveyModalLoadedContent({
               </label>
             ))}
           </div>
-        </section>
+        </section>}
 
         <section ref={pollResultsRef} tabIndex={-1} className="survey-modal-section survey-modal-section--results">
           <div className="survey-modal-section__header">
             <div>
-              <h3 className="survey-modal-section__title">النتائج الحالية</h3>
-              <p className="survey-modal-section__copy">تتحدث الأشرطة مباشرة بعد كل تصويت مسجل على الخادم.</p>
+              <h3 className="survey-modal-section__title">{isClosed ? "النتائج النهائية" : "النتائج الحالية"}</h3>
+              {isClosed ? null : <p className="survey-modal-section__copy">تتحدث الأشرطة مباشرة بعد كل تصويت مسجل على الخادم.</p>}
             </div>
             <span className="survey-modal-chip survey-modal-chip--accent">إجمالي الأصوات: {totalVotes}</span>
           </div>
@@ -381,7 +323,6 @@ function SurveyModalLoadedContent({
           onClick={onShareResults}
           className="survey-modal-button survey-modal-button--secondary"
         >
-          <Share24Regular aria-hidden style={{ width: 18, height: 18 }} />
           مشاركة
         </button>
         <button
@@ -479,12 +420,11 @@ function SurveyModal({
 
         <div className="survey-modal-meta">
           <span className={`survey-modal-status survey-modal-status--${selectedPoll.status}`}>{STATUS_LABELS[selectedPoll.status]}</span>
-          <span className="survey-modal-meta__item">{formatSurveyWindow(selectedPoll)}</span>
-          <span className="survey-modal-meta__item">{selectedPoll.optionCount} خيار/خيارات</span>
+          <span className="survey-modal-meta__item">{formatSurveyWindow(selectedPoll)} · {selectedPoll.optionCount} خيار</span>
           {selectedPoll.hasVoted ? <span className="survey-modal-status survey-modal-status--voted">صوت مسجل</span> : null}
         </div>
         <h2 ref={modalTitleRef} tabIndex={-1} className="survey-modal-title">{selectedPoll.title}</h2>
-        <p className="survey-modal-description">{selectedPoll.description}</p>
+        {selectedPoll.status === "closed" ? null : <p className="survey-modal-description">{selectedPoll.description}</p>}
         {modalContent}
       </dialog>
     </div>
@@ -496,171 +436,13 @@ type SurveySectionActions = {
   openPollResults: (poll: SurveySummary) => void;
 };
 
-function renderSurveyHeroSection({
-  bridgeStatus,
-  providerLabel,
-  loading,
-  activePollCount,
-  totalOptionCount,
-  pollsCount,
-  latestPollId,
-  error,
-  sanitizedNextStep,
-  openLatestPoll,
-  reloadSurveys,
-}: {
-  bridgeStatus: SurveyBridgeStatus | null;
-  providerLabel: string;
-  loading: boolean;
-  activePollCount: number;
-  totalOptionCount: number;
-  pollsCount: number;
-  latestPollId: string | null;
-  error: string;
-  sanitizedNextStep: string;
-  openLatestPoll: (intent: SurveyModalIntent) => void;
-  reloadSurveys: () => void;
-}) {
-  return (
-    <section className="survey-page__hero">
-      <div className="survey-page__hero-copy">
-        <div className="survey-page__eyebrow-row">
-          <span className="survey-page__eyebrow">تصويت مباشر داخل موطني</span>
-          <InlineInfoButton
-            text="واجهة تصويت ونتائج مبنية داخل موطني مع بطاقات أوضح للمباريات، البطل المتوقع، وسباق الهداف."
-            label="حول صفحة الاستطلاع والتصويت"
-          />
-        </div>
+type SurveyTab = "active" | "closed";
 
-        <h2 className="survey-page__title">واجهة تصويت أوضح للمباريات والمنتخبات وسباق الهداف</h2>
-        <p className="survey-page__lead">
-          {bridgeStatus?.ready
-            ? "كل استطلاع يعرض حالته ونافذة الوقت وعدد الخيارات مباشرة، مع انتقال واضح إلى بطاقة تجمع التصويت والنتائج في مكان واحد."
-            : "سنُظهر الاستطلاعات هنا فور جاهزية مصدر البيانات على الخادم، مع نفس الواجهة الواضحة للقراءة السريعة على الهاتف."}
-        </p>
+function getSurveyPageStateMessage(loading: boolean, bridgeStatus: SurveyBridgeStatus | null, polls: SurveySummary[], error: string): string | null {
+  if (error) {
+    return error;
+  }
 
-        <div className="survey-page__quick-actions">
-          <button
-            type="button"
-            className="survey-page__action survey-page__action--primary"
-            onClick={() => openLatestPoll("vote")}
-            disabled={!latestPollId}
-          >
-            <Clock24Regular aria-hidden />
-            أحدث استطلاع
-          </button>
-
-          <button
-            type="button"
-            className="survey-page__action survey-page__action--secondary"
-            onClick={() => openLatestPoll("results")}
-            disabled={!latestPollId}
-          >
-            <Archive24Regular aria-hidden />
-            نتائج فورية
-          </button>
-
-          <button
-            type="button"
-            className="survey-page__action survey-page__action--ghost"
-            onClick={reloadSurveys}
-          >
-            <ArrowCounterclockwise24Regular aria-hidden />
-            تحديث البيانات
-          </button>
-        </div>
-      </div>
-
-      <aside className="survey-status-card">
-        <div className="survey-status-card__header">
-          <div>
-            <span className="survey-status-card__kicker">لوحة سريعة</span>
-            <h3 className="survey-status-card__title">حالة الصفحة الآن</h3>
-          </div>
-          <span className="survey-status-card__pulse" aria-hidden />
-        </div>
-
-        <div className="survey-status-card__metrics">
-          <div className="survey-status-card__metric">
-            <span>مصدر البيانات</span>
-            <strong>{providerLabel}</strong>
-          </div>
-          <div className="survey-status-card__metric">
-            <span>الاستطلاعات النشطة</span>
-            <strong>{loading ? "..." : activePollCount}</strong>
-          </div>
-          <div className="survey-status-card__metric">
-            <span>إجمالي الخيارات</span>
-            <strong>{loading ? "..." : totalOptionCount}</strong>
-          </div>
-        </div>
-
-        <div className="survey-status-card__badges">
-          <span className="pill pending">{bridgeStatus ? `الاستطلاعات الظاهرة: ${pollsCount}` : "الاستطلاعات: جارٍ التحقق"}</span>
-          <span className="pill pending">{latestPollId ? "آخر تحديث جاهز للعرض" : "لا يوجد استطلاع مميز بعد"}</span>
-        </div>
-
-        {error ? <div className="panel-error">{error}</div> : null}
-        {sanitizedNextStep ? (
-          <p className="survey-status-card__note">{sanitizedNextStep}</p>
-        ) : (
-          <p className="survey-status-card__note">التصميم الحالي يركز على قراءة أسرع للبطاقات والنتائج من دون شريط ثابت يحجب المحتوى على الهاتف.</p>
-        )}
-      </aside>
-    </section>
-  );
-}
-
-function renderSurveySpotlightSection(featuredPoll: SurveySummary, actions: SurveySectionActions) {
-  return (
-    <section className="survey-spotlight">
-      <div className="survey-spotlight__copy">
-        <span className="survey-spotlight__kicker">{getSurveyCategoryLabel(featuredPoll)}</span>
-        <h3 className="survey-spotlight__title">{featuredPoll.title}</h3>
-        <p className="survey-spotlight__description">{featuredPoll.description || "بطاقة تصويت نشطة داخل موطني مع نتائج مباشرة."}</p>
-
-        <div className="survey-spotlight__meta">
-          <div className="survey-spotlight__meta-item">
-            <span>نافذة التصويت</span>
-            <strong>{formatSurveyWindow(featuredPoll)}</strong>
-          </div>
-          <div className="survey-spotlight__meta-item">
-            <span>عدد الخيارات</span>
-            <strong>{featuredPoll.optionCount} خيار</strong>
-          </div>
-        </div>
-      </div>
-
-      <div className="survey-spotlight__panel">
-        <div className="survey-spotlight__badges">
-          <span className={`pill ${featuredPoll.status === "active" ? "verified" : "pending"}`}>{STATUS_LABELS[featuredPoll.status]}</span>
-          {featuredPoll.hasVoted ? <span className="pill verified">صوت مسجل</span> : <span className="pill pending">جاهز للتصويت</span>}
-        </div>
-
-        <p className="survey-spotlight__note">افتح البطاقة المميزة إذا كنت تريد مساراً أسرع إلى التفاصيل والنتائج الحالية في نفس النافذة.</p>
-
-        <div className="survey-spotlight__actions">
-          <button
-            type="button"
-            className="survey-page__action survey-page__action--primary"
-            onClick={() => actions.openVotePoll(featuredPoll)}
-          >
-            عرض البطاقة
-          </button>
-          <button
-            type="button"
-            className="survey-page__action survey-page__action--ghost"
-            onClick={() => actions.openPollResults(featuredPoll)}
-          >
-            النتائج المباشرة
-          </button>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function getSurveyPageStateMessage(loading: boolean, bridgeStatus: SurveyBridgeStatus | null, polls: SurveySummary[]): string | null {
   if (loading) {
     return "جارٍ تحميل قائمة الاستطلاعات...";
   }
@@ -676,15 +458,15 @@ function getSurveyPageStateMessage(loading: boolean, bridgeStatus: SurveyBridgeS
   return null;
 }
 
-function renderSurveyPollGridSection(pageStateMessage: string | null, polls: SurveySummary[], actions: SurveySectionActions) {
+function renderSurveyPollGridSection(pageStateMessage: string | null, polls: SurveySummary[], tab: SurveyTab, actions: SurveySectionActions) {
   return (
-    <section className="survey-page__section">
+    <section className={`survey-page__section survey-page__section--compact ${tab === "closed" ? "survey-page__section--closed" : ""}`}>
       <div className="survey-page__section-head">
         <div>
-          <span className="survey-page__section-kicker">بطاقات التصويت</span>
-          <h3 className="survey-page__section-title">اختر الاستطلاع المناسب بسرعة</h3>
+          <span className="survey-page__section-kicker">سجل التصويت</span>
+          <h3 className="survey-page__section-title">{tab === "active" ? "الاستطلاعات النشطة" : "الاستطلاعات المغلقة"}</h3>
         </div>
-        <p className="survey-page__section-copy">كل بطاقة تُظهر الفكرة الأساسية والموعد وعدد الخيارات قبل الدخول إلى نافذة التفاصيل.</p>
+        <p className="survey-page__section-copy">{tab === "active" ? "اختر بطاقة لقراءة التفاصيل وتسجيل صوتك داخل نافذة واحدة." : "راجع البطاقات المنتهية واطّلع على النتائج النهائية لكل استطلاع."}</p>
       </div>
 
       {pageStateMessage ? (
@@ -692,52 +474,39 @@ function renderSurveyPollGridSection(pageStateMessage: string | null, polls: Sur
       ) : (
         <div className="survey-grid">
           {polls.map((poll, index) => (
-            <article className={`survey-poll-card ${getSurveyToneClass(index)}`} key={poll.id}>
-              <div className="survey-poll-card__header">
-                <span className="survey-poll-card__serial">{String(index + 1).padStart(2, "0")}</span>
-                <span className="survey-poll-card__tag">{getSurveyCategoryLabel(poll)}</span>
-              </div>
+            <article className={`survey-poll-card survey-poll-card--compact ${getSurveyToneClass(index)} ${tab === "closed" ? "survey-poll-card--closed" : ""}`} key={poll.id}>
 
               <div className="survey-poll-card__body">
                 <h4 className="survey-poll-card__title">{poll.title}</h4>
-                <p className="survey-poll-card__description">{poll.description || "بطاقة تصويت مفعلة داخل موطني مع واجهة نتائج مباشرة."}</p>
               </div>
 
-              <div className="survey-poll-card__stats">
-                <div className="survey-poll-card__stat">
-                  <span>الحالة</span>
-                  <strong>{STATUS_LABELS[poll.status]}</strong>
-                </div>
-                <div className="survey-poll-card__stat survey-poll-card__stat--wide">
-                  <span>الفترة</span>
-                  <strong>{formatSurveyWindow(poll)}</strong>
-                </div>
-                <div className="survey-poll-card__stat">
-                  <span>الخيارات</span>
-                  <strong>{poll.optionCount}</strong>
-                </div>
+              <div className="survey-poll-card__closed-meta">
+                <span>{formatSurveyWindow(poll)}</span>
+                <span>{poll.optionCount} خيار</span>
               </div>
 
               <div className="survey-poll-card__footer">
-                <div className="survey-poll-card__chips">
+                {tab === "active" ? <div className="survey-poll-card__chips">
                   <span className={`pill ${poll.status === "active" ? "verified" : "pending"}`}>{STATUS_LABELS[poll.status]}</span>
                   {poll.hasVoted ? <span className="pill verified">صوت مسجل</span> : <span className="pill pending">لم يُسجل صوت بعد</span>}
-                </div>
+                </div> : null}
 
                 <div className="survey-poll-card__actions">
-                  <button
-                    type="button"
-                    className="survey-page__action survey-page__action--ghost"
-                    onClick={() => actions.openPollResults(poll)}
-                  >
-                    النتائج
-                  </button>
+                  {tab === "active" ? (
+                    <button
+                      type="button"
+                      className="survey-page__action survey-page__action--ghost"
+                      onClick={() => actions.openPollResults(poll)}
+                    >
+                      النتائج الحالية
+                    </button>
+                  ) : null}
                   <button
                     type="button"
                     className="survey-page__action survey-page__action--primary"
-                    onClick={() => actions.openVotePoll(poll)}
+                    onClick={() => tab === "active" ? actions.openVotePoll(poll) : actions.openPollResults(poll)}
                   >
-                    عرض البطاقة
+                    {tab === "active" ? "فتح للتصويت" : "عرض النتائج"}
                   </button>
                 </div>
               </div>
@@ -755,8 +524,7 @@ function SurveyPageTemplateContent() {
   const [polls, setPolls] = useState<SurveySummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [reloadKey, setReloadKey] = useState(0);
-  
+  const [selectedTab, setSelectedTab] = useState<SurveyTab>("active");
   // Modal state
   const [selectedPoll, setSelectedPoll] = useState<SurveySummary | null>(null);
   const [pollDetails, setPollDetails] = useState<SurveyDetail | null>(null);
@@ -768,13 +536,10 @@ function SurveyPageTemplateContent() {
   const [modalIntent, setModalIntent] = useState<SurveyModalIntent>("vote");
   const modalTitleRef = useRef<HTMLHeadingElement | null>(null);
   const pollResultsRef = useRef<HTMLDivElement | null>(null);
-  const latestPollId = polls[0]?.id ?? selectedPoll?.id ?? null;
-  const featuredPoll = getFeaturedPoll(polls);
-  const activePollCount = polls.filter((poll) => poll.status === "active").length;
-  const totalOptionCount = polls.reduce((sum, poll) => sum + poll.optionCount, 0);
-  const providerLabel = bridgeStatus ? PROVIDER_LABELS[bridgeStatus.provider] : "جارٍ التحقق";
-  const sanitizedNextStep = getSanitizedNextStep(bridgeStatus);
-  const pageStateMessage = getSurveyPageStateMessage(loading, bridgeStatus, polls);
+  const activePolls = polls.filter((poll) => poll.status === "active");
+  const closedPolls = polls.filter((poll) => poll.status === "closed");
+  const visiblePolls = selectedTab === "active" ? activePolls : closedPolls;
+  const pageStateMessage = getSurveyPageStateMessage(loading, bridgeStatus, polls, error);
 
   useEffect(() => {
     let active = true;
@@ -793,10 +558,13 @@ function SurveyPageTemplateContent() {
           return;
         }
 
-        const items = await api.listSurveys(apiBaseUrl);
+        const [activeItems, closedItems] = await Promise.all([
+          api.listSurveys(apiBaseUrl, "active"),
+          api.listSurveys(apiBaseUrl, "closed"),
+        ]);
         if (!active) return;
 
-        setPolls(items);
+        setPolls([...activeItems, ...closedItems]);
       } catch (reason) {
         if (!active) return;
 
@@ -813,7 +581,7 @@ function SurveyPageTemplateContent() {
     return () => {
       active = false;
     };
-  }, [apiBaseUrl, reloadKey]);
+  }, [apiBaseUrl]);
 
   useSurveyModalFocus({
     selectedPoll,
@@ -870,19 +638,6 @@ function SurveyPageTemplateContent() {
     });
   }
 
-  function reloadSurveys() {
-    setReloadKey((value) => value + 1);
-  }
-
-  function openLatestPoll(intent: SurveyModalIntent) {
-    const poll = findPollById(polls, latestPollId);
-    if (!poll) {
-      return;
-    }
-
-    void openPollModal(poll, intent);
-  }
-
   function openVotePoll(poll: SurveySummary) {
     void openPollModal(poll, "vote");
   }
@@ -914,27 +669,41 @@ function SurveyPageTemplateContent() {
         onSubmitVote={submitVote}
       />
 
-    <div className="panel utility-page survey-page">
-      {renderSurveyHeroSection({
-        bridgeStatus,
-        providerLabel,
-        loading,
-        activePollCount,
-        totalOptionCount,
-        pollsCount: polls.length,
-        latestPollId,
-        error,
-        sanitizedNextStep,
-        openLatestPoll,
-        reloadSurveys,
-      })}
+      <div className="panel utility-page survey-page">
+        <div className="survey-tabs" role="tablist" aria-label="حالة الاستطلاعات">
+        <button
+          type="button"
+          role="tab"
+          aria-selected={selectedTab === "active"}
+          className={`survey-tab ${selectedTab === "active" ? "is-active" : ""}`}
+          onClick={() => setSelectedTab("active")}
+        >
+          النشطة <span>{activePolls.length}</span>
+        </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={selectedTab === "closed"}
+          className={`survey-tab ${selectedTab === "closed" ? "is-active" : ""}`}
+          onClick={() => setSelectedTab("closed")}
+        >
+          المغلقة <span>{closedPolls.length}</span>
+        </button>
+        </div>
 
-      {featuredPoll ? (
-        renderSurveySpotlightSection(featuredPoll, sectionActions)
-      ) : null}
-
-      {renderSurveyPollGridSection(pageStateMessage, polls, sectionActions)}
-    </div>
+        {renderSurveyPollGridSection(
+          selectedTab === "active"
+            ? pageStateMessage
+            : loading
+              ? pageStateMessage
+              : visiblePolls.length === 0
+                ? "لا توجد استطلاعات مغلقة حالياً."
+                : null,
+          visiblePolls,
+          selectedTab,
+          sectionActions,
+        )}
+      </div>
     </>
   );
 }

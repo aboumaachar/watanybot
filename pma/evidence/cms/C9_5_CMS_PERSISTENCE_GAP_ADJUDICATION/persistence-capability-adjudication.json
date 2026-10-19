@@ -1,0 +1,177 @@
+{
+    "candidateCount":  12,
+    "currentRuntimeRequiredGapCount":  0,
+    "deferredCapabilityCount":  12,
+    "candidates":  [
+                       {
+                           "capability":  "slug",
+                           "classification":  "DEFERRED_NOT_REQUIRED_BY_PROVEN_CURRENT_DOCUMENT_RUNTIME",
+                           "candidateFields":  [
+                                                   "slug"
+                                               ],
+                           "acceptedContractIntersections":  [
+
+                                                             ],
+                           "missingAcceptedContractFields":  [
+
+                                                             ]
+                       },
+                       {
+                           "capability":  "locale",
+                           "classification":  "DEFERRED_NOT_REQUIRED_BY_PROVEN_CURRENT_DOCUMENT_RUNTIME",
+                           "candidateFields":  [
+                                                   "locale"
+                                               ],
+                           "acceptedContractIntersections":  [
+
+                                                             ],
+                           "missingAcceptedContractFields":  [
+
+                                                             ]
+                       },
+                       {
+                           "capability":  "rich_content",
+                           "classification":  "DEFERRED_NOT_REQUIRED_BY_PROVEN_CURRENT_DOCUMENT_RUNTIME",
+                           "candidateFields":  [
+                                                   "title",
+                                                   "body",
+                                                   "content",
+                                                   "description"
+                                               ],
+                           "acceptedContractIntersections":  [
+
+                                                             ],
+                           "missingAcceptedContractFields":  [
+
+                                                             ]
+                       },
+                       {
+                           "capability":  "category",
+                           "classification":  "DEFERRED_NOT_REQUIRED_BY_PROVEN_CURRENT_DOCUMENT_RUNTIME",
+                           "candidateFields":  [
+                                                   "category"
+                                               ],
+                           "acceptedContractIntersections":  [
+
+                                                             ],
+                           "missingAcceptedContractFields":  [
+
+                                                             ]
+                       },
+                       {
+                           "capability":  "publication_scheduling",
+                           "classification":  "DEFERRED_NOT_REQUIRED_BY_PROVEN_CURRENT_DOCUMENT_RUNTIME",
+                           "candidateFields":  [
+                                                   "published_at",
+                                                   "publish_at",
+                                                   "scheduled_at"
+                                               ],
+                           "acceptedContractIntersections":  [
+
+                                                             ],
+                           "missingAcceptedContractFields":  [
+
+                                                             ]
+                       },
+                       {
+                           "capability":  "creation_timestamp",
+                           "classification":  "DEFERRED_NOT_REQUIRED_BY_PROVEN_CURRENT_DOCUMENT_RUNTIME",
+                           "candidateFields":  [
+                                                   "created_at"
+                                               ],
+                           "acceptedContractIntersections":  [
+
+                                                             ],
+                           "missingAcceptedContractFields":  [
+
+                                                             ]
+                       },
+                       {
+                           "capability":  "archive_delete_timestamps",
+                           "classification":  "DEFERRED_NOT_REQUIRED_BY_PROVEN_CURRENT_DOCUMENT_RUNTIME",
+                           "candidateFields":  [
+                                                   "archived_at",
+                                                   "deleted_at"
+                                               ],
+                           "acceptedContractIntersections":  [
+
+                                                             ],
+                           "missingAcceptedContractFields":  [
+
+                                                             ]
+                       },
+                       {
+                           "capability":  "revision_number",
+                           "classification":  "DEFERRED_NOT_REQUIRED_BY_PROVEN_CURRENT_DOCUMENT_RUNTIME",
+                           "candidateFields":  [
+                                                   "revision",
+                                                   "revision_number"
+                                               ],
+                           "acceptedContractIntersections":  [
+
+                                                             ],
+                           "missingAcceptedContractFields":  [
+
+                                                             ]
+                       },
+                       {
+                           "capability":  "editor_identity",
+                           "classification":  "DEFERRED_NOT_REQUIRED_BY_PROVEN_CURRENT_DOCUMENT_RUNTIME",
+                           "candidateFields":  [
+                                                   "editor_id",
+                                                   "updated_by",
+                                                   "author_id"
+                                               ],
+                           "acceptedContractIntersections":  [
+
+                                                             ],
+                           "missingAcceptedContractFields":  [
+
+                                                             ]
+                       },
+                       {
+                           "capability":  "seo_metadata",
+                           "classification":  "DEFERRED_NOT_REQUIRED_BY_PROVEN_CURRENT_DOCUMENT_RUNTIME",
+                           "candidateFields":  [
+                                                   "seo_metadata",
+                                                   "meta_title",
+                                                   "meta_description"
+                                               ],
+                           "acceptedContractIntersections":  [
+
+                                                             ],
+                           "missingAcceptedContractFields":  [
+
+                                                             ]
+                       },
+                       {
+                           "capability":  "visibility",
+                           "classification":  "DEFERRED_NOT_REQUIRED_BY_PROVEN_CURRENT_DOCUMENT_RUNTIME",
+                           "candidateFields":  [
+                                                   "visibility",
+                                                   "is_public"
+                                               ],
+                           "acceptedContractIntersections":  [
+
+                                                             ],
+                           "missingAcceptedContractFields":  [
+
+                                                             ]
+                       },
+                       {
+                           "capability":  "expanded_workflow",
+                           "classification":  "DEFERRED_NOT_REQUIRED_BY_PROVEN_CURRENT_DOCUMENT_RUNTIME",
+                           "candidateFields":  [
+                                                   "workflow_state",
+                                                   "approval_state"
+                                               ],
+                           "acceptedContractIntersections":  [
+
+                                                             ],
+                           "missingAcceptedContractFields":  [
+
+                                                             ]
+                       }
+                   ],
+    "adjudicationRule":  "A current migration is necessary only for fields explicitly accepted by the current document persistence contract but absent from the live public.documents schema. Whole-file lexical heuristics are prohibited."
+}

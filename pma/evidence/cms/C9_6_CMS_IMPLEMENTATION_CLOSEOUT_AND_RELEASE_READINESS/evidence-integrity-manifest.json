@@ -1,0 +1,50 @@
+{
+    "gate":  "APEX_WATANYBOT_C9_6_CMS_IMPLEMENTATION_CLOSEOUT_AND_RELEASE_READINESS_V1_0_45",
+    "artifactCount":  8,
+    "artifacts":  [
+                      {
+                          "name":  "predecessor-c9-4-runtime-binding.json",
+                          "sha256":  "9E531392F6FC076F9103685ABCE18BB3EC58F520B543A96EB49FD0A1B7BFCA3C",
+                          "sizeBytes":  225
+                      },
+                      {
+                          "name":  "predecessor-c9-5-adjudication-binding.json",
+                          "sha256":  "129D28A311C0ED3CC568C34278B842234B55DA9528ADB7C1C2852D1B5B8A92B7",
+                          "sizeBytes":  452
+                      },
+                      {
+                          "name":  "implementation-freeze-binding.json",
+                          "sha256":  "524E95A7D2C76A66555C4C6C04BB0A0A5EE13218DF2C2CA9E2E9F8332499E474",
+                          "sizeBytes":  329
+                      },
+                      {
+                          "name":  "live-document-state-closeout.json",
+                          "sha256":  "89BA964DE592A749737FFCB649F19BC24912FDC666AF5C8E19C9A9DAF2CEA4B9",
+                          "sizeBytes":  427
+                      },
+                      {
+                          "name":  "death-notices-preexisting-change-classification.json",
+                          "sha256":  "E420C0CE94DCDB46A9D7B2C7D078F20FC57D099F679CFAFC0A1E82A6F020CF21",
+                          "sizeBytes":  414
+                      },
+                      {
+                          "name":  "release-readiness-scope.json",
+                          "sha256":  "76CD371587923CF1B87A30C04AB1DA261AA63A133684E2C21482CC1E96F1818E",
+                          "sizeBytes":  1758
+                      },
+                      {
+                          "name":  "implementation-closeout-summary.md",
+                          "sha256":  "EEA60AA52F25107E96C27520302B2C8491E6AE2A5C745C41015889D2633136BD",
+                          "sizeBytes":  953
+                      },
+                      {
+                          "name":  "final-status.txt",
+                          "sha256":  "D363D0EEC5B960BAAE589EC3C41CB691DB963347CB11FFAB162981297E29FC28",
+                          "sizeBytes":  1249
+                      }
+                  ],
+    "implementationFileCount":  13,
+    "implementationHashMatchCount":  13,
+    "implementationHashMismatchCount":  0,
+    "status":  "PASS"
+}

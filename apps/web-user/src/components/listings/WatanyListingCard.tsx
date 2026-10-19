@@ -9,6 +9,7 @@ export type WatanyListingAction = {
   label: string;
   onClick: () => void;
   tone?: "primary" | "secondary";
+  disabled?: boolean;
 };
 
 export type WatanyListingCardProps = {
@@ -64,11 +65,11 @@ export function WatanyListingCard({
       </div>
       <div className={watanyListingCardTheme.actionRow}>
         {secondaryAction ? (
-          <button className={watanyListingCardTheme.actionButtonSecondary} type="button" onClick={secondaryAction.onClick}>
+          <button className={watanyListingCardTheme.actionButtonSecondary} type="button" onClick={secondaryAction.onClick} disabled={secondaryAction.disabled}>
             {secondaryAction.label}
           </button>
         ) : null}
-        <button className={watanyListingCardTheme.actionButtonPrimary} type="button" onClick={primaryAction.onClick}>
+        <button className={watanyListingCardTheme.actionButtonPrimary} type="button" onClick={primaryAction.onClick} disabled={primaryAction.disabled}>
           {primaryAction.label}
         </button>
       </div>

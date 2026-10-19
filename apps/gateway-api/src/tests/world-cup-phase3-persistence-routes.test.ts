@@ -1,28 +1,25 @@
-﻿import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+﻿import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import Fastify from "fastify";
 import { worldCupRoutes } from "../routes/world-cup";
 import { worldCupMatchSeed } from "../data/world-cup-seed";
 import { resetCommunityStore } from "../community/service";
 import { runMigrations } from "../db/migrate";
-import { acquireCommunityDbTestLock } from "./community-db-test-lock";
+import { acquireCommunityDbTestLock, COMMUNITY_DB_TEST_LOCK_WAIT_MS } from "./community-db-test-lock";
 
 let releaseDbTestLock: null | (() => Promise<void>) = null;
 
+// Hold the community lock for the whole file so no other community suite
+// truncates these tables between our tests.
 beforeAll(async () => {
-  const release = await acquireCommunityDbTestLock();
-  try {
-    await runMigrations();
-  } finally {
-    await release();
-  }
-});
+  releaseDbTestLock = await acquireCommunityDbTestLock();
+  await runMigrations();
+}, COMMUNITY_DB_TEST_LOCK_WAIT_MS);
 
 beforeEach(async () => {
-  releaseDbTestLock = await acquireCommunityDbTestLock();
   await resetCommunityStore();
 });
 
-afterEach(async () => {
+afterAll(async () => {
   if (releaseDbTestLock) {
     await releaseDbTestLock();
     releaseDbTestLock = null;

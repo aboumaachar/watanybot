@@ -157,8 +157,8 @@ const FORMS_CATALOG: FormTemplate[] = [
     authority: "دائرة التقاعد - وزارة الدفاع الوطني",
     version: "2024-01",
     updatedAt: "2024-01-15",
-    previewUrl: "/mof/طلب تعديل وضع عائلي.jpg",
-    downloadUrl: "/mof/طلب تعديل وضع عائلي.jpg",
+    previewUrl: "/mof/طلب تعديل وضع عائلي - ت2.jpg",
+    downloadUrl: "/mof/طلب تعديل وضع عائلي - ت2.jpg",
     instructions_ar: "يُعبأ النموذج بخط واضح ويُرفق مع المستندات المطلوبة. يُقدم لدى قسم الشؤون في القطعة الإدارية أو عبر ليبان بوست.",
     header_html: `<div style="text-align:center;margin-bottom:24px">
       <div style="font-size:14px;margin-bottom:4px">الجمهورية اللبنانية</div>
@@ -192,6 +192,20 @@ const FORMS_CATALOG: FormTemplate[] = [
     ],
   },
   {
+    id: "form_mof_tawtin",
+    code: "طلب توطين",
+    title_ar: "طلب توطين",
+    description_ar: "نموذج طلب توطين وتحويل المعاش التقاعدي إلى الحساب المصرفي.",
+    category: "bank_account_modification",
+    related_tx: [64],
+    authority: "دائرة التقاعد - وزارة الدفاع الوطني",
+    version: "2024-01",
+    updatedAt: "2024-01-15",
+    previewUrl: "/mof/طلب توطين.jpg",
+    downloadUrl: "/mof/طلب توطين.jpg",
+    fields: [],
+  },
+  {
     id: "form_t11",
     code: "ت11",
     title_ar: "تعهد طلاق",
@@ -200,8 +214,8 @@ const FORMS_CATALOG: FormTemplate[] = [
     related_tx: [64],
     authority: "دائرة التقاعد - وزارة الدفاع الوطني",
     version: "2024-01",
-    previewUrl: "/mof/تعهد طلاق - ت11.jpg",
-    downloadUrl: "/mof/تعهد طلاق - ت11.jpg",
+    previewUrl: "/mof/اقرار وتعهد من الابنة الارملة أو المطلقة - ت11.jpg",
+    downloadUrl: "/mof/اقرار وتعهد من الابنة الارملة أو المطلقة - ت11.jpg",
     updatedAt: "2024-01-15",
     instructions_ar: "ينظم هذا التعهد في دائرة التقاعد بحضور المتقاعد وابنته شخصياً أو لدى كاتب العدل في حال عدم الحضور شخصياً.",
     header_html: `<div style="text-align:center;margin-bottom:24px">
@@ -631,8 +645,8 @@ const FORMS_CATALOG: FormTemplate[] = [
     authority: "دائرة التقاعد - وزارة الدفاع الوطني",
     version: "2024-01",
     updatedAt: "2024-01-15",
-    previewUrl: "/mof/طلب دفتر تقاعد - بدل عن ضائع.pdf",
-    downloadUrl: "/mof/طلب دفتر تقاعد - بدل عن ضائع.pdf",
+    previewUrl: "/mof/طلب دفتر تقاعد - بدل عن ضائع - ت1.jpg",
+    downloadUrl: "/mof/طلب دفتر تقاعد - بدل عن ضائع - ت1.jpg",
     fields: [],
   },
   {
@@ -673,8 +687,8 @@ const FORMS_CATALOG: FormTemplate[] = [
     authority: "وزارة الصحة العامة / دائرة التقاعد",
     version: "2024-01",
     updatedAt: "2024-01-15",
-    previewUrl: "/mof/طلب معاينة من اللجنة الطبية الدائمة في وزارة الصحة العامة - ت5.jpg",
-    downloadUrl: "/mof/طلب معاينة من اللجنة الطبية الدائمة في وزارة الصحة العامة - ت5.jpg",
+    previewUrl: "/mof/طلب معاينة من اللجنة الطبية الدائمة في وزارة الصحة العامة.pdf",
+    downloadUrl: "/mof/طلب معاينة من اللجنة الطبية الدائمة في وزارة الصحة العامة.pdf",
     fields: [],
   },
   {
@@ -744,6 +758,10 @@ const GOVERNED_FORM_METADATA: Record<string, { sourceId: string; governance: For
   form_t2: {
     sourceId: "retirement",
     governance: buildGovernance("retirement", "دائرة التقاعد - وزارة الدفاع الوطني", "نموذج ت2 لتعديل الوضع العائلي للمتقاعدين العسكريين"),
+  },
+  form_mof_tawtin: {
+    sourceId: "retirement",
+    governance: buildGovernance("retirement", "دائرة التقاعد - وزارة الدفاع الوطني", "نموذج طلب توطين وتحويل المعاش التقاعدي إلى الحساب المصرفي"),
   },
   form_t11: {
     sourceId: "retirement",
@@ -849,6 +867,10 @@ function getGovernedCatalog(): FormTemplate[] {
 /* ------------------------------------------------------------------ */
 
 const FORM_KEYWORDS: Array<{ patterns: RegExp[]; formIds: string[] }> = [
+  {
+    patterns: [/طلب\s*توطين/i, /توطين\s*(المعاش|الراتب)/i],
+    formIds: ["form_mof_tawtin"],
+  },
   {
     patterns: [
       /نموذج\s*ت\s*2\b/i, /طلب\s*(تعديل|تغيير)\s*وضع\s*عائلي/i,

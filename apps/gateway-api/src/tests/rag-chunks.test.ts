@@ -1,45 +1,88 @@
-import { describe, it, expect } from 'vitest';
-import app from '../server';
-import { signAccessToken } from '../auth/auth-middleware.js';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import Fastify from 'fastify';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
-process.env.JWT_SECRET ||= 'test-jwt-secret-for-admin-tests-0123456789abcdef';
+import { loadRagChunks, listChunks, getChunkById, updateChunkById, persistChunksToFile } from '../ai/rag';
+import { adminKbRoutes } from '../routes/admin-kb';
 
-function adminHeaders() {
-  const token = signAccessToken({ sub: 'test-admin', role: 'admin', email: 'admin@test.com' });
-  return { authorization: `Bearer ${token}` };
-}
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const repoRoot = path.resolve(__dirname, '../../../..');
+const sourceRagPath = path.join(repoRoot, 'watany_kb_tables_v4', 'watany_rag_chunks_v4.jsonl');
+const tempRagPath = path.join(repoRoot, 'tmp', `rag-chunks-admin-test-${process.pid}.jsonl`);
+const app = Fastify();
+// Expected size comes from the canonical file itself, so KB content updates do not need test edits.
+const expectedChunks = fs.readFileSync(sourceRagPath, "utf8").split(/\r?\n/).filter((line) => line.trim()).length;
+
+beforeAll(async () => {
+  fs.mkdirSync(path.dirname(tempRagPath), { recursive: true });
+  fs.copyFileSync(sourceRagPath, tempRagPath);
+  expect(loadRagChunks(tempRagPath)).toBe(expectedChunks);
+  app.addHook('onRequest', async (request) => {
+    request.user = { id: 'rag-admin-test', role: 'admin', email: 'admin@test.local' };
+  });
+  await app.register(adminKbRoutes, {
+    kbSalariesDir: path.join(repoRoot, 'kb', 'salaries'),
+    runtimeKbPath: path.join(repoRoot, 'apps', 'gateway-api', 'data', 'kb', 'runtime_kb.json'),
+    resolvedRagPath: tempRagPath,
+    repoRootPath: repoRoot,
+    versionRootPath: repoRoot,
+    isKbNodesReady: () => false,
+    listKbNodes: () => ({ nodes: [], total: 0 }),
+    writeJsonFile: async () => undefined,
+    addVersionEntry: async () => ({ ok: true }),
+    listVersions: async () => [],
+    restoreVersion: async () => ({ ok: true }),
+    loadLocalSalariesKB: () => ({ salariesIndex: {}, rankMeta: {} }),
+    loadRuntimeKbJson: () => ({}),
+    loadRagChunks,
+    listChunks,
+    getChunkById,
+    updateChunkById,
+    persistChunksToFile,
+  });
+  await app.ready();
+}, 30000);
+
+afterAll(async () => {
+  await app.close();
+  fs.rmSync(tempRagPath, { force: true });
+  loadRagChunks(sourceRagPath);
+}, 30000);
 
 describe('RAG chunks admin endpoints', () => {
-  it('GET /api/admin/kb/chunks returns structure', async () => {
-    const res = await app.inject({ method: 'GET', url: '/api/admin/kb/chunks', headers: adminHeaders() });
+  it('GET /api/admin/kb/chunks returns the isolated authority structure', async () => {
+    const res = await app.inject({ method: 'GET', url: '/api/admin/kb/chunks' });
     expect(res.statusCode).toBe(200);
-    const body = JSON.parse(res.payload || '{}');
-    expect(body).toHaveProperty('total');
+    const body = res.json();
+    expect(body.total).toBe(expectedChunks);
     expect(Array.isArray(body.chunks)).toBe(true);
   });
 
-  it('PATCH /api/admin/kb/chunk/:id updates a chunk and persists', async () => {
-    // Fetch actual loaded RAG chunks from the GET endpoint
-    const listRes = await app.inject({ method: 'GET', url: '/api/admin/kb/chunks', headers: adminHeaders() });
-    const listBody = JSON.parse(listRes.payload || '{}');
-    const id = listBody.chunks?.[0]?.id || null;
-    if (!id || listBody.total === 0) {
-      // skip if no RAG chunks loaded (e.g. no JSONL in test env)
-      expect(true).toBe(true);
-      return;
-    }
+  it('PATCH persists only the isolated RAG and leaves canonical bytes untouched', async () => {
+    const canonicalBefore = fs.readFileSync(sourceRagPath);
+    const listRes = await app.inject({ method: 'GET', url: '/api/admin/kb/chunks?pageSize=1' });
+    expect(listRes.statusCode).toBe(200);
+    const id = listRes.json().chunks?.[0]?.id;
+    expect(typeof id).toBe('string');
+    expect(id.length).toBeGreaterThan(0);
 
     const newText = `UPDATED_BY_TEST_${Date.now()}`;
-  const patchRes = await app.inject({ method: 'PATCH', url: `/api/admin/kb/chunk/${encodeURIComponent(id)}`, payload: { text: newText }, headers: adminHeaders() });
+    const patchRes = await app.inject({
+      method: 'PATCH',
+      url: `/api/admin/kb/chunk/${encodeURIComponent(id)}`,
+      payload: { text: newText },
+    });
     expect(patchRes.statusCode).toBe(200);
-    const patchBody = JSON.parse(patchRes.payload || '{}');
-    expect(patchBody.ok).toBe(true);
-    expect(patchBody.chunk.text).toContain('UPDATED_BY_TEST');
+    expect(patchRes.json().chunk.text).toBe(newText);
+    expect(fs.readFileSync(tempRagPath, 'utf8')).toContain(newText);
 
-    // reload chunks
-    const reloadRes = await app.inject({ method: 'POST', url: '/api/admin/kb/chunks/reload', headers: adminHeaders() });
+    const reloadRes = await app.inject({ method: 'POST', url: '/api/admin/kb/chunks/reload' });
     expect(reloadRes.statusCode).toBe(200);
-    const rl = JSON.parse(reloadRes.payload || '{}');
-    expect(rl.ok).toBe(true);
+    expect(reloadRes.json().loaded).toBe(expectedChunks);
+    expect(fs.readFileSync(sourceRagPath)).toEqual(canonicalBefore);
+    expect(fs.readFileSync(sourceRagPath, 'utf8')).not.toContain('UPDATED_BY_TEST_');
   });
 });

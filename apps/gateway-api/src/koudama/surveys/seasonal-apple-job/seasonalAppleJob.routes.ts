@@ -3,9 +3,11 @@ import {
   createSeasonalAppleJobApplication,
   exportSeasonalAppleJobApplicationsCsv,
   getSeasonalAppleJobApplication,
+  listAcceptedSeasonalAppleJobApplications,
   listSeasonalAppleJobApplications,
   updateSeasonalAppleJobApplication,
 } from './seasonalAppleJob.repository';
+import { ensureAndLinkJobApplicant } from '../../../civilian-jobs/job-applicant-accounts.js';
 
 type CreateApplicationBody = Parameters<typeof createSeasonalAppleJobApplication>[0];
 type UpdateApplicationBody = Parameters<typeof updateSeasonalAppleJobApplication>[1];
@@ -40,6 +42,10 @@ async function requireSeasonalSurveyAdmin(
   request: FastifyRequest,
   reply: FastifyReply,
 ): Promise<boolean> {
+  if (request.user?.role === 'admin' || request.user?.role === 'superadmin') {
+    return true;
+  }
+
   const configuredToken = process.env.KOUDAMA_SURVEY_ADMIN_TOKEN || process.env.ADMIN_API_TOKEN || '';
   const providedToken = extractAdminToken(request);
 
@@ -67,10 +73,24 @@ export async function seasonalAppleJobRouter(app: FastifyInstance): Promise<void
       try {
         const body = request.body as CreateApplicationBody;
         const application = await createSeasonalAppleJobApplication(body);
+        let accountLinkPending = false;
+        try {
+          await ensureAndLinkJobApplicant({
+            applicationId: application.id,
+            campaignId: 'seasonal-apple-job-2026-tannourine',
+            name: String(body.name ?? ''),
+            phone: String(body.phone ?? ''),
+            email: body.email ? String(body.email) : null,
+          });
+        } catch (accountError) {
+          accountLinkPending = true;
+          request.log.error({ err: accountError, applicationId: application.id, campaignId: 'seasonal-apple-job-2026-tannourine' }, 'job_applicant_account_link_failed');
+        }
         return reply.code(201).send({
           ok: true,
           message: 'تم تسجيل الطلب بنجاح',
           applicationId: application.id,
+          accountLinkPending,
           application,
         });
       } catch (error) {
@@ -82,6 +102,14 @@ export async function seasonalAppleJobRouter(app: FastifyInstance): Promise<void
       }
     },
   );
+
+  app.get('/api/koudama/surveys/seasonal-apple-job/accepted', async (_request, reply) => {
+    const applications = await listAcceptedSeasonalAppleJobApplications();
+    return reply.send({
+      ok: true,
+      applications,
+    });
+  });
 
   app.get('/api/admin/koudama/surveys/seasonal-apple-job/applications', async (request, reply) => {
     if (!(await requireSeasonalSurveyAdmin(request, reply))) {

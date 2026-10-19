@@ -44,6 +44,7 @@ CREATE TABLE IF NOT EXISTS civilian_job_applications (
   applicant_type TEXT NOT NULL DEFAULT 'VETERAN',
   status TEXT NOT NULL DEFAULT 'NEW',
   note TEXT,
+  cv_url TEXT,
   created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
   created_by TEXT,

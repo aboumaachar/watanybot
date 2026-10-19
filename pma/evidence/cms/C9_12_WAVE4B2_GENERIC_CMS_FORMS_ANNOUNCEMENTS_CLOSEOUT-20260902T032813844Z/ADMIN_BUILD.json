@@ -1,0 +1,19 @@
+{
+    "name":  "ADMIN_BUILD",
+    "command":  [
+                    "pnpm",
+                    "--dir",
+                    "apps/web-admin",
+                    "build"
+                ],
+    "workingDirectory":  "C:\\xampp\\htdocs\\projectx\\watanybot",
+    "startUtc":  "2026-09-02T03:29:52.1615091Z",
+    "endUtc":  "2026-09-02T03:30:14.1847687Z",
+    "exitCode":  0,
+    "status":  "PASS",
+    "stdoutPath":  "C:\\xampp\\htdocs\\projectx\\watanybot\\pma\\evidence\\cms\\C9_12_WAVE4B2_GENERIC_CMS_FORMS_ANNOUNCEMENTS_CLOSEOUT-20260902T032813844Z\\ADMIN_BUILD.stdout.txt",
+    "stderrPath":  "C:\\xampp\\htdocs\\projectx\\watanybot\\pma\\evidence\\cms\\C9_12_WAVE4B2_GENERIC_CMS_FORMS_ANNOUNCEMENTS_CLOSEOUT-20260902T032813844Z\\ADMIN_BUILD.stderr.txt",
+    "stdoutBytes":  2772,
+    "stderrBytes":  4230,
+    "exception":  ""
+}

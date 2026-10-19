@@ -156,7 +156,7 @@ const AL_WAFIYAT_SOURCES: AlWafiyatSourceRecord[] = [
     providerCode: "GENERAL_SECURITY",
     providerAr: "المديرية العامة للأمن العام",
     titleAr: "وفيات المديرية العامة للأمن العام",
-    sourceUrl: "https://www.general-security.gov.lb/ar/posts/123",
+    sourceUrl: "https://www.general-security.gov.lb/ar/posts/551",
   },
 ];
 
@@ -222,7 +222,7 @@ function readJson<T>(candidates: string[], fallback: T): T {
   const file = firstExisting(candidates);
   try {
     if (!file || !fs.existsSync(file)) return fallback;
-    return JSON.parse(fs.readFileSync(file, "utf8")) as T;
+    return JSON.parse(fs.readFileSync(file, "utf8").replace(/^\uFEFF/, "")) as T;
   } catch {
     return fallback;
   }
@@ -1545,7 +1545,13 @@ export async function registerOfficialSourcesRoutes(app: FastifyLike) {
     const all = readJsonl(dataCandidates("death-notices.jsonl"))
       .filter(publishedDeathNotice)
       .filter(isPubliclyDisplayableDeathNotice)
-      .filter((item) => textMatch(item, q));
+      .filter((item) => textMatch(item, q))
+      .sort((left, right) => {
+        const leftDate = compactText(left?.date_of_death);
+        const rightDate = compactText(right?.date_of_death);
+        if (leftDate !== rightDate) return rightDate.localeCompare(leftDate);
+        return alWafiyatSortTime(right?.published_at) - alWafiyatSortTime(left?.published_at);
+      });
     return { ok: true, items: limitItems(all, req.query?.limit), total: all.length };
   });
 

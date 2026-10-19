@@ -1,6 +1,8 @@
 import { load } from "cheerio";
 import { createHash, createHmac } from "node:crypto";
 import type { FastifyPluginAsync } from "fastify";
+import { FACTCHECK_FALLBACK_CAPTURED_AT, getFactCheckFallbackItems } from "./factcheck-fallback.js";
+import { query } from "../lib/db.js";
 
 export interface NewsItem {
   id: string;
@@ -24,6 +26,7 @@ const NNA_CACHE_TTL_MS = 5 * 60 * 1000;
 const FACTCHECK_LANDING_URL = "https://factchecklebanon.nna-leb.gov.lb/";
 const FACTCHECK_FETCH_TIMEOUT_MS = 15000;
 const FACTCHECK_CACHE_TTL_MS = 5 * 60 * 1000;
+const PUBLIC_NEWS_COLUMNS = "id, title, body, category, image_url, source_url, is_published, published_at, created_at, updated_at, created_by";
 
 type NewsRow = NewsItem;
 
@@ -70,6 +73,22 @@ type NnaApiResponse = {
     news?: NnaApiNewsItem[];
   };
 };
+
+type HistoricalArticleRow = { public_id:string; public_code:string|null; title:string; payload:Record<string,unknown>; published_at:Date|string|null };
+async function fetchHistoricalArticleNews(limit:number):Promise<NewsRow[]> {
+  const result=await query<HistoricalArticleRow>(
+    `SELECT public_id,public_code,title,payload,published_at FROM cms_content_entities
+     WHERE domain='articles' AND status='PUBLISHED' AND payload->'categories' ? 'اخبار'
+     ORDER BY published_at DESC NULLS LAST LIMIT $1`,[limit],
+  );
+  return result.rows.map((row)=>{
+    const p=(row.payload&&typeof row.payload==='object'?row.payload:{}) as Record<string,unknown>;
+    const published=row.published_at?new Date(row.published_at).getTime():Date.now();
+    const slug=String(row.public_code||p.slug||row.public_id);
+    return {id:`archive:${row.public_id}`,title:row.title,body:null,category:'اخبار',image_url:typeof p.featuredImage==='string'?p.featuredImage:null,
+      source_url:`/articles/${encodeURIComponent(slug)}`,published_at:published,is_published:1,created_at:published,updated_at:published,created_by:'wordpress_archive'};
+  });
+}
 
 let nnaCache: NnaCacheEntry | null = null;
 let factCheckCache: FactCheckCacheEntry | null = null;
@@ -477,13 +496,13 @@ export const newsRoutes: FastifyPluginAsync = async (app) => {
       if (category) {
         adminRows = app.pluginDb
           .prepare(
-            "SELECT * FROM news_items WHERE is_published = 1 AND category = ? ORDER BY published_at DESC LIMIT ?"
+            `SELECT ${PUBLIC_NEWS_COLUMNS} FROM news_items WHERE is_published = 1 AND category = ? ORDER BY published_at DESC LIMIT ?`
           )
           .all(category, maxItems) as unknown as NewsItem[];
       } else {
         adminRows = app.pluginDb
           .prepare(
-            "SELECT * FROM news_items WHERE is_published = 1 ORDER BY published_at DESC LIMIT ?"
+            `SELECT ${PUBLIC_NEWS_COLUMNS} FROM news_items WHERE is_published = 1 ORDER BY published_at DESC LIMIT ?`
           )
           .all(maxItems) as unknown as NewsItem[];
       }
@@ -494,8 +513,13 @@ export const newsRoutes: FastifyPluginAsync = async (app) => {
       } catch (error) {
         req.log.warn({ error }, "nna_latest_news_fetch_failed");
       }
+      let archiveRows: NewsRow[] = [];
+      if (!category || compactText(category) === "اخبار") {
+        try { archiveRows = await fetchHistoricalArticleNews(maxItems); }
+        catch (error) { req.log.warn({ error }, "historical_article_news_fetch_failed"); }
+      }
 
-      const rows = buildMergedNewsFeed(adminRows, nnaRows, { category, limit: maxItems });
+      const rows = buildMergedNewsFeed([...adminRows, ...archiveRows], nnaRows, { category, limit: maxItems });
       const payloadBytes = Buffer.byteLength(JSON.stringify(rows));
 
       req.log.debug(
@@ -503,6 +527,7 @@ export const newsRoutes: FastifyPluginAsync = async (app) => {
           category: category ?? null,
           limit: maxItems,
           adminCount: adminRows.length,
+          archiveCount: archiveRows.length,
           nnaCount: nnaRows.length,
           mergedCount: rows.length,
           payloadBytes,
@@ -530,10 +555,25 @@ export const newsRoutes: FastifyPluginAsync = async (app) => {
       const normalizedStatus = compactText(status);
 
       let rows: FakeNewsItem[] = [];
+      let fallbackReason: string | null = null;
       try {
         rows = await fetchFactCheckLandingItems(maxItems);
       } catch (error) {
+        fallbackReason = "upstream_fetch_failed";
         req.log.warn({ error }, "factcheck_landing_fetch_failed");
+        rows = getFactCheckFallbackItems(maxItems);
+      }
+
+      if (rows.length === 0) {
+        fallbackReason = fallbackReason || "upstream_empty";
+        rows = getFactCheckFallbackItems(maxItems);
+        req.log.warn({ fallbackReason }, "factcheck_snapshot_fallback_used");
+      }
+
+      if (fallbackReason) {
+        reply.header("X-Watany-Factcheck-Source", "official-snapshot");
+        reply.header("X-Watany-Factcheck-Captured-At", FACTCHECK_FALLBACK_CAPTURED_AT);
+        reply.header("X-Watany-Factcheck-Degraded", fallbackReason);
       }
 
       const filtered = normalizedStatus
@@ -546,6 +586,7 @@ export const newsRoutes: FastifyPluginAsync = async (app) => {
           limit: maxItems,
           fetchedCount: rows.length,
           returnedCount: filtered.length,
+          sourceMode: fallbackReason ? "official_snapshot" : "live",
         },
         "fake_news_feed_response",
       );

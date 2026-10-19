@@ -33,6 +33,7 @@ type LocalSalaryRow = {
   budget2022: number;
   val2019: number;
   pension2026: number;
+  officialNetPension2026?: number;
   pension2026usd: number;
   val2019usd: number;
   pct2019: number;
@@ -40,6 +41,9 @@ type LocalSalaryRow = {
   totalSalary2026usd: number;
   sixPct: number;
   fiftyPct: number;
+  officialDeduction2026?: number;
+  officialMedalMonthlyValue?: number;
+  officialBasePension2026?: number;
 };
 
 type LocalSalaryTable = { rows: LocalSalaryRow[] };
@@ -113,9 +117,24 @@ function buildLocalSalaryResult(
 
   if (!fallbackEntry) return null;
 
-  const grossPension2026 = Math.round(Number(fallbackEntry.pension2026 || 0));
-  const deduction15Pct = Math.round(Number(fallbackEntry.vetSalary || 0) * 0.015);
-  const pensionCurrent = Math.max(0, grossPension2026 - deduction15Pct);
+  const basePension = Number(fallbackEntry.officialBasePension2026 || 0) > 0
+    ? Number(fallbackEntry.officialBasePension2026)
+    : Number(fallbackEntry.vetSalary || 0) + Number(fallbackEntry.degreeValue || 0);
+  const tableSupplements = Number(fallbackEntry.equipment || 0)
+    + Number(fallbackEntry.driver || 0)
+    + Number(fallbackEntry.position || 0);
+  const socialAids = Number(fallbackEntry.grant2025 || 0)
+    + Number(fallbackEntry.d13020 || 0)
+    + Number(fallbackEntry.d11227_2 || 0)
+    + Number(fallbackEntry.d11227_1 || 0)
+    + Number(fallbackEntry.budget2022 || 0);
+  const grossPension2026 = basePension + tableSupplements + socialAids;
+  const deduction15Pct = Number(fallbackEntry.officialDeduction2026 || 0) > 0
+    ? Number(fallbackEntry.officialDeduction2026)
+    : Math.round(basePension * 0.015);
+  const pensionCurrent = Number(fallbackEntry.officialNetPension2026 || 0) > 0
+    ? Number(fallbackEntry.officialNetPension2026)
+    : Math.max(0, grossPension2026 - deduction15Pct);
   const pensionAfterSixRaise = Math.round(pensionCurrent * SIX_INCREMENTS_FACTOR);
   const pensionAfterFiftyPct = Math.round(pensionCurrent * FIFTY_PERCENT_INCREASE);
   const familyAllowance = {
@@ -129,16 +148,27 @@ function buildLocalSalaryResult(
   const ornamentChoices = meta?.ornamentChoices ?? [];
   const medalItems = ornamentChoices
     .filter((choice) => input.selectedOrnaments.includes(choice.id))
-    .map((choice) => ({ id: choice.id, name_ar: choice.name_ar, monthlyValue: choice.monthlyValue ?? 0 }));
+    .map((choice) => ({
+      id: choice.id,
+      name_ar: choice.name_ar,
+      monthlyValue: Number(fallbackEntry.officialMedalMonthlyValue || 0) > 0
+        ? Number(fallbackEntry.officialMedalMonthlyValue)
+        : choice.monthlyValue ?? 0,
+      annualValue: (Number(fallbackEntry.officialMedalMonthlyValue || 0) > 0
+        ? Number(fallbackEntry.officialMedalMonthlyValue)
+        : choice.monthlyValue ?? 0) * 12,
+    }));
   const medalsTotal = medalItems.reduce((sum, medal) => sum + medal.monthlyValue, 0);
   const totalPension = pensionCurrent + familyAllowance.wife + familyAllowance.children + medalsTotal;
   const totalAfterSixRaise = pensionAfterSixRaise + familyAllowanceAfterRaise.wife + familyAllowanceAfterRaise.children + medalsTotal;
   const totalAfterFiftyPct = pensionAfterFiftyPct + familyAllowanceAfterRaise.wife + familyAllowanceAfterRaise.children + medalsTotal;
 
   return {
+    ok: true,
     input: {
       rank: input.rank,
       degree: input.degree,
+      category: fallbackEntry.category || categoryForRank(input.rank),
       married: input.married,
       kidsCount: input.kidsCount,
       selectedOrnaments: input.selectedOrnaments,
@@ -148,7 +178,7 @@ function buildLocalSalaryResult(
     totalPensionUsd: totalPension / LOCAL_SALARY_USD_RATE,
     breakdown: {
       basicSalary: Number(fallbackEntry.basicSalary || 0),
-      vetSalary: Number(fallbackEntry.vetSalary || 0),
+      vetSalary: basePension,
       equipment: Number(fallbackEntry.equipment || 0),
       driver: Number(fallbackEntry.driver || 0),
       position: Number(fallbackEntry.position || 0),
@@ -161,6 +191,7 @@ function buildLocalSalaryResult(
       },
       deduction15Pct,
       pension2026: pensionCurrent,
+      officialNetPension2026: Number(fallbackEntry.officialNetPension2026 || 0) || undefined,
       pension2026usd: pensionCurrent / LOCAL_SALARY_USD_RATE,
       familyAllowance: {
         wife: familyAllowance.wife,
@@ -183,8 +214,13 @@ function buildLocalSalaryResult(
       },
       totalAfterSixRaise,
       totalAfterSixRaiseUsd: totalAfterSixRaise / LOCAL_SALARY_USD_RATE,
+      sixPct: Number(fallbackEntry.sixPct || 0),
     },
     fiftyPctRaise: {
+      val2019: Number(fallbackEntry.val2019 || 0),
+      val2019usd: Number(fallbackEntry.val2019usd || 0),
+      fiftyPctTargetUsd: Number(fallbackEntry.fiftyPct || 0),
+      fiftyPctTargetLbp: Math.round(Number(fallbackEntry.fiftyPct || 0) * LOCAL_SALARY_USD_RATE),
       additionalRaise: Math.max(0, pensionAfterFiftyPct - pensionCurrent),
       pensionAfterFiftyPct,
       pensionAfterFiftyPctUsd: pensionAfterFiftyPct / LOCAL_SALARY_USD_RATE,
@@ -202,9 +238,44 @@ function buildLocalSalaryResult(
 // searchSalary2019 removed — unused helper
 
 type SalaryStep = 'rank' | 'degree' | 'family' | 'kids' | 'medals';
-type SalaryResultScenario = 'current' | 'six' | 'half';
+type SalaryResultScenario = 'current' | 'six' | 'half' | 'installment';
 type SectionIndex = 0 | 1 | 2 | 3;
 type SalaryMetaStatus = 'ready' | 'partial_data_loaded' | 'metadata_missing' | 'server_unavailable';
+type SalaryHealth = {
+  ok: boolean;
+  status: SalaryMetaStatus;
+  metadataReady: boolean;
+  rankCount: number;
+  degreeCount: number;
+  medalCount: number;
+};
+
+const SALARY_META_CACHE_TTL_MS = 5 * 60 * 1000;
+const salaryBootstrapCache = new Map<string, {
+  cachedAt: number;
+  promise: Promise<{ health: SalaryHealth; data: SalaryMeta }>;
+}>();
+
+function getSalaryBootstrap(baseUrl: string) {
+  const cached = salaryBootstrapCache.get(baseUrl);
+  if (cached && Date.now() - cached.cachedAt < SALARY_META_CACHE_TTL_MS) {
+    return cached.promise;
+  }
+
+  const promise = (async () => {
+    const [health, data] = await Promise.all([
+      api.salaryHealth(baseUrl),
+      api.salaryMeta(baseUrl),
+    ]);
+    return { health, data };
+  })();
+  const entry = { cachedAt: Date.now(), promise };
+  salaryBootstrapCache.set(baseUrl, entry);
+  void promise.catch(() => {
+    if (salaryBootstrapCache.get(baseUrl) === entry) salaryBootstrapCache.delete(baseUrl);
+  });
+  return promise;
+}
 
 type SalaryPageViewProps = Readonly<{
   meta: SalaryMeta | null;
@@ -323,6 +394,24 @@ function SalaryResultsContent({
       deduction: num(deduction15Pct),
       medals: currentMedals,
     };
+  } else if (resultScenario === 'installment') {
+    const familyAllowance = normalizeFamilyAllowance(result.raise.familyAfterRaise);
+    const sixIncrease = num(result.raise.sixSalary);
+    const nineIncrease = Math.round(sixIncrease * 9 / 6);
+    const pension = num(b.pension2026) + nineIncrease;
+    const totalAfterNineRaise = pension + familyAllowance.total + currentMedals.total;
+    scenario = {
+      sectionTitle: 'معاش تقسيط',
+      summary: totalAfterNineRaise,
+      summaryUsd: totalAfterNineRaise / (result.usdRate || 1),
+      pension,
+      pensionUsd: toUsd(pension, result.raise.pensionAfterSixRaiseUsd),
+      familyAllowance,
+      extraGrantLabel: 'الزيادة الإضافية وفق 9 أضعاف',
+      extraGrantValue: nineIncrease,
+      deduction: num(deduction15Pct),
+      medals: currentMedals,
+    };
   } else if (resultScenario === 'half') {
     const familyAllowance = normalizeFamilyAllowance(result.fiftyPctRaise.familyAfterRaise);
     const pension = num(result.fiftyPctRaise.pensionAfterFiftyPct, num(result.fiftyPctRaise.totalAfterFiftyPct) - familyAllowance.total - currentMedals.total);
@@ -345,7 +434,7 @@ function SalaryResultsContent({
   return (
     <div className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-results">
       <div className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-total-banner">
-        <span className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-total-banner__label">المعاش الشهري الإجمالي</span>
+        <span className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-total-banner__label">{resultScenario === 'installment' ? 'المعاش الشهري بعد 9 أضعاف' : 'المعاش الشهري الإجمالي'}</span>
         <span className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-total-banner__value">{fmt(scenario.summary)}</span>
         <span className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-total-banner__currency">ل.ل.</span>
         <span className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-total-banner__usd">≈ {scenario.summaryUsd.toFixed(2)} $</span>
@@ -524,20 +613,23 @@ function SalaryPageView({ // NOSONAR: rendering composition for multi-step wizar
       <div className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-card">
         <div className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-card__title-row">
           <div>
+            <span className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-card__eyebrow">تقدير سريع بخمس خطوات</span>
             <h3 className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-card__header">حاسبة المعاش</h3>
-            <p className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-card__subheader">نتيجة تقديرية سريعة للمعاش والمستحقات.</p>
+            <p className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-card__subheader sc-card__disclaimer">الاحتساب ادناه هو تقريبي والنتيجة ليست رسمية ولا تُعد مرجعاً معتمداً.</p>
           </div>
         </div>
       </div>
 
       <div className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-calc-launcher">
+        <p className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-calc-launcher__instruction">الخطوة الأولى: اضغط الزر للبدء</p>
         <button
           className="wmo-service-route wmo-rebuilt-route wmo-core-route btn sc-calc-btn wt-cta-glow wt-cta-processing wt-guided-action"
           onClick={startWizard}
           disabled={loading}
           aria-busy={loading}
         >
-          {calcButtonContent}
+          <span className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-calc-btn__label">{calcButtonContent}</span>
+          <span className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-calc-btn__hint">يستغرق أقل من دقيقة</span>
         </button>
       </div>
 
@@ -549,6 +641,7 @@ function SalaryPageView({ // NOSONAR: rendering composition for multi-step wizar
           <div className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-result-tabs" role="tablist" aria-label="سيناريوهات المعاش">
             <button type="button" role="tab" aria-selected={resultScenario === 'current'} className={resultScenario === 'current' ? 'active' : ''} onClick={() => setResultScenario('current')}>المعاش الحالي</button>
             <button type="button" role="tab" aria-selected={resultScenario === 'six'} className={resultScenario === 'six' ? 'active' : ''} onClick={() => setResultScenario('six')}>زائد 6 أضعاف</button>
+            <button type="button" role="tab" aria-selected={resultScenario === 'installment'} className={resultScenario === 'installment' ? 'active' : ''} onClick={() => setResultScenario('installment')}>معاش تقسيط</button>
             <button type="button" role="tab" aria-selected={resultScenario === 'half'} className={resultScenario === 'half' ? 'active' : ''} onClick={() => setResultScenario('half')}>زائد 50%</button>
           </div>
           {b ? <SalaryResultsContent result={result} resultScenario={resultScenario} openSection={openSection} setOpenSection={setOpenSection} /> : null}
@@ -562,6 +655,7 @@ function SalaryPageView({ // NOSONAR: rendering composition for multi-step wizar
         <div className="wmo-service-route wmo-rebuilt-route wmo-core-route sc-result-tabs" role="tablist" aria-label="سيناريوهات المعاش">
           <button type="button" role="tab" aria-selected={resultScenario === 'current'} className={resultScenario === 'current' ? 'active' : ''} onClick={() => setResultScenario('current')}>المعاش الحالي</button>
           <button type="button" role="tab" aria-selected={resultScenario === 'six'} className={resultScenario === 'six' ? 'active' : ''} onClick={() => setResultScenario('six')}>زائد 6 أضعاف</button>
+          <button type="button" role="tab" aria-selected={resultScenario === 'installment'} className={resultScenario === 'installment' ? 'active' : ''} onClick={() => setResultScenario('installment')}>معاش تقسيط</button>
           <button type="button" role="tab" aria-selected={resultScenario === 'half'} className={resultScenario === 'half' ? 'active' : ''} onClick={() => setResultScenario('half')}>زائد 50%</button>
         </div>
         {b ? <SalaryResultsContent result={result} resultScenario={resultScenario} openSection={openSection} setOpenSection={setOpenSection} /> : null}
@@ -714,31 +808,22 @@ function useSalaryPageController() {
     setMetaErr("");
     setMetaStatusNote("");
     setMetaLoading(true);
-    const MAX_RETRIES = 3;
-    for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
-      try {
-        const [health, data] = await Promise.all([
-          api.salaryHealth(apiBaseUrl),
-          api.salaryMeta(apiBaseUrl),
-        ]);
-        setMeta({ ...data, ranks: data.ranks.filter((entry) => !HIDDEN_PUBLIC_RANKS.has(entry.rank)) });
-        setMetaStatus(health.status);
-        if (health.status !== 'ready') {
-          setMetaStatusNote(`رتب ${health.rankCount} • درجات ${health.degreeCount} • أوسمة ${health.medalCount}`);
-        }
-        setMetaLoading(false);
-        return;
-      } catch {
-        if (attempt < MAX_RETRIES) {
-          await new Promise((r) => setTimeout(r, 1000 * attempt));
-        }
+    try {
+      const { health, data } = await getSalaryBootstrap(apiBaseUrl);
+      setMeta({ ...data, ranks: data.ranks.filter((entry) => !HIDDEN_PUBLIC_RANKS.has(entry.rank)) });
+      setMetaStatus(health.status);
+      if (health.status !== 'ready') {
+        setMetaStatusNote(`رتب ${health.rankCount} • درجات ${health.degreeCount} • أوسمة ${health.medalCount}`);
       }
+      setMetaLoading(false);
+      return;
+    } catch {
+      setMeta(buildLocalSalaryMeta());
+      setMetaStatus('server_unavailable');
+      setMetaStatusNote('تم تفعيل وضع محلي احتياطي');
+      setMetaErr("");
+      setMetaLoading(false);
     }
-    setMeta(buildLocalSalaryMeta());
-    setMetaStatus('server_unavailable');
-    setMetaStatusNote('تم تفعيل وضع محلي احتياطي');
-    setMetaErr("");
-    setMetaLoading(false);
   }, [apiBaseUrl]);
 
   useEffect(() => { loadMeta(); }, [loadMeta]);

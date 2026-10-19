@@ -1,0 +1,15 @@
+{
+  "status": "BLOCKED_BEFORE_CANARY_CREATE",
+  "canaryCreated": false,
+  "CANARY_CREATE": "NOT_EXECUTED",
+  "CANARY_CREATE_DEFAULT_STATUS_PENDING": "NOT_EXECUTED",
+  "CANARY_CREATED_ROW_COUNT": 0,
+  "CANARY_READ_AFTER_CREATE": "NOT_EXECUTED",
+  "CANARY_NULL_FILE_PATH": "NOT_EXECUTED",
+  "CANARY_UPDATE": "NOT_EXECUTED",
+  "CANARY_STATUS_TRANSITION": "NOT_EXECUTED",
+  "CANARY_READ_AFTER_UPDATE": "NOT_EXECUTED",
+  "reason": "The frozen document CMS contract has no authorized exact-delete boundary. Creating a row would risk leaving residual data, so fail-closed policy stopped the gate before any canary write.",
+  "residualCanary": "NONE_CANARY_NOT_CREATED",
+  "credentialMaterialRecorded": false
+}

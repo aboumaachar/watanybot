@@ -1,0 +1,29 @@
+{
+  "status": "BLOCKED",
+  "gate": "C9_4_CMS_RUNTIME_BROWSER_AND_READ_WRITE_CANARY_VALIDATION",
+  "observedRuntime": {
+    "postgresContainer": "watanbot-postgres healthy; already running",
+    "gatewayListenerBeforeStart": 0,
+    "webAdminListenerBeforeStart": 0,
+    "webUserService": "already running and left untouched"
+  },
+  "runtimeStartRequired": "YES",
+  "runtimeStartScope": "local gateway and local web-admin only",
+  "gateway": {
+    "availableDuringProof": "YES",
+    "url": "http://127.0.0.1:4000",
+    "healthProbe": "GET /api/health -> HTTP 200",
+    "startupMode": "direct local tsx watch with RUN_PG_MIGRATIONS=false",
+    "packageEnvFileAttempt": "failed before application startup because .env was absent",
+    "stoppedAfterBlock": "YES"
+  },
+  "webAdmin": {
+    "availableDuringProof": "YES",
+    "url": "http://127.0.0.1:5173",
+    "rootProbe": "GET / -> HTTP 200"
+  },
+  "productionRuntimeUsed": "NO",
+  "containerLifecycleExecuted": "NO",
+  "credentialMaterialRecorded": false,
+  "blockingCondition": "Unexpected tracked data-file mutation appeared after gateway startup; the file is outside the authorized C9.4 scope."
+}

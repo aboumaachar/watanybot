@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "gatewayHealth": {
+    "url": "http://127.0.0.1:4000/api/health",
+    "status": 200,
+    "bodyStatus": "degraded",
+    "reason": "optional KB sqlite health flag; Gateway listening and CMS routes operational"
+  },
+  "postgres": {"port": 5433, "database": "watany", "authorityTables": "available"},
+  "pythonDependency": "not_required_for_active_CMS_chain"
+}

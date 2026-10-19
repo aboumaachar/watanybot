@@ -38,11 +38,18 @@
 }
 
 .wafiyat-card {
-  border: 1px solid rgba(148, 163, 184, 0.35);
-  border-radius: 20px;
-  background: #fff;
-  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
+  border: 2px solid rgba(201, 151, 30, 0.72);
+  border-radius: 16px;
+  outline: 3px solid rgba(201, 151, 30, 0.14);
+  background: #fffefa;
+  box-shadow: 0 4px 8px rgba(23, 56, 45, 0.16);
   overflow: hidden;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.wafiyat-card[open] {
+  border-color: #8a6412;
+  box-shadow: 0 4px 8px rgba(23, 56, 45, 0.2);
 }
 
 .wafiyat-summary {
@@ -52,8 +59,9 @@
   grid-template-columns: 30px minmax(0, 1fr) auto;
   gap: 0 10px;
   align-items: center;
-  padding: 10px 12px;
+  padding: 12px 14px;
   min-height: 62px;
+  background: linear-gradient(135deg, #fffefa 0%, #fff8df 100%);
   transition: background-color 0.2s ease;
 }
 
@@ -69,8 +77,8 @@
   width: 26px;
   height: 26px;
   border-radius: 999px;
-  background: #1e3a8a;
-  border: 1px solid #1e3a8a;
+  background: #17634d;
+  border: 1px solid #c9971e;
   color: #ffffff;
   font-size: 18px;
   font-weight: 800;
@@ -82,28 +90,30 @@
 
 .wafiyat-card[open] .wafiyat-summary::after {
   content: "−";
+  background: #c9971e;
+  color: #17382d;
 }
 
 .wafiyat-summary:hover {
-  background: rgba(30, 64, 175, 0.04);
+  background: #fff5cf;
 }
 
 .wafiyat-name {
   grid-column: 2;
   grid-row: 1;
   min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
+  text-wrap: pretty;
   font-size: clamp(0.94rem, 2.9vw, 1.15rem);
   font-weight: 800;
   line-height: 1.25;
+  color: #17382d;
 }
 
 .wafiyat-date {
   grid-column: 3;
   grid-row: 1;
-  color: #64748b;
+  color: #6f5615;
   font-size: clamp(0.74rem, 2.3vw, 0.84rem);
   white-space: nowrap;
   text-align: end;
@@ -111,26 +121,43 @@
 }
 
 .wafiyat-details {
-  border-top: 1px solid rgba(148, 163, 184, 0.22);
-  padding: 14px 16px 16px;
+  border-top: 2px solid rgba(201, 151, 30, 0.48);
+  padding: 4px 16px 10px;
+  background: #fffdf7;
   display: grid;
-  gap: 10px;
+  gap: 0;
 }
 
 .wafiyat-detail-row {
   display: grid;
-  gap: 5px;
-  line-height: 1.75;
+  gap: 4px;
+  min-width: 0;
+  padding: 11px 0 12px;
+  line-height: 1.8;
+  border-bottom: 1px solid rgba(23, 56, 45, 0.14);
+}
+
+.wafiyat-detail-row:last-child {
+  border-bottom: 0;
+  padding-bottom: 6px;
 }
 
 .wafiyat-detail-row strong {
-  color: #334155;
+  color: #8a6412;
+  font-size: 0.78rem;
+  font-weight: 800;
+  line-height: 1.4;
 }
 
 .wafiyat-detail-row span,
 .wafiyat-muted {
-  color: #475569;
+  color: #17382d;
+  min-width: 0;
+  line-height: 1.85;
+  white-space: normal;
   overflow-wrap: anywhere;
+  word-break: normal;
+  text-wrap: pretty;
 }
 
 .wafiyat-empty {
@@ -150,7 +177,7 @@
   .wafiyat-summary {
     grid-template-columns: 28px minmax(0, 1fr) auto;
     gap: 0 8px;
-    padding: 9px 10px;
+    padding: 10px 11px;
     min-height: 56px;
   }
 
@@ -160,5 +187,9 @@
 
   .wafiyat-date {
     font-size: 0.8rem;
+  }
+
+  .wafiyat-details {
+    padding-inline: 13px;
   }
 }

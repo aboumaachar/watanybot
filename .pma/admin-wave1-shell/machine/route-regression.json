@@ -1,0 +1,7 @@
+{
+  "status": "PASS",
+  "scope": "focused shell regression, not product audit",
+  "routes": ["/", "/users", "/news", "/jobs", "/market", "/superadmin/", "/superadmin/cms", "/superadmin/crm", "/superadmin/erm", "/superadmin/system", "/superadmin/ain-mreisseh-building-assistant/applications"],
+  "routeRegressionCount": 11,
+  "featureMutation": false
+}

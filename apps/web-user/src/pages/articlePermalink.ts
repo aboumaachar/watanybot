@@ -1,0 +1,4 @@
+const ARABIC_LATIN:Record<string,string>={"ا":"a","أ":"a","إ":"i","آ":"a","ب":"b","ت":"t","ث":"th","ج":"j","ح":"h","خ":"kh","د":"d","ذ":"dh","ر":"r","ز":"z","س":"s","ش":"sh","ص":"s","ض":"d","ط":"t","ظ":"z","ع":"a","غ":"gh","ف":"f","ق":"q","ك":"k","ل":"l","م":"m","ن":"n","ه":"h","ة":"a","و":"w","ؤ":"w","ي":"y","ى":"a","ئ":"y","ء":""};
+export function asciiSlug(value:string):string{return Array.from(value.normalize("NFKD")).map(c=>ARABIC_LATIN[c]??c).join("").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,110)||"article";}
+export function categorySlug(categories:string[],primaryCategory?:string|null):string{return asciiSlug(primaryCategory||categories[0]||"articles");}
+export function articlePath(article:{title:string;categories:string[];primaryCategory?:string|null;permalinkSlug?:string|null}):string{return `/articles/${categorySlug(article.categories,article.primaryCategory)}/${asciiSlug(article.permalinkSlug||article.title)}`;}

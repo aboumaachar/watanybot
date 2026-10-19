@@ -85,22 +85,6 @@ async function readProcedureDocsLinks(): Promise<ProcToDocs[]> {
   return readJsonl<ProcToDocs>(filePath);
 }
 
-function writeProcedureDocsLinks(rows: ProcToDocs[]): void {
-  const filePath = getProcedureDocsLinksPath();
-  const content = rows
-    .map((row) => ({
-      ...row,
-      procedure_id: String(row.procedure_id || "").trim(),
-      doc_ids: normalizeAdminDocIds(row.doc_ids),
-    }))
-    .filter((row) => row.procedure_id && row.doc_ids.length > 0)
-    .sort((left, right) => left.procedure_id.localeCompare(right.procedure_id, "en"))
-    .map((row) => JSON.stringify(row))
-    .join("\n");
-
-  fs.writeFileSync(filePath, content ? `${content}\n` : "", "utf-8");
-}
-
 function sourceRefPaths(doc: StoredDocAsset): string[] {
   const refs = doc.source_refs || [];
   const candidates: Array<string | null> = [];
@@ -124,6 +108,24 @@ function actionTargetPaths(doc: StoredDocAsset): string[] {
     }
   }
   return uniquePaths(candidates);
+}
+
+function mofPublicAssetPaths(doc: StoredDocAsset): string[] {
+  const identity = `${doc.title || ""} ${doc.file_name || ""}`;
+  const idMatch = doc.id.match(/DOC-WATANY_MOF_HTML-000([6-8])$/i);
+  if (!idMatch && deriveReferenceSourceId(doc) !== "mof") return [];
+  const code = idMatch ? String(Number(idMatch[1]) - 0) : identity.match(/(?:^|\s|[-_/])(ت|t)\s*([789])/i)?.[2];
+  if (!code) return [];
+
+  const fileName = `t${code === "6" ? "7" : code === "7" ? "8" : "9"}-original.jpg`;
+  const kbRoot = getKbRoot();
+  return uniquePaths([
+    path.resolve(__dirname, "..", "..", "..", "..", "apps", "web-user", "public", "mof", fileName),
+    path.resolve(process.cwd(), "apps", "web-user", "public", "mof", fileName),
+    path.resolve(process.cwd(), "..", "web-user", "public", "mof", fileName),
+    path.resolve(kbRoot, "..", "apps", "web-user", "public", "mof", fileName),
+    path.resolve(kbRoot, "..", "..", "apps", "web-user", "public", "mof", fileName),
+  ]);
 }
 
 function referenceAttachmentPaths(doc: StoredDocAsset): string[] {
@@ -164,6 +166,7 @@ function docCandidates(doc: StoredDocAsset): string[] {
     exportedFilePath ? path.join(kbRoot, "docs", exportedFilePath) : null,
     exportedFilePath ? path.join(dataDir, "docs", exportedFilePath) : null,
     ...actionTargetPaths(doc),
+    ...mofPublicAssetPaths(doc),
     ...sourceRefPaths(doc),
   ]);
 }
@@ -615,6 +618,7 @@ function getReferenceSourceFile(sourceId: string): string | null {
   const fileName = `${sourceId.toLowerCase()}.html`;
 
   const candidates = uniquePaths([
+    path.resolve(process.cwd(), "reference-assets", "watanybot", "docs", "sources", fileName),
     path.join(docsDir, "sources", fileName),
     path.join(kbRoot, "docs", "sources", fileName),
     path.resolve(kbRoot, "..", "kb_studio", "runtime", "exports", "watanybot", "docs", "sources", fileName),
@@ -813,8 +817,8 @@ function buildPdfProcedurePreviewPage(doc: StoredDocAsset, filePath: string): st
 </html>`;
 }
 
-async function serveProcedurePreview(reply: any, doc: StoredDocAsset) {
-  const filePath = findDocFile(doc);
+async function serveProcedurePreview(reply: any, doc: StoredDocAsset, resolvedFilePath?: string) {
+  const filePath = resolvedFilePath || findDocFile(doc);
   if (!filePath) {
     reply.type("text/html; charset=utf-8");
     return reply.send(buildMissingProcedurePreviewPage(doc.id));
@@ -1159,12 +1163,12 @@ function buildProceduresReferenceHtml(procedures: Procedure[]): string {
 </html>`;
 }
 
-async function serveProcedureDoc(reply: any, doc: StoredDocAsset, disposition: "inline" | "attachment") {
+async function serveProcedureDoc(reply: any, doc: StoredDocAsset, disposition: "inline" | "attachment", resolvedFilePath?: string) {
   if (doc.public_url) {
     return reply.redirect(doc.public_url);
   }
 
-  const filePath = findDocFile(doc);
+  const filePath = resolvedFilePath || findDocFile(doc);
   if (!filePath) {
     if (disposition === "attachment") {
       reply.type("text/plain; charset=utf-8");
@@ -1580,6 +1584,10 @@ export async function proceduresRoutes(app: FastifyInstance) {
     const docSource = deriveReferenceSourceId(doc);
     const sourceFile = docSource ? getReferenceSourceFile(docSource) : null;
     const filePath = findDocFile(doc);
+    const directMofAsset = mofPublicAssetPaths(doc).find((candidate) => isAbsoluteExistingFile(candidate));
+    if (directMofAsset) {
+      return serveProcedurePreview(reply, doc, directMofAsset);
+    }
     // If the doc is a source fallback, only redirect to the reference HTML
     // when the resolved file is missing or when the resolved file is the
     // original source HTML itself. For non-HTML resolved files (images, PDFs)
@@ -1602,10 +1610,11 @@ export async function proceduresRoutes(app: FastifyInstance) {
           const ext = path.extname(c).toLowerCase();
           return ![".html", ".htm"].includes(ext);
         });
-        if (alt) {
+        const publicMofAsset = mofPublicAssetPaths(doc).find((c) => isAbsoluteExistingFile(c));
+        if (publicMofAsset || alt) {
           // Serve the non-HTML asset inline (image/PDF) instead of redirecting
           // to the reference HTML so the viewer can display the actual file.
-          return serveProcedureDoc(reply, doc, "inline");
+          return serveProcedurePreview(reply, doc, publicMofAsset || alt);
         }
       }
 
@@ -1705,148 +1714,22 @@ export async function proceduresRoutes(app: FastifyInstance) {
 
   /* ── Replace document links for one procedure (admin) ─ */
   app.put<{ Params: { id: string }; Body: { doc_ids?: string[]; reason?: string } }>("/api/admin/procedures/:id/doc-links", { preHandler: [requireRole("superadmin")] }, async (req, reply) => {
-    const { id } = req.params;
-    const state = await loadIndex(false);
-    const procedure = state.byId.get(id) || state.byId.get(normalizeAdminProcedureId(id));
-    if (!procedure) {
-      reply.code(404);
-      return { error: "not_found" };
-    }
-
-    const nextDocIds = normalizeAdminDocIds(req.body?.doc_ids);
-    const reason = String(req.body?.reason || "superadmin_manual").trim() || "superadmin_manual";
-    const links = await readProcedureDocsLinks();
-    const existing = links.find((entry) => normalizeAdminProcedureId(entry.procedure_id) === normalizeAdminProcedureId(id));
-    const remaining = links.filter((entry) => normalizeAdminProcedureId(entry.procedure_id) !== normalizeAdminProcedureId(id));
-
-    if (nextDocIds.length > 0) {
-      remaining.push({
-        procedure_id: procedure.id,
-        doc_ids: nextDocIds,
-        confidence: 1,
-        reason,
-        attached_docs: Array.isArray(existing?.attached_docs) ? existing?.attached_docs : [],
-      });
-    }
-
-    try {
-      writeProcedureDocsLinks(remaining);
-      await reloadIndex();
-      return {
-        ok: true,
-        mapping: {
-          procedure_id: procedure.id,
-          doc_ids: nextDocIds,
-          confidence: nextDocIds.length > 0 ? 1 : undefined,
-          reason: nextDocIds.length > 0 ? reason : undefined,
-          attached_docs: Array.isArray(existing?.attached_docs) ? existing?.attached_docs : [],
-        },
-      };
-    } catch (err) {
-      reply.code(500);
-      return { error: err instanceof Error ? err.message : "doc_links_update_failed" };
-    }
+    return reply.code(409).send({ ok: false, error: "CANONICAL_EDITOR_PAYLOAD", canonicalEditor: "PAYLOAD" });
   });
 
   /* ── Create procedure ──────────────────────────────── */
   app.post<{ Body: Partial<Procedure> }>("/api/admin/procedures", { preHandler: [requireRole("superadmin")] }, async (req, reply) => {
-    const body = req.body;
-    if (!body.id || !body.title_ar) {
-      reply.code(400);
-      return { error: "id and title_ar required" };
-    }
-
-    const dataDir = getDataDir();
-    const procPath = path.join(dataDir, "procedures.jsonl");
-
-    // Append to jsonl file
-    const proc: Procedure = {
-      id: body.id,
-      tx_no: body.tx_no,
-      source: body.source || "internal",
-      title_ar: body.title_ar,
-      title_en: body.title_en,
-      summary_lb: body.summary_lb || "",
-      eligibility: body.eligibility,
-      requirements: body.requirements,
-      steps: body.steps,
-      where_to_apply: body.where_to_apply,
-      fees: body.fees,
-      timelines: body.timelines,
-      tags: body.tags,
-      faq_variants: body.faq_variants,
-      version: "3.0.0",
-      last_updated: new Date().toISOString(),
-    };
-
-    try {
-      const line = JSON.stringify(proc);
-      fs.appendFileSync(procPath, line + "\n", "utf-8");
-      await reloadIndex(); // Force reload
-      return { ok: true, procedure: proc };
-    } catch (err) {
-      reply.code(500);
-      return { error: err instanceof Error ? err.message : "Create failed" };
-    }
+    return reply.code(409).send({ ok: false, error: "CANONICAL_EDITOR_PAYLOAD", canonicalEditor: "PAYLOAD" });
   });
 
   /* ── Update procedure ──────────────────────────────── */
   app.put<{ Params: { id: string }; Body: Partial<Procedure> }>("/api/admin/procedures/:id", { preHandler: [requireRole("superadmin")] }, async (req, reply) => {
-    const { id } = req.params;
-    const body = req.body;
-    const state = await loadIndex(false);
-
-    // Find and update in state
-    const idx = state.procedures.findIndex(p => p.id === id);
-    if (idx === -1) {
-      reply.code(404);
-      return { error: "not_found" };
-    }
-
-    const updated: Procedure = {
-      ...state.procedures[idx],
-      ...body,
-      last_updated: new Date().toISOString(),
-    };
-
-    state.procedures[idx] = updated;
-
-    try {
-      // Rewrite jsonl file
-      const dataDir = getDataDir();
-      const procPath = path.join(dataDir, "procedures.jsonl");
-      const content = state.procedures.map(p => JSON.stringify(p)).join("\n");
-      fs.writeFileSync(procPath, content + "\n", "utf-8");
-      await reloadIndex(); // Force reload
-      return { ok: true, procedure: updated };
-    } catch (err) {
-      reply.code(500);
-      return { error: err instanceof Error ? err.message : "Update failed" };
-    }
+    return reply.code(409).send({ ok: false, error: "CANONICAL_EDITOR_PAYLOAD", canonicalEditor: "PAYLOAD" });
   });
 
   /* ── Delete procedure ──────────────────────────────– */
   app.delete<{ Params: { id: string } }>("/api/admin/procedures/:id", { preHandler: [requireRole("superadmin")] }, async (req, reply) => {
-    const { id } = req.params;
-    const state = await loadIndex(false);
-
-    const filtered = state.procedures.filter(p => p.id !== id);
-    if (filtered.length === state.procedures.length) {
-      reply.code(404);
-      return { error: "not_found" };
-    }
-
-    try {
-      const dataDir = getDataDir();
-      const procPath = path.join(dataDir, "procedures.jsonl");
-      const content = filtered.map(p => JSON.stringify(p)).join("\n");
-      fs.writeFileSync(procPath, content + (filtered.length > 0 ? "\n" : ""), "utf-8");
-      await reloadIndex();
-      return { ok: true };
-    } catch (err) {
-      reply.code(500);
-      return { error: err instanceof Error ? err.message : "Delete failed" };
-    }
+    return reply.code(409).send({ ok: false, error: "CANONICAL_EDITOR_PAYLOAD", canonicalEditor: "PAYLOAD" });
   });
 
   /* ── Export to CSV ─────────────────────────────────── */

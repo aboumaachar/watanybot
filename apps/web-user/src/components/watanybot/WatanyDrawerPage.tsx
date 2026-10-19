@@ -357,7 +357,7 @@ export default function WatanyDrawerPage() {
   const handleForceLocalGateway = React.useCallback(() => {
     const forcedBase = import.meta.env.DEV && globalThis.location
       ? `${globalThis.location.protocol}//${globalThis.location.host}`
-      : "http://127.0.0.1:8010";
+      : (globalThis.location?.origin || getCandidateApiBaseUrls()[0] || "");
     globalThis.localStorage?.setItem("watany_api_base_force", forcedBase);
     globalThis.location.reload();
   }, []);

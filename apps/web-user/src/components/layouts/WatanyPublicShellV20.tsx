@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import { NavLink, Outlet, useLocation } from "react-router-dom";
+import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { MainHybridChatSurface } from "../chat/MainHybridChatSurface";
-import { Ticker } from "../Ticker";
+import { PwaInstallController } from "../PwaInstallController";
+import { Ticker, type TickerItem } from "../Ticker";
+import { resolveTickerTarget } from "../../lib/ticker-targets";
 import { WatanyV4Icon } from "../../theme/watany-v4/WatanyV4Icon";
 import { useApp } from "../../store/app";
 import { DRAWER_MENU_GROUPS } from "../../features/universal-feature-menu/universalFeatureMenuRegistry";
@@ -10,6 +12,8 @@ const menuGroups = DRAWER_MENU_GROUPS.map((group) => ({
   key: group.id,
   label: group.label,
   icon: group.iconFeatureId,
+  drawerLevel: group.drawerLevel ?? "group",
+  to: group.route,
   items: group.items.map((item) => ({ to: item.route, label: item.label })),
 }));
 
@@ -23,9 +27,10 @@ const bottomItems = [
 export function WatanyPublicShellV20() {
   const { apiBaseUrl } = useApp();
   const location = useLocation();
+  const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
-  const [openMenuGroups, setOpenMenuGroups] = useState<Record<string, boolean>>({ procedures: true });
+  const [openMenuGroups, setOpenMenuGroups] = useState<Record<string, boolean>>({ procedures: true, "daily-services": true });
   const menuButtonRef = useRef<HTMLButtonElement | null>(null);
   const drawerRef = useRef<HTMLElement | null>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
@@ -118,7 +123,14 @@ export function WatanyPublicShellV20() {
           <img className="watany-recovery-logo" src="/logo.png" alt="شعار موطني" />
         </NavLink>
         <div className="watany-recovery-ticker" aria-label="شريط المعلومات">
-          <Ticker apiBaseUrl={apiBaseUrl} />
+          <Ticker
+            apiBaseUrl={apiBaseUrl}
+            onItemClick={(item: TickerItem) => {
+              const target = resolveTickerTarget(item);
+              if (target?.type === "internal") navigate(target.href);
+              if (target?.type === "external") window.open(target.href, "_blank", "noopener,noreferrer");
+            }}
+          />
         </div>
         <button
           type="button"
@@ -155,6 +167,15 @@ export function WatanyPublicShellV20() {
             <nav>
               <NavLink className="watany-recovery-menu-home-link" to="/home" end onClick={() => setMenuOpen(false)}>الرئيسية</NavLink>
               {menuGroups.map((group) => {
+                if (group.drawerLevel === "top-level") {
+                  return (
+                    <NavLink className="watany-recovery-menu-home-link watany-recovery-menu-top-link" key={group.key} to={group.to} onClick={() => setMenuOpen(false)}>
+                      <WatanyV4Icon name={group.icon as Parameters<typeof WatanyV4Icon>[0]["name"]} aria-hidden="true" width={20} height={20} />
+                      <span>{group.label}</span>
+                    </NavLink>
+                  );
+                }
+
                 const isExpanded = openMenuGroups[group.key] ?? false;
                 return (
                   <section className="watany-recovery-menu-group" key={group.key}>
@@ -189,13 +210,11 @@ export function WatanyPublicShellV20() {
 
       {chatOpen ? (
         <section className="watany-recovery-chat" data-watany-safe-chat="true" aria-label="المساعد">
-          <div className="watany-recovery-chat-head">
-            <strong>مساعد موطني</strong>
-            <button type="button" onClick={() => setChatOpen(false)} aria-label="إغلاق المساعد">×</button>
-          </div>
-          <MainHybridChatSurface context={`shell:${location.pathname}`} />
+          <MainHybridChatSurface context={`shell:${location.pathname}`} onClose={() => setChatOpen(false)} />
         </section>
       ) : null}
+
+      <PwaInstallController />
 
       <nav className="watany-recovery-bottom" aria-label="التنقل السريع" data-watany-bottom-bar="true" data-watany-dock="true" data-watany-bottom-nav="true">
         {bottomItems.map((item) => (
@@ -208,6 +227,16 @@ export function WatanyPublicShellV20() {
             <span className="watany-recovery-bottom__label">{item.label}</span>
           </NavLink>
         ))}
+        <button
+          type="button"
+          className="watany-recovery-bottom__install"
+          aria-label="تثبيت التطبيق"
+          title="تثبيت التطبيق"
+          onClick={() => globalThis.dispatchEvent(new Event("watany-open-install-prompt"))}
+        >
+          <WatanyV4Icon name="install" aria-hidden="true" width={20} height={20} />
+          <span className="watany-recovery-bottom__label">تثبيت</span>
+        </button>
         <button type="button" aria-label="فتح مساعد موطني" aria-expanded={chatOpen} onClick={() => setChatOpen((value) => !value)}>
           <WatanyV4Icon name="ask-watany" aria-hidden="true" width={20} height={20} />
           <span className="watany-recovery-bottom__label">المساعد</span>

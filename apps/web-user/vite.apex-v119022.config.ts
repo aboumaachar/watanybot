@@ -1,8 +1,9 @@
-import { existsSync, readFileSync, readdirSync, statSync, unlinkSync } from "node:fs";
+import { cpSync, existsSync, readFileSync, readdirSync, statSync, unlinkSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { defineConfig, mergeConfig, type ConfigEnv, type Plugin, type ResolvedConfig, type UserConfig } from "vite";
 import baseConfig from "./vite.config";
+import { socialPreviewBuildPlugin } from "./scripts/social-preview-build";
 
 const FINAL_CASCADE_BEGIN = "APEX_V119022_FINAL_CASCADE_BEGIN";
 const FINAL_CASCADE_END = "APEX_V119022_FINAL_CASCADE_END";
@@ -93,6 +94,31 @@ function finalCascadePlugin(): Plugin {
   };
 }
 
+function formsStaticAssetsPlugin(): Plugin {
+  let resolvedConfig: ResolvedConfig | undefined;
+  return {
+    name: "watany-forms-static-assets",
+    configResolved(config) {
+      resolvedConfig = config;
+    },
+    writeBundle() {
+      if (!resolvedConfig) {
+        this.error("Watany forms static assets configuration is unavailable");
+        return;
+      }
+
+      const sourceDir = path.resolve(resolvedConfig.root, "../../public/forms");
+      const outputDir = path.resolve(resolvedConfig.root, resolvedConfig.build.outDir, "forms");
+      if (!existsSync(sourceDir)) {
+        this.error(`Watany forms source directory is missing: ${sourceDir}`);
+        return;
+      }
+
+      cpSync(sourceDir, outputDir, { recursive: true });
+    },
+  };
+}
+
 function cleanChunkName(value: string): string {
   return value
     .replace(/[^a-zA-Z0-9_-]+/g, "-")
@@ -158,9 +184,10 @@ function manualChunks(id: string): string | undefined {
 export default defineConfig(async (env: ConfigEnv) => {
   const source = typeof baseConfig === "function" ? await baseConfig(env) : await baseConfig;
   const splitConfig: UserConfig = {
-    plugins: [finalCascadePlugin()],
+    plugins: [finalCascadePlugin(), formsStaticAssetsPlugin(), socialPreviewBuildPlugin()],
     build: {
       cssCodeSplit: false,
+      modulePreload: false,
       rollupOptions: {
         output: {
           manualChunks,

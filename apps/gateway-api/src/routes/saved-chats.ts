@@ -12,6 +12,11 @@ interface SavedChatsRoutesOptions {
 
 const VALID_SAVED_CHAT_STATUSES = new Set<SavedChatItem["status"]>(["active", "closed", "archived", "deleted_for_me"]);
 
+function resolveSavedChatUserId(request: any): string {
+  const principalId = typeof request?.user?.id === "string" ? request.user.id.trim() : "";
+  return principalId || "default";
+}
+
 function resolveSavedChatTimeline(status: SavedChatItem["status"], existing?: SavedChatItem) {
   const now = Date.now();
 
@@ -51,9 +56,9 @@ function resolveSavedChatTimeline(status: SavedChatItem["status"], existing?: Sa
 }
 
 export const savedChatsRoutes: FastifyPluginAsync<SavedChatsRoutesOptions> = async (app, { pluginDb }) => {
-  app.get("/api/saved", async (_req, reply) => {
+  app.get("/api/saved", async (req, reply) => {
     if (!requireAuth(pluginDb, reply, "accredited")) return { items: [] } as const;
-    const userId = "default";
+    const userId = resolveSavedChatUserId(req);
     const rows = pluginDb
       .prepare("SELECT * FROM saved_chats WHERE user_id = ? ORDER BY COALESCE(updated_at, ts) DESC")
       .all(userId) as Array<Record<string, unknown>>;
@@ -67,7 +72,7 @@ export const savedChatsRoutes: FastifyPluginAsync<SavedChatsRoutesOptions> = asy
       reply.code(400);
       return { error: "text required" } as const;
     }
-    const userId = "default";
+    const userId = resolveSavedChatUserId(req);
     const now = Date.now();
     const item: SavedChatItem = {
       id: makeId("saved"),
@@ -93,7 +98,7 @@ export const savedChatsRoutes: FastifyPluginAsync<SavedChatsRoutesOptions> = asy
   app.patch<{ Params: { id: string }; Body: { status?: SavedChatItem["status"] } }>("/api/saved/:id", async (req, reply) => {
     if (!requireAuth(pluginDb, reply, "accredited")) return { error: "unauthorized" } as const;
 
-    const userId = "default";
+    const userId = resolveSavedChatUserId(req);
     const id = req.params.id;
     const nextStatus = req.body?.status;
 
@@ -135,7 +140,7 @@ export const savedChatsRoutes: FastifyPluginAsync<SavedChatsRoutesOptions> = asy
 
   app.delete<{ Params: { id: string } }>("/api/saved/:id", async (req, reply) => {
     if (!requireAuth(pluginDb, reply, "accredited")) return { error: "unauthorized" } as const;
-    const userId = "default";
+    const userId = resolveSavedChatUserId(req);
     const id = req.params.id;
     const result = pluginDb.prepare("DELETE FROM saved_chats WHERE id = ? AND user_id = ?").run(id, userId);
     if (result.changes === 0) {

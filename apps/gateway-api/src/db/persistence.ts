@@ -272,7 +272,7 @@ export interface DatabaseClient {
 // ─────────────────────────────────────────────────────────────────────
 
 export class PostgresClient implements DatabaseClient {
-  private config: DatabaseConfig;
+  private readonly config: DatabaseConfig;
   private pool: unknown = null;
   private connected = false;
 
@@ -367,7 +367,7 @@ export class PostgresClient implements DatabaseClient {
 // ─────────────────────────────────────────────────────────────────────
 
 export class InMemoryClient implements DatabaseClient {
-  private tables: Map<string, unknown[]> = new Map();
+  private readonly tables: Map<string, unknown[]> = new Map();
 
   async connect(): Promise<void> {
     console.log('[DB] Using in-memory storage (PostgreSQL not configured)');
@@ -409,8 +409,8 @@ export class InMemoryClient implements DatabaseClient {
 // ─────────────────────────────────────────────────────────────────────
 
 export class PersistenceManager {
-  private client: DatabaseClient;
-  private isPostgres: boolean;
+  private readonly client: DatabaseClient;
+  private readonly isPostgres: boolean;
 
   constructor(client: DatabaseClient) {
     this.client = client;
@@ -642,12 +642,12 @@ export function getPersistenceManager(): PersistenceManager {
     if (host) {
       const client = new PostgresClient({
         host,
-        port: parseInt(process.env.DB_PORT || '5433'),
+        port: Number.parseInt(process.env.DB_PORT || '5433', 10),
         database: process.env.DB_NAME || 'watany',
         user: process.env.DB_USER || 'watany',
         password: process.env.DB_PASSWORD || '',
         ssl: process.env.DB_SSL === 'true',
-        poolSize: parseInt(process.env.DB_POOL_SIZE || '10'),
+        poolSize: Number.parseInt(process.env.DB_POOL_SIZE || '10', 10),
       });
       persistenceInstance = new PersistenceManager(client);
     } else {

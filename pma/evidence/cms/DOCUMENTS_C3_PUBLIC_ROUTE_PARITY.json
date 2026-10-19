@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "protectedHashesUnchanged": true,
+  "publicRouteOwner": "apps/gateway-api/src/routes/documents.ts",
+  "publicConsumer": "apps/web-user/src/pages/DocumentsPage.tsx",
+  "documentIdShape": "existing owner-generated doc_* identifiers preserved",
+  "attachmentFileUrlBehavior": "UNVERIFIED_NOT_PRESENT_IN_CURRENT_OWNER",
+  "previewBehavior": "UNVERIFIED_NOT_PRESENT_IN_CURRENT_OWNER",
+  "downloadBehavior": "UNVERIFIED_NOT_PRESENT_IN_CURRENT_OWNER",
+  "shareBehavior": "UNVERIFIED_NOT_PRESENT_IN_CURRENT_OWNER"
+}

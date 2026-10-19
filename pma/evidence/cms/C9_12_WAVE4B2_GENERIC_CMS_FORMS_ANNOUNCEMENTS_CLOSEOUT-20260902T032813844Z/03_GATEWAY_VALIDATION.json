@@ -1,0 +1,71 @@
+{
+    "runId":  "20260902T032813844Z",
+    "stage":  "GATEWAY_VALIDATION",
+    "status":  "PASS",
+    "reason":  "Gateway typecheck, route boundary, preserved Payload boundary, and live Forms/Announcements runtime proof.",
+    "data":  {
+                 "status":  "PASS",
+                 "typecheck":  {
+                                   "name":  "GATEWAY_TYPECHECK",
+                                   "command":  [
+                                                   "pnpm",
+                                                   "--dir",
+                                                   "apps/gateway-api",
+                                                   "typecheck"
+                                               ],
+                                   "workingDirectory":  "C:\\xampp\\htdocs\\projectx\\watanybot",
+                                   "startUtc":  "2026-09-02T03:28:17.6280786Z",
+                                   "endUtc":  "2026-09-02T03:28:38.8851905Z",
+                                   "exitCode":  0,
+                                   "status":  "PASS",
+                                   "stdoutPath":  "C:\\xampp\\htdocs\\projectx\\watanybot\\pma\\evidence\\cms\\C9_12_WAVE4B2_GENERIC_CMS_FORMS_ANNOUNCEMENTS_CLOSEOUT-20260902T032813844Z\\GATEWAY_TYPECHECK.stdout.txt",
+                                   "stderrPath":  "C:\\xampp\\htdocs\\projectx\\watanybot\\pma\\evidence\\cms\\C9_12_WAVE4B2_GENERIC_CMS_FORMS_ANNOUNCEMENTS_CLOSEOUT-20260902T032813844Z\\GATEWAY_TYPECHECK.stderr.txt",
+                                   "stdoutBytes":  242,
+                                   "stderrBytes":  0,
+                                   "exception":  ""
+                               },
+                 "routeBoundary":  {
+                                       "name":  "CMS_ROUTE_AND_PAYLOAD_BOUNDARY",
+                                       "command":  [
+                                                       "pnpm",
+                                                       "exec",
+                                                       "vitest",
+                                                       "run",
+                                                       "apps/gateway-api/src/cms/storage/genericCmsRoutes.test.ts",
+                                                       "apps/gateway-api/src/tests/payload-cms-boundary.test.ts"
+                                                   ],
+                                       "workingDirectory":  "C:\\xampp\\htdocs\\projectx\\watanybot",
+                                       "startUtc":  "2026-09-02T03:28:38.9042289Z",
+                                       "endUtc":  "2026-09-02T03:28:52.5076585Z",
+                                       "exitCode":  0,
+                                       "status":  "PASS",
+                                       "stdoutPath":  "C:\\xampp\\htdocs\\projectx\\watanybot\\pma\\evidence\\cms\\C9_12_WAVE4B2_GENERIC_CMS_FORMS_ANNOUNCEMENTS_CLOSEOUT-20260902T032813844Z\\CMS_ROUTE_AND_PAYLOAD_BOUNDARY.stdout.txt",
+                                       "stderrPath":  "C:\\xampp\\htdocs\\projectx\\watanybot\\pma\\evidence\\cms\\C9_12_WAVE4B2_GENERIC_CMS_FORMS_ANNOUNCEMENTS_CLOSEOUT-20260902T032813844Z\\CMS_ROUTE_AND_PAYLOAD_BOUNDARY.stderr.txt",
+                                       "stdoutBytes":  1336,
+                                       "stderrBytes":  0,
+                                       "exception":  ""
+                                   },
+                 "runtime":  {
+                                 "name":  "FORMS_AND_ANNOUNCEMENTS_RUNTIME",
+                                 "command":  [
+                                                 "pnpm",
+                                                 "exec",
+                                                 "vitest",
+                                                 "run",
+                                                 "apps/gateway-api/src/cms/forms/forms-cms-runtime.test.ts",
+                                                 "apps/gateway-api/src/cms/announcements/announcements-cms-runtime.test.ts"
+                                             ],
+                                 "workingDirectory":  "C:\\xampp\\htdocs\\projectx\\watanybot",
+                                 "startUtc":  "2026-09-02T03:28:52.5271532Z",
+                                 "endUtc":  "2026-09-02T03:29:17.7939723Z",
+                                 "exitCode":  0,
+                                 "status":  "PASS",
+                                 "stdoutPath":  "C:\\xampp\\htdocs\\projectx\\watanybot\\pma\\evidence\\cms\\C9_12_WAVE4B2_GENERIC_CMS_FORMS_ANNOUNCEMENTS_CLOSEOUT-20260902T032813844Z\\FORMS_AND_ANNOUNCEMENTS_RUNTIME.stdout.txt",
+                                 "stderrPath":  "C:\\xampp\\htdocs\\projectx\\watanybot\\pma\\evidence\\cms\\C9_12_WAVE4B2_GENERIC_CMS_FORMS_ANNOUNCEMENTS_CLOSEOUT-20260902T032813844Z\\FORMS_AND_ANNOUNCEMENTS_RUNTIME.stderr.txt",
+                                 "stdoutBytes":  41082,
+                                 "stderrBytes":  0,
+                                 "exception":  ""
+                             },
+                 "reason":  "Gateway typecheck, route boundary, preserved Payload boundary, and live Forms/Announcements runtime proof."
+             }
+}

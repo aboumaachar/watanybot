@@ -1,0 +1,8 @@
+{
+  "classification": "ADAPTER_CONVERGENCE_REQUIRED_NO_PARALLEL_DOCUMENT_REPOSITORY",
+  "canonicalOwner": "apps/gateway-api/src/routes/documents.ts",
+  "cmsGatewayOwner": "apps/gateway-api/src/cms/cms-routes.ts",
+  "cmsAdapter": "apps/gateway-api/src/cms/documents/documents-cms-adapter.ts",
+  "publicConsumer": "apps/web-user/src/pages/DocumentsPage.tsx",
+  "parallelStorageCreated": false
+}

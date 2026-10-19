@@ -121,23 +121,15 @@ describe("sms provider factory", () => {
     expect(() => createSmsProvider()).toThrow(/simulation provider is not allowed in production/i);
   });
 
-  it("falls back to whatsapp simulation when live credentials are missing", async () => {
+  it("fails closed in production when whatsapp live credentials are missing", async () => {
     process.env.NODE_ENV = "production";
     process.env.OTP_PROVIDER = "whatsapp";
     process.env.WHATSAPP_OUTBOUND_MODE = "live";
     delete process.env.WHATSAPP_API_TOKEN;
     delete process.env.WHATSAPP_PHONE_NUMBER_ID;
 
-    const writeSpy = vi.spyOn(process.stdout, "write").mockReturnValue(true);
-
     const { createSmsProvider } = await import("../auth/sms.js");
-
-    await createSmsProvider().sendOtp("+96170123456", "123456");
-
-    const firstWrite = String(writeSpy.mock.calls[0]?.[0] ?? "");
-    expect(firstWrite).toContain("[OTP:whatsapp:simulate]");
-    expect(firstWrite).toContain('"accountNumber":"+96181396332"');
-    expect(firstWrite).toContain('"to":"+96170123456"');
+    expect(() => createSmsProvider()).toThrow(/WhatsApp live OTP requires/);
   });
 
   it("sends via the live whatsapp provider without logging the OTP code", async () => {

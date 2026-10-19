@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("node:child_process", () => ({
   execFile: vi.fn(),
@@ -6,12 +6,22 @@ vi.mock("node:child_process", () => ({
 
 import { execFile } from "node:child_process";
 import { resolveCommand } from "../kb-import/extractors";
+import { deriveIndividualKbId } from "../kb-import/job-store";
 
 type ExecFileCallback = (error: Error | null, stdout?: string, stderr?: string) => void;
 
 describe("kb-import extractor command resolution", () => {
+  // These cases cover the Windows probe (`where` + absolute fallbacks), which
+  // resolveCommand picks from process.platform. Pin it so they also hold on Linux CI.
+  const realPlatform = Object.getOwnPropertyDescriptor(process, "platform")!;
+
   beforeEach(() => {
     vi.clearAllMocks();
+    Object.defineProperty(process, "platform", { ...realPlatform, value: "win32" });
+  });
+
+  afterEach(() => {
+    Object.defineProperty(process, "platform", realPlatform);
   });
 
   it("uses discovered command path when where succeeds", async () => {
@@ -65,5 +75,12 @@ describe("kb-import extractor command resolution", () => {
 
     const resolved = await resolveCommand("pdftotext");
     expect(resolved).toBeNull();
+  });
+});
+
+describe("kb-import individual KB identity", () => {
+  it("is stable for the same source name and content hash", () => {
+    expect(deriveIndividualKbId("source.md", "ABC123")).toBe(deriveIndividualKbId("source.md", "abc123"));
+    expect(deriveIndividualKbId("source.md", "abc123")).not.toBe(deriveIndividualKbId("renamed.md", "abc123"));
   });
 });

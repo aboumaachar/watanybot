@@ -56,6 +56,15 @@ This audit covers:
 | Token rotation | Refresh token replaced on each `/api/auth/refresh` call ✓ |
 | Session revocation | `DELETE FROM sessions WHERE token = $1` on logout ✓ |
 
+**Session-bound administrator closure (UD-1):**
+
+- Access tokens remain valid for exactly 24 hours by default (`86400` seconds), controlled by `JWT_EXPIRES_IN_SEC`.
+- Tokens issued for administrator identities carry the existing `sessions.id` as the `sid` claim.
+- Administrative requests require the JWT signature and expiry, an active current `users` row, and a matching unexpired `sessions` row. Missing, unknown, expired, deleted, or cross-user `sid` values return `401`.
+- Historical administrator JWTs without `sid` are rejected on administrative paths. Public and non-administrative paths retain compatibility with historical tokens that do not carry `sid`.
+- Login, refresh, and logout continue to use the existing `sessions` table. Deleting the session on logout invalidates the same administrator access JWT immediately; refresh after logout returns `401`.
+- The development-only fallback remains unavailable in production and does not create a session-backed administrator token when the database is unavailable; administrative requests fail closed in that state.
+
 **No issues found.**
 
 ---
@@ -385,3 +394,24 @@ Next: RBAC_AUDIT.md
   — Permission boundary completeness
   — Admin control surfaces
 ```
+
+---
+
+## 8. UD-1 Canonical Administrator Security Audit
+
+**Status: WORKING**
+
+Supported administrator security events now converge on the existing immutable `admin_audit_events` store while compatibility `audit_log` writes remain in place:
+
+| Event | Coverage |
+|-------|----------|
+| `ADMIN_LOGIN_SUCCESS` | Password and Google administrator login |
+| `ADMIN_LOGIN_FAILURE` | Unknown, banned, and invalid-credential login attempts; unauthenticated events use actor `anonymous` |
+| `ADMIN_LOGOUT` | Logout resolved from the refresh token or access header |
+| `ADMIN_SESSION_REVOKE` | Single-session and revoke-all administrator operations |
+| `ADMIN_USER_SUSPEND` | Administrator status change to `suspended` |
+| `ADMIN_USER_REACTIVATE` | Administrator status change to `active` |
+| `ADMIN_ROLE_CHANGE` | Administrator role mutation |
+| `ADMIN_PERMISSION_CHANGE` | Not applicable: no permission-mutation endpoint exists |
+
+Audit metadata excludes passwords, password hashes, JWTs, refresh tokens, cookies, secrets, and token hashes. The textual `actor_id` column permits the stable `anonymous` actor without fabricating a user UUID.

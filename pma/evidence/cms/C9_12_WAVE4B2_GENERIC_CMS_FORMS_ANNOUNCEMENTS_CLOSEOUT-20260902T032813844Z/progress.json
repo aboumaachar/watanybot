@@ -1,0 +1,116 @@
+{
+    "rows":  [
+                 {
+                     "utc":  "2026-09-02T03:28:14.0289441Z",
+                     "stage":  "SOURCE_IDENTITY",
+                     "event":  "START",
+                     "status":  "START",
+                     "detail":  "Stage started."
+                 },
+                 {
+                     "utc":  "2026-09-02T03:28:14.4699553Z",
+                     "stage":  "SOURCE_IDENTITY",
+                     "event":  "END",
+                     "status":  "PASS",
+                     "detail":  "Selective Wave 4B.2 implementation identity captured."
+                 },
+                 {
+                     "utc":  "2026-09-02T03:28:14.5312689Z",
+                     "stage":  "MIGRATION_STATUS",
+                     "event":  "START",
+                     "status":  "START",
+                     "detail":  "Stage started."
+                 },
+                 {
+                     "utc":  "2026-09-02T03:28:17.5243346Z",
+                     "stage":  "MIGRATION_STATUS",
+                     "event":  "END",
+                     "status":  "PASS",
+                     "detail":  "Live migration catalog query completed."
+                 },
+                 {
+                     "utc":  "2026-09-02T03:28:17.5690534Z",
+                     "stage":  "GATEWAY_VALIDATION",
+                     "event":  "START",
+                     "status":  "START",
+                     "detail":  "Stage started."
+                 },
+                 {
+                     "utc":  "2026-09-02T03:29:17.9426416Z",
+                     "stage":  "GATEWAY_VALIDATION",
+                     "event":  "END",
+                     "status":  "PASS",
+                     "detail":  "Gateway typecheck, route boundary, preserved Payload boundary, and live Forms/Announcements runtime proof."
+                 },
+                 {
+                     "utc":  "2026-09-02T03:29:18.2540138Z",
+                     "stage":  "ADMIN_BUILD",
+                     "event":  "START",
+                     "status":  "START",
+                     "detail":  "Stage started."
+                 },
+                 {
+                     "utc":  "2026-09-02T03:30:14.2986043Z",
+                     "stage":  "ADMIN_BUILD",
+                     "event":  "END",
+                     "status":  "PASS",
+                     "detail":  "Admin typecheck and production bundle proof."
+                 },
+                 {
+                     "utc":  "2026-09-02T03:30:14.3893745Z",
+                     "stage":  "BROWSER_PROOF",
+                     "event":  "START",
+                     "status":  "START",
+                     "detail":  "Stage started."
+                 },
+                 {
+                     "utc":  "2026-09-02T03:30:15.1307391Z",
+                     "stage":  "BROWSER_PROOF",
+                     "event":  "END",
+                     "status":  "PASS",
+                     "detail":  "Authenticated integrated-browser proof with desktop/mobile overflow and touch-media evidence."
+                 },
+                 {
+                     "utc":  "2026-09-02T03:30:15.4506587Z",
+                     "stage":  "CLEANUP",
+                     "event":  "START",
+                     "status":  "START",
+                     "detail":  "Stage started."
+                 },
+                 {
+                     "utc":  "2026-09-02T03:30:28.0957524Z",
+                     "stage":  "CLEANUP",
+                     "event":  "END",
+                     "status":  "PASS",
+                     "detail":  "Synthetic canary scope was transactionally cleaned and queried after runtime validation."
+                 },
+                 {
+                     "utc":  "2026-09-02T03:30:28.2127755Z",
+                     "stage":  "WORKTREE_CLASSIFICATION",
+                     "event":  "START",
+                     "status":  "START",
+                     "detail":  "Stage started."
+                 },
+                 {
+                     "utc":  "2026-09-02T03:30:29.2182892Z",
+                     "stage":  "WORKTREE_CLASSIFICATION",
+                     "event":  "END",
+                     "status":  "PASS",
+                     "detail":  "Full worktree status captured without staging or mutation."
+                 },
+                 {
+                     "utc":  "2026-09-02T03:30:29.3311431Z",
+                     "stage":  "CLOSEOUT",
+                     "event":  "START",
+                     "status":  "START",
+                     "detail":  "Stage started."
+                 },
+                 {
+                     "utc":  "2026-09-02T03:30:29.5136552Z",
+                     "stage":  "CLOSEOUT",
+                     "event":  "END",
+                     "status":  "PASS",
+                     "detail":  "Current Wave 4B.2 gates evaluated without Git or production actions."
+                 }
+             ]
+}

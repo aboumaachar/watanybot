@@ -1111,6 +1111,89 @@
   cursor: pointer;
 }
 
+.community-starred-entry,
+.community-starred-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  border-radius: 0.75rem;
+  background: #fffdf5;
+}
+
+.community-starred-entry p {
+  margin: 0.25rem 0 0;
+  color: var(--wa-text-light);
+}
+
+.community-starred-entry button,
+.community-starred-header button {
+  min-height: 2.75rem;
+  padding: 0.5rem 0.875rem;
+  border: 1px solid var(--accent);
+  border-radius: 0.5rem;
+  background: var(--accent);
+  color: #fff;
+  cursor: pointer;
+}
+
+.community-starred-header h1 {
+  margin: 0.25rem 0 0;
+  font-size: 1.3rem;
+}
+
+.community-starred-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.community-starred-item {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.875rem 1rem;
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  border-radius: 0.625rem;
+  background: #fff;
+  color: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+
+.community-starred-item > span:nth-child(2) {
+  display: grid;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.community-starred-item > span:nth-child(2) span {
+  overflow: hidden;
+  color: var(--wa-text-light);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.community-starred-item small {
+  color: var(--wa-text-light);
+}
+
+@media (max-width: 640px) {
+  .community-starred-entry,
+  .community-starred-header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .community-starred-entry button,
+  .community-starred-header button {
+    width: 100%;
+  }
+}
+
 /* ─── Post Enhancements ─── */
 .groups-post.pinned {
   border-left: 3px solid var(--accent);

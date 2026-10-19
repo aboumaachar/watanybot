@@ -1,0 +1,17 @@
+{
+    "authority":  "public.documents",
+    "columnCount":  8,
+    "columns":  [
+                    "id",
+                    "user_id",
+                    "name",
+                    "kind",
+                    "status",
+                    "tags",
+                    "file_path",
+                    "updated_at"
+                ],
+    "liveRows":  0,
+    "compatibility":  "PASS",
+    "schemaMutationExecuted":  false
+}

@@ -1,0 +1,21 @@
+{
+    "name":  "ZERO_SYNTHETIC_RESIDUE_CLEANUP",
+    "command":  [
+                    "pnpm",
+                    "--dir",
+                    "apps/gateway-api",
+                    "exec",
+                    "tsx",
+                    "C:\\xampp\\htdocs\\projectx\\watanybot\\pma\\evidence\\cms\\C9_12_WAVE4B2_GENERIC_CMS_FORMS_ANNOUNCEMENTS_CLOSEOUT-20260902T032813844Z\\ZERO_SYNTHETIC_RESIDUE_CLEANUP.ts"
+                ],
+    "workingDirectory":  "C:\\xampp\\htdocs\\projectx\\watanybot",
+    "startUtc":  "2026-09-02T03:30:15.5744198Z",
+    "endUtc":  "2026-09-02T03:30:21.8047866Z",
+    "exitCode":  0,
+    "status":  "PASS",
+    "stdoutPath":  "C:\\xampp\\htdocs\\projectx\\watanybot\\pma\\evidence\\cms\\C9_12_WAVE4B2_GENERIC_CMS_FORMS_ANNOUNCEMENTS_CLOSEOUT-20260902T032813844Z\\ZERO_SYNTHETIC_RESIDUE_CLEANUP.stdout.txt",
+    "stderrPath":  "C:\\xampp\\htdocs\\projectx\\watanybot\\pma\\evidence\\cms\\C9_12_WAVE4B2_GENERIC_CMS_FORMS_ANNOUNCEMENTS_CLOSEOUT-20260902T032813844Z\\ZERO_SYNTHETIC_RESIDUE_CLEANUP.stderr.txt",
+    "stdoutBytes":  176,
+    "stderrBytes":  0,
+    "exception":  ""
+}

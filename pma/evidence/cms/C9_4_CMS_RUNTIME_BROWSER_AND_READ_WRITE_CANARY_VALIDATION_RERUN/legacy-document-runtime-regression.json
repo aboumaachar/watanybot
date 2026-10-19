@@ -1,0 +1,4 @@
+{
+    "legacyApiDocumentsRegression":  "PASS",
+    "test":  "apps/gateway-api/src/tests/documents-metadata-regression.test.ts"
+}

@@ -9,7 +9,6 @@
 
 import type { QueryUnderstanding } from './query-understanding';
 import type { ScoredChunk } from './adaptive-retrieval';
-import type { KbChunk } from './types';
 
 // ─────────────────────────────────────────────────────────────────────
 // Types
@@ -73,20 +72,7 @@ export class ConfidenceAssessment {
     }
     
     // Factor 3: Retrieval quality
-    if (retrievedChunks.length === 0) {
-      confidence *= 0.3;
-      reasons.push('No relevant documents found');
-    } else {
-      // Check average score
-      const avgScore = retrievedChunks.reduce((s, c) => s + c.score, 0) / retrievedChunks.length;
-      if (avgScore < 3) {
-        confidence *= 0.6;
-        reasons.push('Low retrieval scores');
-      } else if (avgScore < 5) {
-        confidence *= 0.8;
-        reasons.push('Moderate retrieval scores');
-      }
-    }
+    confidence *= this.applyRetrievalQualityPenalty(retrievedChunks, reasons);
     
     // Factor 4: Number of relevant results
     if (retrievedChunks.length < 2 && understanding.complexity !== 'simple') {
@@ -105,14 +91,7 @@ export class ConfidenceAssessment {
     }
     
     // Factor 6: Query complexity vs results
-    if (understanding.complexity === 'complex' && retrievedChunks.length < 3) {
-      confidence *= 0.7;
-      reasons.push('Complex query but limited sources');
-    }
-    if (understanding.complexity === 'multi_hop' && retrievedChunks.length < 4) {
-      confidence *= 0.65;
-      reasons.push('Multi-hop query requires more sources');
-    }
+    confidence *= this.applyComplexityPenalty(understanding, retrievedChunks, reasons);
     
     // Factor 7: Consistency check
     const consistency = this.checkConsistency(retrievedChunks);
@@ -231,9 +210,9 @@ export class ConfidenceAssessment {
     
     for (const sentence of sentences.slice(0, 5)) {
       // Extract noun phrases and numbers
-      const matches = sentence.match(/[\u0600-\u06FF]+(?:\s+[\u0600-\u06FF]+){1,3}/g);
-      if (matches) {
-        phrases.push(...matches.slice(0, 2));
+      const words = sentence.match(/[\u0600-\u06FF]+/g) || [];
+      for (let index = 0; index < Math.min(words.length, 2); index++) {
+        phrases.push(words.slice(index, index + 4).join(' '));
       }
       
       // Extract numbers with context
@@ -254,20 +233,13 @@ export class ConfidenceAssessment {
     
     // Simple consistency check: look for contradicting numbers/dates
     const numbers: number[] = [];
-    const years: number[] = [];
-    
     for (const chunk of chunks) {
       // Extract numbers
       const numMatches = chunk.text.match(/\d+(?:,\d{3})*(?:\.\d+)?/g);
       if (numMatches) {
-        numbers.push(...numMatches.map(n => parseFloat(n.replace(/,/g, ''))).filter(n => !isNaN(n)));
+        numbers.push(...numMatches.map(n => Number.parseFloat(n.replace(/,/g, ''))).filter(n => !Number.isNaN(n)));
       }
       
-      // Extract years
-      const yearMatches = chunk.text.match(/\b(19|20)\d{2}\b/g);
-      if (yearMatches) {
-        years.push(...yearMatches.map(y => parseInt(y, 10)));
-      }
     }
     
     // Check for large variance in numbers (might indicate inconsistency)
@@ -281,6 +253,40 @@ export class ConfidenceAssessment {
     }
     
     return 1.0; // Assume consistent
+  }
+
+  private applyComplexityPenalty(
+    understanding: QueryUnderstanding,
+    chunks: ScoredChunk[],
+    reasons: string[],
+  ): number {
+    if (understanding.complexity === 'complex' && chunks.length < 3) {
+      reasons.push('Complex query but limited sources');
+      return 0.7;
+    }
+    if (understanding.complexity === 'multi_hop' && chunks.length < 4) {
+      reasons.push('Multi-hop query requires more sources');
+      return 0.65;
+    }
+    return 1;
+  }
+
+  private applyRetrievalQualityPenalty(chunks: ScoredChunk[], reasons: string[]): number {
+    if (chunks.length === 0) {
+      reasons.push('No relevant documents found');
+      return 0.3;
+    }
+
+    const averageScore = chunks.reduce((sum, chunk) => sum + chunk.score, 0) / chunks.length;
+    if (averageScore < 3) {
+      reasons.push('Low retrieval scores');
+      return 0.6;
+    }
+    if (averageScore < 5) {
+      reasons.push('Moderate retrieval scores');
+      return 0.8;
+    }
+    return 1;
   }
   
   /**
@@ -427,11 +433,12 @@ export class ContextualReranker {
     const chunkType = chunk.chunk_type || '';
     const queryType = understanding.queryType;
     
-    // Procedural queries prefer steps and requirements
+    // Procedural queries prefer steps and the active v4 documents/overview chunks.
+    // Keep the legacy aliases for backward compatibility with older KB artifacts.
     if (queryType === 'procedural') {
       if (chunkType === 'steps') return 1.4;
-      if (chunkType === 'requirements') return 1.3;
-      if (chunkType === 'transaction_overview') return 1.2;
+      if (chunkType === 'documents' || chunkType === 'requirements') return 1.3;
+      if (chunkType === 'overview' || chunkType === 'transaction_overview') return 1.2;
     }
     
     // Calculation queries prefer structured data
@@ -442,7 +449,7 @@ export class ContextualReranker {
     
     // Factual queries prefer overviews
     if (queryType === 'factual') {
-      if (chunkType === 'transaction_overview') return 1.2;
+      if (chunkType === 'overview' || chunkType === 'transaction_overview') return 1.2;
     }
     
     return 1.0;

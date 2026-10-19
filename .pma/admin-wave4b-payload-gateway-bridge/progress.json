@@ -1,0 +1,22 @@
+{
+  "runId": "68721380-5e0c-4bdf-808b-41c4e99a6e34",
+  "state": "COMPLETED",
+  "stages": [
+    { "id": "preflight", "state": "COMPLETED" },
+    { "id": "bridge", "state": "COMPLETED" },
+    { "id": "runtime-proof", "state": "COMPLETED" },
+    { "id": "browser-proof", "state": "COMPLETED" },
+    { "id": "cleanup", "state": "COMPLETED" },
+    { "id": "report-freeze", "state": "COMPLETED" },
+    { "id": "git-closeout", "state": "COMPLETED" }
+  ],
+  "realPayloadAcceptance": {
+    "state": "COMPLETED",
+    "restSnapshot": "2 procedures; 4 documents",
+    "enrichedSyncRunId": "d52f0819-0b3d-4f66-bdef-6c7e6747dd2d",
+    "archiveSyncRunId": "a7099911-10a7-44df-bbbc-e68f0a9d911d",
+    "republishSyncRunId": "7f209036-d8dd-43e9-a11c-162e11a45133",
+    "lastGoodUnavailableProof": "503 / UNAVAILABLE; pointer unchanged",
+    "cleanup": "isolated databases dropped; temporary artifacts removed"
+  }
+}

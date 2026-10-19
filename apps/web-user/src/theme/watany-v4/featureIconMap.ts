@@ -10,7 +10,7 @@ const FEATURE_ICON_NAMES: Record<string, WatanyV4IconName> = {
   bookmarks: "profile",
   profile: "profile",
   "saved-chats": "messages",
-  settings: "profile",
+  settings: "settings",
   install: "install",
   documents: "documents",
   notifications: "notifications",
@@ -20,6 +20,7 @@ const FEATURE_ICON_NAMES: Record<string, WatanyV4IconName> = {
   roles: "roles",
   "activity-log": "activity-log",
   news: "news",
+  articles: "news",
   "fake-fact": "fake-fact",
   circulars: "circulars",
   "useful-links": "links",
@@ -44,6 +45,8 @@ const FEATURE_ICON_NAMES: Record<string, WatanyV4IconName> = {
   health: "health",
   "ask-watany": "ask-watany",
   home: "most-requested",
+  children: "users",
+  sports: "world-cup",
 };
 
 export function getWatanyV4IconName(featureId: string): WatanyV4IconName {

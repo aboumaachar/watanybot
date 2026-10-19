@@ -336,7 +336,7 @@ export function resetGroupsStore(): void {
 
 /** Ensure the current user is added as member when they first access a group */
 function ensureCurrentUser(group: Group, userId: string, userName: string) {
-  if (!group.members.find((m) => m.id === userId)) {
+  if (!group.members.some((m) => m.id === userId)) {
     group.members.push({
       id: userId,
       name: userName,

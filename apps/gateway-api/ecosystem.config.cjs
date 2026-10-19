@@ -25,6 +25,9 @@ module.exports = {
       max_restarts: 10,
       min_uptime: '10s',
       restart_delay: 4000,
+      exp_backoff_restart_delay: 100,
+      kill_timeout: 10000,
+      listen_timeout: 15000,
       autorestart: true,
 
       // Memory limit (restart if exceeded)
@@ -40,7 +43,9 @@ module.exports = {
       },
       env_production: {
         NODE_ENV: 'production',
-        OTP_PROVIDER: 'whatsapp',
+        OTP_PROVIDER: 'android_sms_gateway',
+        ANDROID_SMS_GATEWAY_ENDPOINT: 'http://127.0.0.1:3015/api/3rdparty/v1',
+        ANDROID_SMS_GATEWAY_TIMEOUT_MS: '10000',
         WHATSAPP_OUTBOUND_MODE: 'live',
         WHATSAPP_ACCOUNT_NUMBER: '+96181396332',
       },

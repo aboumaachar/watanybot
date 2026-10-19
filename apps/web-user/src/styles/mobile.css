@@ -4267,8 +4267,8 @@ html[dir="ltr"] .drawer-item {
   margin-top: 0;
   padding: 13px;
   font-size: 1rem; font-weight: 700;
-  background: linear-gradient(135deg, var(--watany-gold, #d6a83f) 0%, #9f7a1b 100%);
-  color: #103626;
+  background: linear-gradient(135deg, var(--royal-green-primary, #145c46) 0%, var(--royal-green-dark, #0c3d2c) 100%);
+  color: #ffffff;
   border: 2px solid rgba(6, 75, 53, 0.76);
   border-radius: var(--r-md);
   cursor: pointer;

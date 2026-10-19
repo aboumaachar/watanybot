@@ -1,0 +1,11 @@
+{
+    "markerSha256":  "457371E7E830D60D01376E30158851B77ADF75EB5B5917A19F4FA3FB76C090AE",
+    "create":  "PASS",
+    "defaultStatusPending":  "PASS",
+    "readAfterCreate":  "PASS",
+    "nullFilePath":  "PASS",
+    "update":  "PASS",
+    "statusTransition":  "pending-\u003everified",
+    "readAfterUpdate":  "PASS",
+    "canaryIdRecordedInEvidence":  false
+}

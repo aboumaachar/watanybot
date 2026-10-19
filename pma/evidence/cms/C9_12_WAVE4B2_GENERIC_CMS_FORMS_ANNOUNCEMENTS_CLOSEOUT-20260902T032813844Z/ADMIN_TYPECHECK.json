@@ -1,0 +1,19 @@
+{
+    "name":  "ADMIN_TYPECHECK",
+    "command":  [
+                    "pnpm",
+                    "--dir",
+                    "apps/web-admin",
+                    "typecheck"
+                ],
+    "workingDirectory":  "C:\\xampp\\htdocs\\projectx\\watanybot",
+    "startUtc":  "2026-09-02T03:29:18.4655506Z",
+    "endUtc":  "2026-09-02T03:29:52.1049647Z",
+    "exitCode":  0,
+    "status":  "PASS",
+    "stdoutPath":  "C:\\xampp\\htdocs\\projectx\\watanybot\\pma\\evidence\\cms\\C9_12_WAVE4B2_GENERIC_CMS_FORMS_ANNOUNCEMENTS_CLOSEOUT-20260902T032813844Z\\ADMIN_TYPECHECK.stdout.txt",
+    "stderrPath":  "C:\\xampp\\htdocs\\projectx\\watanybot\\pma\\evidence\\cms\\C9_12_WAVE4B2_GENERIC_CMS_FORMS_ANNOUNCEMENTS_CLOSEOUT-20260902T032813844Z\\ADMIN_TYPECHECK.stderr.txt",
+    "stdoutBytes":  234,
+    "stderrBytes":  0,
+    "exception":  ""
+}

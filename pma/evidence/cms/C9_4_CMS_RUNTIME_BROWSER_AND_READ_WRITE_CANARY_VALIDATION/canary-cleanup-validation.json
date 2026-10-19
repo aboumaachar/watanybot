@@ -1,0 +1,26 @@
+{
+  "status": "BLOCKED_NO_AUTHORIZED_DELETE_BOUNDARY",
+  "routeAudit": {
+    "documentRoutesFound": [
+      "GET /api/admin/cms/documents",
+      "GET /api/admin/cms/documents/:id",
+      "GET /api/admin/cms/documents/:id/preview",
+      "POST /api/admin/cms/documents",
+      "PATCH /api/admin/cms/documents/:id",
+      "POST /api/admin/cms/documents/:id/actions/publish",
+      "POST /api/admin/cms/documents/:id/actions/unpublish",
+      "POST /api/admin/cms/documents/:id/actions/archive",
+      "GET /api/admin/cms/documents/:id/versions",
+      "GET /api/admin/cms/documents/:id/audit",
+      "POST /api/admin/cms/documents/:id/rollback/:versionId"
+    ],
+    "exactDeleteRouteFound": false,
+    "repositoryDeleteOperationFound": false
+  },
+  "CANARY_CLEANUP": "BLOCKED_NO_AUTHORIZED_DELETE_BOUNDARY",
+  "CANARY_POST_CLEANUP_ROW_COUNT": "NOT_APPLICABLE",
+  "directDatabaseDeleteAttempted": false,
+  "newEndpointInvented": false,
+  "residualCanary": "NONE_CANARY_NOT_CREATED",
+  "requiredRepair": "Add and separately authorize/prove an exact document delete boundary before rerunning C9.4."
+}

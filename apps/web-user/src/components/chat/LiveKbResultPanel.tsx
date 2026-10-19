@@ -1,5 +1,4 @@
 import type { LiveKbDocumentResult, LiveKbTagResult } from "../../hooks/useLiveKbSearch";
-import { KbTagChips } from "./KbTagChips";
 
 export type HybridKbSelectableResult = {
   kind: "tag" | "document" | "procedure" | "faq" | "salary" | "payment" | "form" | "service" | "job" | "listing" | "useful-link" | "unknown";
@@ -173,7 +172,11 @@ function normalizeSourceLabel(sourceType?: string): string {
 }
 
 function renderDocumentTags(tags: string[]) {
-  const visibleTags = tags.map(cleanDisplayText).filter(Boolean).slice(0, 3);
+  const visibleTags = tags
+    .map(cleanDisplayText)
+    .filter((tag) => Boolean(tag) && hasArabicText(tag) && !hasTechnicalTokens(tag))
+    .filter((tag, index, allTags) => allTags.indexOf(tag) === index)
+    .slice(0, 3);
   if (!visibleTags.length) {
     return null;
   }
@@ -297,25 +300,6 @@ type LiveKbBodyProps = Readonly<{
   debugSummary?: LiveKbResultPanelProps["debugSummary"];
 }>;
 
-function renderDebugSummary(summary?: LiveKbResultPanelProps["debugSummary"]) {
-  if (!summary) {
-    return null;
-  }
-
-  return (
-    <details className="hybrid-kb-debug" data-hybrid-kb-debug="true">
-      <summary>تشخيص البحث الهجين</summary>
-      <div className="hybrid-kb-debug__grid">
-        <span>المسار: {summary.originPath}</span>
-        <span>السياق: {summary.pageContext}</span>
-        <span>نتائج الميزة الحالية: {summary.featureCount}</span>
-        <span>نتائج قاعدة المعرفة: {summary.kbCount}</span>
-        <span>الإجمالي المدمج: {summary.mergedCount}</span>
-      </div>
-    </details>
-  );
-}
-
 function renderInfoBanner(hasResults: boolean, resultInfoDismissed: boolean, onDismissResultInfo: () => void) {
   if (!hasResults || resultInfoDismissed) {
     return null;
@@ -323,7 +307,7 @@ function renderInfoBanner(hasResults: boolean, resultInfoDismissed: boolean, onD
 
   return (
     <div className="hybrid-kb-live-info" data-hybrid-kb-live-info="true">
-      <span>تم العثور على اقتراحات مرتبطة ببحثك.</span>
+      <span>اقتراحات</span>
       <button type="button" onClick={onDismissResultInfo} aria-label="إغلاق صندوق الاقتراحات">
         إغلاق
       </button>
@@ -462,19 +446,11 @@ function renderLiveKbBody({
       {renderInfoBanner(hasResults, resultInfoDismissed, onDismissResultInfo)}
 
       <div className="hybrid-kb-live-title">
-        <strong>اقتراحات مرتبطة بـ: {query}</strong>
+        <strong>{query ? `نتائج: ${query}` : "اقتراحات"}</strong>
         {isSearching ? <span>جاري البحث...</span> : null}
       </div>
 
       {renderStatusBlock(error, isSearching, hasResults, debugSummary)}
-      {renderDebugSummary(debugSummary)}
-
-      <KbTagChips
-        tags={tags}
-        selectedTags={selectedTags}
-        onSelectTag={(tag) => onResultSelect(tagToResult(tag))}
-      />
-
       {renderDocumentCards(
         curatedDocuments,
         selectedResultId,
@@ -527,6 +503,10 @@ export function LiveKbResultPanel({
       }
 
       return (right.rankingScore || right.score || 0) - (left.rankingScore || left.score || 0);
+    })
+    .filter((doc, index, allDocuments) => {
+      const normalizedTitle = cleanDisplayText(doc.title || "").toLowerCase();
+      return allDocuments.findIndex((candidate) => cleanDisplayText(candidate.title || "").toLowerCase() === normalizedTitle) === index;
     })
     .slice(0, 5);
   const curatedDocuments = filteredDocuments.length > 0 ? filteredDocuments : buildUiFallbackDocuments(query).slice(0, 5);

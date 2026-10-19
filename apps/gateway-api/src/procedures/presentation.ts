@@ -651,8 +651,12 @@ function isHardExcludedLegalFragment(
 }
 
 export function isListableProcedure(
-  procedure: Pick<Procedure, "title_ar" | "summary_lb" | "tags" | "source" | "source_refs" | "eligibility" | "requirements" | "steps" | "where_to_apply" | "fees" | "timelines" | "contacts" | "exceptions" | "faq_variants">,
+  procedure: Pick<Procedure, "title_ar" | "summary_lb" | "tags" | "source" | "source_refs" | "eligibility" | "requirements" | "steps" | "where_to_apply" | "fees" | "timelines" | "contacts" | "exceptions" | "faq_variants" | "status">,
 ): boolean {
+  if (procedure.status && procedure.status !== "PUBLISHED") {
+    return false;
+  }
+
   if (shouldSuppressProcedureFromCatalog(procedure)) {
     return false;
   }

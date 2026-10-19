@@ -5,10 +5,12 @@
 @import url("../../styles/procedures-browser.css") layer(watany-v4-recovery);
 @import url("../../styles/forms.css") layer(watany-v4-recovery);
 @import url("../../styles/watany-v1-stabilizer.css") layer(watany-v4-recovery);
+@import url("../../features/legal-library/KoudamaLegalLibrarySearchPage.css") layer(watany-v4-recovery);
 @import url("./royalGoldFrame.css") layer(watany-v4);
 @import url("./royalGoldUpgrade.css") layer(watany-v4);
 @import url("../../styles/watany-v4-theme.css") layer(watany-v4-recovery);
 @import url("../../features/market-jobs-mobile-landing/market-jobs-mobile-landing.css");
+@import url("../../themes/watany-v1.19.0.22-final-cascade.css");
 
 /* Community overview: give the social surface a clear royal hierarchy and one scroll owner. */
 .community-screen {
@@ -77,6 +79,20 @@ html:has(.community-thread-screen--thread) .community-thread-composer__file-inpu
 	width: 1px !important;
 	height: 1px !important;
 	opacity: 0 !important;
+	pointer-events: none !important;
+}
+
+/* File controls are triggered by the composer buttons and must never become visible rows. */
+.community-thread-composer__file-input {
+	position: absolute !important;
+	width: 1px !important;
+	height: 1px !important;
+	margin: -1px !important;
+	opacity: 0 !important;
+	overflow: hidden !important;
+	clip: rect(0 0 0 0) !important;
+	clip-path: inset(50%) !important;
+	white-space: nowrap !important;
 	pointer-events: none !important;
 }
 
@@ -260,6 +276,15 @@ html:has(.community-thread-screen--thread) .watany-recovery-main {
 
 .watany-recovery-shell:has(.community-thread-screen--thread) {
 	padding-top: 60px;
+}
+
+/* A thread owns its own WhatsApp-style chrome; the public shell header would cover it. */
+.watany-recovery-shell:has(.community-thread-screen--thread) {
+	padding-top: 0 !important;
+}
+
+.watany-recovery-shell:has(.community-thread-screen--thread) > .watany-recovery-topbar {
+	display: none !important;
 }
 
 .community-thread-screen--thread {
@@ -629,8 +654,10 @@ html:has(.community-thread-screen--thread) .watany-recovery-main {
 }
 
 .watany-recovery-shell:has(.community-thread-screen--thread) .community-thread-search-panel {
-	gap: 3px;
-	padding: 5px 8px;
+	gap: 0;
+	height: 44px;
+	min-height: 44px;
+	padding: 4px 8px;
 }
 
 .watany-recovery-shell:has(.community-thread-screen--thread) .community-search-field--thread,
@@ -641,8 +668,7 @@ html:has(.community-thread-screen--thread) .watany-recovery-main {
 }
 
 .watany-recovery-shell:has(.community-thread-screen--thread) .community-thread-search-panel__meta {
-	height: 16px !important;
-	max-height: 16px !important;
+	display: none;
 }
 
 .watany-recovery-shell:has(.community-thread-screen--thread) .community-membership-banner {
@@ -732,8 +758,69 @@ html:has(.community-thread-screen--thread) .watany-recovery-main {
 }
 
 .watany-recovery-shell:has(.community-thread-screen--thread) .community-thread-composer {
+	display: flex;
+	flex-direction: row;
+	align-items: flex-end;
+	gap: 6px;
+	height: auto;
+	min-height: 64px;
 	padding-top: 6px;
 	padding-bottom: calc(6px + env(safe-area-inset-bottom, 0px));
+}
+
+.watany-recovery-shell:has(.community-thread-screen--thread) .community-thread-composer__stack {
+	display: flex;
+	flex: 1 1 auto;
+	flex-direction: row;
+	align-items: flex-end;
+	gap: 6px;
+	min-width: 0;
+}
+
+.watany-recovery-shell:has(.community-thread-screen--thread) .community-thread-composer__tools {
+	order: 1;
+	flex: 0 0 auto;
+	padding: 0;
+}
+
+.watany-recovery-shell:has(.community-thread-screen--thread) .community-thread-composer__tool {
+	min-width: 34px;
+	width: 34px;
+	height: 34px;
+	overflow: hidden;
+	padding: 0;
+	font-size: 0;
+}
+
+.watany-recovery-shell:has(.community-thread-screen--thread) .community-thread-composer textarea {
+	order: 2;
+	min-width: 0;
+	min-height: 42px;
+	max-height: 78px;
+	padding: 8px 10px;
+	border-radius: 18px;
+}
+
+.watany-recovery-shell:has(.community-thread-screen--thread) .community-thread-composer > button[type="submit"] {
+	flex: 0 0 auto;
+	align-self: flex-end;
+	min-width: 64px;
+	min-height: 36px;
+	margin: 0;
+	padding: 6px 12px;
+}
+
+.watany-recovery-shell:has(.community-thread-screen--thread) .community-thread-composer__stack:has(.community-thread-reply-target),
+.watany-recovery-shell:has(.community-thread-screen--thread) .community-thread-composer__stack:has(.community-thread-attachment-draft),
+.watany-recovery-shell:has(.community-thread-screen--thread) .community-thread-composer__stack:has(.community-thread-mention-list) {
+	flex-direction: column;
+	align-items: stretch;
+}
+
+.watany-recovery-shell:has(.community-thread-screen--thread) .community-thread-composer__stack:has(.community-thread-reply-target) .community-thread-composer__tools,
+.watany-recovery-shell:has(.community-thread-screen--thread) .community-thread-composer__stack:has(.community-thread-attachment-draft) .community-thread-composer__tools,
+.watany-recovery-shell:has(.community-thread-screen--thread) .community-thread-composer__stack:has(.community-thread-mention-list) .community-thread-composer__tools {
+	order: 0;
 }
 
 .watany-recovery-shell:has(.community-thread-screen--thread) .community-thread-message__sender,

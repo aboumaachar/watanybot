@@ -9,6 +9,7 @@ import {
 } from "@watany/shared/features";
 import { getAdminErrorMessage, getFeatureFlags, saveFeatureFlags } from "../lib/api";
 import { AdminFluentIcon } from "../components/AdminFluentIcon";
+import { AdminConfirmDialog } from "../components/admin/AdminPrimitives";
 
 const CATEGORIES: FeatureCategory[] = ["core", "services", "communication"];
 
@@ -56,6 +57,7 @@ export default function FeatureControlsPage() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [pendingBroadAction, setPendingBroadAction] = useState<{ label: string; message: string; run: () => void } | null>(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -175,7 +177,7 @@ export default function FeatureControlsPage() {
           <p className="muted">This panel is independent from the public app and controls what end users can see and use.</p>
         </div>
         <div className="feature-overview__actions">
-          <button className="ghost" onClick={handleReset} disabled={saving}>Reset Locally</button>
+          <button className="ghost" onClick={() => setPendingBroadAction({ label: "Reset locally", message: "Restore all controls to their default local values. Nothing is published until Save & Publish.", run: handleReset })} disabled={saving}>Reset Locally</button>
           <button className="accent" onClick={handleSave} disabled={saving || loading}>
             {saving ? "Saving..." : "Publish to Web User"}
           </button>
@@ -200,8 +202,8 @@ export default function FeatureControlsPage() {
                     <p className="muted">{groupEnabled} / {group.features.length} enabled</p>
                   </div>
                   <div className="feature-group__actions">
-                    <button className="ghost sm" onClick={() => toggleAll(group.features, true)}>Enable All</button>
-                    <button className="ghost sm" onClick={() => toggleAll(group.features, false)}>Disable All</button>
+                    <button className="ghost sm" onClick={() => setPendingBroadAction({ label: `Enable all ${group.label}`, message: `Change every unlockable feature in ${group.label} locally. Locked features stay unchanged and nothing is published yet.`, run: () => toggleAll(group.features, true) })}>Enable All</button>
+                    <button className="ghost sm" onClick={() => setPendingBroadAction({ label: `Disable all ${group.label}`, message: `Change every unlockable feature in ${group.label} locally. Locked features stay unchanged and nothing is published yet.`, run: () => toggleAll(group.features, false) })}>Disable All</button>
                   </div>
                 </div>
 
@@ -234,6 +236,7 @@ export default function FeatureControlsPage() {
           </div>
         </div>
       )}
+      {pendingBroadAction ? <AdminConfirmDialog title={pendingBroadAction.label} message={pendingBroadAction.message} confirmLabel="Apply locally" onCancel={() => setPendingBroadAction(null)} onConfirm={() => { pendingBroadAction.run(); setPendingBroadAction(null); }} /> : null}
     </div>
   );
 }
