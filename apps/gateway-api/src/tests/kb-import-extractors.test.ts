@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("node:child_process", () => ({
   execFile: vi.fn(),
@@ -11,8 +11,17 @@ import { deriveIndividualKbId } from "../kb-import/job-store";
 type ExecFileCallback = (error: Error | null, stdout?: string, stderr?: string) => void;
 
 describe("kb-import extractor command resolution", () => {
+  // These cases cover the Windows probe (`where` + absolute fallbacks), which
+  // resolveCommand picks from process.platform. Pin it so they also hold on Linux CI.
+  const realPlatform = Object.getOwnPropertyDescriptor(process, "platform")!;
+
   beforeEach(() => {
     vi.clearAllMocks();
+    Object.defineProperty(process, "platform", { ...realPlatform, value: "win32" });
+  });
+
+  afterEach(() => {
+    Object.defineProperty(process, "platform", realPlatform);
   });
 
   it("uses discovered command path when where succeeds", async () => {
