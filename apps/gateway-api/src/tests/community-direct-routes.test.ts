@@ -1,12 +1,12 @@
 import Fastify from "fastify";
 import multipart from "@fastify/multipart";
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { registerAuthHook, signAccessToken } from "../auth/auth-middleware";
 import { resetCommunityStore } from "../community/service";
 import { runMigrations } from "../db/migrate";
 import { query } from "../lib/db";
 import { communityRoutes } from "../routes/community";
-import { acquireCommunityDbTestLock } from "./community-db-test-lock";
+import { acquireCommunityDbTestLock, COMMUNITY_DB_TEST_LOCK_WAIT_MS } from "./community-db-test-lock";
 
 const A = "10000000-0000-4000-8000-000000000001";
 const B = "10000000-0000-4000-8000-000000000002";
@@ -24,33 +24,33 @@ function buildApp() {
   server.register(communityRoutes);
   return server;
 }
+// Hold the community lock for the whole file so no other community suite
+// truncates these tables between our tests.
 beforeAll(async () => {
-  const release = await acquireCommunityDbTestLock();
-  try {
-    await runMigrations();
-    for (const [id, email, name] of [
-      [A, "direct.a@watany.test", "Direct A"],
-      [B, "direct.b@watany.test", "Direct B"],
-      [C, "direct.c@watany.test", "Direct C"],
-    ]) {
-      await query(
-        `INSERT INTO users (id,email,password_hash,name,role,status) VALUES ($1,$2,'test-only',$3,'accredited','active')
-         ON CONFLICT (id) DO UPDATE SET email=EXCLUDED.email,name=EXCLUDED.name,status='active'`,
-        [id, email, name],
-      );
-    }
-  } finally { await release(); }
-});
+  releaseLock = await acquireCommunityDbTestLock();
+  await runMigrations();
+  for (const [id, email, name] of [
+    [A, "direct.a@watany.test", "Direct A"],
+    [B, "direct.b@watany.test", "Direct B"],
+    [C, "direct.c@watany.test", "Direct C"],
+  ]) {
+    await query(
+      `INSERT INTO users (id,email,password_hash,name,role,status) VALUES ($1,$2,'test-only',$3,'accredited','active')
+       ON CONFLICT (id) DO UPDATE SET email=EXCLUDED.email,name=EXCLUDED.name,status='active'`,
+      [id, email, name],
+    );
+  }
+}, COMMUNITY_DB_TEST_LOCK_WAIT_MS);
 
 beforeEach(async () => {
-  releaseLock = await acquireCommunityDbTestLock();
   await resetCommunityStore();
 });
-afterEach(async () => {
-  if (releaseLock) { await releaseLock(); releaseLock = null; }
-});
 afterAll(async () => {
-  await query("DELETE FROM users WHERE id::text = ANY($1::text[])", [ids]);
+  try {
+    await query("DELETE FROM users WHERE id::text = ANY($1::text[])", [ids]);
+  } finally {
+    if (releaseLock) { await releaseLock(); releaseLock = null; }
+  }
 });
 describe("community direct conversations", () => {
   it("creates one private two-user thread and keeps it out of group discovery", async () => {

@@ -9,7 +9,7 @@
 import { randomUUID } from "node:crypto";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { query } from "../lib/db";
-import { acquireCommunityDbTestLock } from "./community-db-test-lock";
+import { acquireCommunityDbTestLock, COMMUNITY_DB_TEST_LOCK_WAIT_MS } from "./community-db-test-lock";
 import { deleteCommunityAuditEvents } from "./helpers/community-audit-cleanup";
 import { assertDisposableTestDatabase } from "./helpers/disposable-db";
 
@@ -35,28 +35,31 @@ async function existingIds(): Promise<string[]> {
 }
 
 describe.skipIf(!hasDb)("community audit cleanup isolation", () => {
-  beforeAll(() => {
+  let release: null | (() => Promise<void>) = null;
+
+  // Take the community lock before the test (waiting here, not in the test's
+  // 5s budget) so no community suite's cleanup runs while ours is checked.
+  beforeAll(async () => {
     assertDisposableTestDatabase();
-  });
+    release = await acquireCommunityDbTestLock();
+  }, COMMUNITY_DB_TEST_LOCK_WAIT_MS);
 
   afterAll(async () => {
-    if (!hasDb) return;
-    await query("DELETE FROM admin_audit_events WHERE id = ANY($1::text[])", [Object.values(rows).map((r) => r.id)]);
-    expect(await existingIds()).toEqual([]);
+    try {
+      await query("DELETE FROM admin_audit_events WHERE id = ANY($1::text[])", [Object.values(rows).map((r) => r.id)]);
+      expect(await existingIds()).toEqual([]);
+    } finally {
+      if (release) { await release(); release = null; }
+    }
   });
 
   it("removes only community_* audit rows and keeps other suites' rows", async () => {
-    const release = await acquireCommunityDbTestLock();
-    try {
-      for (const row of Object.values(rows)) await insertAuditRow(row);
-      await deleteCommunityAuditEvents();
-      const remaining = await existingIds();
-      expect(remaining).toContain(rows.news.id);
-      expect(remaining).toContain(rows.superadmin.id);
-      expect(remaining).toContain(rows.lookalike.id); // "community" without the underscore is not community-owned
-      expect(remaining).not.toContain(rows.community.id);
-    } finally {
-      await release();
-    }
+    for (const row of Object.values(rows)) await insertAuditRow(row);
+    await deleteCommunityAuditEvents();
+    const remaining = await existingIds();
+    expect(remaining).toContain(rows.news.id);
+    expect(remaining).toContain(rows.superadmin.id);
+    expect(remaining).toContain(rows.lookalike.id); // "community" without the underscore is not community-owned
+    expect(remaining).not.toContain(rows.community.id);
   });
 });

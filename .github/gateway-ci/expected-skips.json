@@ -1,6 +1,6 @@
 {
   "description": "Tests that skip on purpose because they need an environment CI does not provide (a dedicated DB on port 5433 with no DATABASE_URL, APEX_V119_TEST_DATABASE_URL, APEX_WAVE5A_DATABASE_URL, a real KB SQLite copy, or the attachment-complete KB export). Any skip not listed here fails CI. Remove an entry once its test runs in CI.",
-  "minPassed": 918,
+  "minPassed": 919,
   "skipped": [
     "src/cms/faqs/faqs-cms-atomic.integration.test.ts ::  R025 transactional FAQ CMS all-or-nothing PostgreSQL validation commits the complete draft-to-approved-to-ranked publication with identical audit/version counts",
     "src/cms/faqs/faqs-cms-atomic.integration.test.ts ::  R025 transactional FAQ CMS all-or-nothing PostgreSQL validation does not publish an approved item if its publish audit insert fails",

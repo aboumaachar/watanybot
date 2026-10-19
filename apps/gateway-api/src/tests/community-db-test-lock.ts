@@ -2,6 +2,14 @@ import { getClient } from "../lib/db";
 
 const COMMUNITY_DB_TEST_LOCK_KEY = 2026062301;
 
+/**
+ * Community suites hold this lock for their whole file (acquired in beforeAll,
+ * released in afterAll), so files that TRUNCATE the community tables never
+ * interleave. Under parallel test files a suite can wait for others to finish,
+ * so beforeAll needs a timeout well above vitest's 10s hook default.
+ */
+export const COMMUNITY_DB_TEST_LOCK_WAIT_MS = 300_000;
+
 export async function acquireCommunityDbTestLock(): Promise<() => Promise<void>> {
   const client = await getClient();
   let released = false;

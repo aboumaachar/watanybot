@@ -69,7 +69,7 @@ jobs:
         working-directory: apps/gateway-api
         # The gate below decides pass/fail from the report, so a crash that
         # writes no report still fails there.
-        run: npx vitest run --no-file-parallelism --reporter=default --reporter=json --outputFile.json=vitest-report.json || true
+        run: npx vitest run --reporter=default --reporter=json --outputFile.json=vitest-report.json || true
 
       - name: Gate on report
         # Per-test statuses, not vitest's summary counters (which count skips as

@@ -1,6 +1,6 @@
 import Fastify from "fastify";
 import multipart from "@fastify/multipart";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 import { registerAuthHook, signAccessToken } from "../auth/auth-middleware";
 import { addCommunityMessage, createCommunityGroup, resetCommunityStore } from "../community/service";
@@ -9,7 +9,7 @@ import { runMigrations } from "../db/migrate";
 import { query } from "../lib/db";
 import { buildCommunityNotificationId, communityRoutes, type CommunityTelemetryRecord } from "../routes/community";
 import { notificationRoutes } from "../routes/notifications";
-import { acquireCommunityDbTestLock } from "./community-db-test-lock";
+import { acquireCommunityDbTestLock, COMMUNITY_DB_TEST_LOCK_WAIT_MS } from "./community-db-test-lock";
 import { deleteCommunityAuditEvents } from "./helpers/community-audit-cleanup";
 import { COMMUNITY_ATTACHMENT_MAX_BYTES } from "../community/attachment-security";
 
@@ -177,28 +177,27 @@ function expectPrivacySafeTelemetry(record: CommunityTelemetryRecord) {
 
 let releaseDbTestLock: null | (() => Promise<void>) = null;
 
+// Hold the community lock for the whole file so no other community suite
+// truncates these tables between our tests.
 beforeAll(async () => {
-  const release = await acquireCommunityDbTestLock();
-  try {
-    await runMigrations();
-  } finally {
-    await release();
-  }
-});
+  releaseDbTestLock = await acquireCommunityDbTestLock();
+  await runMigrations();
+}, COMMUNITY_DB_TEST_LOCK_WAIT_MS);
 
 beforeEach(async () => {
-  releaseDbTestLock = await acquireCommunityDbTestLock();
   await resetCommunityStore();
   // Only community-owned audit rows: admin_audit_events is shared with other suites.
   await deleteCommunityAuditEvents();
 });
 
-afterEach(async () => {
+afterAll(async () => {
   if (releaseDbTestLock) {
     await releaseDbTestLock();
     releaseDbTestLock = null;
   }
+});
 
+afterEach(async () => {
   if (originalNodeEnv === undefined) {
     delete process.env.NODE_ENV;
   } else {
