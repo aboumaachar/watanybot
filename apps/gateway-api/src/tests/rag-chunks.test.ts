@@ -13,11 +13,13 @@ const repoRoot = path.resolve(__dirname, '../../../..');
 const sourceRagPath = path.join(repoRoot, 'watany_kb_tables_v4', 'watany_rag_chunks_v4.jsonl');
 const tempRagPath = path.join(repoRoot, 'tmp', `rag-chunks-admin-test-${process.pid}.jsonl`);
 const app = Fastify();
+// Expected size comes from the canonical file itself, so KB content updates do not need test edits.
+const expectedChunks = fs.readFileSync(sourceRagPath, "utf8").split(/\r?\n/).filter((line) => line.trim()).length;
 
 beforeAll(async () => {
   fs.mkdirSync(path.dirname(tempRagPath), { recursive: true });
   fs.copyFileSync(sourceRagPath, tempRagPath);
-  expect(loadRagChunks(tempRagPath)).toBe(1480);
+  expect(loadRagChunks(tempRagPath)).toBe(expectedChunks);
   app.addHook('onRequest', async (request) => {
     request.user = { id: 'rag-admin-test', role: 'admin', email: 'admin@test.local' };
   });
@@ -55,7 +57,7 @@ describe('RAG chunks admin endpoints', () => {
     const res = await app.inject({ method: 'GET', url: '/api/admin/kb/chunks' });
     expect(res.statusCode).toBe(200);
     const body = res.json();
-    expect(body.total).toBe(1480);
+    expect(body.total).toBe(expectedChunks);
     expect(Array.isArray(body.chunks)).toBe(true);
   });
 
@@ -79,7 +81,7 @@ describe('RAG chunks admin endpoints', () => {
 
     const reloadRes = await app.inject({ method: 'POST', url: '/api/admin/kb/chunks/reload' });
     expect(reloadRes.statusCode).toBe(200);
-    expect(reloadRes.json().loaded).toBe(1480);
+    expect(reloadRes.json().loaded).toBe(expectedChunks);
     expect(fs.readFileSync(sourceRagPath)).toEqual(canonicalBefore);
     expect(fs.readFileSync(sourceRagPath, 'utf8')).not.toContain('UPDATED_BY_TEST_');
   });
