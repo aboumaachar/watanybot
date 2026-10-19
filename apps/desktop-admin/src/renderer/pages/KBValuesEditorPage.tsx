@@ -32,10 +32,8 @@ export default function KBValuesEditorPage() {
   const [message, setMessage] = useState("");
   
   // KB Data
-  const [kbRules, setKbRules] = useState<any>(null);
   const [socialAids, setSocialAids] = useState<SocialAids>({});
   const [salaryConfig, setSalaryConfig] = useState<any>(null);
-  const [meta, setMeta] = useState<any>(null);
   
   // Edit state
   const [editingRule, setEditingRule] = useState<string | null>(null);
@@ -54,8 +52,6 @@ export default function KBValuesEditorPage() {
         api.getSalaryMeta()
       ]);
       
-      setKbRules(rules);
-      setMeta(salaryMeta);
       
       // Extract social aids from KB rules if available
       if (rules?.socialAids) {
@@ -210,8 +206,9 @@ export default function KBValuesEditorPage() {
               {editingRule === 'grant_12m' ? (
                 <div className="edit-form">
                   <div className="form-group">
-                    <label>Type:</label>
+                    <label htmlFor="grantType">Type:</label>
                     <select 
+                      id="grantType"
                       value={tempValue.type || 'fixed'}
                       onChange={(e) => setTempValue({...tempValue, type: e.target.value})}
                     >
@@ -223,8 +220,9 @@ export default function KBValuesEditorPage() {
                   </div>
                   
                   <div className="form-group">
-                    <label>Amount (LBP):</label>
+                    <label htmlFor="grantAmount">Amount (LBP):</label>
                     <input
+                      id="grantAmount"
                       type="number"
                       value={tempValue.amount || 12000000}
                       onChange={(e) => setTempValue({...tempValue, amount: Number(e.target.value)})}
@@ -261,8 +259,9 @@ export default function KBValuesEditorPage() {
               {editingRule === 'budget_2022' ? (
                 <div className="edit-form">
                   <div className="form-group">
-                    <label>Multiplier:</label>
+                    <label htmlFor="budgetMultiplier">Multiplier:</label>
                     <input
+                      id="budgetMultiplier"
                       type="number"
                       step="0.1"
                       value={tempValue.multiplier || 2}
@@ -270,16 +269,18 @@ export default function KBValuesEditorPage() {
                     />
                   </div>
                   <div className="form-group">
-                    <label>Max Increase (LBP):</label>
+                    <label htmlFor="budgetMaxIncrease">Max Increase (LBP):</label>
                     <input
+                      id="budgetMaxIncrease"
                       type="number"
                       value={tempValue.max_increase || 12000000}
                       onChange={(e) => setTempValue({...tempValue, max_increase: Number(e.target.value)})}
                     />
                   </div>
                   <div className="form-group">
-                    <label>Min Total (LBP):</label>
+                    <label htmlFor="budgetMinTotal">Min Total (LBP):</label>
                     <input
+                      id="budgetMinTotal"
                       type="number"
                       value={tempValue.min_total_including_base || 500000}
                       onChange={(e) => setTempValue({...tempValue, min_total_including_base: Number(e.target.value)})}
@@ -313,8 +314,9 @@ export default function KBValuesEditorPage() {
               {editingRule === 'decree_11227' ? (
                 <div className="edit-form">
                   <div className="form-group">
-                    <label>Multiplier:</label>
+                    <label htmlFor="decree11227Multiplier">Multiplier:</label>
                     <input
+                      id="decree11227Multiplier"
                       type="number"
                       step="0.1"
                       value={tempValue.multiplier || 4}
@@ -348,8 +350,9 @@ export default function KBValuesEditorPage() {
               {editingRule === 'decree_11227_2' ? (
                 <div className="edit-form">
                   <div className="form-group">
-                    <label>Multiplier:</label>
+                    <label htmlFor="decree11227_2Multiplier">Multiplier:</label>
                     <input
+                      id="decree11227_2Multiplier"
                       type="number"
                       step="0.1"
                       value={tempValue.multiplier || 3}
@@ -357,8 +360,9 @@ export default function KBValuesEditorPage() {
                     />
                   </div>
                   <div className="form-group">
-                    <label>Floor (LBP):</label>
+                    <label htmlFor="decree11227_2Floor">Floor (LBP):</label>
                     <input
+                      id="decree11227_2Floor"
                       type="number"
                       value={tempValue.floor || 7000000}
                       onChange={(e) => setTempValue({...tempValue, floor: Number(e.target.value)})}
@@ -391,8 +395,9 @@ export default function KBValuesEditorPage() {
               {editingRule === 'decree_13020' ? (
                 <div className="edit-form">
                   <div className="form-group">
-                    <label>Multiplier:</label>
+                    <label htmlFor="decree13020Multiplier">Multiplier:</label>
                     <input
+                      id="decree13020Multiplier"
                       type="number"
                       step="0.1"
                       value={tempValue.multiplier || 3}
@@ -400,8 +405,9 @@ export default function KBValuesEditorPage() {
                     />
                   </div>
                   <div className="form-group">
-                    <label>Floor (LBP):</label>
+                    <label htmlFor="decree13020Floor">Floor (LBP):</label>
                     <input
+                      id="decree13020Floor"
                       type="number"
                       value={tempValue.floor || 7000000}
                       onChange={(e) => setTempValue({...tempValue, floor: Number(e.target.value)})}
@@ -445,7 +451,7 @@ export default function KBValuesEditorPage() {
             <div className="card">
               <h4>Family Allowance (Before Raise)</h4>
               <div className="form-group">
-                <label>Wife:</label>
+                <label htmlFor="currentWifeAllowance">Wife:</label>
                 <input
                   type="number"
                   value={salaryConfig.familyAllowance?.wife || 60000}
@@ -454,7 +460,7 @@ export default function KBValuesEditorPage() {
                 <span className="unit">LBP</span>
               </div>
               <div className="form-group">
-                <label>Per Child:</label>
+                <label htmlFor="currentChildAllowance">Per Child:</label>
                 <input
                   type="number"
                   value={salaryConfig.familyAllowance?.perChild || 33000}
@@ -467,7 +473,7 @@ export default function KBValuesEditorPage() {
             <div className="card">
               <h4>Family Allowance (After Raise)</h4>
               <div className="form-group">
-                <label>Wife:</label>
+                <label htmlFor="raisedWifeAllowance">Wife:</label>
                 <input
                   type="number"
                   value={salaryConfig.familyAllowanceAfterRaise?.wife || 180000}
@@ -476,7 +482,7 @@ export default function KBValuesEditorPage() {
                 <span className="unit">LBP</span>
               </div>
               <div className="form-group">
-                <label>Per Child:</label>
+                <label htmlFor="raisedChildAllowance">Per Child:</label>
                 <input
                   type="number"
                   value={salaryConfig.familyAllowanceAfterRaise?.perChild || 99000}
@@ -517,7 +523,7 @@ export default function KBValuesEditorPage() {
           
           <button onClick={async () => {
             try {
-              const exported = await api.saveKB();
+              await api.saveKB();
               setMessage("KB exported to disk");
             } catch (e: any) {
               setError(e.message);

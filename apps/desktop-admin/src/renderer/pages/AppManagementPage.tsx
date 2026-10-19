@@ -74,6 +74,7 @@ export default function AppManagementPage() {
           <div className="card">
             <h3>Gateway</h3>
             <table>
+              <thead><tr><th scope="col">Metric</th><th scope="col">Value</th></tr></thead>
               <tbody>
                 <tr><td>Status</td><td>{overview.gateway?.status}</td></tr>
                 <tr><td>Port</td><td>{overview.gateway?.port}</td></tr>
@@ -87,6 +88,7 @@ export default function AppManagementPage() {
           <div className="card">
             <h3>Backend Services</h3>
             <table>
+              <thead><tr><th scope="col">Service</th><th scope="col">Status</th></tr></thead>
               <tbody>
                 <tr><td>Python API</td><td>{overview.legacy?.ok ? "✓ Online" : "✕ Down"}</td></tr>
                 <tr><td>AI Provider</td><td>{overview.ai?.enabled ? "✓ Enabled" : "✕ Disabled"}</td></tr>
@@ -96,9 +98,9 @@ export default function AppManagementPage() {
             </table>
 
             <div style={{ marginTop: 12 }}>
-              <label>Python API URL</label>
+              <label htmlFor="pythonBaseInput">Python API URL</label>
               <div style={{ display: 'flex', gap: 8 }}>
-                <input type="text" defaultValue={overview.legacy?.enabled ? '' : ''} placeholder={DEFAULT_PYTHON_API_URL} id="pythonBaseInput" />
+                <input type="text" defaultValue="" placeholder={DEFAULT_PYTHON_API_URL} id="pythonBaseInput" />
                 <button onClick={async () => {
                   const el = document.getElementById('pythonBaseInput') as HTMLInputElement | null;
                   const base = (el?.value || '').trim() || DEFAULT_PYTHON_API_URL;
@@ -117,7 +119,7 @@ export default function AppManagementPage() {
 
               <hr style={{ margin: '12px 0' }} />
 
-              <label>AI Provider (runtime)</label>
+              <label htmlFor="aiProviderSelect">AI Provider (runtime)</label>
               <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
                 <select id="aiProviderSelect" defaultValue={overview.ai?.provider || 'openai'} style={{ minWidth: 160 }}>
                   <option value="openai">OpenAI-compatible</option>

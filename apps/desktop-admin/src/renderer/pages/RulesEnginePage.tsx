@@ -15,7 +15,6 @@ interface RankDef {
 }
 
 export default function RulesEnginePage() {
-  const [rules, setRules] = useState<any>(null);
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -39,7 +38,6 @@ export default function RulesEnginePage() {
     setErr("");
     try {
       const r = await api.getKBRules();
-      setRules(r.rules);
       setStats(r.stats);
       setUsdRate(r.rules.usdRate);
       setFaWife(r.rules.familyAllowance?.wife || 0);
@@ -201,34 +199,34 @@ export default function RulesEnginePage() {
           <div className="cards">
             <div className="card">
               <h3>USD Exchange Rate</h3>
-              <label>LBP per 1 USD</label>
-              <input type="number" value={usdRate} onChange={(e) => setUsdRate(Number(e.target.value))} />
+              <label htmlFor="usdRate">LBP per 1 USD</label>
+              <input id="usdRate" type="number" value={usdRate} onChange={(e) => setUsdRate(Number(e.target.value))} />
               <p className="note">Currently: {usdRate.toLocaleString()} LBP = $1 USD</p>
             </div>
 
             <div className="card">
               <h3>Family Allowance (Current)</h3>
-              <label>Wife (LBP)</label>
-              <input type="number" value={faWife} onChange={(e) => setFaWife(Number(e.target.value))} />
-              <label>Per Child (LBP)</label>
-              <input type="number" value={faChild} onChange={(e) => setFaChild(Number(e.target.value))} />
+              <label htmlFor="faWife">Wife (LBP)</label>
+              <input id="faWife" type="number" value={faWife} onChange={(e) => setFaWife(Number(e.target.value))} />
+              <label htmlFor="faChild">Per Child (LBP)</label>
+              <input id="faChild" type="number" value={faChild} onChange={(e) => setFaChild(Number(e.target.value))} />
             </div>
 
             <div className="card">
               <h3>Family Allowance (After Raise)</h3>
-              <label>Wife (LBP)</label>
-              <input type="number" value={faWifeRaise} onChange={(e) => setFaWifeRaise(Number(e.target.value))} />
-              <label>Per Child (LBP)</label>
-              <input type="number" value={faChildRaise} onChange={(e) => setFaChildRaise(Number(e.target.value))} />
+              <label htmlFor="faWifeRaise">Wife (LBP)</label>
+              <input id="faWifeRaise" type="number" value={faWifeRaise} onChange={(e) => setFaWifeRaise(Number(e.target.value))} />
+              <label htmlFor="faChildRaise">Per Child (LBP)</label>
+              <input id="faChildRaise" type="number" value={faChildRaise} onChange={(e) => setFaChildRaise(Number(e.target.value))} />
               <p className="note">Proposed post-raise values — not yet enacted</p>
             </div>
 
             <div className="card" style={{ gridColumn: "1 / -1" }}>
               <h3>Notes</h3>
-              <label>Description</label>
-              <input type="text" value={description} onChange={(e) => setDescription(e.target.value)} />
-              <label>Arabic Note</label>
-              <textarea value={noteAr} onChange={(e) => setNoteAr(e.target.value)} rows={2} />
+              <label htmlFor="description">Description</label>
+              <input id="description" type="text" value={description} onChange={(e) => setDescription(e.target.value)} />
+              <label htmlFor="noteAr">Arabic Note</label>
+              <textarea id="noteAr" value={noteAr} onChange={(e) => setNoteAr(e.target.value)} rows={2} />
             </div>
           </div>
 
@@ -255,7 +253,7 @@ export default function RulesEnginePage() {
             </thead>
             <tbody>
               {ranks.map((r, i) => (
-                <tr key={i}>
+                <tr key={`${r.rank}-${r.category}`}>
                   <td>{i + 1}</td>
                   <td>
                     <input type="text" value={r.rank} onChange={(e) => updateRank(i, "rank", e.target.value)} />
@@ -303,7 +301,7 @@ export default function RulesEnginePage() {
             </thead>
             <tbody>
               {medals.map((m, i) => (
-                <tr key={i}>
+                <tr key={m.id}>
                   <td>
                     <input type="text" value={m.id} onChange={(e) => updateMedal(i, "id", e.target.value)} style={{ width: 140 }} />
                   </td>

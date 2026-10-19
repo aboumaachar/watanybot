@@ -1,7 +1,7 @@
-import { app, BrowserWindow, ipcMain, shell, globalShortcut, Menu, dialog } from "electron";
-import * as path from "path";
-import * as http from "http";
-import * as fs from "fs";
+import { app, BrowserWindow, ipcMain, shell, Menu, dialog } from "electron";
+import * as path from "node:path";
+import * as http from "node:http";
+import * as fs from "node:fs";
 
 const isDev = !app.isPackaged;
 // Prefer IPv4 loopback to avoid systems where `localhost` resolves to ::1 and
@@ -34,8 +34,8 @@ function createWindow(): BrowserWindow {
     win.loadURL(devUrl).catch((err) => {
       console.error("[WatanyBot Admin] Failed to load dev URL on 5177, trying 5176:", err.message);
       const fallbackUrl = "http://localhost:5176";
-      win.loadURL(fallbackUrl).catch((err2) => {
-        console.error("[WatanyBot Admin] Failed to load fallback URL:", err2.message);
+      win.loadURL(fallbackUrl).catch((error_) => {
+        console.error("[WatanyBot Admin] Failed to load fallback URL:", error_.message);
         // Final fallback: load file
         const filePath = path.join(__dirname, "../renderer/index.html");
         if (fs.existsSync(filePath)) {
@@ -106,7 +106,7 @@ function gatewayFetch(
       req.on("error", (err: any) => {
         // If initial attempt used IPv6/localhost and we got ECONNREFUSED,
         // retry once with IPv4 loopback.
-        if (!isRetry && (hostname === "::1" || hostname === "localhost") && err && err.code === "ECONNREFUSED") {
+        if (!isRetry && (hostname === "::1" || hostname === "localhost") && err?.code === "ECONNREFUSED") {
           return makeRequest("127.0.0.1", true);
         }
         reject(err);

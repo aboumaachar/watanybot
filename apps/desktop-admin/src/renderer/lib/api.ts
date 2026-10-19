@@ -75,7 +75,10 @@ export const saveRuntimeKB = (kb: any) => gw("POST", "/api/admin/kb/runtime-save
 export const reloadRuntimeKBPreview = () => gw("POST", "/api/admin/kb/runtime-reload");
 
 /* Versions & RAG Chunks */
-export const listKBVersions = (file?: string) => gw("GET", `/api/admin/kb/versions${file ? `?file=${encodeURIComponent(file)}` : ''}`);
+export const listKBVersions = (file?: string) => {
+  const query = file ? `?file=${encodeURIComponent(file)}` : "";
+  return gw("GET", `/api/admin/kb/versions${query}`);
+};
 export const rollbackKBVersion = (id: string) => gw("POST", "/api/admin/kb/versions/rollback", { id });
 export const listRagChunks = (q = '', page = 1, pageSize = 50) => gw("GET", `/api/admin/kb/chunks?q=${encodeURIComponent(q)}&page=${page}&pageSize=${pageSize}`);
 export const getRagChunk = (id: string) => gw("GET", `/api/admin/kb/chunk/${encodeURIComponent(id)}`);

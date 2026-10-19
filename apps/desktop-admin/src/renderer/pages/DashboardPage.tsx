@@ -79,6 +79,7 @@ export default function DashboardPage() {
         <div className="card">
           <h3>Knowledge Base</h3>
           <table>
+            <thead><tr><th scope="col">Metric</th><th scope="col">Value</th></tr></thead>
             <tbody>
               <tr><td>Transactions</td><td>{ov.kb?.transactions ?? 0}</td></tr>
               <tr><td>RAG Chunks</td><td>{ov.kb?.ragChunks ?? 0}</td></tr>
@@ -94,6 +95,7 @@ export default function DashboardPage() {
         <div className="card">
           <h3>Runtime</h3>
           <table>
+            <thead><tr><th scope="col">Metric</th><th scope="col">Value</th></tr></thead>
             <tbody>
               <tr><td>Node</td><td>{ov.runtime?.nodeVersion ?? "?"}</td></tr>
               <tr><td>PID</td><td>{ov.runtime?.pid ?? "?"}</td></tr>
@@ -107,6 +109,7 @@ export default function DashboardPage() {
           <div className="card">
             <h3>Plugins</h3>
             <table>
+              <thead><tr><th scope="col">Plugin</th><th scope="col">Count</th></tr></thead>
               <tbody>
                 <tr><td>Job Applications</td><td>{Array.isArray(plugins.jobApplications) ? plugins.jobApplications.length : (plugins.jobApplicationCount ?? 0)}</td></tr>
                 <tr><td>Marketplace Listings</td><td>{Array.isArray(plugins.marketplaceListings) ? plugins.marketplaceListings.length : (plugins.marketplaceCount ?? plugins.marketplaceListings ?? 0)}</td></tr>

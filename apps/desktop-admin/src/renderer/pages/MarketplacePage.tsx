@@ -75,7 +75,7 @@ export default function MarketplacePage() {
             <thead><tr><th>Title</th><th>Company</th><th>Location</th><th>Mode</th><th>Tags</th></tr></thead>
             <tbody>
               {jobs.map((j, i) => (
-                <tr key={i}>
+                <tr key={j.id || j.key || `${j.title || "job"}-${j.company || ""}-${i}`}>
                   <td>{j.title}</td><td>{j.company}</td><td>{j.location}</td><td>{j.mode}</td><td>{j.tags?.join(", ")}</td>
                 </tr>
               ))}
@@ -91,7 +91,7 @@ export default function MarketplacePage() {
             <thead><tr><th>Title</th><th>Price</th><th>Category</th><th>Status</th><th>Seller</th></tr></thead>
             <tbody>
               {listings.map((l, i) => (
-                <tr key={i}>
+                <tr key={l.id || l.key || `${l.title || "listing"}-${i}`}>
                   <td>{l.title}</td><td>{l.price?.toLocaleString()} {l.currency}</td><td>{l.category}</td><td>{l.status}</td><td>{l.sellerName || "—"}</td>
                 </tr>
               ))}
@@ -109,7 +109,7 @@ export default function MarketplacePage() {
           </div>
           <div className="alert-list">
             {alerts.map((a, i) => (
-              <div key={i} className="card alert-card">
+              <div key={a.id || a.key || `${a.title || "alert"}-${a.date || i}`} className="card alert-card">
                 <h4>{a.title}</h4>
                 <p>{a.body || a.message}</p>
                 <span className="note">{a.source} · {a.country} · {a.date ? new Date(a.date).toLocaleDateString() : ""}</span>

@@ -14,9 +14,9 @@ export default function KBPage() {
   const [runtimeVersions, setRuntimeVersions] = useState<any[]>([]);
   const [chunkQuery, setChunkQuery] = useState("");
   const [chunkResults, setChunkResults] = useState<any[]>([]);
-  const [selectedChunk, setSelectedChunk] = useState<any | null>(null);
-  const [chunkEditText, setChunkEditText] = useState<string>("");
   const [chunkLoading, setChunkLoading] = useState(false);
+  const [selectedChunk, setSelectedChunk] = useState<any>(null);
+  const [chunkEditText, setChunkEditText] = useState<string>("");
 
   useEffect(() => {
     (async () => {
@@ -71,10 +71,10 @@ export default function KBPage() {
   }
 
   function onUploadFile(e: React.ChangeEvent<HTMLInputElement>) {
-    const f = e.target.files && e.target.files[0];
+    const f = e.target.files?.[0];
     if (!f) return;
     const r = new FileReader();
-    r.onload = () => setRuntimeText(String(r.result || ''));
+    r.onload = () => setRuntimeText(typeof r.result === "string" ? r.result : JSON.stringify(r.result ?? ""));
     r.readAsText(f, 'utf8');
   }
 
@@ -110,7 +110,7 @@ export default function KBPage() {
     setRuntimeMsg(null);
     try {
       const r = await api.reloadRuntimeKBPreview();
-      if (r && r.ok) setRuntimeMsg('Runtime KB loaded into memory (preview)');
+      if (r?.ok) setRuntimeMsg('Runtime KB loaded into memory (preview)');
       else setRuntimeMsg(`Reload failed: ${r?.error || 'unknown'}`);
     } catch (err: any) {
       setRuntimeMsg(String(err.message || err));
@@ -285,10 +285,10 @@ export default function KBPage() {
         <section style={{ marginTop: 18 }} className="section">
           <h3>RAG Chunks (procedures)</h3>
           <div className="search-bar">
-            <input placeholder="Search RAG chunks…" value={chunkQuery} onChange={(e) => setChunkQuery(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && (async () => { setChunkLoading(true); try { const r = await api.listRagChunks(chunkQuery, 1, 50); setChunkResults(r.chunks || []); } catch (err: any) { setErr(err.message); } finally { setChunkLoading(false); } })()} />
-            <button onClick={async () => { setChunkLoading(true); try { const r = await api.listRagChunks(chunkQuery, 1, 50); setChunkResults(r.chunks || []); } catch (err: any) { setErr(err.message); } finally { setChunkLoading(false); } }}>Search</button>
-            <button onClick={async () => { setChunkLoading(true); try { await api.reloadRagChunks(); setChunkMsg('RAG chunks reloaded'); } catch (err: any) { setChunkMsg(String(err.message || err)); } finally { setChunkLoading(false); } }}>Reload chunks</button>
-            <button onClick={async () => { setChunkLoading(true); try { await api.saveRagChunks(); setChunkMsg('Chunks saved to disk'); } catch (err: any) { setChunkMsg(String(err.message || err)); } finally { setChunkLoading(false); } }}>Save chunks</button>
+            <input placeholder="Search RAG chunks…" value={chunkQuery} disabled={chunkLoading} onChange={(e) => setChunkQuery(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && (async () => { setChunkLoading(true); try { const r = await api.listRagChunks(chunkQuery, 1, 50); setChunkResults(r.chunks || []); } catch (err: any) { setErr(err.message); } finally { setChunkLoading(false); } })()} />
+            <button disabled={chunkLoading} onClick={async () => { setChunkLoading(true); try { const r = await api.listRagChunks(chunkQuery, 1, 50); setChunkResults(r.chunks || []); } catch (err: any) { setErr(err.message); } finally { setChunkLoading(false); } }}>Search</button>
+            <button disabled={chunkLoading} onClick={async () => { setChunkLoading(true); try { await api.reloadRagChunks(); setChunkMsg('RAG chunks reloaded'); } catch (err: any) { setChunkMsg(String(err.message || err)); } finally { setChunkLoading(false); } }}>Reload chunks</button>
+            <button disabled={chunkLoading} onClick={async () => { setChunkLoading(true); try { await api.saveRagChunks(); setChunkMsg('Chunks saved to disk'); } catch (err: any) { setChunkMsg(String(err.message || err)); } finally { setChunkLoading(false); } }}>Save chunks</button>
           </div>
 
           {chunkMsg && <div className="note">{chunkMsg}</div>}
@@ -301,7 +301,7 @@ export default function KBPage() {
                   <tr key={c.id}>
                     <td className="mono">{c.id}</td>
                     <td>{c.chunk_type}</td>
-                    <td>{(c.metadata || {}).title_ar || c.title || '—'}</td>
+                    <td>{c.metadata?.title_ar || c.title || '—'}</td>
                     <td style={{ maxWidth: 420, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{c.text?.slice(0, 160)}</td>
                     <td>
                       <button className="btn-sm" onClick={async () => {
@@ -320,12 +320,12 @@ export default function KBPage() {
 
           {/* Chunk edit modal */}
           {selectedChunk && (
-            <div className="modal-overlay" onClick={() => { setSelectedChunk(null); setChunkEditText(''); }}>
-              <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <dialog open className="modal-overlay" aria-label="Edit chunk">
+              <div className="modal">
                 <div className="modal-header"><h3>Edit chunk: {selectedChunk.id}</h3><button onClick={() => { setSelectedChunk(null); setChunkEditText(''); }}>✕</button></div>
                 <div className="modal-body">
-                  <label>Text</label>
-                  <textarea rows={10} value={chunkEditText} onChange={(e) => setChunkEditText(e.target.value)} />
+                  <label htmlFor="chunkEditText">Text</label>
+                  <textarea id="chunkEditText" rows={10} value={chunkEditText} onChange={(e) => setChunkEditText(e.target.value)} />
                   <div className="modal-actions">
                     <button className="btn-primary" onClick={async () => {
                       try {
@@ -339,15 +339,15 @@ export default function KBPage() {
                   </div>
                 </div>
               </div>
-            </div>
+            </dialog>
           )}
         </section>
       </section>
 
       {/* Tx Detail Modal */}
       {selectedTx && (
-        <div className="modal-overlay" onClick={() => setSelectedTx(null)}>
-          <div className="modal" onClick={(e) => e.stopPropagation()}>
+        <dialog open className="modal-overlay" aria-label="Transaction details">
+          <div className="modal">
             <div className="modal-header">
               <h3>{selectedTx.title}</h3>
               <button onClick={() => setSelectedTx(null)}>✕</button>
@@ -358,19 +358,19 @@ export default function KBPage() {
               {selectedTx.legal_basis && <p><strong>Legal Basis:</strong> {selectedTx.legal_basis}</p>}
               {selectedTx.required_docs?.length > 0 && (
                 <div><strong>Required Docs:</strong>
-                  <ul>{selectedTx.required_docs.map((d: any, i: number) => <li key={i}>{typeof d === "string" ? d : d.name}</li>)}</ul>
+                  <ul>{selectedTx.required_docs.map((d: any) => <li key={typeof d === "string" ? d : d.id || d.name}>{typeof d === "string" ? d : d.name}</li>)}</ul>
                 </div>
               )}
               {selectedTx.steps?.length > 0 && (
                 <div><strong>Steps:</strong>
-                  <ol>{selectedTx.steps.map((s: any, i: number) => <li key={i}>{typeof s === "string" ? s : s.description}</li>)}</ol>
+                  <ol>{selectedTx.steps.map((s: any) => <li key={typeof s === "string" ? s : s.id || s.description}>{typeof s === "string" ? s : s.description}</li>)}</ol>
                 </div>
               )}
               {selectedTx.fees && <p><strong>Fees:</strong> {selectedTx.fees}</p>}
               {selectedTx.phones?.length > 0 && <p><strong>Phones:</strong> {selectedTx.phones.join(", ")}</p>}
             </div>
           </div>
-        </div>
+        </dialog>
       )}
     </div>
   );
