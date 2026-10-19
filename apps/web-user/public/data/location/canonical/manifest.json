@@ -32,7 +32,7 @@
     "localities.csv": "23d2122f702376ea04b2d16df7a70596df8be75dc02109a543c5d4fa99582728",
     "municipalities.csv": "7966ac970db2fbb5bd22867c464d7d2840623c3c27b21d837ed61209c8e97881",
     "provenance.csv": "9782bcf605172dcf786c7fe185eda5e435d11b0eeee61c47d3808253e134958e",
-    "runtime.json": "91e61ac70bc760fadef46b4c5c79b56ae57499b1751df4900f5c4e29c02b4b00"
+    "runtime.json": "7dd31d871fa2ae937e7559139a5fb4b1e29ef4b6efc595825f6aa9e3537f7fcf"
   },
   "recordCounts": {
     "governorates": 8,

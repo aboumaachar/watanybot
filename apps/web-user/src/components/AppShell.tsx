@@ -19,6 +19,7 @@ const SettingsPage = lazy(() => import("../pages/SettingsPage"));
 const SavedChatsPage = lazy(() => import("../pages/SavedChatsPage"));
 const BookmarksPage = lazy(() => import("../pages/BookmarksPage"));
 const ChatSessionsPage = lazy(() => import("../pages/ChatSessionsPage"));
+const JobApplicationsPage = lazy(() => import("../pages/JobApplicationsPage"));
 const JobsPage = lazy(() => import("../pages/JobsPage"));
 const JobReadinessPage = lazy(() => import("../pages/JobReadinessPage"));
 const EmployerCandidateSearchPage = lazy(() => import("../pages/EmployerCandidateSearchPage"));
@@ -174,6 +175,7 @@ export function AppShell() {
         <Route path="jobs/readiness" element={<RequireAuthenticated><JobReadinessPage /></RequireAuthenticated>} />
         <Route path="jobs/candidates" element={<RequireAuthenticated><EmployerCandidateSearchPage /></RequireAuthenticated>} />
         <Route path="jobs/employer" element={<RequireAuthenticated><EmployerPortalPage /></RequireAuthenticated>} />
+        <Route path="jobs/applications" element={<RequireAuthenticated><JobApplicationsPage /></RequireAuthenticated>} />
         <Route path="jobs" element={<JobsPage />} />
         <Route path="marketplace" element={<MarketPage />} />
         <Route path="saved" element={<RequireAuthenticated><SavedChatsPage /></RequireAuthenticated>} />
