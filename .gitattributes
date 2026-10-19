@@ -1,1 +1,4 @@
 *.sh text eol=lf
+# Canonical location runtime is verified by SHA-256 in the browser; serve the exact committed bytes on every OS
+apps/web-user/public/data/location/canonical/runtime.json -text
+packages/lebanese-administrative-authority/releases/**/runtime.json -text

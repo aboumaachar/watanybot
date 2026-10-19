@@ -31,8 +31,8 @@ export type CanonicalRuntime = Readonly<{
   aliases: ReadonlyArray<Record<string, unknown>>;
 }>;
 
-const CANONICAL_RUNTIME_URL = "/data/location/canonical/runtime.json";
-const CANONICAL_MANIFEST_URL = "/data/location/canonical/manifest.json";
+const CANONICAL_RUNTIME_URL = "/data/location/canonical/runtime.json?v=1.1.1-20260916";
+const CANONICAL_MANIFEST_URL = "/data/location/canonical/manifest.json?v=1.1.1-20260916";
 
 const normalize = (value: string): string => value.trim().toLocaleLowerCase("ar").replace(/[\u064B-\u065F\u0670]/g, "").replace(/[-_\s]+/g, "");
 const byArabicName = <T extends { nameAr: string | null }>(left: T, right: T): number => (left.nameAr ?? "").localeCompare(right.nameAr ?? "", "ar") || String(left.nameAr ?? "").localeCompare(String(right.nameAr ?? ""));
