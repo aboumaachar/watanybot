@@ -33,7 +33,7 @@ describe("C6 News CMS runtime", () => {
   // /admin/* resolves the principal from the database (active user + live session + sid).
   let superadmin = "";
   let admin = "";
-  let externalFetch: ReturnType<typeof vi.spyOn>;
+  let externalFetch: ReturnType<typeof vi.spyOn> | undefined;
 
   beforeAll(async () => {
     const server = await import("../server.js");
@@ -45,15 +45,21 @@ describe("C6 News CMS runtime", () => {
     externalFetch = vi.spyOn(globalThis, "fetch").mockImplementation(async () => new Response("upstream unavailable", { status: 503 }));
   }, 30000);
 
+  // Release the app, session users and pool even when the residue check or beforeAll failed.
   afterAll(async () => {
-    app.pluginDb.prepare("DELETE FROM news_items WHERE id = ?").run(activeId || canaryId);
-    if (app.pluginDb.prepare("SELECT * FROM news_items WHERE id = ?").get(activeId || canaryId)) {
-      throw new Error("C6_NEWS_CANARY_RESIDUE");
+    try {
+      if (app?.pluginDb) {
+        app.pluginDb.prepare("DELETE FROM news_items WHERE id = ?").run(activeId || canaryId);
+        if (app.pluginDb.prepare("SELECT * FROM news_items WHERE id = ?").get(activeId || canaryId)) {
+          throw new Error("C6_NEWS_CANARY_RESIDUE");
+        }
+      }
+      externalFetch?.mockRestore();
+    } finally {
+      if (app) await app.close();
+      await cleanupSessionUsers();
+      await closePool();
     }
-    externalFetch.mockRestore();
-    await app.close();
-    await cleanupSessionUsers();
-    await closePool();
   });
 
   it("proves RBAC, lifecycle, public reflection, audit, versions, rollback, and cleanup", async () => {

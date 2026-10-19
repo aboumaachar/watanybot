@@ -172,16 +172,16 @@ function legacyJobTypeForOpportunity(type: CivilianOpportunity["type"]): "full_t
 function legacyCategoryIdForOpportunity(item: CivilianOpportunity): number | undefined {
   const haystack = [item.category, item.title, item.summary].join(" ").toLowerCase();
   const mappings: Array<[number, string[]]> = [
-    [1, ["security", "guard"]],
-    [2, ["transport", "driver", "driving"]],
-    [3, ["maintenance", "repair"]],
-    [4, ["admin", "office"]],
-    [5, ["technology", "cyber", "it"]],
-    [6, ["education", "training"]],
-    [7, ["health", "medical"]],
-    [8, ["trades", "construction", "building"]],
-    [9, ["hospitality", "tourism"]],
-    [10, ["sales", "marketing"]],
+    [1, ["security", "guard", "أمن", "حراسة"]],
+    [2, ["transport", "driver", "driving", "نقل", "سائق"]],
+    [3, ["maintenance", "repair", "صيانة", "إصلاح"]],
+    [4, ["admin", "office", "إدارة", "مكتب"]],
+    [5, ["technology", "cyber", "تقنية", "تكنولوجيا"]],
+    [6, ["education", "training", "تعليم", "تدريب"]],
+    [7, ["health", "medical", "صحة", "طب"]],
+    [8, ["trades", "construction", "building", "بناء", "مقاولات", "حرف"]],
+    [9, ["hospitality", "tourism", "ضيافة", "سياحة"]],
+    [10, ["sales", "marketing", "مبيعات", "تسويق"]],
   ];
   return mappings.find(([, terms]) => terms.some((term) => haystack.includes(term)))?.[0];
 }
