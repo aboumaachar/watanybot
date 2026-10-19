@@ -10,7 +10,8 @@ description: >
 ---
 
 APEX_NATIVE_SKILL_SOURCE=C:\xampp\htdocs\projectx\watanybot\.pma\skills\apex-ps1\SKILL.md
-APEX_NATIVE_SKILL_SOURCE_SHA256=CE317015ACF91FB84C0D4AEE4EE91F8E2B2C0A75F81926C87AB098F922BB33EB
+APEX_AUTHORITY_EPOCH=20261008_CONVERGENCE_V1
+APEX_NATIVE_SKILL_SOURCE_SHA256=3860BA45E4B8C5EDF1FD6F71D46BB616D54062092FD5BF5779DE0B07D56CDAB4
 
 # APEX PS1 Skill - WatanyBot Local Authority
 
@@ -92,3 +93,21 @@ APEX_NATIVE_SKILL_SOURCE_SHA256=CE317015ACF91FB84C0D4AEE4EE91F8E2B2C0A75F81926C8
 57. When all required browser contracts pass, systemic diagnosis is `NONE_PASS_21_OF_21`; advisory console noise must not masquerade as the dominant failure dimension.
 58. A current run's successful typecheck, build, encoding, and 21/21 browser proof is the closeout authority. Historical controller failures remain historical evidence and do not become current blockers.
 <!-- APEX_FULL_FINALIZER_MANAGED_CONTRACT_END -->
+
+<!-- APEX_WAVE0C_CURRENT_STATE_GUARDS_START -->
+## Permanent Wave 0C current-state and harness guards
+
+59. On resume, nested PowerShell variable interpolation and embedded-language literals must be parser-safe before execution. Prefer braced variables, format operators, single-quoted literals, or literal here-strings where delimiters or `$` syntax can be reinterpreted. A resume preflight that fails interpolation is harness failure, not product evidence.
+60. Native stderr must never be allowed to preempt capture of the child exit code or diagnostics. Run native children through an explicit process boundary, persist stdout/stderr separately, capture the native exit immediately, scan failure tokens, and fail closed on unexplained stderr or nonzero exit.
+61. Browser automation must interact only with the current visible interaction owner. If a modal/dialog owns input, background calculator or page controls are not valid targets. Prove visibility, enabled state, ownership, and stable selector scope before click/type actions.
+62. Multi-step wizard proof must wait for an observable transition after each action before selecting controls for the next step. Chained clicks against stale DOM or asynchronous state are forbidden as acceptance evidence.
+63. `Start-Process` must receive a real executable authority. Do not pass a PowerShell shim such as `pnpm.ps1` where an executable launcher is required. Resolve and record the actual executable or `.cmd` launcher, then require child start, expected exit code, output token, and clean failure-token scan.
+64. A historical blocker may be closed as `RESOLVED_CURRENT_STATE` without a new product mutation only when fresh current-state evidence independently proves the corrected source/artifact/runtime behavior. Preserve the historical failure, record `PRODUCT_MUTATION_ON_RESUME=NONE`, and do not perform an unnecessary cutover merely to recreate causality.
+65. Financial-calculator acceptance requires semantic scenario proof, not only arithmetic API assertions: verify the approved scenario labels/totals in source, emitted route artifact, and fresh production browser output on both required mobile and desktop contexts, and prove the superseded legacy label/result is absent.
+66. Resuming an existing APEX run must retain that run as authority unless a concrete reason requires a successor. Do not create a new run solely to re-prove already-resolved current state; update the existing closeout/evidence lineage and keep unrelated dirty work untouched.
+<!-- APEX_WAVE0C_CURRENT_STATE_GUARDS_END -->
+
+
+## APEX_STANDING_OWNER_AUTHORIZATION_20261013
+
+Owner instruction (2026-10-13): The phrase **"permission granted and elevated"** is the explicit standing authorization of the owner/developer/manager to continue **in-scope** implementation, troubleshooting, QA, staging, deployment and closeout work without repetitive owner-only approval or acceptance prompts. This instruction applies across LNCRS, WatanyBot, NSAForum and other ongoing user-controlled projects (not just WatanyBot). For an owner-only requirement of *separate explicit authorization*, this phrase supplies that authorization when the task's scope includes the operation. Do not silently promote Production for a Staging-only request; respect any current explicit Production hold not superseded by the requested scope. Preserve parser, technical validation, regression, security, permission, data, backup, recovery and rollback gates. Never falsely record genuine member acceptance, independent review, security certification, test results or access elevation. Follow platform/tool restrictions and legitimate third-party authority. Full statement: `C:\Users\User\Documents\APEX_OWNER_EXECUTION_AUTHORITY_20261013.md`. Companion native ChatGPT skill: `apex-owner-execution`.
