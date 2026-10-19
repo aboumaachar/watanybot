@@ -2,7 +2,28 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import Fastify from "fastify";
-import { afterAll, afterEach, describe, expect, it } from "vitest";
+import { afterAll, afterEach, describe, expect, it, vi } from "vitest";
+
+// The recruitment store resolves <cwd>/data/recruitment-announcements.json when
+// the module loads. Load it first with cwd pointed at a temp copy of data/, so
+// the tests below (and their restore) never write the tracked file.
+const recruitmentTmp = await vi.hoisted(async () => {
+  const fs = await import("node:fs");
+  const os = await import("node:os");
+  const path = await import("node:path");
+  const tracked = path.join(process.cwd(), "data", "recruitment-announcements.json");
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "watany-recruitment-"));
+  fs.mkdirSync(path.join(root, "data"), { recursive: true });
+  if (fs.existsSync(tracked)) fs.copyFileSync(tracked, path.join(root, "data", "recruitment-announcements.json"));
+  const realCwd = process.cwd;
+  process.cwd = () => root;
+  try {
+    await import("../recruitment/store");
+  } finally {
+    process.cwd = realCwd;
+  }
+  return { root };
+});
 import { normalizeArabic } from "@watany/shared/arabic";
 
 import { classifySmallTalk, getSmallTalkIntents, setSmallTalkIntents, type SmallTalkIntent } from "../lib/intent-classifier";
@@ -93,7 +114,12 @@ afterAll(async () => {
     await fastifyApp.close();
   }
   restoreRecruitmentStore();
+  fs.rmSync(recruitmentTmp.root, { recursive: true, force: true });
 }, 30000);
+
+it("keeps the recruitment store in a temp dir, not the tracked data file", () => {
+  expect(path.resolve(recruitmentStorePath)).toBe(path.resolve(recruitmentTmp.root, "data", "recruitment-announcements.json"));
+});
 
 describe("chat relevance regressions", () => {
   it("does not classify family pension queries as small-talk rejection", () => {
