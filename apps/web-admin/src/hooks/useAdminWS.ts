@@ -9,10 +9,8 @@ export type WSMessage = {
 };
 
 function getWsUrl(): string {
-  const apiUrl = new URL(getApiUrl(), globalThis.location.origin);
-  const basePath = apiUrl.pathname.replace(/\/mcp\/?$/u, "").replace(/\/$/u, "");
-  const protocol = apiUrl.protocol === "https:" ? "wss:" : "ws:";
-  return `${protocol}//${apiUrl.host}${basePath}/ws/admin`;
+  const apiUrl = getApiUrl();
+  return apiUrl.replace(/\/$/, "").replace(/^http/, "ws") + "/ws/admin";
 }
 
 function readTokenExpiry(token: string): number | undefined {
