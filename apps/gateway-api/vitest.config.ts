@@ -6,6 +6,11 @@ export default defineConfig({
     globals: true,
     environment: "node",
     setupFiles: [],
+    exclude: [
+      "**/node_modules/**",
+      "**/.pma/**",
+      "**/tmp/**",
+    ],
     env: {
       JWT_SECRET: "TEST_ONLY_FAKE_JWT_SECRET_DO_NOT_USE_IN_PROD",
       USE_PYTHON_API: "true",

@@ -11,7 +11,7 @@ STAGE="/home/koudama/.watany-admin-stage-${STAMP}"
 BACKUP="/home/koudama/watany-admin-ops-${STAMP}.tar.gz"
 DEPLOYED=0
 
-EXPECTED_BRANCH="integration/theme-upgrade-20260728"
+EXPECTED_BRANCH="integration/theme-upgrade-20260728-published"
 PUBLIC_BASE="/ops/"
 PUBLIC_URL="https://koudama.com/ops/"
 API_URL="https://koudama.com/mcp"
@@ -22,11 +22,24 @@ fail() {
   exit 1
 }
 
+PRESERVE_DIRS=(payments veterans-2019-applications)
+
 rollback() {
   if [ "$DEPLOYED" -eq 1 ] && [ -s "$BACKUP" ]; then
-    rm -rf "$LIVE"
-    mkdir -p "$LIVE"
-    tar -xzf "$BACKUP" --no-same-owner -C "$LIVE"
+    for entry in "$LIVE"/*; do
+      base="$(basename "$entry")"
+      skip=false
+      for keep in "${PRESERVE_DIRS[@]}"; do
+        [ "$base" = "$keep" ] && skip=true && break
+      done
+      $skip || rm -rf "$entry"
+    done
+    for entry in "$LIVE"/.[!.]*; do
+      [ -e "$entry" ] && rm -rf "$entry"
+    done
+    tar -xzf "$BACKUP" --no-same-owner -C "$LIVE" \
+      --exclude='payments' --exclude='payments/*' \
+      --exclude='veterans-2019-applications' --exclude='veterans-2019-applications/*'
     printf 'ROLLBACK: PASS\n'
   fi
 }
@@ -84,14 +97,33 @@ mkdir -p "$STAGE"
 cp -a "$DIST/." "$STAGE/"
 
 cat > "$STAGE/.htaccess" <<'HTACCESS'
+# SPA Routing - web-admin /ops
 <IfModule mod_rewrite.c>
-RewriteEngine On
-RewriteBase /ops/
-RewriteRule ^index\.html$ - [L]
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule . /ops/index.html [L]
+  RewriteEngine On
+  RewriteBase /ops/
+  RewriteRule ^index\.html$ - [L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /ops/index.html [L]
 </IfModule>
+
+<IfModule mod_expires.c>
+  ExpiresActive On
+  <FilesMatch "\.(js|css)$">
+    ExpiresDefault "access plus 1 year"
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  <FilesMatch "\.html$">
+    ExpiresDefault "access plus 0 seconds"
+    Header set Cache-Control "no-cache, no-store, must-revalidate"
+  </FilesMatch>
+</IfModule>
+
+# KOUDAMA_OPS_NOINDEX_V1_BEGIN
+<IfModule mod_headers.c>
+  Header always set X-Robots-Tag "noindex, nofollow"
+</IfModule>
+# KOUDAMA_OPS_NOINDEX_V1_END
 HTACCESS
 
 printf '%s\n' "$COMMIT" > "$STAGE/.apex-web-admin-deployed-sha"
@@ -109,13 +141,25 @@ fi
 
 [ -s "$BACKUP" ] || fail "Admin backup was not created."
 
-rm -rf "$LIVE"
-mkdir -p "$LIVE"
+for entry in "$LIVE"/*; do
+  [ -e "$entry" ] || continue
+  base="$(basename "$entry")"
+  skip=false
+  for keep in "${PRESERVE_DIRS[@]}"; do
+    [ "$base" = "$keep" ] && skip=true && break
+  done
+  $skip || rm -rf "$entry"
+done
+for entry in "$LIVE"/.[!.]*; do
+  [ -e "$entry" ] && rm -rf "$entry"
+done
+
 tar --no-same-owner -C "$STAGE" -cf - . | tar --no-same-owner -xf - -C "$LIVE"
 DEPLOYED=1
 
-find "$LIVE" -type d -exec chmod 755 {} +
-find "$LIVE" -type f -exec chmod 644 {} +
+find "$LIVE" -maxdepth 0 -type d -exec chmod 755 {} +
+find "$LIVE" -maxdepth 1 ! -name payments ! -name veterans-2019-applications -type f -exec chmod 644 {} +
+[ -d "$LIVE/assets" ] && find "$LIVE/assets" -type d -exec chmod 755 {} + && find "$LIVE/assets" -type f -exec chmod 644 {} +
 
 sleep 3
 

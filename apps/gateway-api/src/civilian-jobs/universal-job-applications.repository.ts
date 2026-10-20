@@ -6,6 +6,8 @@ import { getClient, query } from "../lib/db.js";
 import { appendAdminAuditEventInTransaction, createAdminAuditEvent } from "../admin-authority/adminAuthorityAudit.js";
 import { createAdminAuthorityId, createAdminEntityVersionRowInTransaction, ensureAdminAuthorityTables } from "../admin-authority/adminAuthorityStore.js";
 import { listAdminEntityVersions } from "../admin-authority/adminAuthorityVersioning.js";
+import { resolveMiddleEastSecurityAddress } from "../koudama/surveys/middle-east-security/middleEastSecurity.address.js";
+import { listMiddleEastSecurityApplicationsForOwner } from "../koudama/surveys/middle-east-security/middleEastSecurity.repository.js";
 import type {
   UniversalJobAddressInput,
   UniversalJobApplication,
@@ -459,6 +461,40 @@ export async function listUniversalJobPreviousAutofill(slug: string, userId: str
       location_approval_status: clean(row.location_approval_status) || undefined,
     },
   }));
+  const mes = await listMiddleEastSecurityApplicationsForOwner({ userId });
+  for (const row of mes.slice(0, 20)) {
+    const values = reusableValues(template.fields, {
+      full_name: row.full_name,
+      birth_date: row.birth_date,
+      age_years: row.age_years,
+      birth_place: row.birth_place,
+      phone: row.phone,
+      arabic_read: row.arabic_read,
+      arabic_write: row.arabic_write,
+      english_read: row.english_read,
+      english_write: row.english_write,
+    });
+    items.push({
+      id: row.id,
+      source: "middle-east-security",
+      title: "فرصة عمل في الأمن والحماية",
+      employer: "ميدل إيست سيكوريتي لبنان",
+      submittedAt: row.createdAt,
+      values,
+      address: {
+        address: row.address ?? undefined,
+        mohafaza: row.mohafaza ?? undefined,
+        mohafaza_id: row.mohafaza_id ?? undefined,
+        caza: row.caza ?? undefined,
+        caza_id: row.caza_id ?? undefined,
+        village: row.village ?? undefined,
+        village_id: row.village_id ?? undefined,
+        village_pcode: row.village_pcode ?? undefined,
+        location_dataset_version: row.location_dataset_version ?? undefined,
+        location_approval_status: row.location_approval_status ?? undefined,
+      },
+    });
+  }
   return items.sort((a, b) => b.submittedAt.localeCompare(a.submittedAt));
 }
 
