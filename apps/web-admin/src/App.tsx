@@ -12,7 +12,7 @@ import { DASHBOARD_MODULES } from "./dashboardModuleRegistry";
 import AdminMarketPage from "./pages/AdminMarketPage";
 import AdminKBStudioPage from "./pages/AdminKBStudioPage";
 import AdminDocumentsPage from "./pages/AdminDocumentsPage";
-import CmsPage from "./pages/CmsPage";
+import AdminProceduresPage from "./pages/AdminProceduresPage";
 import AdminCommandCenterPage from "./pages/AdminCommandCenterPage";
 import SuperadminShellPage from "./pages/SuperadminShellPage";
 import AdminSalaryPage from "./pages/AdminSalaryPage";
@@ -74,11 +74,11 @@ const pickRegistered = (...paths: string[]) => REGISTERED_NAV_ITEMS.filter((item
 const NAV_SECTIONS: Array<{ id: string; label: string; items: NavItem[] }> = [
   { id: "overview", label: "الرئيسية", items: [{ path: "/", label: "لوحة الإدارة", icon: "dashboard", capability: "admin.dashboard" }, { path: "/admin/command-center", label: "مركز العمليات", icon: "briefcase", capability: "admin.dashboard" }] },
   { id: "cms", label: "المحتوى", items: [...pickRegistered("/admin/procedures", "/kb", "/admin/documents", "/news"), { path: "/content-studio", label: "استوديو المحتوى", icon: "document", capability: "cms.read" }, { path: "/rules", label: "قواعد المحتوى", icon: "shield", capability: "admin.rules" }, { path: "/superadmin/cms/articles", label: "المقالات والأرشيف", icon: "document", capability: "cms.read" }] },
-  { id: "operations", label: "العمليات", items: [...pickRegistered("/jobs", "/market", "/salary", "/school-grants", "/ads"), { path: "/forms", label: "منشئ النماذج", icon: "document", capability: "admin.dashboard" }, { path: "/chat", label: "مراقبة المحادثة", icon: "chat", capability: "admin.dashboard" }, { path: "/network", label: "الشبكة", icon: "location", capability: "admin.dashboard" }] },
-  { id: "users", label: "المستخدمون", items: [{ path: "/users", label: "إدارة المستخدمين", icon: "users", capability: "admin.users" }, { path: "/roles-permissions", label: "الأدوار والصلاحيات", icon: "shield", capability: "admin.users" }, { path: "/sessions", label: "الجلسات", icon: "shield", capability: "admin.users" }, { path: "/administrators", label: "المسؤولون", icon: "users", capability: "admin.users" }, { path: "/audit", label: "سجل التدقيق", icon: "audit", capability: "superadmin.audit.read" }] },
+  { id: "operations", label: "العمليات", items: [...pickRegistered("/jobs", "/market", "/salary", "/school-grants"), { path: "/ads", label: "إدارة الإعلانات", icon: "apps", capability: "superadmin.ads.manage" }, { path: "/forms", label: "منشئ النماذج", icon: "document", capability: "admin.dashboard" }, { path: "/chat", label: "مراقبة المحادثة", icon: "chat", capability: "admin.dashboard" }, { path: "/network", label: "الشبكة", icon: "location", capability: "admin.dashboard" }] },
+  { id: "users", label: "المستخدمون", items: [{ path: "/users", label: "إدارة المستخدمين", icon: "users", capability: "admin.users" }, { path: "/roles-permissions", label: "الأدوار والصلاحيات", icon: "shield", capability: "superadmin.admin.manage" }, { path: "/sessions", label: "الجلسات", icon: "shield", capability: "superadmin.admin.manage" }, { path: "/administrators", label: "المسؤولون", icon: "users", capability: "superadmin.admin.manage" }, { path: "/audit", label: "سجل التدقيق", icon: "audit", capability: "superadmin.audit.read" }] },
   { id: "crm", label: "CRM", items: [...pickRegistered("/crm")] },
   { id: "erm", label: "ERM", items: [...pickRegistered("/erm")] },
-  { id: "system", label: "النظام", items: [...pickRegistered("/system/health", "/system/integrations", "/features", "/analytics", "/diagnostics"), { path: "/system/ticker", label: "إعدادات الشريط الإخباري", icon: "news", capability: "admin.dashboard" }, { path: "/approvals", label: "مركز الموافقات", icon: "audit", capability: "admin.users" }, { path: "/authority-audit", label: "تدقيق الصلاحيات", icon: "audit", capability: "admin.users" }] },
+  { id: "system", label: "النظام", items: [...pickRegistered("/features", "/analytics", "/diagnostics"), { path: "/system/health", label: "صحة النظام", icon: "settings", capability: "superadmin.admin.manage" }, { path: "/system/integrations", label: "التكاملات", icon: "network", capability: "superadmin.admin.manage" }, { path: "/system/ticker", label: "إعدادات الشريط الإخباري", icon: "news", capability: "admin.dashboard" }, { path: "/approvals", label: "مركز الموافقات", icon: "audit", capability: "superadmin.admin.manage" }, { path: "/authority-audit", label: "تدقيق الصلاحيات", icon: "audit", capability: "superadmin.admin.manage" }] },
 ];
 
 function navItemMatches(pathname: string, itemPath: string): boolean {
@@ -315,7 +315,7 @@ export default function App() {
                     <Route path="/admin/command-center" element={<AdminCommandCenterPage />} />
                     <Route path="/admin/kb-studio" element={<AdminKBStudioPage />} />
                     <Route path="/admin/documents" element={<AdminDocumentsPage />} />
-                    <Route path="/admin/procedures" element={<CmsPage />} />
+                    <Route path="/admin/procedures" element={<AdminProceduresPage />} />
                     <Route path="/content-studio" element={<ContentStudioPage />} />
                     <Route path="/salary" element={<AdminSalaryPage />} />
                     <Route path="/school-grants" element={<AdminSchoolGrantsPage />} />
