@@ -1736,7 +1736,10 @@ export async function registerOfficialSourcesRoutes(app: FastifyLike) {
       };
     }
 
-    const decision = mutateAllDeathNotices((all) => {
+    const decision = mutateAllDeathNotices<{
+      error: "not_found" | "synthetic_test_notice_blocked" | "invalid_approval_transition" | null;
+      item?: any;
+    }>((all) => {
       const idx = all.findIndex((item) => String(item?.id ?? "") === id);
       if (idx === -1) return { changed: false, result: { error: "not_found" as const } };
       if (action === "APPROVE" && isSyntheticDeathNotice(all[idx])) {
@@ -1837,7 +1840,10 @@ export async function registerOfficialSourcesRoutes(app: FastifyLike) {
       reply.code(409);
       return { ok: false, error: "use_al_wafiyat_approval_endpoint" };
     }
-    const changed = mutateAllDeathNotices((all) => {
+    const changed = mutateAllDeathNotices<{
+      error: "not_found" | "invalid_status_transition" | null;
+      notice?: any;
+    }>((all) => {
       const idx = all.findIndex((item) => String(item?.id ?? "") === id);
       if (idx === -1) return { changed: false, result: { error: "not_found" as const } };
       const previous = String(all[idx]?.status ?? "");
