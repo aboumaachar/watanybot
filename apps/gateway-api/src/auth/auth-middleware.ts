@@ -26,6 +26,7 @@ const ADMIN_AUTH_ROUTE_PREFIXES = [
   "/api/admin",
   "/api/superadmin",
   "/api/admin-authority",
+  "/api/al-wafiyat",
   "/admin",
   "/admin-authority",
 ] as const;
