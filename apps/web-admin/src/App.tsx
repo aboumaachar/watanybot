@@ -12,7 +12,7 @@ import { DASHBOARD_MODULES } from "./dashboardModuleRegistry";
 import AdminMarketPage from "./pages/AdminMarketPage";
 import AdminKBStudioPage from "./pages/AdminKBStudioPage";
 import AdminDocumentsPage from "./pages/AdminDocumentsPage";
-import AdminProceduresPage from "./pages/AdminProceduresPage";
+import CmsPage from "./pages/CmsPage";
 import AdminCommandCenterPage from "./pages/AdminCommandCenterPage";
 import SuperadminShellPage from "./pages/SuperadminShellPage";
 import AdminSalaryPage from "./pages/AdminSalaryPage";
@@ -34,11 +34,7 @@ const KBEditorPage = lazy(() => import("./pages/KBEditorPage"));
 const NewsAdminPage = lazy(() => import("./pages/NewsAdminPage"));
 const NetworkAdminPage = lazy(() => import("./pages/NetworkAdminPage"));
 const JobsAdminPage = lazy(() => import("./pages/JobsAdminPage"));
-const UniversalFormsAdminPage = lazy(() => import("./pages/UniversalFormsAdminPage"));
 const AinMreissehApplicationsAdminPage = lazy(() => import("./pages/AinMreissehApplicationsAdminPage"));
-const MiddleEastSecurityApplicationsAdminPage = lazy(() => import("./pages/MiddleEastSecurityApplicationsAdminPage"));
-const Veterans2019ApplicationsAdminPage = lazy(() => import("./pages/Veterans2019ApplicationsAdminPage"));
-const SeasonalAppleApplicationsAdminPage = lazy(() => import("./pages/SeasonalAppleApplicationsAdminPage"));
 
 function RedirectToWebUser() {
   const location = useLocation();
@@ -74,11 +70,11 @@ const pickRegistered = (...paths: string[]) => REGISTERED_NAV_ITEMS.filter((item
 const NAV_SECTIONS: Array<{ id: string; label: string; items: NavItem[] }> = [
   { id: "overview", label: "الرئيسية", items: [{ path: "/", label: "لوحة الإدارة", icon: "dashboard", capability: "admin.dashboard" }, { path: "/admin/command-center", label: "مركز العمليات", icon: "briefcase", capability: "admin.dashboard" }] },
   { id: "cms", label: "المحتوى", items: [...pickRegistered("/admin/procedures", "/kb", "/admin/documents", "/news"), { path: "/content-studio", label: "استوديو المحتوى", icon: "document", capability: "cms.read" }, { path: "/rules", label: "قواعد المحتوى", icon: "shield", capability: "admin.rules" }, { path: "/superadmin/cms/articles", label: "المقالات والأرشيف", icon: "document", capability: "cms.read" }] },
-  { id: "operations", label: "العمليات", items: [...pickRegistered("/jobs", "/market", "/salary", "/school-grants"), { path: "/ads", label: "إدارة الإعلانات", icon: "apps", capability: "superadmin.ads.manage" }, { path: "/forms", label: "منشئ النماذج", icon: "document", capability: "admin.dashboard" }, { path: "/chat", label: "مراقبة المحادثة", icon: "chat", capability: "admin.dashboard" }, { path: "/network", label: "الشبكة", icon: "location", capability: "admin.dashboard" }] },
-  { id: "users", label: "المستخدمون", items: [{ path: "/users", label: "إدارة المستخدمين", icon: "users", capability: "admin.users" }, { path: "/roles-permissions", label: "الأدوار والصلاحيات", icon: "shield", capability: "superadmin.admin.manage" }, { path: "/sessions", label: "الجلسات", icon: "shield", capability: "superadmin.admin.manage" }, { path: "/administrators", label: "المسؤولون", icon: "users", capability: "superadmin.admin.manage" }, { path: "/audit", label: "سجل التدقيق", icon: "audit", capability: "superadmin.audit.read" }] },
+  { id: "operations", label: "العمليات", items: [...pickRegistered("/jobs", "/market", "/salary", "/school-grants", "/ads"), { path: "/chat", label: "مراقبة المحادثة", icon: "chat", capability: "admin.dashboard" }, { path: "/network", label: "الشبكة", icon: "location", capability: "admin.dashboard" }] },
+  { id: "users", label: "المستخدمون", items: [{ path: "/users", label: "إدارة المستخدمين", icon: "users", capability: "admin.users" }, { path: "/roles-permissions", label: "الأدوار والصلاحيات", icon: "shield", capability: "admin.users" }, { path: "/sessions", label: "الجلسات", icon: "shield", capability: "admin.users" }, { path: "/administrators", label: "المسؤولون", icon: "users", capability: "admin.users" }, { path: "/audit", label: "سجل التدقيق", icon: "audit", capability: "superadmin.audit.read" }] },
   { id: "crm", label: "CRM", items: [...pickRegistered("/crm")] },
   { id: "erm", label: "ERM", items: [...pickRegistered("/erm")] },
-  { id: "system", label: "النظام", items: [...pickRegistered("/features", "/analytics", "/diagnostics"), { path: "/system/health", label: "صحة النظام", icon: "settings", capability: "superadmin.admin.manage" }, { path: "/system/integrations", label: "التكاملات", icon: "network", capability: "superadmin.admin.manage" }, { path: "/system/ticker", label: "إعدادات الشريط الإخباري", icon: "news", capability: "admin.dashboard" }, { path: "/approvals", label: "مركز الموافقات", icon: "audit", capability: "superadmin.admin.manage" }, { path: "/authority-audit", label: "تدقيق الصلاحيات", icon: "audit", capability: "superadmin.admin.manage" }] },
+  { id: "system", label: "النظام", items: [...pickRegistered("/system/health", "/system/integrations", "/features", "/analytics", "/diagnostics"), { path: "/approvals", label: "مركز الموافقات", icon: "audit", capability: "admin.users" }] },
 ];
 
 function navItemMatches(pathname: string, itemPath: string): boolean {
@@ -91,7 +87,7 @@ function SidebarNavigation({ adminSession, onNavigate }: Readonly<{ adminSession
   const activeSectionId = NAV_SECTIONS.find((section) => section.items.some((item) => navItemMatches(location.pathname, item.path)))?.id ?? "overview";
   const [openSectionId, setOpenSectionId] = useState<string | null>(activeSectionId);
   useEffect(() => { setOpenSectionId(activeSectionId); }, [activeSectionId]);
-  return <nav className="sidebar-nav" aria-label="التنقل الرئيسي">
+  return <nav className="sidebar-nav" aria-label="Primary navigation">
     {NAV_SECTIONS.map((section) => {
       const expanded = openSectionId === section.id;
       const visibleItems = section.items.filter((item) => Boolean(adminSession) && hasAdminCapability(adminSession, item.capability));
@@ -121,54 +117,29 @@ const ROUTE_META: Record<string, { title: string; section: string }> = {
   "/admin": { title: "لوحة الإدارة", section: "الرئيسية" },
   "/admin/command-center": { title: "مركز القيادة", section: "نظرة عامة" },
   "/users": { title: "المستخدمون", section: "المستخدمون" },
-  "/jobs/ainelhafeh": { title: "طلبات قطاف التفاح", section: "العمليات" },
-  "/jobs/ain-mreisseh-building-assistant": { title: "طلبات عين المريسة", section: "العمليات" },
-  "/jobs/middle-east-security": { title: "طلبات الأمن والحماية", section: "العمليات" },
-  "/news": { title: "الأخبار", section: "المحتوى والمعرفة" },
-  "/jobs": { title: "الوظائف والطلبات", section: "العمليات" },
-  "/forms": { title: "منشئ النماذج", section: "العمليات" },
-  "/market": { title: "السوق", section: "العمليات" },
-  "/chat": { title: "مراقبة المحادثة", section: "العمليات" },
+  "/jobs/ain-mreisseh-building-assistant": { title: "طلبات عين المريسة", section: "التشغيل" },
+  "/news": { title: "التعاميم", section: "المحتوى والمعرفة" },
+  "/jobs": { title: "الفرص والوظائف", section: "التشغيل" },
+  "/market": { title: "السوق", section: "التشغيل" },
+  "/chat": { title: "مراقبة المحادثة", section: "التشغيل" },
   "/kb": { title: "قاعدة المعرفة", section: "المحتوى والمعرفة" },
   "/rules": { title: "قواعد المحتوى", section: "المحتوى والمعرفة" },
   "/audit": { title: "سجل التدقيق", section: "النظام" },
   "/features": { title: "التحكم بالميزات", section: "النظام" },
-  "/system/ticker": { title: "إعدادات الشريط الإخباري", section: "النظام" },
-  "/network": { title: "الشبكة", section: "العمليات" },
-  "/salary": { title: "الراتب", section: "العمليات" },
-  "/school-grants": { title: "المنح المدرسية", section: "العمليات" },
-  "/crm": { title: "إدارة العملاء", section: "العمليات" },
-  "/erm": { title: "إدارة الموارد", section: "العمليات" },
-  "/ads": { title: "إدارة الإعلانات", section: "العمليات" },
+  "/network": { title: "الشبكة", section: "التشغيل" },
+  "/salary": { title: "الراتب", section: "التشغيل" },
+  "/school-grants": { title: "المنح المدرسية", section: "التشغيل" },
+  "/crm": { title: "إدارة العملاء", section: "التشغيل" },
+  "/erm": { title: "إدارة الموارد", section: "التشغيل" },
+  "/ads": { title: "إدارة الإعلانات", section: "التشغيل" },
   "/analytics": { title: "التحليلات", section: "النظام" },
   "/diagnostics": { title: "التشخيص", section: "النظام" },
   "/admin/kb-studio": { title: "استوديو المعرفة", section: "المحتوى والمعرفة" },
   "/admin/documents": { title: "المستندات", section: "المحتوى والمعرفة" },
   "/admin/procedures": { title: "إدارة الإجراءات", section: "المحتوى والمعرفة" },
   "/content-studio": { title: "استوديو المحتوى", section: "المحتوى والمعرفة" },
-  "/superadmin": { title: "Superadmin", section: "نظرة عامة" },
-  "/superadmin/operations": { title: "نظرة العمليات", section: "العمليات" },
-  "/superadmin/system": { title: "نظرة النظام", section: "النظام والحوكمة" },
-  "/superadmin/features": { title: "ميزات الإدارة العليا", section: "النظام والحوكمة" },
-  "/superadmin/system/features": { title: "ميزات النظام", section: "النظام والحوكمة" },
-  "/superadmin/audit": { title: "تدقيق الإدارة العليا", section: "النظام والحوكمة" },
-  "/superadmin/cms": { title: "مساحة CMS", section: "المحتوى والمعرفة" },
-  "/superadmin/cms/community": { title: "المجتمع", section: "المحتوى والمعرفة" },
-  "/superadmin/cms/ai-training": { title: "تدريب الذكاء الاصطناعي", section: "المحتوى والمعرفة" },
-  "/superadmin/cms/abusive-events": { title: "الأحداث المسيئة", section: "المحتوى والمعرفة" },
-  "/superadmin/cms/chat-inputs": { title: "مدخلات المحادثة", section: "المحتوى والمعرفة" },
-  "/superadmin/cms/answer-overrides": { title: "بدائل الإجابات", section: "المحتوى والمعرفة" },
-  "/superadmin/cms/chat-sessions": { title: "جلسات المحادثة", section: "المحتوى والمعرفة" },
-  "/superadmin/cms/rules": { title: "قواعد التصفية", section: "المحتوى والمعرفة" },
-  "/superadmin/cms/news": { title: "أخبار CMS", section: "المحتوى والمعرفة" },
   "/superadmin/cms/articles": { title: "المقالات والأرشيف", section: "المحتوى والمعرفة" },
-  "/superadmin/cms/articles/archive": { title: "أرشيف المقالات", section: "المحتوى والمعرفة" },
-  "/superadmin/system/official-services": { title: "الخدمات الرسمية", section: "المحتوى والمعرفة" },
-  "/superadmin/system/ticker": { title: "عناصر الشريط الإخباري", section: "المحتوى والمعرفة" },
-  "/superadmin/crm": { title: "نظرة CRM", section: "CRM" },
-  "/superadmin/crm/contacts": { title: "جهات اتصال CRM", section: "CRM" },
-  "/superadmin/erm": { title: "نظرة ERM", section: "ERM" },
-  "/superadmin/erm/assets": { title: "أصول ERM", section: "ERM" },
+  "/cms/articles": { title: "المقالات والأرشيف", section: "المحتوى والمعرفة" },
   "/system/health": { title: "صحة النظام", section: "النظام" },
   "/system/integrations": { title: "التكاملات", section: "النظام" },
   "/administrators": { title: "المسؤولون", section: "النظام" },
@@ -176,13 +147,6 @@ const ROUTE_META: Record<string, { title: string; section: string }> = {
   "/roles-permissions": { title: "الأدوار والصلاحيات", section: "النظام" },
   "/approvals": { title: "مركز الموافقات", section: "النظام" },
   "/authority-audit": { title: "تدقيق الصلاحيات", section: "النظام" },
-  "/superadmin/administrators": { title: "المسؤولون", section: "النظام والحوكمة" },
-  "/superadmin/sessions": { title: "الجلسات", section: "النظام والحوكمة" },
-  "/superadmin/roles-permissions": { title: "الأدوار والصلاحيات", section: "النظام والحوكمة" },
-  "/superadmin/approvals": { title: "مركز الموافقات", section: "النظام والحوكمة" },
-  "/superadmin/system/health": { title: "صحة الوحدات", section: "النظام والحوكمة" },
-  "/superadmin/system/integrations": { title: "التكاملات", section: "النظام والحوكمة" },
-  "/superadmin/authority-audit": { title: "تدقيق الصلاحيات", section: "النظام والحوكمة" },
 };
 
 function Loading() {
@@ -192,7 +156,13 @@ function Loading() {
 const routerBasename =
   import.meta.env.BASE_URL === "/"
     ? "/"
-    : import.meta.env.BASE_URL.replace(/\/+$/, "");
+    : trimTrailingSlashes(import.meta.env.BASE_URL);
+
+function trimTrailingSlashes(value: string): string {
+  let end = value.length;
+  while (end > 0 && value[end - 1] === "/") end -= 1;
+  return value.slice(0, end);
+}
 
 export default function App() {
   const dir = dirForLocale(defaultLocale);
@@ -252,6 +222,7 @@ export default function App() {
 
   const handleLogout = useCallback(async () => {
     await logoutAdmin();
+    // Do NOT clear admin_api_url — keep server selection for next login
     setToken(null);
   }, []);
 
@@ -264,7 +235,7 @@ export default function App() {
         {isAuthenticated ? (
           <div className={`admin-app ${sidebarCollapsed ? "sidebar-collapsed" : ""}`} dir={dir}>
             {/* Sidebar */}
-            {mobileOpen && <button aria-label="إغلاق التنقل" className="drawer-backdrop" onClick={() => setMobileOpen(false)} />}
+            {mobileOpen && <button aria-label="Close navigation" className="drawer-backdrop" onClick={() => setMobileOpen(false)} />}
             <aside className={`admin-sidebar ${mobileOpen ? "mobile-open" : ""}`}>
               <div className="sidebar-brand">
                 <div className="brand-icon">W</div>
@@ -301,8 +272,8 @@ export default function App() {
             {/* Main content */}
             <main className="admin-main">
               <header className="admin-topbar">
-                <button type="button" className="menu-toggle" aria-label="فتح التنقل" onClick={() => setMobileOpen(true)}>☰</button>
-                <button type="button" className="collapse-toggle" aria-label={sidebarCollapsed ? "توسيع التنقل" : "طي التنقل"} onClick={() => { const next = !sidebarCollapsed; setSidebarCollapsed(next); localStorage.setItem("admin_sidebar_collapsed", String(next)); }}>‹</button>
+                <button type="button" className="menu-toggle" aria-label="Open navigation" onClick={() => setMobileOpen(true)}>☰</button>
+                <button type="button" className="collapse-toggle" aria-label={sidebarCollapsed ? "Expand navigation" : "Collapse navigation"} onClick={() => { const next = !sidebarCollapsed; setSidebarCollapsed(next); localStorage.setItem("admin_sidebar_collapsed", String(next)); }}>‹</button>
                 <RouteContext />
               </header>
 
@@ -315,7 +286,7 @@ export default function App() {
                     <Route path="/admin/command-center" element={<AdminCommandCenterPage />} />
                     <Route path="/admin/kb-studio" element={<AdminKBStudioPage />} />
                     <Route path="/admin/documents" element={<AdminDocumentsPage />} />
-                    <Route path="/admin/procedures" element={<AdminProceduresPage />} />
+                    <Route path="/admin/procedures" element={<CmsPage />} />
                     <Route path="/content-studio" element={<ContentStudioPage />} />
                     <Route path="/salary" element={<AdminSalaryPage />} />
                     <Route path="/school-grants" element={<AdminSchoolGrantsPage />} />
@@ -326,7 +297,7 @@ export default function App() {
                     <Route path="/ads" element={<AdminAdsPage />} />
                     <Route path="/features" element={<AdminPluginsPage />} />
                     <Route path="/users" element={<UsersPage />} />
-                    <Route path="/users/:id" element={<UserPage />} />
+            <Route path="/users/:id" element={<UserPage />} />
                     <Route path="/chat" element={<ChatMonitorPage />} />
                     <Route path="/rules" element={<RulesPage />} />
                     <Route path="/audit" element={<AuditPage />} />
@@ -334,21 +305,17 @@ export default function App() {
                     <Route path="/news" element={<NewsAdminPage />} />
                     <Route path="/network" element={<NetworkAdminPage />} />
                     <Route path="/jobs" element={<JobsAdminPage />} />
-                    <Route path="/forms" element={<UniversalFormsAdminPage />} />
-                    <Route path="/jobs/ainelhafeh" element={<SeasonalAppleApplicationsAdminPage />} />
                     <Route path="/jobs/ain-mreisseh-building-assistant" element={<AinMreissehApplicationsAdminPage />} />
-                    <Route path="/jobs/middle-east-security" element={<MiddleEastSecurityApplicationsAdminPage />} />
-                    <Route path="/veterans-2019-applications" element={<Veterans2019ApplicationsAdminPage />} />
                     <Route path="/market" element={<AdminMarketPage />} />
                     <Route path="/administrators" element={<SuperadminShellPage />} />
                     <Route path="/sessions" element={<SuperadminShellPage />} />
                     <Route path="/roles-permissions" element={<SuperadminShellPage />} />
                     <Route path="/approvals" element={<SuperadminShellPage />} />
-                    <Route path="/system/ticker" element={<SuperadminShellPage />} />
                     <Route path="/system/health" element={<SuperadminShellPage />} />
                     <Route path="/system/integrations" element={<SuperadminShellPage />} />
                     <Route path="/authority-audit" element={<SuperadminShellPage />} />
                     <Route path="/superadmin/*" element={<SuperadminShellPage />} />
+                    <Route path="/*" element={<SuperadminShellPage />} />
                     <Route path="*" element={<Navigate to="/" replace />} />
                   </Routes>
                 </Suspense>

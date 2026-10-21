@@ -479,6 +479,16 @@ export async function otpRoutes(app: FastifyInstance): Promise<void> {
       if (!normalized) {
         return reply.code(400).send({ error: "رقم الهاتف غير صالح" });
       }
+      const unresolvedLegacyPhone = await query<{ total: number }>(
+        `SELECT COUNT(*)::int AS total FROM legacy_wp_user_identities
+         WHERE identity_verification_required = TRUE
+           AND regexp_replace(COALESCE(shared_phone,''), '[^0-9]', '', 'g') = $1`,
+        [normalized],
+      );
+      if ((unresolvedLegacyPhone.rows[0]?.total ?? 0) > 0) {
+        return reply.code(409).send({ error: "هذا الرقم مرتبط بأكثر من حساب قديم. سجّل الدخول باسم المستخدم أو البريد ثم وثّق رقمك من الملف الشخصي." });
+      }
+
       try {
         const unresolvedLegacyPhone = await query<{ total: number }>(
           `SELECT COUNT(*)::int AS total FROM legacy_wp_user_identities

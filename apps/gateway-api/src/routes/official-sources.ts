@@ -1,9 +1,12 @@
 ﻿import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { randomUUID } from "node:crypto";
 import { load } from "cheerio";
 import type { UserRole } from "@watany/types";
 import { hasMinRole } from "../auth/rbac";
+import { buildOfficialDeathNoticeIdentity, normalizeArabicIdentity, normalizeOfficialDate, reconcileOfficialDeathNotice } from "./al-wafiyat-identity";
+import { DeathNoticeStoreError, mutateDeathNoticeRows, readDeathNoticeRowsStrict } from "./al-wafiyat-store";
 
 
 function watanySafeStringField(value: unknown, fallback = ""): string {
@@ -121,9 +124,6 @@ const OFFICIAL_SERVICE_TIMEOUT_MS = 15000;
 const OFFICIAL_SERVICE_UPSTREAM_UNAVAILABLE_ERROR = "تعذّر الاتصال بالمصدر الرسمي حالياً. يمكنك فتح الرابط الرسمي مباشرةً والمحاولة لاحقاً.";
 const AL_WAFIYAT_AUTO_SYNC_INTERVAL_MS = 2 * 60 * 60 * 1000;
 const AL_WAFIYAT_AUTO_SYNC_INITIAL_DELAY_MS = 60 * 1000;
-const AL_WAFIYAT_TICKER_WINDOW_MS = 6 * 60 * 60 * 1000;
-const AL_WAFIYAT_TICKER_PRIORITY = 95;
-const AL_WAFIYAT_NOTIFICATION_KIND = "system";
 const AL_WAFIYAT_SYNTHETIC_PATTERNS = [
   /(^|\s)اختبار(\s|$)/,
   /\b(?:test|phase\s*\d+[a-z]?|qa|demo|dummy|automated evidence capture)\b/i,
@@ -770,16 +770,6 @@ function normalizeNoticeDate(value: unknown): string {
   return text;
 }
 
-function slugifyNoticeTitle(value: string): string {
-  const normalized = compactText(value)
-    .normalize("NFKD")
-    .replace(/[^\p{L}\p{N}]+/gu, "-")
-    .replace(/^-+|-+$/g, "")
-    .toLowerCase();
-
-  return normalized.slice(0, 48) || "notice";
-}
-
 function findAlWafiyatSource(sourceId: string): AlWafiyatSourceRecord | undefined {
   return AL_WAFIYAT_SOURCES.find((source) => source.id === sourceId);
 }
@@ -1047,22 +1037,29 @@ async function fetchAlWafiyatSourceHtml(source: AlWafiyatSourceRecord): Promise<
   return { html, statusCode: response.status };
 }
 
-function buildStoredDeathIdentity(item: any): string {
-  const sourceKey = compactText(item?.source).toLowerCase();
-  const title = compactText(item?.title || item?.name).toLowerCase();
-  const noticeDate = normalizeNoticeDate(item?.date_of_death);
-  return `${sourceKey}::${noticeDate}::${title}`;
-}
-
-function mapImportedAlWafiyatToStoredDeathRecord(item: ImportedAlWafiyatNotice, index: number) {
-  const id = `al-wafiyat-${item.sourceId}-${item.noticeDate}-${slugifyNoticeTitle(item.title)}-${index + 1}`;
+function mapImportedAlWafiyatToStoredDeathRecord(item: ImportedAlWafiyatNotice) {
+  const identity = buildOfficialDeathNoticeIdentity({
+    source: item.sourceKey,
+    title: item.title,
+    noticeDate: item.noticeDate,
+    originalUrl: item.originalUrl,
+    rawText: item.rawText,
+  });
+  if (!identity) return null;
   return {
-    id,
+    id: identity.stableId,
+    identity_key: identity.identityKey,
     name: item.title,
     title: item.title,
     rank: "",
     apparatus: item.sourceProviderAr,
-    date_of_death: item.noticeDate,
+    // New crawled records never conflate a listing date with an unverified death date.
+    date_of_death: identity.death_date,
+    notice_date: identity.notice_date,
+    death_date: identity.death_date,
+    funeral_date: identity.funeral_date,
+    date_evidence: identity.date_evidence,
+    event_type: identity.event_type,
     source: item.sourceKey,
     sourceUrl: item.sourceUrl,
     originalUrl: item.originalUrl,
@@ -1076,19 +1073,26 @@ function mapImportedAlWafiyatToStoredDeathRecord(item: ImportedAlWafiyatNotice, 
 }
 
 function appendImportedDeathNotices(allNotices: any[], imported: ImportedAlWafiyatNotice[]) {
-  const seen = new Set(allNotices.map((item) => buildStoredDeathIdentity(item)));
   const inserted: any[] = [];
+  let duplicates = 0;
+  let reviewRequired = 0;
+  let invalid = 0;
 
-  imported.forEach((item, index) => {
-    const next = mapImportedAlWafiyatToStoredDeathRecord(item, index);
-    const key = buildStoredDeathIdentity(next);
-    if (seen.has(key)) return;
-    seen.add(key);
+  for (const item of imported) {
+    const identity = buildOfficialDeathNoticeIdentity({
+      source: item.sourceKey, title: item.title, noticeDate: item.noticeDate,
+      originalUrl: item.originalUrl, rawText: item.rawText,
+    });
+    const next = mapImportedAlWafiyatToStoredDeathRecord(item);
+    if (!identity || !next) { invalid += 1; continue; }
+    const reconciliation = reconcileOfficialDeathNotice(identity, allNotices, item.sourceKey);
+    if (reconciliation.disposition === "DUPLICATE") { duplicates += 1; continue; }
+    if (reconciliation.disposition === "REVIEW_REQUIRED") { reviewRequired += 1; continue; }
     allNotices.push(next);
     inserted.push(next);
-  });
+  }
 
-  return inserted;
+  return { inserted, duplicates, reviewRequired, invalid };
 }
 
 function mapStoredDeathNoticeToAlWafiyat(item: any) {
@@ -1096,7 +1100,7 @@ function mapStoredDeathNoticeToAlWafiyat(item: any) {
   if (!source) return null;
 
   const title = compactText(item?.title || item?.name);
-  const noticeDate = normalizeNoticeDate(item?.date_of_death);
+  const noticeDate = normalizeNoticeDate(item?.notice_date ?? item?.date_of_death);
   if (!title || !noticeDate) return null;
 
   const rank = compactText(item?.rank);
@@ -1112,6 +1116,10 @@ function mapStoredDeathNoticeToAlWafiyat(item: any) {
     rank: rank || null,
     apparatus,
     noticeDate,
+    deathDate: compactText(item?.death_date) || null,
+    funeralDate: compactText(item?.funeral_date) || null,
+    eventType: compactText(item?.event_type) || "DEATH_NOTICE",
+    dateEvidence: item?.date_evidence ?? null,
     sourceId: source.id,
     sourceProvider: source.providerCode,
     sourceProviderAr: source.providerAr,
@@ -1153,52 +1161,20 @@ function compareAlWafiyatNotices(left: ReturnType<typeof mapStoredDeathNoticeToA
 }
 
 function deathNoticesWritePath(): string {
+  // A declared isolated data root must never silently fall back to repository data.
+  if (process.env.KB_DATA_ROOT) return path.resolve(process.env.KB_DATA_ROOT, "death-notices.jsonl");
   const candidates = dataCandidates("death-notices.jsonl");
-  const existing = candidates.find((p) => fs.existsSync(p));
+  const existing = candidates.find((candidate) => fs.existsSync(candidate));
   return existing ?? candidates[0];
 }
 
 function readAllDeathNotices(): any[] {
-  return readJsonl(dataCandidates("death-notices.jsonl"));
+  return readDeathNoticeRowsStrict(deathNoticesWritePath());
 }
 
-function writeAllDeathNotices(notices: any[]): void {
-  const file = deathNoticesWritePath();
-  const dir = path.dirname(file);
-  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-  const content = notices.map((n) => JSON.stringify(n)).join("\n") + "\n";
-  fs.writeFileSync(file, content, "utf8");
-}
-
-function publishStoredDeathNotices(items: any[], publishedAt: string) {
-  items.forEach((item) => {
-    item.status = "published";
-    item.updated_at = publishedAt;
-    item.published_at = publishedAt;
-  });
-}
-
-function buildAlWafiyatSyncAnnouncement(inserted: any[]) {
-  const titles = inserted
-    .map((item) => buildStoredDeathDisplayTitle(item))
-    .filter(Boolean);
-  const count = titles.length;
-  const preview = titles.slice(0, 4);
-  const remaining = count - preview.length;
-
-  if (count <= 1) {
-    const title = preview[0] || "وفاة جديدة معلنة رسمياً";
-    return {
-      title: `وفاة جديدة في الوفيات الرسمية: ${title}`,
-      body: `تمت إضافة ${title} إلى قائمة الوفيات الرسمية.`,
-    };
-  }
-
-  const suffix = remaining > 0 ? `، و${remaining} حالات إضافية` : "";
-  return {
-    title: `تم تحديث الوفيات الرسمية (${count})`,
-    body: `أُضيفت وفيات جديدة إلى القائمة الرسمية: ${preview.join("، ")}${suffix}.`,
-  };
+function mutateAllDeathNotices<T>(fn: (all: any[]) => { changed: boolean; result: T }): T {
+  const committed = mutateDeathNoticeRows(deathNoticesWritePath(), fn);
+  return committed.result;
 }
 
 async function importAlWafiyatSource(sourceId: AlWafiyatSourceId, req: any, reply: any) {
@@ -1229,21 +1205,29 @@ async function importAlWafiyatSource(sourceId: AlWafiyatSourceId, req: any, repl
       };
     }
 
-    const all = readAllDeathNotices();
-    const inserted = appendImportedDeathNotices(all, extracted);
-    writeAllDeathNotices(all);
+    const result = mutateAllDeathNotices((all) => {
+      const next = appendImportedDeathNotices(all, extracted);
+      return { changed: next.inserted.length > 0, result: next };
+    });
 
     return {
       ok: true,
       source,
       previewOnly: false,
-      importedCount: inserted.length,
-      total: inserted.length,
-      items: inserted
+      importedCount: result.inserted.length,
+      total: result.inserted.length,
+      duplicatesSkipped: result.duplicates,
+      ambiguousSkipped: result.reviewRequired,
+      invalidSkipped: result.invalid,
+      items: result.inserted
         .map((item) => mapStoredDeathNoticeToAlWafiyat(item))
         .filter((item): item is NonNullable<ReturnType<typeof mapStoredDeathNoticeToAlWafiyat>> => Boolean(item)),
     };
-  } catch {
+  } catch (error) {
+    if (error instanceof DeathNoticeStoreError) {
+      reply.code(error.code === "WRITE_LOCK_UNAVAILABLE" ? 423 : 503);
+      return { ok: false, error: "death_notice_store_unavailable", reason: error.code };
+    }
     reply.code(502);
     return {
       ok: false,
@@ -1542,13 +1526,13 @@ export async function registerOfficialSourcesRoutes(app: FastifyLike) {
 
   app.get("/api/deaths", async (req: any) => {
     const q = String(req.query?.q ?? "");
-    const all = readJsonl(dataCandidates("death-notices.jsonl"))
+    const all = readAllDeathNotices()
       .filter(publishedDeathNotice)
       .filter(isPubliclyDisplayableDeathNotice)
       .filter((item) => textMatch(item, q))
       .sort((left, right) => {
-        const leftDate = compactText(left?.date_of_death);
-        const rightDate = compactText(right?.date_of_death);
+        const leftDate = compactText(left?.notice_date ?? left?.date_of_death);
+        const rightDate = compactText(right?.notice_date ?? right?.date_of_death);
         if (leftDate !== rightDate) return rightDate.localeCompare(leftDate);
         return alWafiyatSortTime(right?.published_at) - alWafiyatSortTime(left?.published_at);
       });
@@ -1557,7 +1541,7 @@ export async function registerOfficialSourcesRoutes(app: FastifyLike) {
 
   app.get("/api/deaths/:id", async (req: any, reply: any) => {
     const id = String(req.params?.id ?? "");
-    const all = readJsonl(dataCandidates("death-notices.jsonl"))
+    const all = readAllDeathNotices()
       .filter(publishedDeathNotice)
       .filter(isPubliclyDisplayableDeathNotice);
     const item = all.find((x) => String(x?.id ?? "") === id);
@@ -1598,84 +1582,42 @@ export async function registerOfficialSourcesRoutes(app: FastifyLike) {
 
   // ── Admin: death notices management ────────────────────────────────────────
 
-  function createAlWafiyatSyncArtifacts(inserted: any[]) {
-    const pluginDb = (app as any)?.pluginDb;
-    if (!pluginDb || inserted.length === 0) return;
-
-    const nowMs = Date.now();
-    const summary = buildAlWafiyatSyncAnnouncement(inserted);
-
-    try {
-      pluginDb
-        .prepare(
-          "INSERT INTO notifications (id, title, body, kind, ts, read, user_id, ref_type, ref_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-        )
-        .run(
-          `notif_al_wafiyat_sync_${nowMs}`,
-          summary.title,
-          summary.body,
-          AL_WAFIYAT_NOTIFICATION_KIND,
-          nowMs,
-          0,
-          null,
-          "route",
-          "/al-wafiyat",
-        );
-    } catch (error) {
-      (app as any)?.log?.warn?.({ err: error }, "al_wafiyat_auto_sync_notification_failed");
-    }
-
-    try {
-      pluginDb
-        .prepare(
-          "INSERT INTO ticker_items (id, type, title, body, link_type, link_id, priority, starts_at, ends_at, created_at, updated_at, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-        )
-        .run(
-          `ticker_al_wafiyat_sync_${nowMs}`,
-          "announcement",
-          summary.title,
-          summary.body,
-          "route",
-          "/al-wafiyat",
-          AL_WAFIYAT_TICKER_PRIORITY,
-          nowMs,
-          nowMs + AL_WAFIYAT_TICKER_WINDOW_MS,
-          nowMs,
-          nowMs,
-          "al_wafiyat_auto_sync",
-        );
-    } catch (error) {
-      (app as any)?.log?.warn?.({ err: error }, "al_wafiyat_auto_sync_ticker_failed");
-    }
-  }
-
   async function runAlWafiyatAutoSyncCycle() {
-    const all = readAllDeathNotices();
-    const inserted: any[] = [];
+    // Network requests happen OUTSIDE the file lock; all read/modify/write
+    // decisions occur together once the complete available batch is collected.
+    const extractedBatches: ImportedAlWafiyatNotice[][] = [];
     const failedSources: string[] = [];
-    const publishedAt = new Date().toISOString();
-
     for (const source of AL_WAFIYAT_SOURCES) {
       try {
         const { html } = await fetchAlWafiyatSourceHtml(source);
-        const extracted = extractAlWafiyatNotices(source, html);
-        const nextInserted = appendImportedDeathNotices(all, extracted);
-        if (nextInserted.length > 0) {
-          publishStoredDeathNotices(nextInserted, publishedAt);
-          inserted.push(...nextInserted);
-        }
+        extractedBatches.push(extractAlWafiyatNotices(source, html));
       } catch (error) {
         failedSources.push(source.id);
         (app as any)?.log?.warn?.({ err: error, sourceId: source.id }, "al_wafiyat_auto_sync_source_failed");
       }
     }
-
-    if (inserted.length > 0) {
-      writeAllDeathNotices(all);
-      createAlWafiyatSyncArtifacts(inserted);
+    if (extractedBatches.length === 0) {
+      return { importedCount: 0, duplicatesSkipped: 0, ambiguousSkipped: 0, invalidSkipped: 0, failedSources };
     }
-
-    return { importedCount: inserted.length, failedSources };
+    const outcome = mutateAllDeathNotices((all) => {
+      const inserted: any[] = [];
+      let duplicatesSkipped = 0;
+      let ambiguousSkipped = 0;
+      let invalidSkipped = 0;
+      for (const extracted of extractedBatches) {
+        const batch = appendImportedDeathNotices(all, extracted);
+        inserted.push(...batch.inserted);
+        duplicatesSkipped += batch.duplicates;
+        ambiguousSkipped += batch.reviewRequired;
+        invalidSkipped += batch.invalid;
+      }
+      return {
+        changed: inserted.length > 0,
+        result: { importedCount: inserted.length, duplicatesSkipped, ambiguousSkipped, invalidSkipped },
+      };
+    });
+    // Never auto-publish, and never create public ticker/notification artifacts.
+    return { ...outcome, failedSources };
   }
 
   function startAlWafiyatAutoSyncJob() {
@@ -1689,7 +1631,9 @@ export async function registerOfficialSourcesRoutes(app: FastifyLike) {
       try {
         const result = await runAlWafiyatAutoSyncCycle();
         (app as any)?.log?.info?.(
-          { importedCount: result.importedCount, failedSources: result.failedSources },
+          { importedCount: result.importedCount, duplicatesSkipped: result.duplicatesSkipped,
+            ambiguousSkipped: result.ambiguousSkipped, invalidSkipped: result.invalidSkipped,
+            pendingApproval: true, failedSources: result.failedSources },
           "al_wafiyat_auto_sync_cycle_completed",
         );
       } catch (error) {
@@ -1710,7 +1654,7 @@ export async function registerOfficialSourcesRoutes(app: FastifyLike) {
       {
         intervalMs: AL_WAFIYAT_AUTO_SYNC_INTERVAL_MS,
         warmupMs: AL_WAFIYAT_AUTO_SYNC_INITIAL_DELAY_MS,
-        tickerWindowMs: AL_WAFIYAT_TICKER_WINDOW_MS,
+        approvalRequired: true,
       },
       "al_wafiyat_auto_sync_started",
     );
@@ -1792,32 +1736,33 @@ export async function registerOfficialSourcesRoutes(app: FastifyLike) {
       };
     }
 
-    const all = readAllDeathNotices();
-    const idx = all.findIndex((item) => String(item?.id ?? "") === id);
-    if (idx === -1) {
-      reply.code(404);
-      return { ok: false, error: "not_found" };
+    const decision = mutateAllDeathNotices<{
+      error: "not_found" | "synthetic_test_notice_blocked" | "invalid_approval_transition" | null;
+      item?: any;
+    }>((all) => {
+      const idx = all.findIndex((item) => String(item?.id ?? "") === id);
+      if (idx === -1) return { changed: false, result: { error: "not_found" as const } };
+      if (action === "APPROVE" && isSyntheticDeathNotice(all[idx])) {
+        return { changed: false, result: { error: "synthetic_test_notice_blocked" as const } };
+      }
+      if (!["pending", "under_review"].includes(String(all[idx]?.status ?? ""))) {
+        return { changed: false, result: { error: "invalid_approval_transition" as const } };
+      }
+      const now = new Date().toISOString();
+      all[idx] = {
+        ...all[idx],
+        status: action === "APPROVE" ? "published" : "archived",
+        updated_at: now,
+        published_at: action === "APPROVE" ? now : all[idx]?.published_at,
+      };
+      return { changed: true, result: { error: null, item: mapStoredDeathNoticeToAlWafiyat(all[idx]) } };
+    });
+    if (decision.error) {
+      reply.code(decision.error === "not_found" ? 404
+        : decision.error === "synthetic_test_notice_blocked" ? 400 : 409);
+      return { ok: false, error: decision.error };
     }
-    if (action === "APPROVE" && isSyntheticDeathNotice(all[idx])) {
-      reply.code(400);
-      return { ok: false, error: "synthetic_test_notice_blocked" };
-    }
-
-    const nextStatus = action === "APPROVE" ? "published" : "archived";
-    const now = new Date().toISOString();
-    all[idx] = {
-      ...all[idx],
-      status: nextStatus,
-      updated_at: now,
-      published_at: action === "APPROVE" ? now : all[idx]?.published_at,
-    };
-    writeAllDeathNotices(all);
-
-    return {
-      ok: true,
-      action,
-      item: mapStoredDeathNoticeToAlWafiyat(all[idx]),
-    };
+    return { ok: true, action, item: decision.item };
   });
 
   app.get("/api/admin/deaths", async (req: any, reply: any) => {
@@ -1845,23 +1790,37 @@ export async function registerOfficialSourcesRoutes(app: FastifyLike) {
     }
     const allowedSources = ["army_official", "isf_official", "admin_input"];
     const resolvedSource = allowedSources.includes(String(source ?? "")) ? String(source) : "admin_input";
-    const id = `death-${Date.now()}`;
+    const explicitDeathDate = normalizeOfficialDate(date_of_death);
+    if (!explicitDeathDate) {
+      reply.code(400);
+      return { ok: false, error: "invalid_death_date" };
+    }
     const notice = {
-      id,
-      name: String(name),
-      rank: String(rank),
-      apparatus: String(apparatus),
-      date_of_death: String(date_of_death),
+      id: `death-${randomUUID()}`,
+      name: String(name).trim(),
+      rank: String(rank).trim(),
+      apparatus: String(apparatus).trim(),
+      date_of_death: explicitDeathDate,
+      death_date: explicitDeathDate,
       source: resolvedSource,
       status: "pending",
       submitted_at: new Date().toISOString(),
       notes: notes ? String(notes) : "",
     };
-    const all = readAllDeathNotices();
-    all.push(notice);
-    writeAllDeathNotices(all);
+    const created = mutateAllDeathNotices((all) => {
+      const same = all.some((existing) => existing.source === notice.source
+        && normalizeArabicIdentity(existing.name) === normalizeArabicIdentity(notice.name)
+        && normalizeOfficialDate(existing.death_date ?? existing.date_of_death) === explicitDeathDate);
+      if (same) return { changed: false, result: false };
+      all.push(notice);
+      return { changed: true, result: true };
+    });
+    if (!created) {
+      reply.code(409);
+      return { ok: false, error: "duplicate_death_notice_requires_review" };
+    }
     reply.code(201);
-    return { ok: true, id, notice };
+    return { ok: true, id: notice.id, notice };
   });
 
   app.patch("/api/admin/deaths/:id/status", async (req: any, reply: any) => {
@@ -1876,22 +1835,35 @@ export async function registerOfficialSourcesRoutes(app: FastifyLike) {
       reply.code(400);
       return { ok: false, error: "invalid_status", allowed: allowedStatuses };
     }
-    const all = readAllDeathNotices();
-    const idx = all.findIndex((x) => String(x?.id ?? "") === id);
-    if (idx === -1) {
-      reply.code(404);
-      return { ok: false, error: "not_found" };
-    }
-    if (newStatus === "published" && isSyntheticDeathNotice(all[idx])) {
-      reply.code(400);
-      return { ok: false, error: "synthetic_test_notice_blocked" };
-    }
-    all[idx] = { ...all[idx], status: newStatus, updated_at: new Date().toISOString() };
+    // Publication has one explicit approval boundary. PATCH cannot bypass it.
     if (newStatus === "published") {
-      all[idx].published_at = new Date().toISOString();
+      reply.code(409);
+      return { ok: false, error: "use_al_wafiyat_approval_endpoint" };
     }
-    writeAllDeathNotices(all);
-    return { ok: true, id, status: newStatus, notice: all[idx] };
+    const changed = mutateAllDeathNotices<{
+      error: "not_found" | "invalid_status_transition" | null;
+      notice?: any;
+    }>((all) => {
+      const idx = all.findIndex((item) => String(item?.id ?? "") === id);
+      if (idx === -1) return { changed: false, result: { error: "not_found" as const } };
+      const previous = String(all[idx]?.status ?? "");
+      if (previous === newStatus) {
+        return { changed: false, result: { error: null, notice: all[idx] } };
+      }
+      const allowedNonPublishTransition =
+        (["pending", "under_review"].includes(previous) && ["pending", "under_review"].includes(newStatus))
+        || (previous === "published" && newStatus === "archived");
+      if (!allowedNonPublishTransition) {
+        return { changed: false, result: { error: "invalid_status_transition" as const } };
+      }
+      all[idx] = { ...all[idx], status: newStatus, updated_at: new Date().toISOString() };
+      return { changed: true, result: { error: null, notice: all[idx] } };
+    });
+    if (changed.error) {
+      reply.code(changed.error === "not_found" ? 404 : 409);
+      return { ok: false, error: changed.error };
+    }
+    return { ok: true, id, status: newStatus, notice: changed.notice };
   });
 
   startAlWafiyatAutoSyncJob();

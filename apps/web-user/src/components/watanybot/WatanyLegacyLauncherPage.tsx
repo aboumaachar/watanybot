@@ -5,7 +5,6 @@ import "./watany-drawer.css";
 import "./watany-drawer-overrides.css";
 import { watanyDrawerItems, type WatanyDrawerItem } from "./watanyDrawerItems";
 import { WatanyAppIcon } from "./WatanyAppIcon";
-import { useInternalMail } from "../../lib/internal-mail";
 import { cleanupRouteActivationChrome, clearRouteActivationOptIn } from "../../lib/publicRuntimeChrome";
 import { applyKoudamaTheme, KOUDAMA_THEME_OPTIONS, readStoredKoudamaTheme, type KoudamaThemeId } from "../../lib/koudama-theme";
 
@@ -21,7 +20,6 @@ const launcherQuickItems: ReadonlyArray<WatanyDrawerItem> = [
 
 export default function WatanyLegacyLauncherPage() {
   const { profile } = useApp();
-  useInternalMail(profile);
   const [themeSheetOpen, setThemeSheetOpen] = useState(false);
   const [activeTheme, setActiveTheme] = useState<KoudamaThemeId>(() => readStoredKoudamaTheme());
   const quickItems = launcherQuickItems.map((item) => ({

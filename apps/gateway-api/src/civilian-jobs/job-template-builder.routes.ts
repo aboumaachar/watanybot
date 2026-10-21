@@ -5,7 +5,7 @@ import { getClient, query } from "../lib/db.js";
 type JobField = {
   fieldKey: string;
   label: string;
-  fieldType: "text" | "textarea" | "number" | "integer" | "email" | "tel" | "phone" | "date" | "select" | "radio" | "checkbox" | "yes_no" | "multi_select" | "universal_locator";
+  fieldType: "text" | "textarea" | "number" | "email" | "tel" | "date" | "select" | "radio" | "checkbox";
   required: boolean;
   placeholder: string | null;
   helpText: string | null;
@@ -13,9 +13,9 @@ type JobField = {
   sortOrder: number;
 };
 
-const postingStatuses = ["DRAFT","PUBLISHED","SUSPENDED","CLOSED","ARCHIVED"] as const;
+const postingStatuses = ["DRAFT","PUBLISHED","CLOSED","ARCHIVED"] as const;
 const applicationStatuses = ["SUBMITTED","SCREENING","CONTACTED","SHORTLISTED","INTERVIEW","ACCEPTED","REJECTED","WITHDRAWN"] as const;
-const fieldTypes = ["text","textarea","number","integer","email","tel","phone","date","select","radio","checkbox","yes_no","multi_select","universal_locator"] as const;
+const fieldTypes = ["text","textarea","number","email","tel","date","select","radio","checkbox"] as const;
 
 function userOf(request: FastifyRequest): any { return (request as any).user ?? null; }
 function requireUser(request: FastifyRequest) {
@@ -26,31 +26,6 @@ function requireUser(request: FastifyRequest) {
 function isAdmin(user: any) { const role = String(user?.role ?? "").toLowerCase(); return role === "admin" || role === "superadmin"; }
 function clean(value: unknown, max = 5000) { return String(value ?? "").trim().slice(0, max); }
 function normalizeSlug(value: unknown) { return clean(value, 100).toLowerCase().replace(/[^a-z0-9-]+/g, "-").replace(/^-+|-+$/g, "").replace(/-+/g, "-"); }
-function normalizeLocation(value: unknown): Record<string, unknown> {
-  if (!value || typeof value !== "object" || Array.isArray(value)) return {};
-  const raw = value as Record<string, unknown>;
-  const number = (candidate: unknown) => {
-    if (candidate === null || candidate === undefined || clean(candidate, 64) === "") return undefined;
-    const parsed = Number(candidate);
-    return Number.isFinite(parsed) ? parsed : undefined;
-  };
-  return Object.fromEntries(Object.entries({
-    governorateId: clean(raw.governorateId, 120) || undefined, governorateName: clean(raw.governorateName, 120) || undefined,
-    cazaId: clean(raw.cazaId, 120) || undefined, cazaName: clean(raw.cazaName, 120) || undefined,
-    municipalityId: clean(raw.municipalityId, 120) || undefined, municipalityName: clean(raw.municipalityName, 120) || undefined,
-    villageId: clean(raw.villageId, 120) || undefined, villageName: clean(raw.villageName, 120) || undefined,
-    latitude: number(raw.latitude), longitude: number(raw.longitude), manualPin: raw.manualPin === true || undefined,
-    manualText: clean(raw.manualText, 500) || undefined,
-  }).filter(([, item]) => item !== undefined));
-}
-export function hasAddressSelection(value: unknown): boolean {
-  if (!value || typeof value !== "object" || Array.isArray(value)) return false;
-  const raw = value as Record<string, unknown>;
-  const administrative = clean(raw.governorateId || raw.governorateName || raw.cazaId || raw.cazaName || raw.municipalityId || raw.municipalityName || raw.villageId || raw.villageName || raw.manualText, 500);
-  const latitude = typeof raw.latitude === "number" ? raw.latitude : Number.NaN;
-  const longitude = typeof raw.longitude === "number" ? raw.longitude : Number.NaN;
-  return Boolean(administrative) || (Number.isFinite(latitude) && Number.isFinite(longitude));
-}
 function normalizeFields(value: unknown): JobField[] {
   if (!Array.isArray(value)) return [];
   const seen = new Set<string>();
@@ -105,18 +80,11 @@ async function replaceFields(client: any, jobId: string, fields: JobField[]) {
 async function loadFields(jobId: string) {
   const result = await query<any>(`SELECT id,field_key,label,field_type,required,placeholder,help_text,options,sort_order
     FROM job_posting_form_fields WHERE job_posting_id=$1 ORDER BY sort_order,id`, [jobId]);
-  return result.rows.map((row: any) => ({ id: row.id, fieldKey: row.field_key, label: row.label, fieldType: row.field_type,
-    required: row.required, placeholder: row.placeholder, helpText: row.help_text, options: Array.isArray(row.options) ? row.options : [], sortOrder: row.sort_order }));
-}
-async function loadPublishedSharedForm(formId: string) {
-  if (!formId) return null;
-  const result = await query<any>(`SELECT f.id,f.current_version,v.fields_json FROM universal_forms f JOIN universal_form_versions v ON v.form_id=f.id AND v.version=f.current_version WHERE f.id=$1 AND f.status='PUBLISHED' LIMIT 1`, [formId]);
-  const row=result.rows[0]; if(!row){const error:any=new Error("APPLICATION_FORM_NOT_PUBLISHED");error.statusCode=400;throw error;}
-  const rawFields = Array.isArray(row.fields_json) ? row.fields_json : [];
-  const incompatible = rawFields.some((field:any) => !fieldTypes.includes(field?.type) || field?.condition || field?.pageBreakBefore);
-  if (incompatible) { const error:any=new Error("APPLICATION_FORM_NOT_JOB_COMPATIBLE");error.statusCode=400;throw error; }
-  const fields=normalizeFields(rawFields.map((field:any)=>({fieldKey:field.key,label:field.label,fieldType:field.type,required:field.required,placeholder:field.placeholder,helpText:field.helpText,options:field.options})));
-  return { id:row.id, version:Number(row.current_version), fields };
+  return result.rows.map((row: any) => ({
+    id: row.id, fieldKey: row.field_key, label: row.label, fieldType: row.field_type,
+    required: row.required, placeholder: row.placeholder, helpText: row.help_text,
+    options: Array.isArray(row.options) ? row.options : [], sortOrder: row.sort_order,
+  }));
 }
 export async function registerJobTemplateBuilderRoutes(app: FastifyInstance) {
   app.post("/api/jobs/builder/jobs", async (request, reply) => {
@@ -135,23 +103,17 @@ export async function registerJobTemplateBuilderRoutes(app: FastifyInstance) {
     } else if (isAdmin(user) && clean(body.organizationName, 200)) {
       organizationName = clean(body.organizationName, 200);
     }
-    let fields = normalizeFields(body.fields);
-    const sharedFormId = clean(body.applicationFormId, 64);
-    const sharedForm = body.collectApplications !== false && sharedFormId ? await loadPublishedSharedForm(sharedFormId) : null;
-    if (sharedForm) fields = sharedForm.fields;
-    const locationData = normalizeLocation(body.locationData);
-    if (!hasAddressSelection(locationData)) return reply.code(400).send({ error: "LOCATION_REQUIRED" });
+    const fields = normalizeFields(body.fields);
     const slug = normalizeSlug(body.slug) || `job-${randomUUID().slice(0, 8)}`;
     const client = await getClient();
     try {
       await client.query("BEGIN");
       const created = await client.query<any>(`INSERT INTO job_postings
-        (owner_user_id,created_by_user_id,organization_name,title,slug,summary,description,employment_type,work_mode,governorate,caza,locality,salary_text,closes_at,collect_applications,location_data,application_form_id,application_form_version)
-        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16::jsonb,$17,$18) RETURNING *`, [
+        (owner_user_id,created_by_user_id,organization_name,title,slug,summary,description,employment_type,work_mode,governorate,caza,locality,salary_text,closes_at)
+        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14) RETURNING *`, [
         ownerUserId,user.id,organizationName,title,slug,clean(body.summary,800) || null,clean(body.description,10000) || null,
-        clean(body.employmentType,80) || null,clean(body.workMode,80) || null,clean(locationData.governorateName || body.governorate,120) || null,
-        clean(locationData.cazaName || body.caza,120) || null,clean(locationData.villageName || locationData.municipalityName || body.locality,160) || null,clean(body.salaryText,160) || null,body.closesAt || null,
-        body.collectApplications !== false,JSON.stringify(locationData),sharedForm?.id ?? null,sharedForm?.version ?? null,
+        clean(body.employmentType,80) || null,clean(body.workMode,80) || null,clean(body.governorate,120) || null,
+        clean(body.caza,120) || null,clean(body.locality,160) || null,clean(body.salaryText,160) || null,body.closesAt || null,
       ]);
       await replaceFields(client, created.rows[0].id, fields);
       await client.query("COMMIT");
@@ -192,23 +154,17 @@ export async function registerJobTemplateBuilderRoutes(app: FastifyInstance) {
     const body = (request.body ?? {}) as any;
     const title = clean(body.title, 200);
     if (!title) return reply.code(400).send({ error: "TITLE_REQUIRED" });
-    let fields = normalizeFields(body.fields);
-    const sharedFormId = clean(body.applicationFormId, 64);
-    const sharedForm = body.collectApplications !== false && sharedFormId ? await loadPublishedSharedForm(sharedFormId) : null;
-    if (sharedForm) fields = sharedForm.fields;
-    const locationData = normalizeLocation(body.locationData);
-    if (!hasAddressSelection(locationData)) return reply.code(400).send({ error: "LOCATION_REQUIRED" });
+    const fields = normalizeFields(body.fields);
     const slug = normalizeSlug(body.slug) || existing.slug;
     const client = await getClient();
     try {
       await client.query("BEGIN");
       const updated = await client.query<any>(`UPDATE job_postings SET
         title=$2,slug=$3,summary=$4,description=$5,employment_type=$6,work_mode=$7,
-        governorate=$8,caza=$9,locality=$10,salary_text=$11,closes_at=$12,collect_applications=$13,location_data=$14::jsonb,
-        application_form_id=$15,application_form_version=$16,updated_at=NOW()
+        governorate=$8,caza=$9,locality=$10,salary_text=$11,closes_at=$12,updated_at=NOW()
         WHERE id=$1 RETURNING *`, [id,title,slug,clean(body.summary,800)||null,clean(body.description,10000)||null,
-        clean(body.employmentType,80)||null,clean(body.workMode,80)||null,clean(locationData.governorateName || body.governorate,120)||null,
-        clean(locationData.cazaName || body.caza,120)||null,clean(locationData.villageName || locationData.municipalityName || body.locality,160)||null,clean(body.salaryText,160)||null,body.closesAt||null,body.collectApplications !== false,JSON.stringify(locationData),sharedForm?.id ?? null,sharedForm?.version ?? null]);
+        clean(body.employmentType,80)||null,clean(body.workMode,80)||null,clean(body.governorate,120)||null,
+        clean(body.caza,120)||null,clean(body.locality,160)||null,clean(body.salaryText,160)||null,body.closesAt||null]);
       await replaceFields(client, id, fields);
       await client.query("COMMIT");
       return { ok: true, item: { ...updated.rows[0], fields } };
@@ -227,7 +183,10 @@ export async function registerJobTemplateBuilderRoutes(app: FastifyInstance) {
     if (!existing) return reply.code(404).send({ error: "NOT_FOUND" });
     const status = clean((request.body as any)?.status, 20).toUpperCase();
     if (!postingStatuses.includes(status as any)) return reply.code(400).send({ error: "INVALID_STATUS" });
-    if (status === "PUBLISHED" && !hasAddressSelection(existing.location_data)) return reply.code(400).send({ error: "LOCATION_REQUIRED" });
+    if (status === "PUBLISHED") {
+      const count = await query<{ count: number }>("SELECT COUNT(*)::int AS count FROM job_posting_form_fields WHERE job_posting_id=$1", [id]);
+      if ((count.rows[0]?.count ?? 0) === 0) return reply.code(400).send({ error: "FORM_FIELDS_REQUIRED" });
+    }
     const result = await query<any>(`UPDATE job_postings SET status=$2,
       published_at=CASE WHEN $2='PUBLISHED' AND published_at IS NULL THEN NOW() ELSE published_at END,
       updated_at=NOW() WHERE id=$1 RETURNING *`, [id, status]);
@@ -245,10 +204,10 @@ export async function registerJobTemplateBuilderRoutes(app: FastifyInstance) {
     try {
       await client.query("BEGIN");
       const created = await client.query<any>(`INSERT INTO job_postings
-        (owner_user_id,created_by_user_id,organization_name,title,slug,summary,description,employment_type,work_mode,governorate,caza,locality,salary_text,closes_at,collect_applications,location_data,application_form_id,application_form_version)
-        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16::jsonb,$17,$18) RETURNING *`, [
-        source.owner_user_id,user.id,source.organization_name,`${source.title} - قالب`, `job-${randomUUID().slice(0,8)}`,
-        source.summary,source.description,source.employment_type,source.work_mode,source.governorate,source.caza,source.locality,source.salary_text,source.closes_at,source.collect_applications !== false,JSON.stringify(source.location_data || {}),source.application_form_id||null,source.application_form_version||null,
+        (owner_user_id,created_by_user_id,organization_name,title,slug,summary,description,employment_type,work_mode,governorate,caza,locality,salary_text,closes_at)
+        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14) RETURNING *`, [
+        source.owner_user_id,user.id,source.organization_name,`${source.title} - نسخة`, `job-${randomUUID().slice(0,8)}`,
+        source.summary,source.description,source.employment_type,source.work_mode,source.governorate,source.caza,source.locality,source.salary_text,source.closes_at,
       ]);
       await replaceFields(client, created.rows[0].id, fields);
       await client.query("COMMIT");
@@ -257,21 +216,9 @@ export async function registerJobTemplateBuilderRoutes(app: FastifyInstance) {
     finally { client.release(); }
   });
 
-  app.delete("/api/jobs/builder/jobs/:id", async (request, reply) => {
-    const user = requireUser(request);
-    await requireEmployer(user);
-    const id = clean((request.params as any).id, 64);
-    const existing = await ownedJob(user, id);
-    if (!existing) return reply.code(404).send({ error: "NOT_FOUND" });
-    const confirmTitle = clean((request.body as any)?.confirmTitle, 200);
-    if (!confirmTitle || confirmTitle !== existing.title) return reply.code(400).send({ error: "DELETE_CONFIRMATION_REQUIRED" });
-    const result = await query<any>("DELETE FROM job_postings WHERE id=$1 RETURNING id,title", [id]);
-    return { ok: true, item: result.rows[0] };
-  });
-
   app.get("/api/jobs/opportunities", async () => {
     const result = await query<any>(`SELECT id,organization_name,title,slug,summary,employment_type,work_mode,
-      governorate,caza,locality,salary_text,published_at,closes_at,collect_applications,location_data,application_form_id,application_form_version
+      governorate,caza,locality,salary_text,published_at,closes_at
       FROM job_postings WHERE status='PUBLISHED' AND (closes_at IS NULL OR closes_at>=NOW())
       ORDER BY published_at DESC,created_at DESC LIMIT 100`);
     return { ok: true, items: result.rows };
@@ -349,7 +296,6 @@ export async function registerJobTemplateBuilderRoutes(app: FastifyInstance) {
       AND (closes_at IS NULL OR closes_at>=NOW()) LIMIT 1`, [slug]);
     const job = jobResult.rows[0];
     if (!job) return reply.code(404).send({ error: "NOT_FOUND" });
-    if (job.collect_applications === false) return reply.code(409).send({ error: "APPLICATIONS_DISABLED" });
     const name = clean(body.name, 200), phone = clean(body.phone, 40), email = clean(body.email, 320);
     if (!name || !phone) return reply.code(400).send({ error: "IDENTITY_REQUIRED" });
     const answers = body.answers && typeof body.answers === "object" && !Array.isArray(body.answers) ? body.answers : {};
@@ -358,11 +304,7 @@ export async function registerJobTemplateBuilderRoutes(app: FastifyInstance) {
       const value = answers[field.fieldKey];
       if (field.required && (value === undefined || value === null || value === "" || (Array.isArray(value) && value.length === 0)))
         return reply.code(400).send({ error: "REQUIRED_FIELD_MISSING", fieldKey: field.fieldKey });
-      if (field.fieldType === "universal_locator" && field.required && !hasAddressSelection(value))
-        return reply.code(400).send({ error: "REQUIRED_FIELD_MISSING", fieldKey: field.fieldKey });
       if ((field.fieldType === "select" || field.fieldType === "radio") && value && !field.options.includes(String(value)))
-        return reply.code(400).send({ error: "INVALID_FIELD_OPTION", fieldKey: field.fieldKey });
-      if (field.fieldType === "multi_select" && value && (!Array.isArray(value) || value.some((item) => !field.options.includes(String(item)))))
         return reply.code(400).send({ error: "INVALID_FIELD_OPTION", fieldKey: field.fieldKey });
     }
     const source = ["PROFILE","PREVIOUS_APPLICATION","SAVED_TEMPLATE"].includes(String(body.prefillSource)) ? String(body.prefillSource) : "MANUAL";

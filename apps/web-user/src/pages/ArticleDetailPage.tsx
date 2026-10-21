@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type MouseEvent as ReactMouseEvent } from "react";
 import { Link, useParams } from "react-router-dom";
 import "./article-archive.css";
 import { articlePath, asciiSlug, categorySlug } from "./articlePermalink";
@@ -14,6 +14,12 @@ async function fetchFromCandidates<T>(apiBaseUrl:string,path:string):Promise<T>{
   let last:unknown;
   for(const base of bases){try{const r=await fetch(`${base}${path}`,{credentials:"include"});if(!r.ok)throw new Error(String(r.status));return await r.json() as T;}catch(e){last=e;}}
   throw last instanceof Error?last:new Error("request_failed");
+}
+
+type ArticleEngagementEvent="view"|"share"|"pdf_download"|"internal_link";
+async function postArticleEngagement(apiBaseUrl:string,articleId:string,event:ArticleEngagementEvent,path:string):Promise<void>{
+  const base=apiBaseUrl.replace(/\/+$/u,"");
+  try{await fetch(`${base}/api/articles/${encodeURIComponent(articleId)}/engagement`,{method:"POST",credentials:"include",keepalive:true,headers:{"Content-Type":"application/json"},body:JSON.stringify({event,path})});}catch{}
 }
 
 function sanitizeArchiveHtml(value:string):string{
@@ -45,6 +51,7 @@ export default function ArticleDetailPage(){
   const title=article?.title||"المقالات والأرشيف";
   const canonicalPath=article?articlePath(article):globalThis.location?.pathname||"/articles";
   const canonicalUrl=globalThis.location?new URL(canonicalPath,globalThis.location.origin).toString():canonicalPath;
+  useEffect(()=>{if(!article?.id)return;const key=`watany_article_view_v1_${article.id}`;try{if(globalThis.sessionStorage?.getItem(key))return;globalThis.sessionStorage?.setItem(key,"1");}catch{}void postArticleEngagement(apiBaseUrl,article.id,"view",articlePath(article));},[apiBaseUrl,article?.id]);
   useEffect(()=>{if(!article||typeof document==="undefined")return;
     const seo=article.seo;const shareImage=seo?.ogImage||article.featuredImage||new URL("/logo.png?v=20260827-1",globalThis.location.origin).toString();const description=seo?.ogDescription||seo?.description||"مقال منشور على منصة موطني.";
     document.title=`${seo?.title||article.title} | موطني`;
@@ -91,10 +98,12 @@ export default function ArticleDetailPage(){
     }
     return()=>{facebookCancelled=true;if(facebookPoll!==undefined)globalThis.clearTimeout(facebookPoll);};
   },[article,canonicalUrl]);
-  async function shareArticle(){if(!article)return;const payload={title:article.title,text:article.title,url:canonicalUrl};if(globalThis.navigator?.share){try{await globalThis.navigator.share(payload);return;}catch{}}await copyArticleLink();}
-  async function copyArticleLink(){try{await globalThis.navigator?.clipboard?.writeText(canonicalUrl);setShareNotice("تم نسخ الرابط");globalThis.setTimeout(()=>setShareNotice(""),1800);}catch{globalThis.prompt?.("انسخ الرابط",canonicalUrl);}}
-  function shareFacebook(){globalThis.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(canonicalUrl)}`,"_blank","noopener,noreferrer,width=700,height=600");}
-  function shareWhatsApp(){if(!article)return;globalThis.open(`https://wa.me/?text=${encodeURIComponent(`${article.title}\n${canonicalUrl}`)}`,"_blank","noopener,noreferrer");}
+  function recordArticleEngagement(event:ArticleEngagementEvent):void{if(article?.id)void postArticleEngagement(apiBaseUrl,article.id,event,canonicalPath);}
+  async function shareArticle(){if(!article)return;recordArticleEngagement("share");const payload={title:article.title,text:article.title,url:canonicalUrl};if(globalThis.navigator?.share){try{await globalThis.navigator.share(payload);return;}catch{}}await copyArticleLink(false);}
+  async function copyArticleLink(record=true){if(record)recordArticleEngagement("share");try{await globalThis.navigator?.clipboard?.writeText(canonicalUrl);setShareNotice("تم نسخ الرابط");globalThis.setTimeout(()=>setShareNotice(""),1800);}catch{globalThis.prompt?.("انسخ الرابط",canonicalUrl);}}
+  function shareFacebook(){recordArticleEngagement("share");globalThis.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(canonicalUrl)}`,"_blank","noopener,noreferrer,width=700,height=600");}
+  function shareWhatsApp(){if(!article)return;recordArticleEngagement("share");globalThis.open(`https://wa.me/?text=${encodeURIComponent(`${article.title}\n${canonicalUrl}`)}`,"_blank","noopener,noreferrer");}
+  function handleArticleContentClick(event:ReactMouseEvent<HTMLDivElement>):void{if(!article)return;const target=event.target;if(!(target instanceof Element))return;const anchor=target.closest("a");if(!(anchor instanceof HTMLAnchorElement))return;const href=anchor.getAttribute("href")||"";if(/\.pdf(?:$|[?#])/iu.test(href)){recordArticleEngagement("pdf_download");return;}try{const url=new URL(href,globalThis.location.origin);if(url.origin===globalThis.location.origin&&url.pathname.startsWith("/articles/"))recordArticleEngagement("internal_link");}catch{}}
   return <WatanyFeatureTemplate category="updates" eyebrow="أرشيف موطني" title={title} description={article?"مادة تاريخية محفوظة من بوابة قدامى العسكريين.":"تحميل المادة المؤرشفة…"} meta={article?[{label:"التاريخ",value:article.publishedAt?new Date(article.publishedAt).toLocaleDateString("ar-LB"):"—"}]:[]}>
     <article dir="rtl" data-watany-article-detail="v1">
       <p><Link to="/articles">العودة إلى الأرشيف</Link></p>
@@ -105,7 +114,7 @@ export default function ArticleDetailPage(){
         <p>{article.authorName||"كاتب تاريخي"}{article.categories.length?` — ${article.categories.join(" · ")}`:""}</p>
         <div className="watany-article-share" aria-label="مشاركة المقال"><button type="button" className="watany-share-action watany-share-action--native" onClick={()=>void shareArticle()}><span className="watany-share-symbol" aria-hidden="true">↗</span><span>مشاركة</span></button><button type="button" className="watany-share-action watany-share-action--facebook" onClick={shareFacebook}><img src="/social-icons/facebook.ico" alt="" aria-hidden="true" /><span>فيسبوك</span></button><button type="button" className="watany-share-action watany-share-action--whatsapp" onClick={shareWhatsApp}><img src="/social-icons/whatsapp.ico" alt="" aria-hidden="true" /><span>واتساب</span></button><button type="button" className="watany-share-action watany-share-action--copy" onClick={()=>void copyArticleLink()}><span className="watany-share-symbol" aria-hidden="true">🔗</span><span>نسخ الرابط</span></button>{shareNotice?<span className="watany-share-notice" role="status">{shareNotice}</span>:null}</div>
         <FeatureAdSensePlacement featureId="articles" placement="inline" />
-        <div className="watany-article-content" dangerouslySetInnerHTML={{__html:sanitizeArchiveHtml(article.bodyHtml)}} />
+        <div className="watany-article-content" onClick={handleArticleContentClick} dangerouslySetInnerHTML={{__html:sanitizeArchiveHtml(article.bodyHtml)}} />
         <section className="watany-article-comments" data-facebook-comments-state={facebookCommentsState} aria-labelledby="article-comments-title">
           <div className="watany-comments-heading"><img src="/social-icons/facebook.ico" alt="" aria-hidden="true" /><div><h2 id="article-comments-title">التعليقات عبر فيسبوك</h2><p>شارك رأيك من خلال إضافة Facebook الرسمية. عند ظهور صندوق التعليقات يمكنك تسجيل الدخول إلى حسابك على فيسبوك والتعليق مباشرة.</p></div></div>
           <div id="fb-root" />

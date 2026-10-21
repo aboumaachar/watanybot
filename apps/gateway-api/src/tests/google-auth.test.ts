@@ -82,7 +82,7 @@ describe("POST /api/auth/google", () => {
         rowCount: 1,
       })
       .mockResolvedValueOnce({ rows: [], rowCount: 1 })
-      .mockResolvedValueOnce({ rows: [{ id: "google-session-1" }], rowCount: 1 })
+      .mockResolvedValueOnce({ rows: [{ id: "google-session-existing" }], rowCount: 1 })
       .mockResolvedValueOnce({ rows: [], rowCount: 1 })
       .mockResolvedValueOnce({ rows: [], rowCount: 1 });
 
@@ -131,7 +131,7 @@ describe("POST /api/auth/google", () => {
         }],
         rowCount: 1,
       })
-      .mockResolvedValueOnce({ rows: [{ id: "google-session-2" }], rowCount: 1 })
+      .mockResolvedValueOnce({ rows: [{ id: "google-session-new" }], rowCount: 1 })
       .mockResolvedValueOnce({ rows: [], rowCount: 1 })
       .mockResolvedValueOnce({ rows: [], rowCount: 1 });
 

@@ -6,6 +6,35 @@ import { signAccessToken } from "../auth/auth-middleware";
 import { app } from "../server";
 import { registerOfficialSourcesRoutes } from "../routes/official-sources";
 
+import { query as dbQuery } from "../lib/db";
+
+vi.mock("../lib/db", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("../lib/db")>();
+  return {
+    ...actual,
+    query: vi.fn().mockImplementation(actual.query),
+  };
+});
+
+const mockedQuery = vi.mocked(dbQuery);
+
+const TEST_ADMIN_ID = "00000000-0000-0000-0000-000000000002";
+const TEST_ADMIN_SESSION = "00000000-0000-0000-0000-aaaaaaaaaaaa";
+const TEST_MODERATOR_ID = "00000000-0000-0000-0000-000000000003";
+
+function mockAdminDbQueries() {
+  mockedQuery.mockImplementation(async (sql: string, params?: unknown[]) => {
+    const text = typeof sql === "string" ? sql : "";
+    if (text.includes("FROM users") && params?.[0] === TEST_ADMIN_ID) {
+      return { rows: [{ id: TEST_ADMIN_ID, email: "ops@watany.test", role: "admin" }], rowCount: 1 } as any;
+    }
+    if (text.includes("FROM sessions") && params?.[0] === TEST_ADMIN_SESSION && params?.[1] === TEST_ADMIN_ID) {
+      return { rows: [{ id: TEST_ADMIN_SESSION }], rowCount: 1 } as any;
+    }
+    return { rows: [], rowCount: 0 } as any;
+  });
+}
+
 const originalKbDataRoot = process.env.KB_DATA_ROOT;
 const tempDataRoot = fs.mkdtempSync(path.join(os.tmpdir(), "watany-al-wafiyat-"));
 
@@ -52,9 +81,10 @@ describe("al-wafiyat routes", () => {
     expect(unauthorizedAdminList.statusCode).toBe(401);
 
     const adminToken = signAccessToken({
-      sub: "00000000-0000-0000-0000-000000000002",
+      sub: TEST_ADMIN_ID,
       role: "admin",
       email: "ops@watany.test",
+      sid: TEST_ADMIN_SESSION,
     });
 
     const isfHtml = `
@@ -74,6 +104,7 @@ describe("al-wafiyat routes", () => {
       headers: { "content-type": "text/html" },
     })));
     vi.stubGlobal("fetch", fetchMock);
+    mockAdminDbQueries();
 
     const baselineStoredTotal = storedNoticeCount();
 
@@ -142,7 +173,7 @@ describe("al-wafiyat routes", () => {
     const importBody = importResponse.json() as {
       ok: boolean;
       importedCount: number;
-      items: Array<{ id: string; status: string; sourceProvider: string }>;
+      items: Array<{ id: string; status: string; sourceProvider: string; noticeDate: string; deathDate: string | null; funeralDate: string | null; eventType: string }>;
     };
     expect(importBody.ok).toBe(true);
     expect(importBody.importedCount).toBe(1);
@@ -155,6 +186,23 @@ describe("al-wafiyat routes", () => {
 
     const importedId = importBody.items[0]?.id;
     expect(importedId).toBeTruthy();
+    expect(importBody.items[0]).toMatchObject({
+      noticeDate: "2026-05-06",
+      deathDate: null, // "بتاريخ 6 الجاري" is not a complete death date.
+      funeralDate: null,
+      eventType: "DEATH_NOTICE",
+    });
+
+    // The scraper must never create a second ID for the same official notice.
+    const repeatImport = await app.inject({
+      method: "POST",
+      url: "/api/al-wafiyat/import/isf",
+      headers: { authorization: `Bearer ${adminToken}` },
+      payload: { limit: 1 },
+    });
+    expect(repeatImport.statusCode).toBe(200);
+    expect(repeatImport.json()).toMatchObject({ importedCount: 0, duplicatesSkipped: 1 });
+    expect(storedNoticeCount()).toBe(baselineStoredTotal + 1);
 
     const publicBeforeApproval = await app.inject({
       method: "GET",
@@ -192,6 +240,42 @@ describe("al-wafiyat routes", () => {
       status: "APPROVED",
     });
 
+    const moderatorToken = signAccessToken({
+      sub: TEST_MODERATOR_ID,
+      role: "moderator",
+      email: "moderator@watany.test",
+    });
+    const moderatorAttempt = await app.inject({
+      method: "POST", url: "/api/al-wafiyat/approve",
+      headers: { authorization: `Bearer ${moderatorToken}` },
+      payload: { id: importedId, action: "REJECT" },
+    });
+    expect(moderatorAttempt.statusCode).toBe(403);
+
+    const directPublishAttempt = await app.inject({
+      method: "PATCH", url: `/api/admin/deaths/${encodeURIComponent(importedId!)}/status`,
+      headers: { authorization: `Bearer ${adminToken}` },
+      payload: { status: "published" },
+    });
+    expect(directPublishAttempt.statusCode).toBe(409);
+    expect(directPublishAttempt.json()).toMatchObject({ error: "use_al_wafiyat_approval_endpoint" });
+
+    const repeatDecision = await app.inject({
+      method: "POST", url: "/api/al-wafiyat/approve",
+      headers: { authorization: `Bearer ${adminToken}` },
+      payload: { id: importedId, action: "APPROVE" },
+    });
+    expect(repeatDecision.statusCode).toBe(409);
+    expect(repeatDecision.json()).toMatchObject({ error: "invalid_approval_transition" });
+
+    const forbiddenReopen = await app.inject({
+      method: "PATCH", url: `/api/admin/deaths/${encodeURIComponent(importedId!)}/status`,
+      headers: { authorization: `Bearer ${adminToken}` },
+      payload: { status: "pending" },
+    });
+    expect(forbiddenReopen.statusCode).toBe(409);
+    expect(forbiddenReopen.json()).toMatchObject({ error: "invalid_status_transition" });
+
     const publicAfterApproval = await app.inject({
       method: "GET",
       url: "/api/al-wafiyat",
@@ -223,9 +307,10 @@ describe("al-wafiyat routes", () => {
 
   it("imports general security deaths and keeps the apparatus inside the description", async () => {
     const adminToken = signAccessToken({
-      sub: "00000000-0000-0000-0000-000000000002",
+      sub: TEST_ADMIN_ID,
       role: "admin",
       email: "ops@watany.test",
+      sid: TEST_ADMIN_SESSION,
     });
 
     const gsfHtml = `
@@ -254,6 +339,7 @@ describe("al-wafiyat routes", () => {
       headers: { "content-type": "text/html" },
     })));
     vi.stubGlobal("fetch", fetchMock);
+    mockAdminDbQueries();
 
     const previewResponse = await app.inject({
       method: "POST",

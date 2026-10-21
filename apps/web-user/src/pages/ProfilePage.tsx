@@ -17,6 +17,7 @@ import { MainHybridChatSurface } from "../components/chat/MainHybridChatSurface"
 import { useLocation, useNavigate } from "react-router-dom";
 import UtilityHeaderTitleRow from "../components/UtilityHeaderTitleRow";
 import { AccountApplicationsPanel } from "../components/account/AccountApplicationsPanel";
+import JobAccountSecurityCard from "../components/jobs/JobAccountSecurityCard";
 import { useApp } from "../store/app";
 import { useNavigateMode } from "../lib/routes";
 // APEX_CSS_FREEZE_DISABLED_IMPORT import "../styles/profile-page.css";
@@ -316,6 +317,8 @@ export default function ProfilePage() {
             </label>
           </div>
         </section>
+
+        <JobAccountSecurityCard />
 
         <AccountApplicationsPanel />
 

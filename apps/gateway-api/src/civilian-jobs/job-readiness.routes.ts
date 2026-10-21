@@ -76,13 +76,6 @@ export async function registerJobReadinessRoutes(app: FastifyInstance) {
         FROM job_application_user_links l
         JOIN ain_mreisseh_building_assistant_applications m ON m.id=l.application_id
         WHERE l.user_id=$1 AND l.campaign_id='ain-mreisseh-building-assistant'
-        UNION ALL
-        SELECT l.application_id,l.campaign_id,'Middle East Security Lebanon'::text AS label,
-               m.full_name AS name,m.phone,NULL::text AS email,COALESCE(m.age_years::text,'') AS age,
-               m.mohafaza AS governorate,m.caza,m.village,m.village_id,m.created_at
-        FROM job_application_user_links l
-        JOIN middle_east_security_applications m ON m.id=l.application_id
-        WHERE l.user_id=$1 AND l.campaign_id='middle-east-security'
       )
       SELECT * FROM snapshots ORDER BY created_at DESC LIMIT 20
     `, [user.id]);

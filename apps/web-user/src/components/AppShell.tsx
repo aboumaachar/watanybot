@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, type ReactNode } from "react";
+import { lazy, Suspense, type ReactNode } from "react";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { WatanyPublicShellV20 } from "./layouts/WatanyPublicShellV20";
 import { UnavailableRecoveryPage } from "../pages/WatanyRecoveryPages";
@@ -19,12 +19,18 @@ const SettingsPage = lazy(() => import("../pages/SettingsPage"));
 const SavedChatsPage = lazy(() => import("../pages/SavedChatsPage"));
 const BookmarksPage = lazy(() => import("../pages/BookmarksPage"));
 const ChatSessionsPage = lazy(() => import("../pages/ChatSessionsPage"));
-const JobApplicationsPage = lazy(() => import("../pages/JobApplicationsPage"));
 const JobsPage = lazy(() => import("../pages/JobsPage"));
 const JobReadinessPage = lazy(() => import("../pages/JobReadinessPage"));
+const JobApplicationsPage = lazy(() => import("../pages/JobApplicationsPage"));
 const EmployerCandidateSearchPage = lazy(() => import("../pages/EmployerCandidateSearchPage"));
 const EmployerPortalPage = lazy(() => import("../pages/EmployerPortalPage"));
+const EmployerJobsDashboardPage = lazy(() => import("../pages/EmployerJobsDashboardPage"));
+const EmployerJobBuilderPage = lazy(() => import("../pages/EmployerJobBuilderPage"));
+const EmployerJobApplicationsPage = lazy(() => import("../pages/EmployerJobApplicationsPage"));
+const JobOpportunitiesPage = lazy(() => import("../pages/JobOpportunitiesPage"));
+const JobOpportunityPage = lazy(() => import("../pages/JobOpportunityPage"));
 const AdminEmployerPortalPage = lazy(() => import("../pages/AdminEmployerPortalPage"));
+const AdminJobApplicationsPage = lazy(() => import("../pages/AdminJobApplicationsPage"));
 const AinElHafehJobsPage = lazy(() => import("../pages/AinElHafehJobsPage"));
 const AinElHafehAcceptedApplicationsPage = lazy(() => import("../pages/AinElHafehAcceptedApplicationsPage"));
 const AinElHafehApplicationsAdminPage = lazy(() => import("../pages/AinElHafehApplicationsAdminPage"));
@@ -34,8 +40,6 @@ const MiddleEastSecurityJobsPage = lazy(() => import("../pages/MiddleEastSecurit
 const MiddleEastSecurityApplicationsAdminPage = lazy(() => import("../pages/MiddleEastSecurityApplicationsAdminPage"));
 const MiddleEastSecuritySharePage = lazy(() => import("../pages/MiddleEastSecuritySharePage"));
 const UniversalJobApplicationPage = lazy(() => import("../pages/UniversalJobApplicationPage"));
-const JobOpportunitiesPage = lazy(() => import("../pages/JobOpportunitiesPage"));
-const JobOpportunityPage = lazy(() => import("../pages/JobOpportunityPage"));
 const MarketPage = lazy(() => import("../pages/MarketPage"));
 const SuperAdminPage = lazy(() => import("../pages/SuperAdminPage"));
 const SuperadminUsersPage = lazy(() => import("../features/superadmin-users/SuperadminUsersPage"));
@@ -50,7 +54,6 @@ const ArticlesPage = lazy(() => import("../pages/ArticlesPage"));
 const ArticleDetailPage = lazy(() => import("../pages/ArticleDetailPage"));
 const FakeFactPage = lazy(() => import("../pages/FakeNewsPage"));
 const FormsPage = lazy(() => import("../pages/FormsPage"));
-const UniversalFormPage = lazy(() => import("../pages/UniversalFormPage"));
 const SurveyDetailPage = lazy(() => import("../pages/SurveyDetailPage"));
 const SurveyResultsPage = lazy(() => import("../pages/SurveyResultsPage"));
 const SurveyPage = lazy(() => import("../pages/SurveyPage"));
@@ -61,7 +64,6 @@ const CommunityThreadsPage = lazy(() => import("../pages/CommunityThreadsPage"))
 const MessagesPage = lazy(() => import("../pages/MessagesPage"));
 const TaxiPage = lazy(() => import("../pages/TaxiPage"));
 const NetworkPage = lazy(() => import("../pages/NetworkPage"));
-const SurveysPage = lazy(() => import("../pages/SurveysPage"));
 const CircularsPage = lazy(() => import("../pages/CircularsPage"));
 const ChildrenHubPage = lazy(() => import("../pages/ChildrenHubPage"));
 const AdsPage = lazy(() => import("../pages/AdsPage"));
@@ -81,11 +83,6 @@ function RequireAuthenticated({ children }: { children: ReactNode }) {
   }
 
   return <>{children}</>;
-}
-
-function RedirectVeterans2019ApplicationsToOps() {
-  useEffect(() => { globalThis.location.replace("/ops/veterans-2019-applications/"); }, []);
-  return <div role="status">جارٍ الانتقال إلى موطني Ops…</div>;
 }
 
 function RequireAdmin({ children }: { children: ReactNode }) {
@@ -162,20 +159,25 @@ export function AppShell() {
         <Route path="jobs/ainelhafeh" element={<AinElHafehJobsPage />} />
         <Route path="jobs/ain-mreisseh-building-assistant" element={<AinMreissehBuildingAssistantJobsPage />} />
         <Route path="jobs/middle-east-security" element={<MiddleEastSecurityJobsPage />} />
-        <Route path="jobs/opportunities" element={<JobOpportunitiesPage />} />
-        <Route path="jobs/opportunities/:slug" element={<JobOpportunityPage />} />
         <Route path="jobs/:jobSlug/application" element={<UniversalJobApplicationPage />} />
         <Route path="jobs/accredited-bulldozer-driver" element={<Navigate to="/jobs/accredited-bulldozer-driver/application" replace />} />
         <Route path="superadmin/middle-east-security/applications" element={<RequireAdmin><MiddleEastSecurityApplicationsAdminPage /></RequireAdmin>} />
         <Route path="superadmin/ain-mreisseh-building-assistant/applications" element={<RequireAdmin><AinMreissehBuildingAssistantApplicationsAdminPage /></RequireAdmin>} />
         <Route path="superadmin/jobs" element={<RequireAdmin><AdminEmployerPortalPage /></RequireAdmin>} />
         <Route path="superadmin/jobs/employers" element={<RequireAdmin><AdminEmployerPortalPage /></RequireAdmin>} />
+        <Route path="superadmin/jobs/applications" element={<RequireAdmin><AdminJobApplicationsPage /></RequireAdmin>} />
         <Route path="jobs/ainelhafeh/accepted" element={<AinElHafehAcceptedApplicationsPage />} />
         <Route path="superadmin/ainelhafeh/applications" element={<RequireAdmin><AinElHafehApplicationsAdminPage /></RequireAdmin>} />
         <Route path="jobs/readiness" element={<RequireAuthenticated><JobReadinessPage /></RequireAuthenticated>} />
+        <Route path="jobs/applications" element={<RequireAuthenticated><JobApplicationsPage /></RequireAuthenticated>} />
         <Route path="jobs/candidates" element={<RequireAuthenticated><EmployerCandidateSearchPage /></RequireAuthenticated>} />
         <Route path="jobs/employer" element={<RequireAuthenticated><EmployerPortalPage /></RequireAuthenticated>} />
-        <Route path="jobs/applications" element={<RequireAuthenticated><JobApplicationsPage /></RequireAuthenticated>} />
+        <Route path="jobs/opportunities" element={<JobOpportunitiesPage />} />
+        <Route path="jobs/opportunities/:slug" element={<JobOpportunityPage />} />
+        <Route path="jobs/employer/dashboard" element={<RequireAuthenticated><EmployerJobsDashboardPage /></RequireAuthenticated>} />
+        <Route path="jobs/employer/builder/new" element={<RequireAuthenticated><EmployerJobBuilderPage /></RequireAuthenticated>} />
+        <Route path="jobs/employer/builder/:jobId" element={<RequireAuthenticated><EmployerJobBuilderPage /></RequireAuthenticated>} />
+        <Route path="jobs/employer/jobs/:jobId/applications" element={<RequireAuthenticated><EmployerJobApplicationsPage /></RequireAuthenticated>} />
         <Route path="jobs" element={<JobsPage />} />
         <Route path="marketplace" element={<MarketPage />} />
         <Route path="saved" element={<RequireAuthenticated><SavedChatsPage /></RequireAuthenticated>} />
@@ -192,9 +194,9 @@ export function AppShell() {
         <Route path="articles" element={<div data-watany-feature-route="articles"><ArticlesPage /></div>} />
         <Route path="articles/:category/:slug" element={<div data-watany-feature-route="article-detail"><ArticleDetailPage /></div>} />
         <Route path="articles/:slug" element={<div data-watany-feature-route="article-detail"><ArticleDetailPage /></div>} />
-        <Route path="fake-fact" element={<div data-watany-feature-route="fake-fact"><FakeFactPage /></div>} />
+        <Route path="fake-news" element={<div data-watany-feature-route="fake-news"><FakeFactPage /></div>} />
+        <Route path="fake-fact" element={<Navigate to="/fake-news" replace />} />
         <Route path="forms" element={<div data-watany-feature-route="forms"><FormsPage /></div>} />
-        <Route path="forms/live/:slug" element={<div data-watany-feature-route="universal-form"><UniversalFormPage /></div>} />
         <Route path="vote" element={<SurveyPage />} />
         <Route path="voting" element={<Navigate to="/vote" replace />} />
         <Route path="voting/:surveyId" element={<SurveyDetailPage />} />
@@ -208,9 +210,6 @@ export function AppShell() {
         <Route path="messages/:groupId" element={<RequireAuthenticated><MessagesPage /></RequireAuthenticated>} />
         <Route path="taxi" element={<TaxiPage />} />
         <Route path="network" element={<NetworkPage />} />
-        <Route path="surveys" element={<SurveysPage />} />
-        <Route path="veterans-2019" element={<Navigate to="/surveys" replace />} />
-        <Route path="superadmin/veterans-2019-applications" element={<RedirectVeterans2019ApplicationsToOps />} />
         <Route path="circulars" element={<CircularsPage />} />
         <Route path="children" element={<ChildrenHubPage />} />
         <Route path="sports" element={<WatanyV4FeatureLanding />} />

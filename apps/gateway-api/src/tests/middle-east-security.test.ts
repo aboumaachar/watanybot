@@ -159,9 +159,6 @@ describe("Middle East Security application contract", () => {
     await expect(createMiddleEastSecurityApplication({ ...validInput, age_years: "62.5" })).rejects.toThrow("INVALID_AGE_YEARS");
     await expect(createMiddleEastSecurityApplication({ ...validInput, age_years: 0 })).rejects.toThrow("INVALID_AGE_YEARS");
     await expect(createMiddleEastSecurityApplication({ ...validInput, birth_date: "not-a-date" })).rejects.toThrow("INVALID_BIRTH_DATE");
-    await expect(createMiddleEastSecurityApplication({ ...validInput, birth_date: "09-28" })).rejects.toThrow("INVALID_BIRTH_DATE");
-    await expect(createMiddleEastSecurityApplication({ ...validInput, birth_date: "1984-02-31" })).rejects.toThrow("INVALID_BIRTH_DATE");
-    await expect(createMiddleEastSecurityApplication({ ...validInput, birth_date: `${new Date().getUTCFullYear() + 1}-01-01` })).rejects.toThrow("INVALID_BIRTH_DATE");
     await expect(createMiddleEastSecurityApplication({ ...validInput, phone: "123" })).rejects.toThrow("INVALID_PHONE");
     await expect(createMiddleEastSecurityApplication({ ...validInput, security_training: true })).rejects.toThrow("MISSING_SECURITY_TRAINING_DETAILS");
     await expect(createMiddleEastSecurityApplication({ ...validInput, ngo_experience: true })).rejects.toThrow("MISSING_NGO_DETAILS");

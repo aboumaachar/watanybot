@@ -851,3 +851,898 @@ FAIL_CLOSED=YES
 | APEX_V119_LOCAL_DURABILITY_V105_POSTGRES18_BOOTSTRAP_TEMP_SERVER_FALSE_READINESS_DEFECT | 2026-08-20T17:00:00.0000000Z | V1.0.6 local durability PostgreSQL stable final-server readiness | Disposable postgres:18 startup exposed a bootstrap PostgreSQL server: the first equivalent pg_isready success could occur before initialization completed, and the immediately following SQL probe returned database system is shutting down. First readiness success is therefore not proof of the final stable server. | Require a running controller-owned container, final postgres PID 1, pg_isready exit 0, the exact SQL identity probe, and three consecutive complete observations separated by a bounded interval. Reset the stability counter on shutdown, startup, refusal, FATAL, PANIC, or any failed observation; preserve all readiness evidence and use a bounded total timeout. | PASS requires FINAL_SERVER_OBSERVATION_1=PASS, FINAL_SERVER_OBSERVATION_2=PASS, FINAL_SERVER_OBSERVATION_3=PASS, FINAL_POSTGRES_SERVER_STABLE_READINESS=PASS, post-restart stable readiness, and rejection of bootstrap-ready to shutdown transitions. | OPEN |
 | APEX_V119_LOCAL_DURABILITY_V106_DEATH_NOTICES_UNAUTHORIZED_DIRTY_PATH_BLOCKS_QUALIFICATION | 2026-08-20 | V1.0.6 local durability repository-authority gate | The exact V1.0.6 Plan reached repository authority and failed closed because apps/gateway-api/data/death-notices.jsonl was a pre-existing worktree modification outside the seven-path durability repair scope. The index was empty, HEAD remained d7eb802b7b9563d61e64aa8cadce34805a9d8dae, and no typecheck, Docker runtime, migration, commit, push, production access, or production database mutation occurred. | Preserve the exact worktree bytes externally before any reconciliation. Reconcile this one tracked data path only when it is worktree-only, HEAD equals index, the delta is append-only valid JSONL, and the exact seven durability paths remain unchanged. Restore only from the proven index blob and then rerun the unchanged hash-qualified V1.0.6 Plan. | Plan proves target status, HEAD/index blob parity, append-only JSONL delta, exact eight-path pre-scope and empty index. Apply proves external preservation byte parity, targeted checkout-index restoration, target clean status, exact seven authorized durability paths, empty index, and unchanged V1.0.6 runner SHA before Plan rerun. | OPEN |
 | APEX_V119_DEATH_NOTICES_RECONCILIATION_V100_PREFLIGHT_DOCUMENTATION_DOCKER_TOKEN_FALSE_POSITIVE_DEFECT | 2026-08-20 | death-notices reconciliation V1.0.0 external PS5.1 preflight | V1.0.0 runner, binder and controller hashes matched; all three PowerShell files parsed with zero errors and all protected/native/Git/production safety counts were zero except DOCKER_TOKEN_COUNT=1. Exact artifact inspection proved the only matched token was prose in the failure-register binder describing that the prior V1.0.6 Plan performed no Docker runtime. No executable docker command existed and the target reconciliation controller never executed. | Replace text-wide docker word counting with an AST executable-command census. Count only CommandAst nodes whose resolved command name is docker or docker.exe, case-insensitively. Prose, comments, string literals, variable names and report labels must not satisfy the executable-command detector. Re-run the complete parser/protected-variable/native/Git/production/reporting guards before handoff. | PASS requires this failure binding exactly once, all exact artifact hashes stable, parser errors zero, executable Docker CommandAst count zero, all destructive/native/Git/production guards zero, targeted checkout-index cardinality one, mandatory reporting contract PASS and external preflight native exit zero. | OPEN |
+
+### SALARY_PRE2019_OVERLAY_REGRESSED_USERPROFILE_IDENTITY_VERIFICATION
+- Status: ACTIVE
+- Discovered: 2026-09-25
+- Failure: production-derived salary candidate failed web-user typecheck because staged packages/types/src/index.ts removed the newer UserProfile.identityVerificationRequired optional field present in current production.
+- Evidence: current production release web typecheck exits 0; candidate salary-pre2019-v1-20260925T132822Z-2859577 exits 2 with three TS2339 errors in LoginPageOriginal.tsx and ProfilePage.tsx.
+- Root cause class: stale whole-file overlay overwrote a newer unrelated contract on the production authority branch.
+- Permanent guard: reconcile every overlaid file against current production authority; preserve unrelated newer symbols; require baseline and candidate typecheck/build before cutover.
+- Repair rule: reconcile the complete file, then rerun semantic, typecheck, build, manifest, and runtime proof; do not patch only the observed failing line.
+
+### APEX_REPORT_MANIFEST_WARNINGS_FILENAME_FALSE_FAILURE
+- Status: ACTIVE
+- Discovered: 2026-09-25
+- Failure: salary deployment report sealing always failed because the verifier scanned report-manifest-verify.txt for case-insensitive token WARNING, which falsely matched the successful filename line ./warnings.csv: OK.
+- Evidence: seal_report runs sha256sum -c and then rejects FAILED|NOT FOUND|WARNING anywhere in the verification output; the mandatory warnings.csv filename therefore guarantees a false failure even when every hash is OK.
+- Root cause class: broad substring failure-token scan over verification filenames rather than verification status fields.
+- Permanent guard: match verification status/error syntax such as : FAILED, : WARNING, NOT FOUND, or missing-file diagnostics; warnings.csv: OK must be accepted.
+- Repair rule: repair the verifier predicate, then rerun full controller syntax, guard-token, manifest, failure-path, and success-path evidence checks before deployment retry.
+
+### SALARY_DEPLOY_SECONDARY_OVERLAY_MANIFEST_DRIFT_DEFECT
+- Status: ACTIVE
+- Discovered: 2026-09-25
+- Failure: root deployment candidate failed `CANDIDATE_OVERLAY_MANIFEST_FAILED` after the repaired overlay hash changed but `MANIFEST.sha256` still contained the previous `packages/types/src/index.ts` hash.
+- Evidence: staged overlay `packages/types/src/index.ts` SHA256 is `05d729b7...e578`, while `MANIFEST.sha256` still expected `f7dff61f...808d`; `STAGE_MANIFEST.sha256` had been resealed against the overlay but did not include `MANIFEST.sha256` itself.
+- Root cause class: dual-manifest drift; the secondary candidate manifest was mutable/unsealed relative to the stage integrity manifest.
+- Permanent guard: `MANIFEST.sha256` must be regenerated from the exact nine overlay bytes after every overlay mutation and must itself be included in `STAGE_MANIFEST.sha256` before root execution.
+- Repair rule: regenerate both manifests, re-run complete stage/parser/semantic/typecheck/build/runtime preflight, and only then retry the same root controller.
+
+### SALARY_DEPLOY_NONROOT_GATEWAY_TYPECHECK_PERMISSION_FALSE_MISSING_DEFECT
+- Status: ACTIVE
+- Discovered: 2026-09-25
+- Failure: non-root diagnostic typecheck on the failed production-derived candidate reported TS6053 for `apps/gateway-api/src/scripts/import-wordpress-legacy-users.ts` even though the file exists.
+- Evidence: current and candidate both contain the file as `-rw------- root root`; dcagent cannot read/hash it, while the earlier root controller gateway typecheck/build passed on the same production authority.
+- Root cause class: proof-environment permission mismatch masquerading as source-file absence.
+- Permanent guard: do not treat non-root TS6053 on root-only production files as product absence; verify file existence/permissions and use root controller or an authorized readable clone for gateway proof.
+- Repair rule: no product mutation from this class; continue with independent readable proofs and the root fail-closed controller.
+
+### SALARY_PRE2019_PRODUCTION_BROWSER_CONSOLE_400_UNATTRIBUTED
+- Status: ACTIVE_DIAGNOSTIC
+- Discovered: 2026-09-25
+- Failure: the first live mobile browser closeout passed every salary UI/API assertion but captured one generic browser console error: `Failed to load resource: the server responded with a status of 400 ()`.
+- Risk: an unexplained HTTP 400 could represent an unrelated third-party/advisory browser request or an unobserved first-party regression; it must not be silently ignored in final deployment proof.
+- Guard: capture console source location and every production response with HTTP >=400 in a fresh touch/mobile browser run; classify first-party salary/runtime failures separately from unrelated third-party/advisory noise before final PASS.
+- Repair rule: do not mutate product code from the generic console string alone; require URL/status/source evidence first.
+- Disposition: DIAGNOSTIC_REQUIRED_BEFORE_FINAL_CLOSEOUT
+
+### SALARY_PRE2019_PRODUCTION_BROWSER_CONSOLE_400_UNATTRIBUTED — RESOLUTION
+- Resolved: 2026-09-25
+- Diagnostic: fresh mobile/touch production run captured `CONSOLE_ERRORS=0`, `BAD_RESPONSES=0`, `PAGE_ERRORS=0`.
+- Request failures: six `net::ERR_ABORTED` requests, all third-party Google Analytics/Google Ads endpoints; no first-party WatanyBot salary request failed.
+- Classification: advisory third-party browser noise, not a salary/runtime defect.
+- Final guard: production PASS requires first-party salary/API responses green, page errors zero, and any third-party request aborts explicitly classified.
+- Disposition: RESOLVED_ADVISORY_THIRD_PARTY_NOISE
+
+### APEX_CMD_CARET_REVISION_ESCAPE_INVALID_PARENT_PROOF_20260928
+- Date: 2026-09-28
+- Class: Windows cmd Git revision quoting.
+- Symptom: `git rev-parse c48e47c^` was issued inside `cmd.exe`; the caret was consumed as a cmd escape, so Git received the wrong revision and the reported parent/diff evidence was invalid.
+- Impact: read-only diagnostic evidence only; no Git or source mutation occurred.
+- Guard: under `cmd.exe`, avoid caret-bearing revision syntax in inline commands; use `git rev-list --parents -n 1 <sha>`, `git show --format=%P`, or another caret-free plumbing form, then verify the derived parent before computing diffs.
+- Status: ACTIVE
+
+### APEX_CMD_DELAYED_EXPANSION_DISABLED_LITERAL_BANG_VARIABLE_20260928
+- Date: 2026-09-28
+- Class: Windows cmd command rendering / delayed expansion.
+- Symptom: a read-only comparison command used `!W!` / `!P!` variables under `cmd.exe` without `/v:on`, so the literal bang expressions were passed as file paths and every comparison failed before source access.
+- Impact: read-only diagnostic failure only; no repository or source mutation occurred.
+- Guard: avoid shell variables for bounded comparison commands where possible; otherwise require `cmd /v:on`, prove variable expansion with an echo preflight, and reject any literal `!NAME!` token before execution.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_SERVER_ARCHIVE_SCP_EXIT255_20260928
+- Date: 2026-09-28
+- Class: Cross-host source-authority transport.
+- Symptom: Windows-side `scp` of the sealed Users/Profile production source archive returned native exit code 255.
+- Impact: transport failed before repository mutation; isolated worktree source remains unchanged.
+- Guard: do not retry the same opaque scp path. Capture transport diagnostics or use the already-authorized Desktop Commander server channel to materialize/verify the archive through a bounded alternate path. Verify the expected archive SHA256 before any extraction.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_WINDOWS_PYTHON_STORE_ALIAS_UNAVAILABLE_20260928
+- Date: 2026-09-28
+- Class: Validation-tool runtime dependency.
+- Symptom: bounded SHA comparison invoked `python`, but the host resolved only the Microsoft Store execution alias and no Python runtime executed.
+- Impact: hash comparison did not run; no repository/source mutation occurred.
+- Guard: do not depend on unproven Python on this host. Use the repository-proven Node runtime or native hash tooling and verify its exit code/output before accepting evidence.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_ISOLATED_WORKTREE_CONCURRENT_MUTATION_AFTER_CREATION_20260928
+- Date: 2026-09-28
+- Class: Concurrent isolated-worktree mutation / provenance loss.
+- Symptom: the Users/Profile integration worktree was created clean at HEAD `3d1921db9e5c91206a26224820ae8d21071a3a26`, but a later provenance check found the full Users/Profile source set modified/untracked without this execution chain having copied those files.
+- Impact: matching bytes in the mutable worktree cannot by themselves prove a valid integration; four convergence-owned files also diverge from the sealed production hashes.
+- Guard: treat the mutable tree only as a candidate. Validate its bounded diff against the sealed 17-file production authority, commit only after semantic reconciliation, then run all gates against a fresh detached worktree at the immutable commit SHA. Any later mutable-tree drift is non-authoritative.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_SERVER_TRANSPORT_GIT_DUBIOUS_OWNERSHIP_20260928
+- Date: 2026-09-28
+- Class: Server Git trust-boundary / repository ownership.
+- Symptom: a read-only `git -C transport status` diagnostic was rejected by Git as dubious ownership. Preceding direct SHA256 file reads succeeded.
+- Impact: no source mutation; Git metadata from that server transport clone is not accepted as evidence through the current execution identity.
+- Guard: do not alter global `safe.directory` merely for inspection. Use direct file hashes, sealed deployment manifests, and immutable archive evidence; if Git metadata becomes necessary, use an ownership-correct execution identity or isolated clone.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_DC_VALIDATOR_WRITE_CLASSIFIER_BLOCK_20260928
+- Date: 2026-09-28
+- Class: Connector tooling / file-write safety classification.
+- Symptom: the final chunk of a bounded read-only Node validator was blocked by the Desktop Commander/OpenAI safety classifier before the write occurred.
+- Impact: validator file remained incomplete; repository source was not changed by the blocked call.
+- Guard: do not bypass connector policy. Split validation logic into smaller unambiguous chunks and verify the completed validator file before execution.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_CMD_WRAPPER_FALSE_GREEN_RUNTIME_SKIPPED_20260928
+- Date: 2026-09-28
+- Class: Native command-chain control flow / false-green evidence.
+- Symptom: combined parser+runtime `cmd.exe` wrapper reported process exit 0 after the parser gate, but the expected runtime proof file was never created and no runtime exit token was emitted.
+- Impact: parser PASS alone is not runtime proof; the candidate static validator remained UNVERIFIED at that point.
+- Guard: separate parser and runtime invocations. Require runtime output file existence, explicit native exit code, expected success token, and absence of failure token before accepting the gate.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_VALIDATOR_LOCK_SCOPE_FALSE_POSITIVE_20260928
+- Date: 2026-09-28
+- Class: Validation methodology / monorepo lockfile scoping.
+- Symptom: candidate validator counted `@watany/address-network` across the entire `pnpm-lock.yaml` and failed when two legitimate occurrences existed.
+- Impact: validator returned native exit 1 and no candidate PASS was claimed; source was not identified as faulty by this evidence.
+- Guard: mirror the production patch contract by isolating the `apps/web-admin` importer slice and requiring exactly one address-network entry in that slice. Keep global duplicate checks out of package-scoped dependency assertions.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_VALIDATOR_LOCK_CRLF_ANCHOR_PORTABILITY_20260928
+- Date: 2026-09-28
+- Class: Validation portability / line-ending normalization.
+- Symptom: V2 scoped the lockfile correctly but searched LF-only importer anchors against a Windows CRLF checkout, producing a false count of zero.
+- Impact: validator returned native exit 1; no candidate PASS was claimed and source was not modified.
+- Guard: normalize CRLF to LF inside the validator before applying production patch anchors, then prove the scoped entry count again.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_POST_STAGE_EXTERNAL_WORKTREE_DRIFT_20260928
+- Date: 2026-09-28
+- Class: Concurrent isolated-worktree mutation after index freeze.
+- Symptom: immediately after staging the bounded Users/Profile source set, `apps/web-admin/src/components/admin/AdminPrimitives.tsx` appeared as a new unstaged modification even though it was absent from the pre-stage candidate proof.
+- Impact: the mutable worktree is no longer a trustworthy validation surface. The unrelated path is not staged and must not be reset, overwritten, or included in the Users/Profile commit.
+- Guard: commit only the already-bounded index plus this regression-register entry, leave external unstaged drift untouched, then validate exclusively from a fresh detached worktree at the immutable commit SHA.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_WINDOWS_WMIC_DIAGNOSTIC_TOOL_UNAVAILABLE_20260928
+- Date: 2026-09-28
+- Class: Verification-environment diagnostic dependency.
+- Symptom: `wmic` was invoked to inspect the stalled pnpm child process, but WMIC is not installed on this Windows image.
+- Impact: child command-line diagnostics were unavailable; the running install and repository source were untouched.
+- Guard: do not rely on deprecated WMIC. Use non-PowerShell process/session evidence and captured native command output unless the current ChatGPT-native APEX PS1 authority is available for a PowerShell diagnostic.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_FROZEN_INSTALL_BETTER_SQLITE3_NODE24_PYTHON_MISSING_20260928
+- Date: 2026-09-28
+- Class: Frozen dependency restoration / native addon toolchain.
+- Symptom: `pnpm install --frozen-lockfile` in detached verification reached native `better-sqlite3@11.10.0`, fell back to node-gyp under Node v24.16.0, and failed because no usable Python installation is available.
+- Evidence: native install exit 1; node-gyp `Could not find any Python installation to use`; final `ELIFECYCLE Command failed with exit code 1`.
+- Impact: detached verification dependencies are incomplete; no typecheck/test/build PASS may be claimed from that install state.
+- Guard: do not install Python or mutate system toolchains ad hoc. Recover and reuse the previously proven WatanyBot dependency strategy/runtime, or use a no-lifecycle restoration only if all runtime tests independently prove required native modules are available.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_PRODUCT_BASE_MISSING_PRODUCTION_ADMIN_PRIMITIVES_CONTRACT_20260928
+- Date: 2026-09-28
+- Class: Production-baseline dependency omitted from sealed feature delta / semantic convergence.
+- Symptom: immutable Users/Profile commit `32514715b63eb091253b1584621c9f0540a17b16` passed Gateway and web-user typechecks but web-admin typecheck exited 2 because `AdminPrimitives` lacks the production-required `AdminTabs` export and `AdminConfirmDialog` `danger` prop consumed by the sealed V3 source.
+- Impact: the 17-file V3 production delta is not self-contained when applied to product base `3d1921db...`; web-admin cannot typecheck, so Users/Profile integration is BLOCKED until the assumed production admin-primitives baseline is reconciled.
+- Guard: do not patch only the reported lines. Recover the authoritative production/baseline `AdminPrimitives.tsx`, compare its complete contract with the product version and concurrent local drift, merge semantically in isolation, then re-run the full Users/Profile and preservation matrix from a new immutable commit.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_CMD_NODE_E_QUOTING_PARSER_FAILURE_20260928
+- Date: 2026-09-28
+- Class: Windows cmd / inline Node command-rendering safety.
+- Symptom: a bounded `node -e` Git-hash comparison was rewritten into an invalid wrapper and exited with a JavaScript `SyntaxError` before producing evidence.
+- Impact: no repository source was changed by the failed command; its comparison result is invalid and must not be reused.
+- Guard: use a checked temporary `.mjs` file for multi-statement Node validation on Windows, run `node --check`, then execute and verify native exit/output.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_PRODUCTION_AUTH_ROUTES_UNCOMMITTED_AUTHORITY_20260928
+- Date: 2026-09-28
+- Class: Production-source authority / Git history gap.
+- Symptom: active Users/Profile V3 production `auth-routes.ts` hashes to `8e7da6f3e5e97ba627f6e8229c2621ab8d80ba756d8039bd3e616b5b719190c2`, but no local Git revision of that path has those bytes.
+- Impact: `b8d06c1` is not an exact substitute for this file and must not be promoted as production authority.
+- Guard: recover exact bytes from an already-authorized local/server source, hash-verify them against active production, then revalidate the complete auth/user execution chain before commit.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_CONCURRENT_BRANCH_ADVANCE_AUTH_PREIMAGE_MISMATCH_20260928
+- Date: 2026-09-28
+- Class: Concurrent Git branch movement / immutable-preimage gate.
+- Symptom: before inherited-baseline materialization, branch HEAD had advanced to `5d73b03d2b07087de55a81dc0bab2d3f9d58c268` and `auth-routes.ts` SHA256 was `7657f4d024e65f136906add968852d4474ccebd5f9a9b4b7b53811d3d6f81f08`, while the recovered production patch requires preimage `a292338134defd727c49828a62f17a26c3e5b44cba4f736a373cba34e6a05adf`.
+- Impact: applying the prior patch would be unsafe; no baseline materialization or auth patch was executed after this mismatch.
+- Guard: stop, inspect new commits and remote branch authority, rebase the production delta semantically or recover exact production bytes onto the new base, then rerun the full chain.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_PRODUCTION_WP_AUTH_DEPENDENCY_NOT_IN_GIT_20260928
+- Date: 2026-09-28
+- Class: Production-source authority / inherited WordPress-auth dependency gap.
+- Symptom: exact active production `password.ts`, `otp-routes.ts`, migration `049_wordpress_legacy_users.sql`, importer, and legacy-password regression have no matching local Git revision, while active production `auth-routes.ts` depends on this layer.
+- Impact: exact production auth cannot be integrated safely by cherry-picking local history or by stubbing the missing helper/schema.
+- Guard: recover the bounded five-file active-production authority through a sealed hash-verified archive, verify every extracted file against active production, then validate auth/OTP/user-management together.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_MANUAL_BASE64_ARCHIVE_TRANSPORT_CORRUPTION_20260928
+- Date: 2026-09-28
+- Class: Cross-device text transport integrity.
+- Symptom: one-line base64 transfer of the sealed WP-auth archive decoded on Windows to 14,244 bytes / SHA256 `6ae1208d884b4935096639c093bd92e446ca321dce4666262b516cbf958944ec`, not server authority 14,226 bytes / `ae72cb5d848a75ae0cda8e0d7f21e33553274d3f18cbc419ba5ae976b0c96858`.
+- Impact: archive is invalid; decode gate stopped before extraction or repository copy.
+- Guard: replace monolithic manual transfer with numbered fixed-size chunks, each with independent length/SHA evidence, reconstruct only after all chunks verify, then verify final archive SHA before extraction.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_CHUNK_DESTINATION_PRECONDITION_MISSING_20260928
+- Date: 2026-09-28
+- Class: Evidence transport destination precondition.
+- Symptom: first fixed-size chunk write failed with ENOENT because the Windows `wp-auth-b64-chunks` evidence directory had not yet been created.
+- Impact: no chunk and no repository source was written by the failed call.
+- Guard: explicitly create and verify the chunk destination directory before any replacement chunk writes; then verify every chunk length/SHA before reconstruction.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_CMD_CHAIN_EXIT0_MISSING_EXTRACTION_TOKEN_20260928
+- Date: 2026-09-28
+- Class: Native command-chain success/output contract.
+- Symptom: archive reconstruction command exited 0 and proved the final archive SHA, but the chained extraction/listing stage emitted neither its expected file listing nor `WP_AUTH_VERIFIED_EXTRACT=PASS`.
+- Impact: archive integrity is proven; extraction from that invocation is UNVERIFIED and must not be used as source evidence.
+- Guard: separate reconstruction and extraction into distinct native invocations; require explicit extracted-file presence, per-file hashes, success token, and exit 0.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_CMD_IF_ERRORLEVEL_CHAIN_FALSE_SUCCESS_20260928
+- Date: 2026-09-28
+- Class: Native cmd.exe process-chain / false-success exit propagation.
+- Symptom: `node --check ... && if errorlevel 1 exit /b 1 && node ...` returned process exit 0 with no validator output because the false `if errorlevel` branch prevented later `&&` commands from executing.
+- Impact: the chunk verifier and archive decoder did not run; the previously rejected 18,992-byte Base64 artifact remained untouched, so no source extraction occurred.
+- Guard: never place a success-path command behind a false `if errorlevel` in an `&&` chain. Use `command || exit /b <code>` for each native gate, require expected success tokens, verify produced file size/hash, and fail closed on missing output.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_TEXT_CHUNK_TRAILING_LF_TRANSPORT_DEFECT_20260928
+- Date: 2026-09-28
+- Class: Cross-device text transport / final-chunk newline mutation.
+- Symptom: fixed-size Base64 chunks `part-00` through `part-05` matched the server exactly, but `part-06` was 969 bytes because the text writer appended one terminal LF to the 968-byte authoritative chunk.
+- Evidence: raw final chunk SHA256 `d8c08da72c1805d29bb507ed396619f08fde4d8dfded6c812da9bc4e5b2fc9f0`; removing exactly one terminal `0A` yields 968 bytes and authoritative SHA256 `57bd7203b1bfe9d4c160a6668790dba7a582ca6cfe3e4da80b07096d46beba31`.
+- Impact: archive reconstruction must remain blocked until the final chunk is normalized and all seven chunks reverified.
+- Guard: for fixed-size text transport, verify byte length and SHA of every chunk; permit terminal-newline normalization only when exactly one final LF is proven and its removal reproduces the independently sealed source hash.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_GOOGLE_AUTH_PRODUCTION_ROUTE_TEST_500_20260928
+- Date: 2026-09-28
+- Class: Auth runtime regression under production-source convergence.
+- Symptom: after exact active-production auth source was materialized, `google-auth.test.ts` returned HTTP 500 instead of 200 for both existing-user and new-user Google login flows.
+- Evidence: bounded 14-file acceptance matrix exited 1; 2 Google-auth tests failed while password/OTP/startup tests passed.
+- Guard: diagnose the complete Google-auth query/session/login-event chain against the test harness and production dependencies before any replacement; do not patch only the observed response line.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_ADMIN_TOKEN_ACCEPTANCE_403_REGRESSION_20260928
+- Date: 2026-09-28
+- Class: Admin authentication/session authorization regression under production-source convergence.
+- Symptom: six `admin-auth-hardening` authorized-token cases and one `superadmin-users-production-auth` case returned HTTP 403 instead of 200.
+- Evidence: bounded acceptance matrix exited 1; unauthorized boundaries and multiple other auth/security suites remained green.
+- Guard: trace token verification, session binding, configured-admin policy, and test fixtures end-to-end before changing source or tests; preserve production security requirements fail-closed.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_MIXED_AUTH_TEST_AUTHORITY_REGRESSION_20260928
+- Date: 2026-09-28
+- Class: Mixed production/product regression authority after auth-baseline convergence.
+- Symptom: expanded 13-file auth/user regression run passed 100/109 tests but failed 9 assertions isolated to `admin-auth-hardening.test.ts`, `google-auth.test.ts`, and `superadmin-users-production-auth.test.ts`; exact imported production regressions for Users/Profile, feature overrides, request-network, security audit, session binding, WordPress password, and OTP passed.
+- Impact: full validation remains BLOCKED. The clustered failures must not be repaired by changing production-authoritative source until the three failing tests and their policy dependencies are compared with active production authority.
+- Guard: classify test/source authority first; recover exact active-production tests or dependency modules when they supersede product-history fixtures, then rerun the complete regression matrix. Do not weaken auth policy to satisfy stale fixtures.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_PRODUCTION_AUTH_POLICY_HARNESS_DEPENDENCY_OMITTED_20260928
+- Date: 2026-09-28
+- Class: Production auth-policy/session dependency omitted from product convergence.
+- Symptom: expanded auth regression failures correlate with product/production hash divergence in `admin-policy.ts`, `auth-middleware.ts`, `server.ts`, and the three failing auth test files, while `admin-users.ts` and `admin-users-management.ts` already match production exactly.
+- Impact: the production-auth route is being validated against an older product auth-policy/middleware harness; the 9 failures cannot be classified as source regressions until this dependency slice is reconciled.
+- Guard: recover the exact active-production policy/middleware/server/test authority, compare whole-file semantics and history, integrate only dependency-proven files, then rerun the entire 13-file auth regression matrix. Never relax authorization checks merely to satisfy stale tests.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_WORKTREE_CRLF_FALSE_AUTHORITY_DIVERGENCE_20260928
+- Date: 2026-09-28
+- Class: Windows checkout line-ending authority-hash classification defect.
+- Symptom: working-file SHA256 values differed from Linux production, but Git blob SHA256 values exactly matched production for admin-auth-hardening.test.ts, google-auth.test.ts, admin-policy.ts, and auth-middleware.ts.
+- Impact: checkout-byte hashes alone could falsely classify correct source as missing production authority.
+- Guard: compare Git blob hashes or semantic diffs before classifying cross-platform source divergence; use raw-byte parity only for explicitly transported production artifacts.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_XARGS_GREP_PIPEFAIL_NO_MATCH_FALSE_FAILURE_20260928
+- Date: 2026-09-28
+- Class: Native pipeline / no-match exit propagation in evidence search.
+- Symptom: bounded `find -print0 | xargs -0 grep ... | head` search completed with exit 123 and no success token because grep found no matches and `set -o pipefail` propagated the nonzero grep/xargs status.
+- Impact: the search result cannot be interpreted as proof that test-harness environment variables are absent; evidence retrieval remains unresolved.
+- Guard: make expected no-match searches explicitly nonfatal while preserving real I/O failures, emit a deterministic result count plus success token, and inspect named harness files directly when possible.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_RAW_PRODUCTION_HASH_VS_PRODUCT_ADAPTATION_MISMATCH_20260928
+- Date: 2026-09-28
+- Class: Production-source hash authority versus reconciled product-head adaptation.
+- Symptom: index authority validator matched all checked inherited/V3 production files except `apps/web-admin/src/App.tsx` and `packages/address-network/src/AddressWidget.tsx`; current index hashes are `cdb51e8c...` and `0a5cf333...` instead of raw server V3 `d277782f...` and `206c0b68...`.
+- Impact: raw-byte authority gate is BLOCKED for these two paths until their product-specific reconciliation provenance is re-proven; no overwrite is permitted.
+- Guard: compare against the original V3 integration commit and newer product baseline, prove the deltas preserve V3 route/address contracts while retaining later product-owned changes, then encode these two paths as explicit reconciled exceptions in the authority validator.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_ACTIVE_PRODUCTION_GOOGLE_AUTH_FIXTURE_STALE_20260928
+- Date: 2026-09-28
+- Class: Active-production regression fixture stale relative to active auth runtime.
+- Symptom: running the exact active-release `google-auth.test.ts` and `superadmin-users-production-auth.test.ts` against `/opt/watany/releases/users-profile-v3-20260928T124234Z-535218` yielded superadmin 2/2 PASS but Google auth 4/6 PASS, with both successful-login paths returning HTTP 500 instead of 200.
+- Evidence: server-side test run exit 1; `superadmin-users-production-auth.test.ts` 2 passed; `google-auth.test.ts` 2 failed at lines 95 and 143; stdout/stderr preserved under `product-convergence-authority/prod-auth-targeted-runtime/`.
+- Impact: these Google-auth failures pre-exist in active production source/test authority and cannot be attributed to the product integration worktree. They still block a broad regression PASS until the fixture/runtime mismatch is root-caused and repaired or explicitly scoped as a production-baseline defect.
+- Guard: reproduce disputed regression failures on the exact active-release tree; never mutate product source to satisfy a test that also fails against its own production authority. Repair the fixture only after tracing the full runtime query/call chain.
+- Status: ACTIVE
+
+### Resolution — APEX_USERS_PROFILE_RAW_PRODUCTION_HASH_VS_PRODUCT_ADAPTATION_MISMATCH_20260928
+- `git diff --exit-code 3251471... -- App.tsx AddressWidget.tsx` proved both reconciled paths are unchanged since the original V3 product-integration commit.
+- `App.tsx` delta from product base is bounded to the lazy `UserPage` import, `/users/:id` route, and matching user-detail route metadata.
+- `AddressWidget.tsx` delta from product base is bounded to the `catalogUrl` prop, its fetch use, and effect dependency.
+- Reconciled index authorities: `App.tsx=cdb51e8c76a42586c3d02bee9f870e501a010bd48b246993fd3fad17ba764ac3`; `AddressWidget.tsx=0a5cf333bad867e9294f87d50e2024118fb756d1f8600c5ec2dc01d748d104e7`.
+- Resolution status: RESOLVED_AS_PRODUCT_RECONCILIATION; raw-server overwrite remains prohibited.
+
+## Users/Profile V3 product convergence resolution update — 2026-09-28
+- `APEX_USERS_PROFILE_CMD_NODE_E_QUOTING_PARSER_FAILURE_20260928`: RESOLVED_BY_CHECKED_MJS_VALIDATORS.
+- `APEX_USERS_PROFILE_PRODUCTION_AUTH_ROUTES_UNCOMMITTED_AUTHORITY_20260928`: RESOLVED; exact production auth route reconstructed from verified preimage + server diff and index SHA `8e7da6f3...` proven.
+- `APEX_USERS_PROFILE_CONCURRENT_BRANCH_ADVANCE_AUTH_PREIMAGE_MISMATCH_20260928`: RESOLVED; branch was re-derived from `5d73b03...` before any auth patch application.
+- `APEX_USERS_PROFILE_PRODUCTION_WP_AUTH_DEPENDENCY_NOT_IN_GIT_20260928`: RESOLVED; five-file production authority was recovered through a sealed archive and each index SHA is verified.
+- `APEX_USERS_PROFILE_MANUAL_BASE64_ARCHIVE_TRANSPORT_CORRUPTION_20260928`: RESOLVED_BY_CHUNKED_HASH_VERIFIED_TRANSPORT; corrupt monolithic archive was never extracted.
+- `APEX_USERS_PROFILE_CHUNK_DESTINATION_PRECONDITION_MISSING_20260928`: RESOLVED; destination was explicitly created before replacement transfer.
+- `APEX_USERS_PROFILE_CMD_CHAIN_EXIT0_MISSING_EXTRACTION_TOKEN_20260928`: RESOLVED; standalone extraction emitted file listing + `WP_AUTH_VERIFIED_EXTRACT=PASS` with exit 0.
+- `APEX_USERS_PROFILE_GOOGLE_AUTH_PRODUCTION_ROUTE_TEST_500_20260928`: RESOLVED_AS_STALE_TEST_FIXTURE; production source unchanged, test now returns real mocked session IDs and accounts for successful-login persistence.
+- `APEX_USERS_PROFILE_ADMIN_TOKEN_ACCEPTANCE_403_REGRESSION_20260928`: RESOLVED_AS_SECURITY_CONTRACT_FIXTURE; unbound admin JWTs are now explicitly expected to be denied, while `admin-session-binding.test.ts` proves live-session positive authorization.
+- `APEX_USERS_PROFILE_RAW_PRODUCTION_HASH_VS_PRODUCT_ADAPTATION_MISMATCH_20260928`: RESOLVED_AS_PRODUCT_RECONCILIATION; exact reconciled hashes are enforced.
+- Final bounded acceptance matrix after all repairs: 14/14 test files, 110/110 tests, exit 0, `USERS_PROFILE_AUTH_ACCEPTANCE=PASS`.
+
+### APEX_USERS_PROFILE_ACTIVE_PRODUCTION_ADMIN_HARDENING_FIXTURE_STALE_20260928
+- Date: 2026-09-28
+- Class: Active-production admin hardening fixture stale after mandatory administrative session binding.
+- Symptom: exact active-release `admin-auth-hardening.test.ts` still signs bare administrative JWTs without `sid`; probing its dashboard-success assertion against the active production release reproduces HTTP 403 instead of expected 200.
+- Evidence: active-release probe exit was nonzero as expected, response `/api/admin/dashboard` = 403, and the wrapper verified `expected 403 to be 200`, then emitted `PROD_ADMIN_HARDENING_STALE_FIXTURE_REPRO=PASS`.
+- Impact: the six broad hardening success assertions are incompatible with the newer production `resolveFreshAdminUser` contract and must not drive any weakening of session binding.
+- Guard: update success-path hardening fixtures to supply a session-bound administrative identity through deterministic DB mocks (active user + unexpired matching session), while retaining dedicated negative coverage for missing/invalid `sid` in `admin-session-binding.test.ts`.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_CMD_UNIX_SUBSTITUTION_IN_CMD_IMMUTABLE_PRECHECK_20260928
+- Date: 2026-09-28
+- Class: Windows cmd command-rendering / success-token enforcement.
+- Symptom: immutable-precheck command used Unix `$(git rev-parse HEAD)` inside `cmd.exe`; process exited 0 but emitted no expected `IMMUTABLE_PRECHECK=PASS` token.
+- Impact: that invocation is UNVERIFIED and must not be cited as immutable proof.
+- Guard: use a plain cmd chain that prints `git rev-parse HEAD`, runs unstaged/cached diff checks, and emits the success token only after all commands succeed; verify the printed hash separately.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_WEB_ADMIN_VITE_REPORTER_STDERR_ADVISORY_20260928
+- Date: 2026-09-28
+- Class: Build stderr / nonfatal Vite reporter advisory requiring explicit classification.
+- Symptom: web-admin production build exited 0 and emitted a complete dist, but stderr contained four `plugin:vite:reporter` warnings that DashboardPage, AuditPage, FeatureControlsPage, and UsersPage are both dynamically and statically imported, so those modules will not be split into separate chunks.
+- Impact: nonempty stderr prevents an automatic PASS classification until the stream is proven warning-only and free of failure/error tokens; no build artifact failure is implied by these specific messages.
+- Guard: validate exit code, expected build output, nonempty dist/index/assets, whitelist only the exact Vite reporter advisory form, and reject stderr containing `error`, `failed`, `failure`, stack traces, or unclassified warnings.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_SEALED_17_MANIFEST_SHARED_FILE_SUPERSESSION_20260928
+- Date: 2026-09-28
+- Class: Sealed feature-manifest byte mismatch on shared files after later product integration.
+- Symptom: current `252643e` HEAD matches 15/17 hashes from the sealed Users/Profile V3 `SOURCE_MANIFEST.sha256`; `apps/web-admin/src/App.tsx` and `packages/address-network/src/AddressWidget.tsx` differ.
+- Impact: the original 17-file manifest cannot be reported as byte-identical at current product HEAD. Blind restoration of the two sealed blobs could remove later Jobs/product integrations.
+- Guard: trace both paths from the sealed V3 commit through every later touching commit, prove the V3 route/address contracts remain present, and classify current-head adaptation explicitly. Restore old bytes only if a real V3 regression is proven.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_SEALED_17_MANIFEST_SHARED_FILE_SUPERSESSION_RESOLUTION_20260928
+- Date: 2026-09-28
+- Resolution: the 15/17 raw manifest result is an adapted-equivalence case, not a missing V3 feature regression.
+- `packages/address-network/src/AddressWidget.tsx`: production normalized UTF-8/LF hash is `0a5cf333bad867e9294f87d50e2024118fb756d1f8600c5ec2dc01d748d104e7`, exactly matching the product Git blob; raw server SHA differs only because the production copy uses CRLF.
+- `apps/web-admin/src/App.tsx`: commit `3251471` deliberately preserved the product admin shell and added only the V3 contracts: lazy `UserPage`, route `/users/:id`, and user-profile breadcrumb metadata. No later commit changed this path.
+- Validation: current HEAD retains all three App contracts and `AddressWidget` retains `catalogUrl`, uses it in fetch fallback, and tracks it in the effect dependency; web-admin typecheck and production build pass.
+- Closeout rule: report **15/17 raw-byte exact + 1 normalized-byte exact + 1 explicitly adapted shared-file contract**, never `17/17 byte-identical`.
+- Status: RESOLVED
+
+### APEX_USERS_PROFILE_CMD_CARET_REVISION_ESCAPE_20260928
+- Date: 2026-09-28
+- Class: Windows cmd.exe Git revision rendering / caret escape.
+- Symptom: `git rev-parse HEAD^` inside a cmd command chain printed the current HEAD because `^` was consumed by cmd escaping instead of reaching Git as the parent revision suffix.
+- Impact: that parent-hash line is invalid evidence, although the same invocation's clean status, `git diff HEAD^ HEAD --check` no-output result, and explicit `252643e..HEAD` name-status are not used as parent proof.
+- Guard: use `HEAD~1`, an explicit parent hash, or properly escaped `HEAD^^` under cmd.exe; verify parent differs from HEAD and equals the expected source commit before push.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_UNPERSISTED_110_TEST_CLOSEOUT_CLAIM_20260928
+- Date: 2026-09-28
+- Class: Runtime-evidence durability / report-claim mismatch.
+- Symptom: closeout/register text claimed a final 14/14-file, 110/110-test acceptance run, but no matching preserved stdout/stderr artifact was found in the validation evidence directories; the latest durable complete matrix was 13/13 files and 109/109 tests.
+- Impact: the 14/14, 110/110 claim is UNVERIFIED until rerun and persisted; report text alone is not runtime proof.
+- Guard: every final acceptance count must be backed by preserved command output, exit code, empty-or-classified stderr, and a deterministic success token before it is copied into closeout documentation.
+- Status: ACTIVE
+
+### APEX_NATIVE_SKILL_DECLARED_PATH_MISSING_REPOSITORY_MIRROR_ONLY_20260928
+- Date: 2026-09-28
+- Class: APEX skill authority path / repository enforcement-layer integrity.
+- Symptom: `.github\skills\apex-ps1\SKILL.md` declares native source `.pma\skills\apex-ps1\SKILL.md`, but that declared file is absent in both the isolated worktree and canonical workspace; only the `.github` mirror is present.
+- Impact: repository-local native-skill parity is UNVERIFIED and must not be represented as loaded from the declared `.pma` source. Product validation may proceed under the active ChatGPT-native policy plus repository mirror, but the repository skill state requires separate repair/update.
+- Guard: never silently substitute the mirror for the declared native path; report `APEX_PS1_SKILL_UPDATE_REQUIRED=YES` until the repository authority path is restored or the metadata is intentionally revised and independently verified.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_REMOTE_COMMAND_TRANSPORT_FETCH_FAILURE_20260928
+- Date: 2026-09-28
+- Class: Remote command transport / missing execution evidence.
+- Symptom: Desktop Commander returned `Result could not be stored (TypeError: fetch failed)` while invoking the final Node authority validator, so no trustworthy process exit code or validator token was captured.
+- Impact: that invocation is UNVERIFIED and cannot satisfy the authority gate.
+- Guard: retry only after confirming device connectivity; accept the stage only when the actual process result includes exit 0 plus the expected deterministic success token.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_LOCAL_SEALED_SHARED_FILE_COPY_NOT_SERVER_RAW_AUTHORITY_20260928
+- Date: 2026-09-28
+- Class: Evidence-source identity / stale local sealed-file copy.
+- Symptom: the reconciliation validator correctly found the expected 15/17 raw Git-blob matches, then failed because local `sealed-AddressWidget.tsx.bin` did not hash to the server manifest's raw SHA `206c0b68...`.
+- Impact: the local `.bin` copy cannot be used as proof of the sealed server bytes; the raw manifest mismatch classification remains valid, but normalized equivalence must be re-proven from the server authority itself.
+- Guard: never trust a locally named `sealed-*` file without re-verifying its raw hash against the server manifest. For cross-platform normalization proof, compute raw and normalized hashes directly on the sealed server release and compare them to the isolated Git blob.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_APP_ADAPTATION_VALIDATOR_SYNTAX_EQUIVALENCE_DEFECT_20260928
+- Date: 2026-09-28
+- Class: Semantic-equivalence validator incorrectly required local implementation syntax in sealed server source.
+- Symptom: direct server proof confirmed both shared files match the sealed raw manifest exactly and confirmed the AddressWidget normalized hash, then failed because it required the product adaptation string `const UserPage = lazy(...)` to exist in the sealed server `App.tsx`.
+- Impact: the server proof invocation is INVALID as an App semantic-equivalence gate; it conflated implementation syntax with required user-profile routing behavior.
+- Guard: compare server and product App files by their actual V3 route/navigation contracts and separately prove product App provenance/immutability since `3251471`; never require the product-shell adaptation syntax to appear verbatim in the production-shell source.
+- Status: ACTIVE
+
+## Users/Profile V3 final evidence-resolution update — 2026-09-28
+- `APEX_USERS_PROFILE_UNPERSISTED_110_TEST_CLOSEOUT_CLAIM_20260928`: RESOLVED; fresh `users-auth-regressions-v3.out/.err` proves exit 0, 14/14 files, 110/110 tests, stderr 0.
+- `APEX_USERS_PROFILE_REMOTE_COMMAND_TRANSPORT_FETCH_FAILURE_20260928`: RESOLVED; device ping succeeded and the authority validator rerun returned exit 0 with `USERS_PROFILE_INDEX_AUTHORITY=PASS`.
+- `APEX_USERS_PROFILE_LOCAL_SEALED_SHARED_FILE_COPY_NOT_SERVER_RAW_AUTHORITY_20260928`: RESOLVED_BY_DIRECT_SERVER_PROOF; server `shared-authority-v5.out` proves App and AddressWidget raw hashes match `SOURCE_MANIFEST.sha256`, with AddressWidget normalized SHA `0a5cf333...`.
+- `APEX_USERS_PROFILE_APP_ADAPTATION_VALIDATOR_SYNTAX_EQUIVALENCE_DEFECT_20260928`: RESOLVED; server V5 validates the production App's direct-import route/breadcrumb contract, while Windows reconciliation V4 validates the product lazy-import adaptation and unchanged provenance since `3251471`.
+- Final local validator: `final-validation-v3.out/.err` => `FINAL_LOCAL_VALIDATION_CHAIN=PASS`, stderr 0.
+- Sealed V3 disposition: 15/17 raw exact + AddressWidget normalized exact + App product-shell contract adaptation; never report 17/17 raw-byte identity.
+
+### APEX_USERS_PROFILE_REMOTE_PRODUCT_REF_DIVERGED_AFTER_VALIDATION_20260928
+- Date: 2026-09-28
+- Class: Concurrent product-authority branch divergence after Users/Profile validation.
+- Symptom: verified Users/Profile candidate `5a83ed3f143c43937318710ad74754aa2e364c3e` could not fast-forward `origin/integration/theme-upgrade-20260728`; remote product had independently advanced to `407cb1dcff8ea992576784658d09ba80202c4302`.
+- Evidence: ancestry gate exited 1; merge base is `3d1921db9e5c91206a26224820ae8d21071a3a26`; remote-only commits are `5bb600c` and `407cb1d` (Article SEO V4).
+- Impact: direct product-ref update was BLOCKED; force push prohibited.
+- Guard: reconcile the complete verified Users/Profile chain onto the current remote product head in a fresh isolated worktree, preserve Article SEO V4 semantics, rerun both feature regressions plus full typecheck/build gates, then publish only a normal fast-forward.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_FAILURE_REGISTER_APPEND_MERGE_CONFLICT_20260928
+- Date: 2026-09-28
+- Class: Documentation/evidence merge conflict caused by concurrent append-only failure-register histories.
+- Symptom: merging verified Users/Profile `5a83ed3` into Article SEO V4 reconciliation produced a single conflict in `pma/feature-gates/04_PROGRAM_FAILURE_AND_REGRESSION_REGISTER.md`; no application source path conflicted.
+- Impact: merge commit remained BLOCKED until the complete verified Users/Profile register plus local reconciliation records were preserved.
+- Guard: resolve from the complete verified Users/Profile register, append both local reconciliation records, run `git diff --check`, verify no conflict markers remain, then rerun the full combined validation chain before committing the merge.
+- Status: ACTIVE
+
+### Recurrence — APEX_USERS_PROFILE_CMD_CHAIN_EXIT0_MISSING_EXTRACTION_TOKEN_20260928
+- Date: 2026-09-28
+- Symptom: combined `cmd.exe` install wrapper exited 0 after `pnpm --version`, but created no `pnpm-install.*` or tracked-diff evidence and emitted no `OFFLINE_FROZEN_INSTALL=PASS` token.
+- Root class: left-to-right `&&` / `||` command-chain control flow allowed later stages to be skipped without propagating failure.
+- Impact: that install invocation is UNVERIFIED and cannot support any dependency/bootstrap PASS claim.
+- Guard: execute version, install, and tracked-diff gates as separate native processes; require each expected file/token and exit code independently before continuing.
+- Status: ACTIVE_RECURRENCE
+
+### APEX_USERS_PROFILE_REMOTE_RECONCILE_BETTER_SQLITE3_NODE24_PYTHON_INSTALL_BLOCK_20260928
+- Date: 2026-09-28
+- Class: Fresh isolated-worktree dependency bootstrap / native addon build boundary.
+- Symptom: `pnpm install --offline --frozen-lockfile` reused/linked all 1061 locked packages with zero downloads, then exited 1 in `better-sqlite3@11.10.0` postinstall because Node 24.16.0 has no matching Windows prebuilt binary and node-gyp cannot locate Python.
+- Evidence: `validation/pnpm-install.out` records `No prebuilt binaries found`, `Could not find any Python installation to use`, and `ELIFECYCLE ... exit code 1`; `validation/pnpm-install.err` is empty.
+- Impact: combined Article SEO V4 + Users/Profile validation remains BLOCKED until the exact Node 24 consumer can load a proven native binary and pass an in-memory SQLite functional probe.
+- Guard: do not install or invent a new machine toolchain merely to close this feature merge. Reuse the already-proven offline `--ignore-scripts` dependency-link path, then bind any reused native addon to exact package version, Node executable/version/ABI, package root, native binary hash/count, and an actual `:memory:` query probe. Generic rebuild or copied-file presence alone is not proof.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_PRIOR_NATIVE_ADDON_DONOR_STATE_NOT_REPRODUCIBLE_20260928
+- Date: 2026-09-28
+- Class: Mutable prior-worktree native-addon evidence cannot serve as current binary provenance.
+- Symptom: the previously validated Users/Profile worktree now resolves `better-sqlite3@12.11.1` under `C:\Program Files\nodejs\node.exe` v24.16.0 / ABI 137, has no discoverable native binding, and its `:memory:` construction fails with `Could not locate the bindings file`.
+- Contrast: the current reconciliation lock/install failure is for `better-sqlite3@11.10.0`; therefore the prior mutable worktree is also the wrong package version for binary reuse.
+- Impact: prior `BETTER_SQLITE3_RUNTIME=PASS` text remains historical evidence only and cannot authorize copying a binary from the current state of that worktree.
+- Guard: search read-only for an existing exact `better-sqlite3@11.10.0` native binary, prove package version + Node v24.16.0 + ABI 137 + binary hash/count + real `:memory:` query at the donor before reuse. If no exact reproducible donor exists, keep combined validation BLOCKED; do not install a new machine toolchain or use a different package version.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_PY_LAUNCHER_STALE_PYTHON312_PATH_20260928
+- Date: 2026-09-28
+- Class: Existing-toolchain discovery / stale Python launcher registration.
+- Symptom: `py -0p` advertised Python 3.12 at `C:\Users\User\AppData\Local\Programs\Python\Python312\python.exe`, but direct execution returned `The system cannot find the path specified.`
+- Impact: that interpreter is not a valid node-gyp recovery source and must not be cited as installed-toolchain evidence.
+- Guard: verify each advertised interpreter by direct executable invocation before passing it to node-gyp. Prefer an already-present repository/runtime interpreter only after exact path + version proof; do not install Python for this merge.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_REPO_PYTHON311_TOOL_PATH_STALE_20260928
+- Date: 2026-09-28
+- Class: Repository-local tool inventory references missing Python executable.
+- Symptom: direct execution of `C:\xampp\htdocs\projectx\watanybot\.tools\python-3.11.9\python.exe --version` returned `The system cannot find the path specified.`
+- Impact: repository-local Python 3.11.9 cannot be used for node-gyp recovery and must not be treated as an available toolchain.
+- Guard: require direct executable/version proof for any tool path before node-gyp use; continue only with an existing verified interpreter, otherwise keep native-addon validation BLOCKED.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_PY_LAUNCHER_STALE_PYTHON314_PATH_20260928
+- Date: 2026-09-28
+- Class: Python launcher advertises missing 3.14 executable.
+- Symptom: `py -3.14 --version` failed because `C:\Users\User\AppData\Local\Python\pythoncore-3.14-64\python.exe` does not exist.
+- Impact: launcher-managed Python 3.14 cannot be used as node-gyp recovery evidence.
+- Guard: keep discovery fail-closed; only directly executable existing interpreters are eligible, and no new Python/toolchain installation is permitted for this merge.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_NATIVE_REBUILD_UNPLANNED_NODE_HEADER_NETWORK_FETCH_20260928
+- Date: 2026-09-28
+- Class: Native-addon recovery unexpectedly crossed the offline validation boundary.
+- Symptom: after explicit existing Python 3.14.3 recovery, `node-gyp@9.4.1` for `better-sqlite3@11.10.0` automatically issued HTTP GET requests to `nodejs.org` for Node v24.16.0 headers, SHASUMS256, and win-x64/node.lib.
+- Impact: this rebuild invocation cannot serve as the authoritative offline/frozen dependency proof even if compilation completes; external retrieval was not part of the intended bounded recovery.
+- Guard: preserve this run as diagnostic only. Any authoritative rebuild must use already-cached exact Node v24.16.0 headers/node.lib with network-disabled or no-fetch behavior, then prove the resulting addon by package/version + Node ABI + binary hash/count + real in-memory SQLite query. If an offline rebuild cannot be demonstrated, keep native validation BLOCKED.
+- Status: ACTIVE
+
+### APEX_USERS_PROFILE_NODE_GYP94_PYTHON314_DISTUTILS_INCOMPATIBILITY_20260928
+- Date: 2026-09-28
+- Class: Existing Python interpreter incompatible with repository node-gyp runtime.
+- Symptom: `better-sqlite3@11.10.0` rebuild using verified existing Python 3.14.3 reached node-gyp 9.4.1 configuration and existing VS2022 BuildTools, then failed with `ModuleNotFoundError: No module named 'distutils'` from node-gyp's bundled gyp input layer.
+- Evidence: `validation/better-sqlite3-1110-rebuild.out`; node v24.16.0, node-gyp 9.4.1, Python 3.14.3, VS2022 17.14 detected, final exit 1; stderr file empty.
+- Impact: Python 3.14.3 is not a valid build interpreter for this locked node-gyp version. The diagnostic rebuild remains non-authoritative and failed.
+- Guard: do not install setuptools, Python, or upgrade node-gyp for this merge. Use only an already-existing directly executable Python version compatible with node-gyp 9.4.1 (prefer <=3.11), then repeat the exact package rebuild and runtime proof. If none exists, keep the native-addon gate BLOCKED.
+- Status: ACTIVE
+
+### APEX_NODE_GYP_9_PYTHON_314_DISTUTILS_REMOVAL_INCOMPATIBILITY
+- Status: ACTIVE GUARD / registered 2026-09-28 during product-authority reconciliation.
+- Trigger: `better-sqlite3@11.10.0` rebuild under Node 24.16.0 reached node-gyp 9.4.1 with verified uv CPython 3.14.3, then failed importing `distutils.version.StrictVersion` because `distutils` is absent.
+- Evidence: `validation\better-sqlite3-1110-rebuild.out`; process exit 1; stderr capture empty; stdout contains `ModuleNotFoundError: No module named 'distutils'` and `gyp ERR! not ok`.
+- Guard: do not retry node-gyp 9.4.1 with Python 3.12+ as a repair. A replacement must materially change the toolchain boundary (for example an already-installed compatible Python <=3.11 or an already-installed newer node-gyp that supports the verified Python) and must be re-proved end-to-end.
+- Closeout rule: native addon remains BLOCKED until rebuild exit 0 plus exact Node 24.16.0 / ABI 137 load and in-memory SQLite runtime proof are captured.
+
+### APEX_CMD_NODE_E_NESTED_QUOTING_PROBE_DEFECT
+- Status: ACTIVE GUARD / registered 2026-09-28 during native-toolchain discovery.
+- Trigger: a `cmd /d /s /c` wrapper containing nested `node -e` quoting reached Node as an unterminated string and exited before candidate inspection.
+- Evidence: process output shows `[eval]:1`, `Unterminated string constant`, `SyntaxError: Invalid or unexpected token` under Node v24.16.0.
+- Guard: do not use that nested wrapper pattern for toolchain authority. Probe each candidate path independently with a single simple command and require explicit output plus exit 0.
+
+### APEX_NODE_GYP_12_CACHED_NODE_LIB_LAYOUT_MISMATCH
+- Status: ACTIVE GUARD / registered 2026-09-28 during native-addon recovery.
+- Trigger: node-gyp 12.3.0 with verified Python 3.14.3 successfully configured and compiled `better-sqlite3@11.10.0`, but MSBuild failed linking because it expected `C:\Users\User\AppData\Local\node-gyp\Cache\24.16.0\Release\node.lib` and that path was absent.
+- Evidence: `validation\better-sqlite3-1110-node-gyp12.out` contains `LNK1104: cannot open file ...\Release\node.lib`; paired stderr contains node-gyp 12.3.0, Node 24.16.0, Python 3.14.3, and final `gyp ERR! not ok`; process exit 1.
+- Guard: do not retry unchanged. Inspect the existing Node 24.16.0 cache layout and provenance first. Any repair may use only an already-present matching `node.lib` or a deterministic locally derived layout fix, followed by a full rebuild and runtime proof.
+
+### Native dependency recovery resolution — 2026-09-28
+- `better-sqlite3@11.10.0` recovery used already-installed npm node-gyp 12.3.0 + verified uv CPython 3.14.3 + existing Node 24.16.0 download cache in `--devdir` mode; no new toolchain was installed.
+- Rebuild process exit: 0. Captured stderr ends with `gyp info ok`; captured rebuild output contains no HTTP/download fetch lines.
+- Runtime proof: Node v24.16.0; ABI 137; package 11.10.0; in-memory SQLite result 42; token `BETTER_SQLITE3_11_10_RUNTIME=PASS`; process exit 0; runtime stderr empty.
+- Native binary SHA-256: `694df9bf0d00d63458b7b03dad75d44a1993060080c8ae0693f03359ea7eb8b9`.
+- Disposition: the Python/distutils and cached-node-lib-layout blockers are RESOLVED for this worktree by the materially changed node-gyp 12 + native `--devdir` cache path. Permanent guards remain active against retrying the failed node-gyp 9.4.1/Python 3.14 or `--nodedir` cache-layout combinations.
+
+### APEX_ISOLATED_WORKTREE_KB_NODES_RUNTIME_FIXTURE_MISSING_STDERR
+- Status: ACTIVE GUARD / registered 2026-09-28 during combined product preservation validation.
+- Trigger: fresh salary regression returned exit 0 and 23/23 tests, but stderr was nonempty because `kb_studio\runtime\exports\watanybot\kb_nodes.db` was absent in the isolated reconciliation worktree.
+- Evidence: `validation\combined-salary-23.err` contains `[kb-nodes] DB not found: ...\kb_nodes.db`; stdout still reports 23 passed tests.
+- Classification: validation-environment/runtime-fixture defect, not salary assertion failure. Under APEX fail-closed rules the run is not acceptable as PASS while stderr is present.
+- Guard: do not suppress stderr or weaken initialization. Restore only a proven existing WatanyBot `kb_nodes.db` fixture into the ignored runtime location, verify donor hash/provenance and that no tracked source changes occur, then rerun the full 23-test salary gate and require exit 0 + 23/23 + empty stderr.
+
+### APEX_KB_NODES_FILENAME_DONOR_MUST_PROVE_NODES_SCHEMA
+- Status: ACTIVE GUARD / registered 2026-09-28 during isolated runtime-fixture recovery.
+- Trigger: the first donor-parity verifier assumed every file named `kb_nodes.db` carried the runtime `nodes` relation; the first candidate opened successfully under better-sqlite3 12.11.1 but `SELECT COUNT(*) FROM nodes` failed with `SQLITE_ERROR: no such table: nodes`.
+- Evidence: `validation\restore-kb-nodes-fixture.err`; process exit 1; no success token emitted.
+- Classification: donor-selection/schema-assumption defect. Filename/path alone is not runtime authority.
+- Guard: do not copy any donor until a read-only census proves SHA-256, SQLite table inventory, required `nodes` table/columns, and row count. A verifier must inspect schema before issuing relation-specific queries and fail closed per candidate rather than aborting the whole census on the first schema mismatch.
+
+### APEX_KB_NODES_GATEWAY_FILENAME_CANDIDATES_ARE_ZERO_BYTE_PLACEHOLDERS
+- Status: ACTIVE GUARD / registered 2026-09-28 during runtime-fixture census.
+- Trigger: read-only census of all nine discovered `apps\gateway-api\kb_nodes.db` candidates found each file size 0, SHA-256 `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`, no tables, and no `nodes` relation.
+- Evidence: `validation\census-kb-nodes-candidates.out`; `VALID_NODE_DB_COUNT=0`; census process exit 6; census stderr empty.
+- Guard: treat Gateway-local files with that empty-file hash as placeholders only. Runtime fixture recovery must search the canonical/export authority and require nonzero SQLite schema + `nodes` relation + columns + row count before copy.
+
+### APEX_ISOLATED_SALARY_GATE_MUST_DISABLE_UNRELATED_MISSING_KB_NODES_SUBSYSTEM
+- Status: ACTIVE GUARD / registered 2026-09-28 after canonical fixture census.
+- Trigger: no populated `kb_studio\runtime\exports\watanybot\kb_nodes.db` exists in canonical or evidence worktrees; all discovered Gateway-local names are zero-byte placeholders. The repository explicitly supports `DISABLE_KB_NODES=true`, and `salary.test.ts` contains no KB-nodes/KB_NODES/DISABLE_KB contract references.
+- Classification: isolated validation environment must not initialize an unrelated optional KB-nodes subsystem when its runtime export is unavailable.
+- Approved recovery boundary: for the salary preservation test only, set `DISABLE_KB_NODES=true` in the child process environment. Do not change source, do not treat this as production KB-nodes proof, and require stdout to show `kb_nodes_fts_disabled`, exactly 23/23 salary tests, process exit 0, and empty stderr.
+- Production/runtime KB-nodes readiness remains a separate gate and is not inferred from this test-harness setting.
+
+### APEX_PRESERVATION_VALIDATION_TEST_FILE_NOT_TRACKED_IN_CURRENT_PRODUCT_TREE
+- Status: ACTIVE GUARD / registered 2026-09-28 during chat preservation validation.
+- Trigger: `src/pages/MessagesPage.receipt-regression.validation.test.ts` was used in prior chat-integration evidence but is absent from the current reconciled product tree; Vitest exited 1 with `No test files found` before assertions ran.
+- Evidence: `validation\combined-messages-receipt-2.out/.err`; process exit 1; stderr identifies the missing filter and no matching test file.
+- Classification: validation-harness availability defect, not a MessagesPage functional assertion failure.
+- Guard: do not interpret the missing harness as product failure or silently drop the receipt contract. Recover the exact prior two-test harness bytes, prove their prior evidence provenance, run an equivalent isolated harness against the current MessagesPage bytes, and ensure any temporary harness materialization is untracked/removed before commit. Require 2/2, exit 0, and empty stderr.
+
+### APEX_PRIOR_RECEIPT_VALIDATION_OUTPUT_WITHOUT_HARNESS_BYTES_IS_NOT_REPRODUCIBLE_AUTHORITY
+- Status: ACTIVE GUARD / registered 2026-09-28 during chat preservation recovery.
+- Trigger: prior evidence `messages-receipt-validation.out` records 2/2 receipt tests from the chat integration worktree, but the referenced `MessagesPage.receipt-regression.validation.test.ts` file is no longer present at that recorded worktree path.
+- Classification: evidence reproducibility defect. Historical test output proves a past run but does not by itself preserve the exact harness source bytes needed for a current replay.
+- Guard: search all preserved evidence/worktrees for the exact filename/content before reconstructing anything. If no original harness bytes survive, any replacement must be derived transparently from preserved MessagesPage behavior/contracts and current source, saved as a new validation artifact outside tracked product source, and must not be mislabeled as byte-identical to the historical harness.
+
+### APEX_PRIOR_DIRECT_CONVERSATION_VALIDATION_HARNESS_NOT_TRACKED
+- Status: ACTIVE GUARD / registered 2026-09-28 during chat preservation validation.
+- Trigger: historical evidence records `community-direct-routes.validation.test.ts` as a 1-test direct-conversation validation, but that file is absent from the current product tree; Vitest exited 1 with `No test files found` before assertions ran.
+- Evidence: `validation\combined-community-direct-1.out/.err`; process exit 1.
+- Classification: validation-harness availability defect, not a direct-messaging assertion failure.
+- Guard: do not drop the direct-conversation contract. Search tracked/current tests and preserved evidence for an equivalent authoritative contract first. If the historical harness bytes are unavailable, construct a new explicitly labeled external validation harness from current route/storage contracts and historical expected behavior, keep it outside tracked product source or remove any temporary materialization, and require functional success with exit 0 and empty stderr.
+
+### Combined preservation recovery resolutions — 2026-09-28
+- Gateway direct `better-sqlite3@12.11.1` was rebuilt with already-installed node-gyp 12.3.0 + uv Python 3.14.3 + existing Node 24.16.0 `--devdir` cache; process exit 0, `gyp info ok`, no HTTP fetch lines. Exact runtime probe: Node v24.16.0, ABI 137, package 12.11.1, SQLite result 42, token `BETTER_SQLITE3_12_11_RUNTIME=PASS`, exit 0, empty runtime stderr. Native binary SHA-256: `253d17716445d4c055210cc4724175396c10e9f4cea3f54c49ca264bea556049`.
+- Salary preservation rerun used repository-owned `DISABLE_KB_NODES=true` only for the isolated salary gate because no populated KB-nodes runtime export exists locally; stdout records `kb_nodes_fts_disabled`, 23/23 tests passed, process exit 0, stderr empty.
+- Gateway chat/community preservation: 8/8 files, 96/96 tests, process exit 0, stderr empty.
+- Web chat preservation: 2/2 files, 8/8 tests, process exit 0, stderr empty.
+- Historical receipt harness bytes were unavailable, so a new explicitly named temporary APEX harness tested current `mergeDirectMessages` monotonic receipt behavior: 2/2 tests, exit 0, stderr empty. The temporary file was deleted after execution and is not product authority.
+- Historical direct-conversation harness bytes were unavailable, so a new explicitly named temporary APEX route harness tested authenticated create/reuse/list behavior for `/api/community/direct`: 1/1 test, exit 0, stderr empty. The temporary file was deleted after execution and is not product authority.
+
+### APEX_CMD_FIND_ZERO_MATCH_EXIT1_CHAIN_SHORT_CIRCUIT_20260928
+- Status: ACTIVE GUARD / registered 2026-09-28 during final source-freeze census.
+- Trigger: `git diff --name-only | find /c /v ""` correctly printed `0` for an empty path set, but Windows `find` returned exit 1; an `&&` chain therefore skipped the following conflict-count command and the wrapper exited 1.
+- Classification: validation-wrapper control-flow defect only; no Git/source mutation occurred and the zero path count itself is not failure evidence.
+- Guard: never chain empty-set cardinality probes through `find` when its exit code controls later gates. Run the authoritative Git command independently and accept empty stdout only with Git exit 0; compute display counts separately without affecting control flow.
+
+### APEX_USERS_PROFILE_REMOTE_RECONCILE_REPORT_PACKAGE_LATE_MATERIALIZATION_20260928
+- Status: ACTIVE PROCESS GUARD / registered 2026-09-28 at final closeout.
+- Trigger: the reconciliation evidence root contained `worktree`, `validation`, and helper scripts but no mandatory APEX report package before the resumed source-freeze, merge commit, and non-force Git publication were executed.
+- Impact: feature validation, merge identity, push exit, and remote-ref parity remain independently evidenced, but this execution violated the APEX report-lifecycle ordering contract and must not be described as process-clean.
+- Guard: every future resume must precreate `FINAL_REPORT.md`, `summary.json`, `FINAL_STATUS.txt`, progress/checkpoint/CSV ledgers, logs, stage reports, and manifest scaffolding before substantive Git or deployment mutation; later sealing may finalize them but cannot substitute for precreation.
+- Current recovery: create and freeze the complete closeout package now, preserve this late-materialization fact in warnings/failures, and report the overall run as successful publication with a registered reporting-order deviation rather than an unqualified process PASS.
+
+### APEX_WINDOWS_AUTHORITY_DEVICE_OFFLINE_BLOCKER_20260929
+- Status: ACTIVE PROCESS GUARD / registered 2026-09-29 during CMS/CRM/Admin convergence resume.
+- Trigger: the authorized Windows authority device `WIN-J8RN490L6JB` was offline, so the convergence run could not create the mandatory report package or safely mutate Git state on the canonical machine.
+- Classification: execution-environment connectivity blocker, not a product/source defect.
+- Guard: do not substitute the Redmi, production server, or another host for canonical WatanyBot repository mutation. Resume only after the authorized Windows device is online and responsive; then precreate the complete APEX report package before substantive execution.
+- Recovery evidence: device listed online and answered ping on 2026-09-29 before this resumed run; no repository mutation occurred during the offline interval.
+
+### APEX_NATIVE_SKILL_DECLARED_SOURCE_MISSING_20260929
+- Status: ACTIVE PROCESS GUARD / registered 2026-09-29 during CMS/CRM/Admin convergence precheck.
+- Trigger: `.github\skills\apex-ps1\SKILL.md` declares `APEX_NATIVE_SKILL_SOURCE=C:\xampp\htdocs\projectx\watanybot\.pma\skills\apex-ps1\SKILL.md`, but the declared `.pma` file is absent on disk; the first Windows PowerShell 5.1 precheck terminated with exit 1 before any Git mutation.
+- Classification: stale/missing secondary native-source pointer in the repository APEX shim; not evidence of a product-tree defect. The `.github` APEX skill was readable and its mandatory convergence contract was applied.
+- Guard: never claim the declared native-source SHA is currently verified when the declared file is absent. Treat the loaded `.github` skill plus project-level APEX mandate as current enforcement, preserve the discrepancy as an explicit process warning, and do not fabricate or silently recreate the missing native skill file during feature convergence.
+- Recovery boundary: continue only after this class is registered; no retry may assert `APEX_NATIVE_SKILL_SOURCE_SHA256` verification unless the declared source is actually restored and independently hashed.
+
+### APEX_REMOTE_COMMAND_RESPONSE_TIMEOUT_AMBIGUOUS_MUTATION_20260929
+- Status: ACTIVE PROCESS GUARD / registered 2026-09-29 during convergence governance commit.
+- Trigger: Desktop Commander returned a transport response timeout while a PowerShell/Git add-and-commit sequence could have produced side effects.
+- Classification: remote-execution observability defect; mutation state is UNKNOWN until independently inspected.
+- Guard: never retry a timed-out mutation blindly. First verify device connectivity, branch HEAD, worktree/index state, and last commit read-only; only retry after proving whether the prior command completed.
+- Recovery evidence: follow-up read-only proof showed HEAD remained `7f927fabd92d519e779f4a79bd92ee4257b8b3ae`, no governance commit existed, and the regression register remained as a working-tree modification. Registration of this class is the required state change before retry.
+
+### APEX_POWERSHELL51_GIT_LINE_ENDING_WARNING_NATIVE_STDERR_TERMINATION_20260929
+- Status: ACTIVE PROCESS GUARD / registered 2026-09-29 during convergence governance staging.
+- Trigger: Windows PowerShell 5.1 with `$ErrorActionPreference='Stop'` promoted Git's `LF will be replaced by CRLF` advisory emitted during `git add` into a terminating `NativeCommandError`, even though Git staged the intended path.
+- Classification: native-process wrapper/line-ending advisory handling defect, not a source-content failure. Read-only verification proved HEAD unchanged and exactly the regression-register path staged.
+- Guard: do not retry the same PowerShell native invocation unchanged and do not globally alter repository line-ending configuration. For this add boundary, capture native stdout/stderr explicitly and invoke Git with command-scoped `-c core.safecrlf=false`; require native exit 0, expected staged-path cardinality, and empty captured stderr before commit.
+- Recovery boundary: this class registration plus the changed captured-native runner is the required state change before retry.
+
+### APEX_DOTNET_PROCESS_GIT_ADD_EXIT1_EMPTY_STDERR_20260929
+- Status: ACTIVE PROCESS GUARD / registered 2026-09-29 during governance staging retry.
+- Trigger: the first captured `.NET ProcessStartInfo` Git runner invoked `git -c core.safecrlf=false -C <worktree> add -- <register>` and returned exit 1 with empty captured stderr.
+- Classification: native-runner/argument-boundary defect; not a source or Git-index failure. Follow-up read-only proof showed the register remained both staged and unstaged (`MM`) because the newly appended guard had not been staged.
+- Guard: do not retry the same argument string. Change the process boundary by setting `ProcessStartInfo.WorkingDirectory` to the worktree and remove `-C` from Git arguments; capture exit/stdout/stderr and require exit 0 plus exact one-path staged scope.
+- Recovery boundary: this class registration and changed working-directory runner are required before retry.
+
+### APEX_POWERSHELL_ARGS_AUTOMATIC_VARIABLE_COLLISION_NATIVE_RUNNER_20260929
+- Status: ACTIVE PROCESS GUARD / registered 2026-09-29 during governance staging retry.
+- Trigger: the `.NET ProcessStartInfo` helper declared a function parameter named `$args`, colliding with PowerShell's automatic `$args` variable. The intended Git argument string was therefore not reliably passed and bare `git.exe` behavior produced exit 1 with empty stderr.
+- Classification: PowerShell wrapper/interpolation defect, not a Git repository or source defect.
+- Guard: never use `$args` as a named helper parameter in PowerShell native-process wrappers. Use an unambiguous parameter such as `$gitArgs`, persist the exact argument string when relevant, and require native exit 0 plus expected stdout/scope and empty stderr.
+- Recovery boundary: this class registration and renaming the helper parameter from `$args` to `$gitArgs` is the required state-changing wrapper repair before retry.
+
+### APEX_PROCESSSTARTINFO_GIT_COMMIT_MESSAGE_QUOTING_PATHSPEC_20260929
+- Status: ACTIVE PROCESS GUARD / registered 2026-09-29 during convergence governance commit.
+- Trigger: the first `ProcessStartInfo.Arguments` commit attempt embedded a quoted multi-word `-m` message inside nested PowerShell/cmd quoting; Git parsed message words as pathspecs and exited 1 with explicit pathspec errors.
+- Classification: native-process quoting/interpolation defect; no commit was created. Read-only verification proved HEAD unchanged and the intended regression-register path remained staged.
+- Guard: avoid nested inline commit-message quoting in this execution chain. Persist the exact commit message to an external UTF-8 text file and invoke `git commit -F <message-file>` through the captured native runner; require exit 0, empty stderr, expected parent, and clean worktree.
+- Recovery boundary: this class registration plus the `-F` message-file strategy is required before retry.
+
+### APEX_CANONICAL_WORKTREE_AGGREGATE_ADMIN_GATEWAY_DIFF_FAILED_20260929
+- Status: ACTIVE PROCESS GUARD / registered 2026-09-29 during CMS/CRM/Admin source-relationship census.
+- Trigger: the captured native runner returned a non-accepted result while attempting one aggregate `git diff --name-status <product-base> -- apps/web-admin apps/gateway-api` against the divergent canonical dirty workspace; the first wrapper terminated before persisting the native exit/stderr details.
+- Classification: source-census wrapper failure pending diagnostic; not evidence that either app tree is invalid. Earlier read-only proof established canonical HEAD is not a descendant of product authority and the two histories diverge.
+- Guard: do not repeat the aggregate diff unchanged or infer source failure. First run an explicitly diagnostic read-only probe that persists native exit, stdout, and stderr; then choose a narrower per-tree/per-path census if required.
+- Recovery boundary: this class registration precedes any replacement census command.
+
+### APEX_INLINE_PS51_JOIN_NEWLINE_NESTED_QUOTING_PARSER_DEFECT_20260929
+- Status: ACTIVE PROCESS GUARD / registered 2026-09-29 during convergence checkpointing.
+- Trigger: an inline Windows PowerShell 5.1 command embedded `($status -join "`n")` inside the outer remote command string; nested quoting removed the string operand and the PowerShell parser failed before execution with `ExpectedValueExpression` / unexpected `` `n `` tokens.
+- Classification: inline PowerShell quoting/parser defect; no repository or report mutation occurred.
+- Guard: do not embed quoted newline join expressions inside nested remote `-Command` strings. Prefer direct collection cardinality/item comparisons or a precreated script file with independent parser proof when multiline expression logic is required.
+- Recovery boundary: register this class first, then retry using direct array count and exact element comparisons without `-join`.
+
+### APEX_INLINE_PS51_TYPESCRIPT_QUOTED_LITERAL_STRIPPED_APP_EXCLUSION_20260929
+- Status: ACTIVE PROCESS GUARD / registered 2026-09-29 during bounded frontend extraction.
+- Trigger: an inline Windows PowerShell 5.1 command embedded exact TypeScript source lines containing double-quoted import/route literals inside the outer remote `-Command` string; nested quoting stripped those quotes and the exact exclusion matcher could not find the canonical Middle East Security import line.
+- Classification: inline PowerShell quoting/interpolation defect. The controller stopped before writing `App.tsx` or `styles.css`; the preceding 16 exact canonical file copies had already completed with source/destination SHA-256 equality.
+- Guard: do not embed quoted TypeScript source literals inside nested PowerShell command strings. Use line-oriented predicates keyed by quote-free stable substrings, verify exactly one excluded import/meta/route line each, and write strict UTF-8 bytes only after cardinality proof.
+- Recovery boundary: register this class, inspect the partial worktree state read-only, then resume from the completed exact-copy boundary without recopying or broad-resetting the worktree.
+
+### APEX_WEB_ADMIN_TYPECHECK_TRANSITIVE_WEB_USER_PACKAGE_LOCAL_DEPENDENCY_BINDING_MISSING_20260929
+- Status: ACTIVE PROCESS GUARD / registered 2026-09-29 during bounded frontend validation.
+- Trigger: isolated `web-admin` typecheck exited 2 with empty stderr after traversing workspace-linked `apps/web-user` sources; those sources could not resolve `react`, `react-router-dom`, `@watany/shared`, or `@watany/types` because the isolated worktree had root and `web-admin` dependency junctions but no `web-user` package-local `node_modules` binding.
+- Classification: isolated validation dependency-topology defect, not a source/type failure in the 18 CMS/CRM/Admin candidate paths. The failing diagnostics were confined to transitive `../web-user/src/**` sources and missing package resolution.
+- Guard: when a workspace package's source is pulled into TypeScript validation through aliases/project paths, reproduce that package's canonical package-local dependency topology with a validation-only junction rather than installing/copying dependencies or altering tsconfig exclusions. Re-run the full typecheck after the binding and require exit 0 plus empty stderr.
+- Recovery boundary: register this class first; then bind `apps/web-user/node_modules` to the canonical package-local dependency directory, prove the junction target, and rerun the complete web-admin typecheck unchanged.
+
+### APEX_REMOTE_READ_FILE_TIMEOUT_NO_SIDE_EFFECT_20260929
+- Status: ACTIVE PROCESS GUARD / registered 2026-09-29 during focused Gateway validation setup.
+- Trigger: Desktop Commander `read_file` timed out while reading isolated `apps/gateway-api/package.json` after web-admin build PASS.
+- Classification: remote read observability/transport timeout with no possible repository side effect; distinct from ambiguous mutation timeouts.
+- Guard: do not infer file absence or content failure from a remote read timeout and do not repeat the identical read blindly. Register the event, then switch to a captured local read/process path with explicit exit/output evidence.
+- Recovery boundary: this registration is the state change before replacement retrieval; repository feature bytes remain unchanged by the failed read.
+
+- `APEX_NATIVE_RUNNER_SEQUENTIAL_STREAM_READ_NONTERMINATION_20260929` - During CMS/CRM/Admin convergence focused Gateway validation, a PowerShell 5.1 `ProcessStartInfo` runner using sequential `StandardOutput.ReadToEnd()` then `StandardError.ReadToEnd()` remained non-terminating for >100 seconds; the Vitest child CPU stopped changing and no finalized evidence files were produced. Guard: classify as harness/stream-capture failure, terminate the affected process tree only after state proof, then rerun unchanged tests with independent file-backed stdout/stderr redirection plus an explicit timeout and exit-code gate. Never classify the application tests from a non-terminating capture harness.
+
+- `APEX_VALIDATION_EVIDENCE_SUBDIRECTORY_NOT_PRECREATED_20260929` - During resumed CMS/CRM/Admin convergence, the mandatory report package had precreated stage/report files but omitted the nested `validation\` evidence directory. A file-backed focused-test runner reached child completion but failed when persisting its exit-code artifact with `DirectoryNotFoundException`; therefore that run is not accepted as test proof. Guard: precreate every nested evidence directory referenced by validation commands before execution, verify directory existence, then rerun the exact unchanged validation with fresh file-backed stdout/stderr/exit artifacts.
+
+- `APEX_START_PROCESS_TIMED_WAIT_EXITCODE_BLANK_FALSE_ZERO_WRAPPER_20260929` - In CMS/CRM/Admin convergence focused Gateway validation, Windows PowerShell 5.1 `Start-Process -PassThru` followed by `WaitForExit(timeout)` and `Refresh()` returned a blank `ExitCode` even though Vitest output proved failures; the enclosing wrapper therefore completed with process exit 0. Guard: never use a blank `ExitCode` as success. After timed wait returns true, call parameterless `WaitForExit()`, require a numeric `ExitCode`, and independently parse the expected Vitest success summary; blank/non-numeric exit state is a harness failure.
+
+- `APEX_ADMIN_OWNER_TRACKED_TESTS_PRE_SESSION_HARDENING_AUTH_FIXTURE_DRIFT_20260929` - The CMS/CRM/Admin focused owner run found 10 failures across four tracked tests because those tests mint role-only JWTs or call protected admin routes without the live session binding now required by `auth-middleware.ts`. Current administrative auth calls `resolveFreshAdminUser()` and requires both an active user and non-expired `sid`; the observed 401 responses therefore match the hardened runtime boundary rather than proving owner-route regressions. Guard: do not weaken production auth or patch only expected status codes. Preserve the stale-test evidence, then prove the current contract with a temporary APEX harness that supplies valid active-user/session resolution, exercises the same owner endpoints and negative-auth behavior, and is deleted before commit.
+
+- `APEX_POWERSHELL_HOST_COMSPEC_UNSET_NATIVE_CALL_BOUNDARY_20260929` - The repaired CMD-backed validation runner failed before native execution because the Desktop Commander Windows PowerShell host exposed an unset/invalid `$env:ComSpec`, making `& $env:ComSpec` an invalid call target. Guard: do not assume `ComSpec` exists in automation hosts; resolve and verify an explicit `C:\Windows\System32\cmd.exe` (or system-root-derived equivalent) before execution, and prove no child evidence files were created on the failed pre-execution attempt.
+
+- `APEX_VITEST_ANSI_ESCAPE_SUCCESS_TOKEN_FALSE_NEGATIVE_20260929` - The CMD-backed current-auth owner harness produced matching native/file exit 0, empty stderr, and a visible Vitest 1-file/5-test PASS summary, but the PowerShell success-token regex failed because ANSI SGR escape sequences interrupted the plain-text token stream. Guard: normalize captured stdout/stderr by removing ANSI escape sequences before success/failure-token classification; preserve raw streams separately and require both raw exit evidence and normalized expected summary tokens.
+
+- `APEX_POWERSHELL_GETCONTENT_RAW_ZERO_BYTE_RETURNS_NULL_NORMALIZER_DEFECT_20260929` - The ANSI-normalizing validation pass failed after child execution because Windows PowerShell 5.1 `Get-Content -Raw` returned `$null` for the zero-byte stderr file, and `[regex]::Replace()` rejects null input. Guard: normalize captured stream reads with explicit null-to-empty coalescing before regex/token scanning; zero-byte stderr remains valid empty evidence only after file existence and length are verified.
+
+- `APEX_DC_CMD_INLINE_QUOTED_PROGRAM_FILES_EXECUTABLE_SPLIT_20260929` - The CMS/CRM/Admin browser-proof parser preflight used an inline Desktop Commander `cmd` shell command with a quoted `C:\Program Files\nodejs\node.exe` executable, but the shell wrapper split the executable at `C:\Program`, so Node never ran. Guard: avoid inline `cmd` commands whose executable path contains spaces; materialize a dedicated `.cmd` wrapper with the executable quoted inside the file, then execute that wrapper and verify its explicit exit artifact/stdout/stderr.
+
+- `APEX_WEB_ADMIN_PREVIEW_BASE_ENV_DRIFT_FROM_BUILT_OPS_BASE_20260929` - The first Chromium route matrix returned 404 for all 13 `/ops/*` URLs even though `dist/index.html` referenced `/ops/assets/...`. Root cause: the production build was created with `VITE_BASE=/ops/`, but `vite preview` was launched without that environment value, causing `vite.config.ts` to fall back to `/superadmin/` for the preview server. Guard: runtime preview/deployment proof must bind the same base-path environment as the build, verify the preview root returns HTTP 200 before browser execution, and never classify all-route 404s as application failures until build/serve base parity is proven.
+
+- `APEX_PROCESS_STOP_TOCTOU_PID_ALREADY_EXITED_20260929` - During CMS/CRM/Admin browser-preview cleanup, the listener child was terminated successfully and the wrapper process then exited naturally between `Get-Process` and `Stop-Process`; `Stop-Process -ErrorAction Stop` therefore raised `NoProcessFoundForGivenId`. Guard: shutdown cleanup must treat an already-absent process as successful terminal state after independently proving the target listener/port is gone; re-query immediately before stop or use an idempotent stop helper, and never classify process absence after child termination as runtime failure.
+
+### APEX_ALL_RECENT_MIDDLE_EAST_SECURITY_FRONTEND_BACKEND_AUTHORITY_SPLIT_20260929
+- Date: 2026-09-29
+- Stage: all-recent WatanyBot authority audit.
+- Failure: current unified candidate `d52f5216e313b6b699f7a879f5960993be98a7f8` contains Middle East Security Web User application/admin/share surfaces that call `/api/jobs/middle-east-security/*`, `/api/superadmin/middle-east-security/*`, and `/api/share/jobs/middle-east-security/*`, while the corresponding Gateway survey owner directory is absent from that tree.
+- Guard: do not claim unified-baseline closure and do not patch only a missing import/route. Recover the complete latest proven MES owner set from an authority branch, reconcile migrations/routes/repository/share/address/types/tests plus frontend consumers against the current product tree, and rerun affected typecheck/build/runtime/auth/browser preservation gates.
+- Status: ACTIVE
+
+### APEX_CMD_INLINE_ERRORLEVEL_REDIRECT_EMPTY_EVIDENCE_20260929
+- Status: ACTIVE
+- Scope: Windows CMD evidence wrappers.
+- Failure: inline `echo %errorlevel%>path` produced `ECHO is on.` and an empty exit-code artifact, so parser/runtime success could not be proven from the persisted evidence.
+- Guard: capture `%ERRORLEVEL%` into a named variable in a dedicated `.cmd` wrapper, then emit the variable with redirection separated from the value; require a non-empty numeric exit artifact before interpreting the stage.
+- Repair rule: register first, replace the inline wrapper with a checked batch wrapper, rerun the same preflight on unchanged source bytes, and retain the failed evidence artifacts.
+
+### APEX_ISOLATED_WORKTREE_PNPM_JUNCTION_BIN_RESOLUTION_MISSING_20260929
+- Status: ACTIVE
+- Scope: isolated-worktree validation using donor `node_modules` junctions.
+- Failure: `pnpm --filter gateway-api typecheck` exited 1 because `tsc` was not resolved from the junctioned validation topology; MES tests did not run.
+- Evidence: `mes-gateway-typecheck.exit.txt=1`; stderr contains `'tsc' is not recognized as an internal or external command`.
+- Guard: do not interpret this as a source/type failure. Inspect donor `.bin`/pnpm link targets, prove the exact executable path, and use an explicit validated executable boundary or a complete validation-only junction topology before retrying.
+- Repair rule: validation-plane only; no product-source mutation; rerun typecheck and focused tests after concrete topology repair.
+
+### APEX_CMD_NESTED_REGEX_ALTERNATION_PIPE_INTERPRETATION_20260929
+- Status: ACTIVE
+- Scope: nested Windows CMD audit probes containing regex alternation (`|`).
+- Failure: a quoted `git grep -E` alternation was reinterpreted by the nested CMD boundary as pipeline syntax (`JobApplicationPreviousFillButton is not recognized`).
+- Guard: do not pass regex alternation through nested inline CMD command strings. Use a file-backed wrapper with escaped metacharacters or a non-shell content-search API.
+- Repair rule: no source mutation; preserve the failed probe evidence and rerun the audit through a metacharacter-safe search boundary.
+
+### APEX_ALL_RECENT_JOB_READINESS_BUILDER_FRONTEND_BACKEND_AUTHORITY_SPLIT_20260929
+- Status: ACTIVE
+- Scope: all-recent WatanyBot convergence audit, civilian jobs readiness/employer/builder workflow.
+- Failure: current Web User routes/pages actively call `/api/jobs/readiness`, `/api/jobs/employer-access/*`, `/api/jobs/candidates/search`, and `/api/jobs/builder/*`, but the current Gateway contains none of those route owners and no `ensureAndLinkJobApplicant` owner.
+- Authority evidence: `b8d06c1ae8c6381b7f62afac899402633a5c690e` contains the coherent `job-applicant-accounts.ts`, `job-readiness.routes.ts`, `job-template-builder.routes.ts`, corresponding migrations, server registration, and matching frontend contract.
+- Guard: do not treat the existing routed frontend as proof of capability. Require a coherent backend/schema owner or explicitly remove/retire the frontend contract.
+- Repair rule: preserve newer universal-job authority; adapt the missing b8 owner onto the current migration sequence, validate endpoint ownership/auth/schema compatibility, and rerun jobs plus preservation regressions before publication.
+
+### APEX_NODE_PATCHER_LF_ANCHOR_CRLF_SOURCE_MISMATCH_20260929
+- Status: ACTIVE
+- Scope: Node file-backed source patchers against Windows-checked-out TypeScript files.
+- Failure: parser preflight exited 0, but `patch-jobs-owner.mjs` runtime exited 1 with `SERVER_IMPORT_ANCHOR_MISSING` because the patcher encoded LF-only anchors while `server.ts` uses CRLF line endings.
+- Side effects: none; the patcher buffers all source changes in memory and performs writes only after all replacements/count assertions succeed, so failure occurred before any write.
+- Guard: source patchers must detect each target file's native EOL and construct anchors/replacements using that EOL, or use exact EOL-neutral structural matching with uniqueness assertions.
+- Repair rule: register first, verify expected symbols remain absent, make the complete patcher EOL-aware, rerun parser + runtime, and revalidate all binding counts.
+
+### APEX_JOB_SUCCESS_LINK_UNHANDLED_APPLICATIONS_SECTION_20260929
+- Status: DEFERRED_FOLLOW_UP
+- Scope: Web User job-application success navigation.
+- Failure: Middle East Security and Universal Job Application success views link to `/jobs?section=applications`, but the current `JobsPage.tsx` has no `applications` section/query handler; the canonical routed applications surface is `/jobs/applications` and it is authenticated.
+- Convergence disposition: do not broaden the current authority-reconciliation repair into navigation/auth UX redesign. Preserve the finding for a bounded follow-up that resolves anonymous tracking versus authenticated application history deliberately.
+- Guard: future success-link work must prove the destination exists for both authenticated and anonymous submissions and must not expose applications by phone or other weak identifiers.
+
+### APEX_WEB_USER_SHARED_PACKAGE_REACT_RESOLUTION_JUNCTION_MISSING_20260929
+- Status: ACTIVE_GUARD
+- Scope: isolated-worktree Web User typecheck/build validation.
+- Failure: TypeScript traversed shared workspace packages (`packages/address-network`, `packages/lebanese-administrative-authority`) but could not resolve `react` / `react/jsx-runtime`; Web User typecheck exited 2 with empty stderr before build.
+- Classification: validation dependency-topology defect, not product-source failure.
+- Required repair: prove canonical package/root dependency topology, add validation-only junction bindings needed for shared-package resolution, rerun unchanged typecheck/build, and remove junctions before commit.
+- Regression guard: never classify TS2307 shared-package dependency errors as application defects until isolated workspace package-level module-resolution topology is proven equivalent to canonical donor.
+
+## APEX_ISOLATED_WEB_USER_WORKSPACE_REACT_RESOLUTION_JUNCTION_MISSING_20260929
+- Status: ACTIVE / REGISTERED BEFORE REPAIR.
+- Trigger: Web User typecheck exit 2 in isolated convergence worktree while imported workspace packages `packages/address-network` and `packages/lebanese-administrative-authority` could not resolve `react` or `react/jsx-runtime`.
+- Evidence: `validation/web-user-typecheck.exit.txt=2`; stdout contains TS2307/TS2875 module-resolution failures; stderr empty.
+- Classification: validation topology / dependency-junction defect, not proven product source defect.
+- Guard: repair only isolated validation dependency resolution; do not modify package source to satisfy missing node_modules topology.
+- Retry rule: after state-changing junction repair, rerun exact Web User typecheck from clean evidence files before build.
+
+## APEX_CMD_SAME_LINE_PERCENT_EXPANSION_REPAIR_EVIDENCE_FALSE_ZERO_20260929
+- Status: ACTIVE / REGISTERED BEFORE RETRY.
+- Trigger: junction-repair CMD returned process exit 0 but the expected evidence file was absent and junction targets remained on the prior canonical package-level paths.
+- Root class: `%VAR%` references were composed on the same parsed CMD line as `set VAR=...`, allowing pre-expansion before assignment and invalidating the intended evidence path/repair target.
+- Guard: do not accept process exit alone; verify evidence artifact plus actual reparse target. Use fixed absolute paths or a prewritten CMD with variables expanded at execution time on separate lines.
+- Retry rule: perform an explicit state-changing junction replacement with fixed paths, verify both reparse targets and React package presence, then rerun Web User typecheck.
+
+## APEX_ISOLATED_WEB_USER_TYPESCRIPT_BIN_MISSING_AFTER_DEPENDENCY_JUNCTION_REPAIR_20260929
+- Status: ACTIVE / REGISTERED BEFORE REPAIR.
+- Trigger: Web User typecheck retry exit 1 with Node MODULE_NOT_FOUND for isolated `apps/web-user/node_modules/typescript/bin/tsc`; stderr captured full stack.
+- Evidence: `validation/web-user-typecheck.exit.txt=1`; stdout empty; stderr names the missing exact executable path. Web User production Vite build evidence remains exit 0 with `WEB_USER_BUILD_SUCCESS=YES` and empty stderr.
+- Classification: validation runner dependency-path defect, not product source/type failure.
+- Guard: do not install or mutate product dependencies solely for proof. Resolve TypeScript from an already-proven repository dependency authority and rerun the same `tsconfig.json --noEmit` gate.
+- Retry rule: only after the runner path is changed to an existing TypeScript binary and its existence is independently verified.
+
+## APEX_ISOLATED_WEB_USER_APP_NODE_MODULES_JUNCTION_MISSING_20260929
+- Status: ACTIVE / REGISTERED BEFORE REPAIR.
+- Trigger: true TypeScript compile reached project config but failed TS2688 for `vite/client`; independent filesystem check showed isolated `apps/web-user/node_modules` absent while canonical Web User contains `vite/client.d.ts`.
+- Evidence: `validation/web-user-typecheck.exit.txt=2`, stdout TS2688, stderr empty; live `dir /AL` shows no app-level junction and `ISO_VITE_CLIENT=NO`, `CANON_VITE_CLIENT=YES`.
+- Classification: isolated validation topology defect, not product source/type defect.
+- Guard: restore only the isolated app-level `node_modules` junction to canonical Web User dependencies; do not install, mutate, or clean canonical dependencies.
+- Retry rule: independently verify reparse target plus `vite/client.d.ts`, then rerun typecheck and build with fresh output files.
+
+### APEX_ALL_RECENT_JOB_PREFILL_AND_ACCOUNT_SECURITY_UI_STRANDED_20260929
+- Status: ACTIVE_GUARD
+- Scope: all-recent WatanyBot convergence audit against `b8d06c1ae8c6381b7f62afac899402633a5c690e`.
+- Failure: active b8 job UI capabilities were absent from the unified tree: authenticated profile prefill and previous-application prefill on Ain El Hafeh/Ain Mreisseh forms, plus the Profile job-account password/security card.
+- Evidence: b8 route usage proves `JobApplicationProfileFillButton` and `JobApplicationPreviousFillButton` were imported/rendered by both live legacy job pages; `JobAccountSecurityCard` was imported/rendered by `ProfilePage`; current Web User has no `change-password` UI while `mustChangePassword` remains mapped and backend ownership is present.
+- Required repair: restore only the three active helper components and their bounded page integrations; do not carry orphaned `JobApplicationPrefillControls`, `JobsCmsDashboardPage`, or `MyJobApplicationsPage`.
+- Regression guard: recent-owner audits must distinguish definition-only files from files proven reachable by route/import usage before declaring a branch superseded.
+
+### APEX_CMD_INLINE_PERCENT_EXIT_CAPTURE_LITERAL_EVIDENCE_DEFECT_20260929
+- Status: ACTIVE_GUARD
+- Scope: CMD evidence wrappers that set and consume `%ERRORLEVEL%` variables inside one inline command string.
+- Failure: the b8 active-job UI patch wrapper wrote literal `%RC%` to the check exit artifact and never produced apply-stage evidence, while the outer process returned 0.
+- Classification: controller/evidence defect; source mutation state is unknown until independently inspected.
+- Required repair: inspect source state first, then use a batch file with line-scoped `set RC=%ERRORLEVEL%` and subsequent lines (or delayed expansion) for deterministic exit persistence before any retry.
+- Regression guard: never accept an outer shell exit as child-stage proof when the persisted child exit artifact is missing, non-numeric, or contains an unexpanded `%VAR%` token.
+
+### APEX_VALIDATION_JUNCTION_EXISTING_PATH_AND_STALE_TARGET_DRIFT_20260929
+- Status: ACTIVE_GUARD
+- Scope: isolated Web User validation dependency junction setup.
+- Failure: chained `mklink /J` stopped when the already-correct `apps/web-user/node_modules` junction existed; subsequent topology inspection showed both shared-package junctions present but targeting the web-user dependency tree instead of their canonical package-local donors.
+- Classification: validation topology drift / non-idempotent setup defect; no compile was run under the partial state.
+- Required repair: inspect every expected junction target, preserve already-correct bindings, replace only stale bindings with proven canonical donors, then rerun unchanged validation.
+- Regression guard: validation junction setup must be idempotent and target-aware; an existing path is neither automatic success nor automatic failure until its reparse target is verified.
+
+### APEX_WEB_USER_JOB_UI_BROWSER_PROOF_UNCLASSIFIED_REQUEST_FAILURES_20260929
+- Status: ACTIVE_GUARD
+- Scope: built Web User browser proof for restored job-prefill and Profile account-security UI.
+- Failure: parser preflight passed, but browser runtime exited 1 at the final gate with `REQUEST_FAILURES=3`; the harness did not persist the failed request URLs before throwing.
+- Classification: browser-proof evidence defect until each failed request is identified; product/UI failure is not assumed.
+- Required repair: persist raw failed request method/URL/error before final classification, rerun the same built bundle, and fail closed on any target app/API/resource failure while allowing only specifically proven benign external noise.
+- Regression guard: a request-failure count without URL/error evidence is insufficient for product diagnosis and must not be converted into either PASS or application FAIL.
+
+### APEX_BROWSER_PROOF_EXTERNAL_GOOGLE_ANALYTICS_ABORTED_REQUEST_NOISE_20260929
+- Status: ACTIVE_GUARD
+- Scope: local built-bundle browser proofs that navigate between WatanyBot routes while Google Analytics is enabled.
+- Failure: each tested route emitted one `POST https://analytics.google.com/g/collect` request that Playwright reported as `net::ERR_ABORTED` during local navigation; target route/UI assertions all passed with zero console/page errors.
+- Classification: external telemetry proof noise, not WatanyBot application/API failure.
+- Required repair: intercept only `https://analytics.google.com/g/collect*` in the local proof harness and fulfill it with a synthetic successful empty response; continue to record and fail closed on every other request failure.
+- Regression guard: never broadly ignore request failures; external telemetry may be neutralized only by exact host/path evidence while application, API, asset, and unknown failures remain blockers.
+
+### APEX_PLAYWRIGHT_ANALYTICS_ROUTE_FULFILL_DID_NOT_SUPPRESS_REQUESTFAILED_20260929
+- Status: ACTIVE_GUARD
+- Scope: local Playwright browser proof with Google Analytics send-beacon/page-view telemetry.
+- Failure: exact `analytics.google.com/g/collect` route fulfillment was added, but Playwright still emitted the same three `requestfailed` `net::ERR_ABORTED` events during route navigation.
+- Classification: browser harness event-order/cancellation behavior; target route assertions remain green with zero console/page errors.
+- Required repair: change strategy from route-only neutralization to exact event-time classification: record `analytics.google.com/g/collect` aborts separately as ignored telemetry and keep every non-analytics request failure in the blocking collection.
+- Regression guard: a failed first telemetry-neutralization strategy must not be retried unchanged; only exact-host/path event classification is permitted, never generic `ERR_ABORTED` suppression.
+
+### APEX_FINAL_ALL_RECENT_AUDIT_STALE_ORPHAN_EXPECTATION_20260929
+- Status: ACTIVE_GUARD
+- Scope: final all-recent fail-closed audit harness.
+- Failure: the audit returned BLOCKED because it required an orphan-definition count for `8e1baf...:JobApplicationPrefillControls` even though that path was no longer present in the ref-only `A` set after the final carry-forward.
+- Classification: audit-harness stale expectation; repository runtime gap not indicated.
+- Required repair: run orphan checks only for paths that remain ref-only, then rerun the unchanged path allowlist and semantic supersession checks.
+- Regression guard: a disposition check must not require evidence for a candidate that the same current diff no longer classifies as unique to the historical ref.
+
+### APEX_WEB_USER_TYPECHECK_EXIT0_SUCCESS_TOKEN_ABSENT_20260929
+- Date: 2026-09-29
+- Class: validation evidence / success-token integrity.
+- Symptom: Web User typecheck evidence recorded native exit `0` and zero-byte stderr, but the wrapper-owned `WEB_USER_TYPECHECK_SUCCESS=YES` token was absent from captured stdout.
+- Impact: compiler output alone was insufficient for APEX PASS because the expected success token contract was not met; no product source mutation resulted from this evidence defect.
+- Guard: write a dedicated result artifact after the compiler returns, require exit `0`, empty stderr, exact success token, and absence of failure tokens before accepting typecheck.
+- Repair: replace only the evidence wrapper, rerun the unchanged compiler against the same source and dependency junction topology, then independently read exit/stdout/stderr/result artifacts.
+- Status: ACTIVE
+
+### APEX_WEB_USER_TYPECHECK_VITE_CLIENT_VALIDATION_TOPOLOGY_MISSING_20260929
+- Date: 2026-09-29
+- Class: isolated-worktree dependency topology.
+- Symptom: fail-closed Web User typecheck V2 exited `2` with `TS2688 Cannot find type definition file for 'vite/client'` after React resolution was repaired.
+- Impact: validation environment is incomplete; this is not evidence of a Web User source regression. No product source mutation occurred.
+- Guard: prove the isolated Web User `node_modules` junction target contains both `react` and `vite` package roots before typecheck; package-level workspace junctions may reuse that same proven dependency tree.
+- Repair: inspect current junction target and canonical package ownership, then rebind only validation junctions; rerun unchanged typecheck/build and require explicit exit/status/stderr proof.
+- Status: ACTIVE
+
+### APEX_CMD_NESTED_PERCENT_VARIABLE_PREEXPANSION_PATH_DEFECT_20260929
+- Date: 2026-09-29
+- Class: Windows cmd diagnostic transport.
+- Symptom: a nested `cmd /c` diagnostic referenced `%WT%` in the outer command text; the outer shell expanded it before the inner `set WT=...`, yielding an invalid path.
+- Impact: read-only diagnostic failed before repository access; no mutation occurred.
+- Guard: avoid nested `%VAR%` expansion for bounded diagnostics; pass literal absolute paths or use one shell scope with proven variable expansion.
+- Repair: rerun the same read-only topology census with literal absolute paths only.
+- Status: ACTIVE
+
+### APEX_CMD_CHAINED_QUOTED_BATCH_INVOCATION_SYNTAX_DEFECT_20260929
+- Date: 2026-09-29
+- Class: Windows cmd validation launcher transport.
+- Symptom: chaining two quoted `.cmd` paths with `&&` through the Desktop Commander shell produced `The filename, directory name, or volume label syntax is incorrect` before either validation wrapper ran.
+- Impact: no compiler/build/source mutation occurred.
+- Guard: invoke validation batch files one process at a time; do not rely on nested quoted batch chaining through the connector shell.
+- Repair: execute typecheck V2 and build as separate native processes and validate each evidence bundle independently.
+- Status: ACTIVE
+
+- `APEX_WEB_USER_BROWSER_PROOF_EXTERNAL_ANALYTICS_ABORT_FALSE_APP_FAILURE_20260929` - The final Web User restored-surfaces Chromium proof rendered all four required routes and expected controls successfully with zero console errors and zero page errors, but Playwright recorded one aborted `https://analytics.google.com/g/collect` request per navigation in the local headless environment. These external telemetry aborts do not represent application resource or route failure. Guard: preserve the raw failed-request evidence, classify the proof-environment boundary before repair, then rerun unchanged application assertions while preserving raw failed requests and classifying external telemetry separately; require zero failed application/runtime requests, zero console errors, and zero page errors.
+
+- `APEX_BROWSER_PROOF_REPAIR_MUST_RESPECT_EXISTING_ANALYTICS_FULFILL_REGRESSION_20260929` - During final Web User browser-proof closeout, the newly drafted analytics-noise guard initially proposed `204` fulfillment before the full local register tail was re-read. The existing class `APEX_PLAYWRIGHT_ANALYTICS_ROUTE_FULFILL_DID_NOT_SUPPRESS_REQUESTFAILED_20260929` already proves that strategy can still emit aborted-request events. Guard: when a stronger existing regression class supersedes a newly drafted recovery step, correct the new guard before execution and use a materially different strategy; preserve raw request failures, separate external telemetry advisory failures from application/runtime failures, and require zero application/runtime failures.
+
+- `APEX_WINDOWS_STORE_PYTHON_ALIAS_NO_INTERPRETER_REPAIR_BOUNDARY_20260929` - A validation-register text correction attempted a read-modify-write through `python -c`, but this Windows host exposed only the Microsoft Store execution alias and no Python interpreter, so the command terminated before opening or modifying the repository file. Guard: treat the Store alias message as a pre-execution tooling failure, verify the target bytes remain unchanged, then use an already proven local runtime such as Node for the same deterministic replacement; do not install tooling during bounded closeout.
+
+- `APEX_RESUME_AFTER_SEALED_REPORT_REQUIRES_NEW_REPORT_PACKAGE_20260929` - The CMS/CRM/Admin convergence root report package had already been frozen and manifest-verified at authority `6667c221714cbfd7295d10703b3f321566eb7d5e` before this resumed closeout performed additional Web User runtime proof, preservation adjudication, governance commit, and remote publication. APEX contract forbids mutating manifest-listed artifacts after successful verification. Guard: never rewrite a sealed package to absorb resumed work; preserve it as historical evidence, register the resumed reporting-lifecycle deviation, create a new superseding complete report package that references the sealed predecessor, and report the resumed execution as `PASS_WITH_REGISTERED_PROCESS_DEVIATION` (plus any separately deferred follow-up) rather than laundering it to unqualified PASS.
